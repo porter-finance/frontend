@@ -214,6 +214,7 @@ const AuctionInfoCard: React.FC<Props> = (props) => {
     }, 1000)
     return () => clearInterval(interval)
   }, [endTimeTimestamp])
+
   const auctionSymbolBiddingToken = auctionInfo.symbolBiddingToken.slice(0, 7)
   const auctionSymbolAuctioningToken = auctionInfo.symbolAuctioningToken.slice(0, 7)
   return (
