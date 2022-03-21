@@ -168,6 +168,7 @@ const ImageBlock = styled.div<{ align: string }>`
 const AuctionsButton = styled(HashLink)`
   ${ButtonCSS}
   height: 52px;
+  margin-bottom: 20px;
 `
 
 const ButtonWrapper = styled.div`
@@ -223,6 +224,10 @@ export const Landing: React.FC = () => {
           <AuctionsButton to="/overview#topAnchor">
             <SendIcon />
             View Auctions
+          </AuctionsButton>
+          <AuctionsButton to="/bonds#topAnchor">
+            <SendIcon />
+            View Bonds
           </AuctionsButton>
         </AuctionsBlock>
       </Welcome>
