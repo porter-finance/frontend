@@ -1,6 +1,8 @@
 // Export env vars
 export const PUBLIC_URL = process.env.PUBLIC_URL
 
+export const SUBGRAPH_URL_RINKEBY = 'https://api.thegraph.com/subgraphs/name/porter-finance/porter'
+
 // API endpoints for several environments
 export const API_URL_DEVELOP_RINKEBY = process.env.REACT_APP_ADDITIONAL_SERVICES_API_URL_RINKEBY
 export const API_URL_PRODUCTION_RINKEBY =
