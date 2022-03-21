@@ -570,7 +570,7 @@ const AllBonds = (props: Props) => {
         <EmptyContentWrapper>
           <InfoIcon />
           <EmptyContentText>
-            {noBonds && 'No bonds.'}
+            {noBonds && !noBondsFound && 'No bonds.'}
             {noBondsFound && 'No bonds found.'}
           </EmptyContentText>
         </EmptyContentWrapper>
