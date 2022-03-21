@@ -1,18 +1,10 @@
-import { gql, useQuery } from '@apollo/client'
+import { useEffect, useState } from 'react'
 
+import { additionalServiceApi } from '../api'
 import { getLogger } from '../utils/logger'
 import { AuctionInfo } from './useAllAuctionInfos'
 
 const logger = getLogger('useInterestingAuctionInfo')
-
-const auctionQuery = (closedAuctions: boolean | undefined) => gql`
-  query AuctionList {
-    auctions(first: 10, where: { live: ${closedAuctions || true} }) {
-      id
-      minimum
-    }
-  }
-`
 
 interface InterestingAuctionInfo {
   closedAuctions: boolean
@@ -21,11 +13,33 @@ interface InterestingAuctionInfo {
 export function useInterestingAuctionInfo(
   params?: Maybe<InterestingAuctionInfo>,
 ): Maybe<AuctionInfo[]> {
-  const { data, error } = useQuery(auctionQuery(params?.closedAuctions))
+  const [auctionInfo, setMostInterestingAuctions] = useState<Maybe<AuctionInfo[]>>(null)
 
-  if (error) {
-    logger.error('Error getting most interesting auction details info', error)
-  }
+  useEffect(() => {
+    let cancelled = false
 
-  return data?.auctions
+    const fetchApiData = async (): Promise<void> => {
+      try {
+        if (!additionalServiceApi) {
+          throw new Error('missing dependencies in useInterestingAuctionInfo callback')
+        }
+        const auctionInfo = await additionalServiceApi.getMostInterestingAuctionDetails(
+          params?.closedAuctions,
+        )
+        if (cancelled) return
+        setMostInterestingAuctions(auctionInfo)
+      } catch (error) {
+        if (cancelled) return
+        setMostInterestingAuctions(null)
+        logger.error('Error getting most interesting auction details info', error)
+      }
+    }
+    fetchApiData()
+
+    return (): void => {
+      cancelled = true
+    }
+  }, [params?.closedAuctions])
+
+  return auctionInfo
 }
