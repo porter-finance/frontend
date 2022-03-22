@@ -345,7 +345,7 @@ const AllBonds = (props: Props) => {
       },
       {
         Header: 'Borrowing Token',
-        accessor: 'borrowingToken',
+        accessor: 'paymentToken',
         align: 'flex-start',
         show: true,
         style: {},

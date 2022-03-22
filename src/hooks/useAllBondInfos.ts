@@ -10,10 +10,10 @@ export interface BondInfo {
   symbol: string
   owner: string
   maturityDate: number
-  borrowingToken: string
+  paymentToken: string
   collateralToken: string
-  backingRatio: number
-  convertibilityRatio: number
+  collateralRatio: number
+  convertibleRatio: number
   isAuction: boolean
 }
 
@@ -25,10 +25,10 @@ const bondsQuery = gql`
       symbol
       owner
       maturityDate
-      borrowingToken
+      paymentToken
       collateralToken
-      backingRatio
-      convertibilityRatio
+      collateralRatio
+      convertibleRatio
       isAuction
     }
   }

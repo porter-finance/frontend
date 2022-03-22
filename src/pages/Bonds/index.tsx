@@ -34,7 +34,7 @@ const BondOverviewCommon = ({ allBonds }: OverviewProps) => {
       bondId: `#${item.id}`,
       name: item.name,
       owner: item.owner.slice(0, 7),
-      borrowingToken: item.borrowingToken.slice(0, 7),
+      paymentToken: item.paymentToken.slice(0, 7),
       collateralToken: item.collateralToken.slice(0, 7),
       chevron: <Chevron />,
       maturityDate: (
@@ -47,7 +47,7 @@ const BondOverviewCommon = ({ allBonds }: OverviewProps) => {
       symbol: (
         <DoubleLogo
           auctioningToken={{
-            address: item.borrowingToken,
+            address: item.paymentToken,
             symbol: item.symbol,
           }}
           biddingToken={{
