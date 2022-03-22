@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import ReactTooltip from 'react-tooltip'
 
 import Auction from '../../../pages/Auction'
+import Bond from '../../../pages/Bond'
 import BondsOverview from '../../../pages/Bonds'
 import { Documentation } from '../../../pages/Documentation'
 import { Landing } from '../../../pages/Landing'
@@ -71,6 +72,7 @@ const Routes: React.FC<RouteComponentProps> = (props) => {
                 strict
               />
               <Route component={Overview} exact path="/overview" strict />
+              <Route component={Bond} exact path="/bond" strict />
               <Route component={BondsOverview} exact path="/bonds" strict />
               <Route component={Landing} exact path="/start" strict />
               <Route component={Terms} exact path="/terms-and-conditions" strict />

@@ -65,6 +65,7 @@ export default createReducer<OrderPlacementState>(initialState, (builder) =>
 )
 
 export interface AuctionIdentifier {
+  bondId: string
   auctionId: number
   chainId: number
 }
@@ -78,11 +79,13 @@ export function parseURL(queryString: string): AuctionIdentifier {
     return {
       chainId: parseAuctionIdParameter(parsedQs.chainId),
       auctionId: parseAuctionIdParameter(parsedQs.auctionId),
+      bondId: `${parsedQs.bondId}`,
     }
   }
 
   return {
     chainId: 1,
     auctionId: 1,
+    bondId: '0x0',
   }
 }

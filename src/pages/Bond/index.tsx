@@ -2,18 +2,16 @@ import React from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
-import AuctionBody from '../../components/auction/AuctionBody'
-import AuctionDetails from '../../components/auction/AuctionDetails'
 import { ButtonCopy } from '../../components/buttons/ButtonCopy'
 import { InlineLoading } from '../../components/common/InlineLoading'
 import { NetworkIcon } from '../../components/icons/NetworkIcon'
 import WarningModal from '../../components/modals/WarningModal'
 import { PageTitle } from '../../components/pureStyledComponents/PageTitle'
-import { useDefaultsFromURLSearch, useDerivedAuctionInfo } from '../../state/orderPlacement/hooks'
+import { useBondDetails } from '../../hooks/useBondDetails'
+import { useDefaultsFromURLSearch } from '../../state/orderPlacement/hooks'
 import { parseURL } from '../../state/orderPlacement/reducer'
 import { useTokenListState } from '../../state/tokenList/hooks'
 import { isAddress } from '../../utils'
-import { getChainName } from '../../utils/tools'
 
 const Title = styled(PageTitle)`
   margin-bottom: 2px;
@@ -68,20 +66,22 @@ interface Props extends RouteComponentProps {
   showTokenWarning: (bothTokensSupported: boolean) => void
 }
 
-const Auction: React.FC<Props> = (props) => {
+const Bond: React.FC<Props> = (props) => {
   const {
     history,
     location: { search },
     showTokenWarning,
   } = props
 
-  const auctionIdentifier = parseURL(search)
-  const derivedAuctionInfo = useDerivedAuctionInfo(auctionIdentifier)
+  const bondIdentifier = parseURL(search)
+  const derivedAuctionInfo = useBondDetails(bondIdentifier?.bondId)
   const { tokens } = useTokenListState()
   const url = window.location.href
 
-  const biddingTokenAddress = derivedAuctionInfo?.biddingToken?.address
-  const auctioningTokenAddress = derivedAuctionInfo?.auctioningToken?.address
+  console.log(derivedAuctionInfo, bondIdentifier)
+
+  const biddingTokenAddress = derivedAuctionInfo?.paymentToken
+  const auctioningTokenAddress = derivedAuctionInfo?.collateralToken
   const validBiddingTokenAddress =
     biddingTokenAddress !== undefined &&
     isAddress(biddingTokenAddress) &&
@@ -95,30 +95,10 @@ const Auction: React.FC<Props> = (props) => {
 
   useDefaultsFromURLSearch(search)
 
-  React.useEffect(() => {
-    if (
-      !derivedAuctionInfo ||
-      biddingTokenAddress === undefined ||
-      auctioningTokenAddress === undefined
-    ) {
-      showTokenWarning(false)
-      return
-    }
-
-    showTokenWarning(!validBiddingTokenAddress || !validAuctioningTokenAddress)
-  }, [
-    auctioningTokenAddress,
-    biddingTokenAddress,
-    derivedAuctionInfo,
-    showTokenWarning,
-    validAuctioningTokenAddress,
-    validBiddingTokenAddress,
-  ])
-
   const isLoading = React.useMemo(() => derivedAuctionInfo === null, [derivedAuctionInfo])
   const invalidAuction = React.useMemo(
-    () => !auctionIdentifier || derivedAuctionInfo === undefined,
-    [auctionIdentifier, derivedAuctionInfo],
+    () => !bondIdentifier || derivedAuctionInfo === undefined,
+    [bondIdentifier, derivedAuctionInfo],
   )
 
   return (
@@ -126,25 +106,20 @@ const Auction: React.FC<Props> = (props) => {
       {isLoading && <InlineLoading />}
       {!isLoading && !invalidAuction && (
         <>
-          <Title>Auction Details</Title>
+          <Title>Bond Details</Title>
           <SubTitleWrapperStyled>
             <SubTitle>
               <Network>
                 <NetworkIconStyled />
-                <NetworkName>Selling on {getChainName(auctionIdentifier.chainId)} -</NetworkName>
               </Network>
-              <AuctionId>Auction Id #{auctionIdentifier.auctionId}</AuctionId>
+              <AuctionId>Bond Id #{bondIdentifier.bondId}</AuctionId>
             </SubTitle>
             <CopyButton copyValue={url} title="Copy URL" />
           </SubTitleWrapperStyled>
-          <AuctionDetails
-            auctionIdentifier={auctionIdentifier}
-            derivedAuctionInfo={derivedAuctionInfo}
-          />
-          <AuctionBody
-            auctionIdentifier={auctionIdentifier}
-            derivedAuctionInfo={derivedAuctionInfo}
-          />
+
+          <div>
+            <code>{JSON.stringify(derivedAuctionInfo)}</code>
+          </div>
         </>
       )}
       {!isLoading && invalidAuction && (
@@ -161,4 +136,4 @@ const Auction: React.FC<Props> = (props) => {
   )
 }
 
-export default Auction
+export default Bond
