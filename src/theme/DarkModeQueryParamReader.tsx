@@ -8,18 +8,16 @@ import { updateUserDarkMode } from '../state/user/actions'
 
 export default function DarkModeQueryParamReader() {
   const dispatch = useDispatch<AppDispatch>()
-  const parsed = useParams()
+  const parsed = window.location.search
 
   useEffect(() => {
-    if (!parsed) return
+    if (!parsed.includes('theme')) return
 
-    const theme = parsed.theme
+    if (typeof parsed !== 'string') return
 
-    if (typeof theme !== 'string') return
-
-    if (theme.toLowerCase() === 'light') {
+    if (parsed.toLowerCase().includes('light')) {
       dispatch(updateUserDarkMode({ userDarkMode: false }))
-    } else if (theme.toLowerCase() === 'dark') {
+    } else if (parsed.toLowerCase().includes('dark')) {
       dispatch(updateUserDarkMode({ userDarkMode: true }))
     }
   }, [dispatch, parsed])
