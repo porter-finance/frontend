@@ -109,7 +109,7 @@ const OverviewCommon = ({ allAuctions }: OverviewProps) => {
       ) : (
         'Public'
       ),
-      url: `/auction?auctionId=${item.auctionId}&chainId=${Number(item.chainId)}#topAnchor`,
+      url: `/auction/${item.auctionId}/${Number(item.chainId)}#topAnchor`,
     })
   })
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { RouteComponentProps } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
 import { ButtonCopy } from '../../components/buttons/ButtonCopy'
@@ -10,8 +10,6 @@ import { PageTitle } from '../../components/pureStyledComponents/PageTitle'
 import { useBondDetails } from '../../hooks/useBondDetails'
 import { useDefaultsFromURLSearch } from '../../state/orderPlacement/hooks'
 import { parseURL } from '../../state/orderPlacement/reducer'
-import { useTokenListState } from '../../state/tokenList/hooks'
-import { isAddress } from '../../utils'
 
 const Title = styled(PageTitle)`
   margin-bottom: 2px;
@@ -33,7 +31,7 @@ const SubTitle = styled.h2`
   margin: 0 8px 0 0;
 `
 
-const AuctionId = styled.span`
+const BondId = styled.span`
   align-items: center;
   display: flex;
 `
@@ -57,54 +55,26 @@ const NetworkIconStyled = styled(NetworkIcon)`
   ${IconCSS}
 `
 
-const NetworkName = styled.span`
-  margin-left: 8px;
-  text-transform: capitalize;
-`
-
-interface Props extends RouteComponentProps {
+interface Props {
   showTokenWarning: (bothTokensSupported: boolean) => void
 }
 
 const Bond: React.FC<Props> = (props) => {
-  const {
-    history,
-    location: { search },
-    showTokenWarning,
-  } = props
+  const navigate = useNavigate()
 
-  const bondIdentifier = parseURL(search)
-  const derivedAuctionInfo = useBondDetails(bondIdentifier?.bondId)
-  const { tokens } = useTokenListState()
+  const bondIdentifier = useParams()
+  const { data: derivedBondInfo, loading: isLoading } = useBondDetails(bondIdentifier?.bondId)
   const url = window.location.href
 
-  console.log(derivedAuctionInfo, bondIdentifier)
-
-  const biddingTokenAddress = derivedAuctionInfo?.paymentToken
-  const auctioningTokenAddress = derivedAuctionInfo?.collateralToken
-  const validBiddingTokenAddress =
-    biddingTokenAddress !== undefined &&
-    isAddress(biddingTokenAddress) &&
-    tokens &&
-    tokens[biddingTokenAddress.toLowerCase()] !== undefined
-  const validAuctioningTokenAddress =
-    auctioningTokenAddress !== undefined &&
-    isAddress(auctioningTokenAddress) &&
-    tokens &&
-    tokens[auctioningTokenAddress.toLowerCase()] !== undefined
-
-  useDefaultsFromURLSearch(search)
-
-  const isLoading = React.useMemo(() => derivedAuctionInfo === null, [derivedAuctionInfo])
-  const invalidAuction = React.useMemo(
-    () => !bondIdentifier || derivedAuctionInfo === undefined,
-    [bondIdentifier, derivedAuctionInfo],
+  const invalidBond = React.useMemo(
+    () => !bondIdentifier || derivedBondInfo === undefined,
+    [bondIdentifier, derivedBondInfo],
   )
 
   return (
     <>
       {isLoading && <InlineLoading />}
-      {!isLoading && !invalidAuction && (
+      {!isLoading && !invalidBond && (
         <>
           <Title>Bond Details</Title>
           <SubTitleWrapperStyled>
@@ -112,22 +82,22 @@ const Bond: React.FC<Props> = (props) => {
               <Network>
                 <NetworkIconStyled />
               </Network>
-              <AuctionId>Bond Id #{bondIdentifier.bondId}</AuctionId>
+              <BondId>Bond Ids #{bondIdentifier.bondId}</BondId>
             </SubTitle>
             <CopyButton copyValue={url} title="Copy URL" />
           </SubTitleWrapperStyled>
 
           <div>
-            <code>{JSON.stringify(derivedAuctionInfo)}</code>
+            <code>{JSON.stringify(derivedBondInfo)}</code>
           </div>
         </>
       )}
-      {!isLoading && invalidAuction && (
+      {!isLoading && invalidBond && (
         <>
           <WarningModal
-            content={`This auction doesn't exist or it hasn't started yet.`}
+            content={`This bond doesn't exist or it hasn't been created yet.`}
             isOpen
-            onDismiss={() => history.push('/overview')}
+            onDismiss={() => navigate('/overview')}
             title="Warning!"
           />
         </>

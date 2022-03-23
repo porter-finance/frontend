@@ -305,7 +305,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
             text: 'Please connect your wallet.',
             type: InfoType.info,
           }
-        : notApproved && approval !== ApprovalState.PENDING && approval !== ApprovalState.APPROVED
+        : notApproved && approval !== ApprovalState.PENDING
         ? {
             text: `You need to unlock ${biddingTokenDisplay} to allow the smart contract to interact with it.`,
             type: InfoType.info,
