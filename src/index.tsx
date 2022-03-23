@@ -21,6 +21,7 @@ import 'sanitize.css'
 
 const apolloClient = new ApolloClient({
   uri: SUBGRAPH_URL_RINKEBY,
+  connectToDevTools: true,
   cache: new InMemoryCache(),
 })
 
