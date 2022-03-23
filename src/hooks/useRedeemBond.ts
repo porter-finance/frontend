@@ -14,15 +14,15 @@ export function useRedeemBond(amountToRedeem?: TokenAmount | null, addressToRede
   const tokenContract = useBondContract(amountToRedeem?.token?.address)
   const addTransaction = useTransactionAdder()
 
-  const redeem = useCallback(async (): Promise<void> => {
+  const redeem = useCallback(async (): Promise<string> => {
     if (!tokenContract) {
       logger.error('tokenContract is null')
-      return
+      return ''
     }
 
     if (!amountToRedeem) {
       logger.error('missing amount to redeem')
-      return
+      return ''
     }
 
     return tokenContract
@@ -32,6 +32,7 @@ export function useRedeemBond(amountToRedeem?: TokenAmount | null, addressToRede
           summary: 'Redeem ' + amountToRedeem?.token?.symbol,
           approval: { tokenAddress: amountToRedeem.token.address, spender: addressToRedeem },
         })
+        return response.hash
       })
       .catch((error: Error) => {
         logger.debug('Failed to redeem token', error)

@@ -14,6 +14,7 @@ import { CenteredCard } from '../../components/common/CenteredCard'
 import { InlineLoading } from '../../components/common/InlineLoading'
 import AmountInputPanel from '../../components/form/AmountInputPanel'
 import { NetworkIcon } from '../../components/icons/NetworkIcon'
+import ConfirmationModal from '../../components/modals/ConfirmationModal'
 import WarningModal from '../../components/modals/WarningModal'
 import { PageTitle } from '../../components/pureStyledComponents/PageTitle'
 import { useTotalSupply } from '../../data/TotalSupply'
@@ -21,6 +22,7 @@ import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallbac
 import { useBondDetails } from '../../hooks/useBondDetails'
 import { useBondContract } from '../../hooks/useContract'
 import { useRedeemBond } from '../../hooks/useRedeemBond'
+import { useActivePopups } from '../../state/application/hooks'
 import { useFetchTokenByAddress } from '../../state/user/hooks'
 import { ChainId, EASY_AUCTION_NETWORKS } from '../../utils'
 
@@ -82,12 +84,18 @@ const Bond: React.FC<Props> = () => {
   const { account, chainId } = useWeb3React()
   const fetchTok = useFetchTokenByAddress()
   const [bondInfo, setBondInfo] = useState(null)
+  const activePopups = useActivePopups()
 
   const bondIdentifier = useParams()
   const { data: derivedBondInfo, loading: isLoading } = useBondDetails(bondIdentifier?.bondId)
 
   const [ownage, setOwnage] = useState(false)
   const [newValue, setNewValue] = useState('0')
+  const [showConfirm, setShowConfirm] = useState<boolean>(false)
+  const [showWarning, setShowWarning] = useState<boolean>(false)
+  const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirmed
+  const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true) // waiting for user confirmation
+  const [txHash, setTxHash] = useState<string>('')
 
   const bigg = bondInfo && parseUnits(newValue, bondInfo.decimals)
   const tokenAmount = bondInfo && new TokenAmount(bondInfo, bigg)
@@ -98,19 +106,55 @@ const Bond: React.FC<Props> = () => {
   )
 
   const bondContract = useBondContract(bondIdentifier?.bondId)
-  const { redeem: redeemBond } = useRedeemBond(tokenAmount, bondIdentifier?.bondId)
+  const { redeem } = useRedeemBond(tokenAmount, bondIdentifier?.bondId)
 
   const [totalBalance, setTotalBalance] = useState('0')
   const notApproved = approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING
-
+  const onUserSellAmountInput = (theInput) => {
+    setNewValue(theInput || '0')
+  }
   const url = window.location.href
+
+  const resetModal = () => {
+    if (!pendingConfirmation) {
+      onUserSellAmountInput('')
+    }
+    setPendingConfirmation(true)
+    setAttemptingTxn(false)
+  }
+
+  React.useEffect(() => {
+    if (activePopups.length) {
+      onUserSellAmountInput('')
+      setShowConfirm(false)
+      setPendingConfirmation(false)
+    }
+  }, [activePopups, txHash])
+
+  const redeemBond = () => {
+    setShowConfirm(true)
+  }
+
+  const doTheRedeem = () => {
+    setAttemptingTxn(true)
+
+    redeem()
+      .then((hash) => {
+        setTxHash(hash)
+        setPendingConfirmation(false)
+      })
+      .catch(() => {
+        resetModal()
+        setShowConfirm(false)
+      })
+  }
 
   React.useEffect(() => {
     if (!bondInfo && bondContract) return
     bondContract.totalSupply().then((r) => {
       setTotalBalance(formatUnits(r, bondInfo.decimals))
     })
-  }, [bondContract, bondInfo])
+  }, [bondContract, bondInfo, pendingConfirmation])
 
   const invalidBond = React.useMemo(
     () => !bondIdentifier || !derivedBondInfo,
@@ -152,9 +196,7 @@ const Bond: React.FC<Props> = () => {
               onMax={() => {
                 setNewValue(totalBalance)
               }}
-              onUserSellAmountInput={(newValue) => {
-                setNewValue(newValue || '0')
-              }}
+              onUserSellAmountInput={onUserSellAmountInput}
               token={bondInfo}
               unlock={{ isLocked: notApproved, onUnlock: approveCallback, unlockState: approval }}
               value={newValue}
@@ -182,6 +224,24 @@ const Bond: React.FC<Props> = () => {
           />
         </>
       )}
+      <ConfirmationModal
+        attemptingTxn={attemptingTxn}
+        content={
+          <div>
+            You sure? <ActionButton onClick={doTheRedeem}>Yes</ActionButton>
+          </div>
+        }
+        hash={txHash}
+        isOpen={showConfirm}
+        onDismiss={() => {
+          resetModal()
+          setShowConfirm(false)
+        }}
+        pendingConfirmation={pendingConfirmation}
+        pendingText={'Placing redeem order'}
+        title="Confirm Order"
+        width={504}
+      />
     </>
   )
 }
