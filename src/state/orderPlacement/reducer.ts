@@ -1,5 +1,4 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { parse } from 'qs'
 
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../constants/config'
 import { getInverse } from '../../utils/prices'
@@ -31,8 +30,8 @@ function parseAuctionIdParameter(urlParam: any): number {
 
 export default createReducer<OrderPlacementState>(initialState, (builder) =>
   builder
-    .addCase(setDefaultsFromURLSearch, (_, { payload: { queryString } }) => {
-      const { chainId } = parseURL(queryString)
+    .addCase(setDefaultsFromURLSearch, () => {
+      const { chainId } = useParams()
       return {
         ...initialState,
         chainId,
@@ -64,25 +63,24 @@ export default createReducer<OrderPlacementState>(initialState, (builder) =>
     }),
 )
 
-export interface AuctionIdentifier {
-  auctionId: number
-  chainId: number
+export type RouteAuctionIdentifier = {
+  bondId?: string
+  auctionId?: string
+  chainId?: string
 }
-export function parseURL(queryString: string): AuctionIdentifier {
-  if (queryString && queryString.length > 1) {
-    const parsedQs = parse(queryString, {
-      parseArrays: false,
-      ignoreQueryPrefix: true,
-    })
+export type AuctionIdentifier = {
+  bondId?: string
+  auctionId?: number
+  chainId?: number
+}
 
-    return {
-      chainId: parseAuctionIdParameter(parsedQs.chainId),
-      auctionId: parseAuctionIdParameter(parsedQs.auctionId),
-    }
-  }
-
+export function parseURL(props: RouteAuctionIdentifier): AuctionIdentifier {
   return {
-    chainId: 1,
-    auctionId: 1,
+    chainId: parseAuctionIdParameter(props?.chainId),
+    auctionId: parseAuctionIdParameter(props?.auctionId),
+    bondId: `${props?.bondId}`,
   }
+}
+function useParams(): { chainId: any } {
+  throw new Error('Function not implemented.')
 }

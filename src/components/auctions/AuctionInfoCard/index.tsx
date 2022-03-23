@@ -219,9 +219,7 @@ const AuctionInfoCard: React.FC<Props> = (props) => {
   const auctionSymbolAuctioningToken = auctionInfo.symbolAuctioningToken.slice(0, 7)
   return (
     <Wrapper
-      to={`/auction?auctionId=${auctionInfo.auctionId}&chainId=${Number(
-        auctionInfo.chainId,
-      )}#topAnchor`}
+      to={`/auction/${auctionInfo.auctionId}/${Number(auctionInfo.chainId)}#topAnchor`}
       {...restProps}
     >
       <Top>

@@ -11,8 +11,11 @@ const App: React.FC = () => {
   return (
     <Suspense fallback={null}>
       <Router>
-        <Route component={DarkModeQueryParamReader} />
-        <Routes />
+        <Routes>
+          <Route>
+            <DarkModeQueryParamReader />
+          </Route>
+        </Routes>
       </Router>
     </Suspense>
   )
