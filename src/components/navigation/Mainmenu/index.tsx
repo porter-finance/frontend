@@ -44,7 +44,11 @@ export const Mainmenu: React.FC = (props) => {
     <Wrapper {...props}>
       {navItems.map((item, index) => {
         return (
-          <Item activeClassName="active" key={index} to={item.url}>
+          <Item
+            className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')}
+            key={index}
+            to={item.url}
+          >
             {item.title}
           </Item>
         )

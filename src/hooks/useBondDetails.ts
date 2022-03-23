@@ -2,7 +2,7 @@ import { gql, useQuery } from '@apollo/client'
 
 import { getLogger } from '../utils/logger'
 
-const logger = getLogger('useAllBondInfo')
+const logger = getLogger('useBondDetails')
 
 export interface BondInfo {
   id: string
@@ -17,9 +17,9 @@ export interface BondInfo {
   isAuction: boolean
 }
 
-const bondsQuery = gql`
-  query BondList {
-    bonds(first: 100) {
+const bondsQuery = (bondId: string) => gql`
+  query Bond {
+    bond(id: "${bondId}") {
       id
       name
       symbol
@@ -34,12 +34,15 @@ const bondsQuery = gql`
   }
 `
 
-export const useAllBondInfo = (): Maybe<BondInfo[]> => {
-  const { data, error } = useQuery(bondsQuery)
+export const useBondDetails = (bondId: string): Maybe<{ data: BondInfo; loading: boolean }> => {
+  const { data, error, loading } = useQuery(bondsQuery(bondId))
+
+  console.log(bondId)
 
   if (error) {
-    logger.error('Error getting useAllBondInfo info', error)
+    logger.error('Error getting useBondDetails info', error)
   }
 
-  return data?.bonds
+  const info = data?.bond
+  return { data: info, loading }
 }

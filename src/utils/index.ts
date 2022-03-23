@@ -5,7 +5,7 @@ import { Contract } from '@ethersproject/contracts'
 import { JsonRpcSigner, Provider, Web3Provider } from '@ethersproject/providers'
 import { parseBytes32String } from '@ethersproject/strings'
 import { JSBI, Percent, Token, TokenAmount, WETH } from '@josojo/honeyswap-sdk'
-import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
+import IUniswapV2PairABI from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 
 import easyAuctionABI from '../constants/abis/easyAuction/easyAuction.json'
 import ERC20_ABI from '../constants/abis/erc20.json'
@@ -173,7 +173,7 @@ export function getEasyAuctionContract(chainId: ChainId, library: Web3Provider, 
 
 // account is optional
 export function getExchangeContract(pairAddress: string, library: Web3Provider, account?: string) {
-  return getContract(pairAddress, IUniswapV2PairABI, library, account)
+  return getContract(pairAddress, IUniswapV2PairABI.abi, library, account)
 }
 
 // get token info and fall back to unknown if not available, except for the
