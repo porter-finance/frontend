@@ -1,5 +1,5 @@
 import React from 'react'
-import { RouteComponentProps } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
 import AuctionBody from '../../components/auction/AuctionBody'
@@ -9,8 +9,8 @@ import { InlineLoading } from '../../components/common/InlineLoading'
 import { NetworkIcon } from '../../components/icons/NetworkIcon'
 import WarningModal from '../../components/modals/WarningModal'
 import { PageTitle } from '../../components/pureStyledComponents/PageTitle'
-import { useDefaultsFromURLSearch, useDerivedAuctionInfo } from '../../state/orderPlacement/hooks'
-import { parseURL } from '../../state/orderPlacement/reducer'
+import { useDerivedAuctionInfo } from '../../state/orderPlacement/hooks'
+import { RouteAuctionIdentifier, parseURL } from '../../state/orderPlacement/reducer'
 import { useTokenListState } from '../../state/tokenList/hooks'
 import { isAddress } from '../../utils'
 import { getChainName } from '../../utils/tools'
@@ -64,18 +64,16 @@ const NetworkName = styled.span`
   text-transform: capitalize;
 `
 
-interface Props extends RouteComponentProps {
+interface Props {
   showTokenWarning: (bothTokensSupported: boolean) => void
 }
 
 const Auction: React.FC<Props> = (props) => {
-  const {
-    history,
-    location: { search },
-    showTokenWarning,
-  } = props
+  const { showTokenWarning } = props
 
-  const auctionIdentifier = parseURL(search)
+  const navigate = useNavigate()
+
+  const auctionIdentifier = parseURL(useParams<RouteAuctionIdentifier>())
   const derivedAuctionInfo = useDerivedAuctionInfo(auctionIdentifier)
   const { tokens } = useTokenListState()
   const url = window.location.href
@@ -92,8 +90,6 @@ const Auction: React.FC<Props> = (props) => {
     isAddress(auctioningTokenAddress) &&
     tokens &&
     tokens[auctioningTokenAddress.toLowerCase()] !== undefined
-
-  useDefaultsFromURLSearch(search)
 
   React.useEffect(() => {
     if (
@@ -152,7 +148,7 @@ const Auction: React.FC<Props> = (props) => {
           <WarningModal
             content={`This auction doesn't exist or it hasn't started yet.`}
             isOpen
-            onDismiss={() => history.push('/overview')}
+            onDismiss={() => navigate('/overview')}
             title="Warning!"
           />
         </>

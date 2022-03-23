@@ -1,6 +1,7 @@
 import { TokenInfo, TokenList } from '@uniswap/token-lists'
 import schema from '@uniswap/token-lists/src/tokenlist.schema.json'
 import Ajv from 'ajv'
+import addFormats from 'ajv-formats'
 
 import { getLogger } from '../utils/logger'
 
@@ -14,7 +15,11 @@ const TOKEN_LIST_RESOURCES = [
   'https://raw.githubusercontent.com/gnosis/ido-contracts/master/assets/tokens/rinkeby-token-list.json',
   'https://tokens.honeyswap.org',
 ]
-const tokenListValidator = new Ajv({ allErrors: true }).compile(schema)
+
+const ajv = new Ajv({ allErrors: true })
+addFormats(ajv)
+
+const tokenListValidator = ajv.compile(schema)
 
 export interface TokenLogosServiceApiInterface {
   getTokensByUrl(url: string): Promise<TokenInfo[]>
@@ -36,7 +41,7 @@ export class TokenLogosServiceApi implements TokenLogosServiceApiInterface {
       if (!tokenListValidator(data)) {
         const validationErrors =
           tokenListValidator.errors?.reduce<string>((memo, error) => {
-            const add = `${error.dataPath} ${error.message ?? ''}`
+            const add = `${error.data} ${error.message ?? ''}`
             return memo.length > 0 ? `${memo}; ${add}` : `${add}`
           }, '') ?? 'unknown error'
 

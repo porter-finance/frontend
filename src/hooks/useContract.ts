@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
 import { Contract } from '@ethersproject/contracts'
-import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
+import IUniswapV2PairABI from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 
 import ERC20_ABI from '../constants/abis/erc20.json'
 import { MULTICALL_ABI, MULTICALL_NETWORKS } from '../constants/multicall'
@@ -56,7 +56,7 @@ export function usePairContract(
   pairAddress?: string,
   withSignerIfPossible = true,
 ): Maybe<Contract> {
-  return useContract(pairAddress, IUniswapV2PairABI, withSignerIfPossible)
+  return useContract(pairAddress, IUniswapV2PairABI.abi, withSignerIfPossible)
 }
 
 export function useMulticallContract(): Maybe<Contract> {
