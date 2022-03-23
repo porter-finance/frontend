@@ -2,8 +2,10 @@ import React from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 
+import { DAppProvider, Mainnet, Rinkeby } from '@usedapp/core'
 import ReactTooltip from 'react-tooltip'
 
+import { NETWORK_URL_MAINNET, NETWORK_URL_RINKEBY } from '../../../constants/config'
 import Auction from '../../../pages/Auction'
 import Bond from '../../../pages/Bond'
 import BondsOverview from '../../../pages/Bonds'
@@ -24,11 +26,19 @@ import { MainScroll } from '../../pureStyledComponents/MainScroll'
 import { MainWrapper } from '../../pureStyledComponents/MainWrapper'
 import Web3ReactManager from '../../web3/Web3ReactManager'
 
+const dappConfig = {
+  readOnlyChainId: Mainnet.chainId,
+  readOnlyUrls: {
+    [Rinkeby.chainId]: NETWORK_URL_RINKEBY,
+    [Mainnet.chainId]: NETWORK_URL_MAINNET,
+  },
+}
+
 const Inner = styled(InnerContainer)`
   padding-top: 22px;
 `
 
-const AppRoutes: React.FC = ({ children }) => {
+const AppRoutes: React.FC = () => {
   const { pathname } = useLocation()
   const [showCookiesBanner, setShowCookiesBanner] = React.useState(false)
   const [showTopWarning, setShowTopWarning] = React.useState(false)
@@ -64,33 +74,38 @@ const AppRoutes: React.FC = ({ children }) => {
         <Inner>
           <DarkModeQueryParamReader />
           <Web3ReactManager>
-            <Routes>
-              <Route element={<Auction showTokenWarning={tokenSupport} />} path="/auction" />
-              <Route
-                element={<Auction showTokenWarning={tokenSupport} />}
-                path="/auction/:auctionId/:chainId"
-              />
-              <Route element={<Overview />} path="/overview" />
-              <Route element={<Bond showTokenWarning={tokenSupport} />} path="/bond/:bondId" />
-              <Route element={<BondsOverview />} path="/bonds" />
-              <Route element={<Landing />} path="/start" />
-              <Route element={<Terms />} path="/terms-and-conditions" />
-              <Route element={<Licenses />} path="/licenses" />
-              <Route element={<Documentation />} path="/docs" />
-              <Route element={<Documentation />} path="/docs/batch-auctions" />
-              <Route element={<Documentation />} path="/docs/use-cases" />
-              <Route element={<Documentation />} path="/docs/user-flow" />
-              <Route element={<Documentation />} path="/docs/participate-as-a-bidder" />
-              <Route element={<Documentation />} path="/docs/participate-as-auctioneer" />
-              <Route element={<Documentation />} path="/docs/starting-an-auction-with-safe" />
-              <Route element={<Documentation />} path="/docs/settle-an-auction" />
-              <Route element={<Documentation />} path="/docs/Private-Auctions-And-KYC-solutions" />
-              <Route element={<Documentation />} path="/docs/vested-tokens" />
-              <Route element={<Documentation />} path="/docs/media-kit" />
-              <Route element={<Documentation />} path="/docs/faq" />
-              <Route element={<Navigate to="/start" />} path="/" />
-              <Route element={<BaseCard>Page not found Error 404</BaseCard>} path="*" />
-            </Routes>
+            <DAppProvider config={dappConfig}>
+              <Routes>
+                <Route element={<Auction showTokenWarning={tokenSupport} />} path="/auction" />
+                <Route
+                  element={<Auction showTokenWarning={tokenSupport} />}
+                  path="/auction/:auctionId/:chainId"
+                />
+                <Route element={<Overview />} path="/overview" />
+                <Route element={<Bond showTokenWarning={tokenSupport} />} path="/bond/:bondId" />
+                <Route element={<BondsOverview />} path="/bonds" />
+                <Route element={<Landing />} path="/start" />
+                <Route element={<Terms />} path="/terms-and-conditions" />
+                <Route element={<Licenses />} path="/licenses" />
+                <Route element={<Documentation />} path="/docs" />
+                <Route element={<Documentation />} path="/docs/batch-auctions" />
+                <Route element={<Documentation />} path="/docs/use-cases" />
+                <Route element={<Documentation />} path="/docs/user-flow" />
+                <Route element={<Documentation />} path="/docs/participate-as-a-bidder" />
+                <Route element={<Documentation />} path="/docs/participate-as-auctioneer" />
+                <Route element={<Documentation />} path="/docs/starting-an-auction-with-safe" />
+                <Route element={<Documentation />} path="/docs/settle-an-auction" />
+                <Route
+                  element={<Documentation />}
+                  path="/docs/Private-Auctions-And-KYC-solutions"
+                />
+                <Route element={<Documentation />} path="/docs/vested-tokens" />
+                <Route element={<Documentation />} path="/docs/media-kit" />
+                <Route element={<Documentation />} path="/docs/faq" />
+                <Route element={<Navigate to="/start" />} path="/" />
+                <Route element={<BaseCard>Page not found Error 404</BaseCard>} path="*" />
+              </Routes>
+            </DAppProvider>
           </Web3ReactManager>
         </Inner>
         <Footer />

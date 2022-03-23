@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
+import { TokenAmount } from '@josojo/honeyswap-sdk'
+import { useNotifications } from '@usedapp/core'
 import { useWeb3React } from '@web3-react/core'
 
 import { ButtonCopy } from '../../components/buttons/ButtonCopy'
@@ -15,6 +17,7 @@ import { useTotalSupply } from '../../data/TotalSupply'
 import { ApprovalState } from '../../hooks/useApproveCallback'
 import { useBondDetails } from '../../hooks/useBondDetails'
 import { useBondContract } from '../../hooks/useContract'
+import { useRedeemBond } from '../../hooks/useRedeemBond'
 import { useFetchTokenByAddress } from '../../state/user/hooks'
 
 const Title = styled(PageTitle)`
@@ -70,15 +73,22 @@ const Bond: React.FC<Props> = () => {
   const { account } = useWeb3React()
   const fetchTok = useFetchTokenByAddress()
   const [bondInfo, setBondInfo] = useState(null)
-  const supply = useTotalSupply(bondInfo)
+  const { notifications } = useNotifications()
+
   const bondIdentifier = useParams()
-  const contract = useBondContract(bondIdentifier?.bondId)
   const { data: derivedBondInfo, loading: isLoading } = useBondDetails(bondIdentifier?.bondId)
 
   const [ownage, setOwnage] = useState(false)
   const [newValue, setNewValue] = useState('0')
+  const tokenAmount = bondInfo && new TokenAmount(bondInfo, newValue)
+  console.log(tokenAmount)
+
+  const { redeem } = useRedeemBond(tokenAmount, bondIdentifier?.bondId)
+
   const url = window.location.href
   const totalBalance = '1000'
+
+  console.log(notifications)
 
   const invalidBond = React.useMemo(
     () => !bondIdentifier || !derivedBondInfo,
@@ -96,9 +106,8 @@ const Bond: React.FC<Props> = () => {
   }, [derivedBondInfo, isLoading, invalidBond, account, fetchTok, bondIdentifier])
 
   const redeemBond = () => {
-    // TODO: 100? how to get full amount of bonds to redeem
-    // or leave that up to the user to enter how many they wanna redeem?
-    contract.redeem(100)
+    const k = redeem()
+    console.log(k)
   }
 
   return (
@@ -119,14 +128,7 @@ const Bond: React.FC<Props> = () => {
 
           <div>
             <code>{JSON.stringify(derivedBondInfo)}</code>
-            <div>
-              {ownage ? 'You are the owner' : 'You are NOT the owner'}
-              <button disabled={!ownage} onClick={redeemBond}>
-                Redeem
-              </button>
-            </div>
             <CenteredCard>{JSON.stringify(bondInfo)}</CenteredCard>
-            <CenteredCard>{JSON.stringify(supply)}</CenteredCard>
             <AmountInputPanel
               balance={totalBalance}
               chainId={bondInfo.chainId}
@@ -147,6 +149,12 @@ const Bond: React.FC<Props> = () => {
               value={newValue}
               wrap={{ isWrappable: false, onClick: null }}
             />
+            <div>
+              {!ownage && 'You cannot redeem a bond you dont own haHAA'}
+              <button disabled={!ownage || !parseFloat(newValue)} onClick={redeemBond}>
+                Redeem
+              </button>
+            </div>
           </div>
         </>
       )}
