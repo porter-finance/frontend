@@ -8,6 +8,7 @@ import { TokenAmount } from '@josojo/honeyswap-sdk'
 import { useNotifications } from '@usedapp/core'
 import { useWeb3React } from '@web3-react/core'
 
+import { Button } from '../../components/buttons/Button'
 import { ButtonCopy } from '../../components/buttons/ButtonCopy'
 import { CenteredCard } from '../../components/common/CenteredCard'
 import { InlineLoading } from '../../components/common/InlineLoading'
@@ -41,6 +42,11 @@ const SubTitle = styled.h2`
   font-weight: 400;
   line-height: 1.2;
   margin: 0 8px 0 0;
+`
+const ActionButton = styled(Button)`
+  flex-shrink: 0;
+  height: 40px;
+  margin-top: auto;
 `
 
 const BondId = styled.span`
@@ -92,7 +98,7 @@ const Bond: React.FC<Props> = () => {
   )
 
   const bondContract = useBondContract(bondIdentifier?.bondId)
-  const { redeem } = useRedeemBond(tokenAmount, bondIdentifier?.bondId)
+  const { redeem: redeemBond } = useRedeemBond(tokenAmount, bondIdentifier?.bondId)
 
   const [totalBalance, setTotalBalance] = useState('0')
   const notApproved = approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING
@@ -120,11 +126,6 @@ const Bond: React.FC<Props> = () => {
       })
     }
   }, [derivedBondInfo, isLoading, invalidBond, account, fetchTok, bondIdentifier])
-
-  const redeemBond = () => {
-    const k = redeem()
-    console.log(k)
-  }
 
   return (
     <>
@@ -161,9 +162,12 @@ const Bond: React.FC<Props> = () => {
             />
             <div>
               {!ownage && 'You cannot redeem a bond you dont own haHAA'}
-              <button disabled={!ownage || !parseFloat(newValue)} onClick={redeemBond}>
+              <ActionButton
+                disabled={notApproved || !ownage || !parseFloat(newValue)}
+                onClick={redeemBond}
+              >
                 Redeem
-              </button>
+              </ActionButton>
             </div>
           </div>
         </>
