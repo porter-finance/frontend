@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
+import { BigNumber } from '@ethersproject/bignumber'
+import { formatUnits, parseUnits } from '@ethersproject/units'
 import { TokenAmount } from '@josojo/honeyswap-sdk'
 import { useNotifications } from '@usedapp/core'
 import { useWeb3React } from '@web3-react/core'
@@ -73,22 +75,30 @@ const Bond: React.FC<Props> = () => {
   const { account } = useWeb3React()
   const fetchTok = useFetchTokenByAddress()
   const [bondInfo, setBondInfo] = useState(null)
-  const { notifications } = useNotifications()
 
   const bondIdentifier = useParams()
   const { data: derivedBondInfo, loading: isLoading } = useBondDetails(bondIdentifier?.bondId)
 
   const [ownage, setOwnage] = useState(false)
   const [newValue, setNewValue] = useState('0')
-  const tokenAmount = bondInfo && new TokenAmount(bondInfo, newValue)
-  console.log(tokenAmount)
 
+  const bigg = bondInfo && parseUnits(newValue, bondInfo.decimals)
+  console.log(bigg)
+
+  const tokenAmount = bondInfo && new TokenAmount(bondInfo, bigg)
+  const bondContract = useBondContract(bondIdentifier?.bondId)
   const { redeem } = useRedeemBond(tokenAmount, bondIdentifier?.bondId)
 
-  const url = window.location.href
-  const totalBalance = '1000'
+  const [totalBalance, setTotalBalance] = useState('0')
 
-  console.log(notifications)
+  const url = window.location.href
+
+  React.useEffect(() => {
+    if (!bondInfo && bondContract) return
+    bondContract.totalSupply().then((r) => {
+      setTotalBalance(formatUnits(r, bondInfo.decimals))
+    })
+  }, [bondContract, bondInfo])
 
   const invalidBond = React.useMemo(
     () => !bondIdentifier || !derivedBondInfo,
@@ -133,6 +143,8 @@ const Bond: React.FC<Props> = () => {
               balance={totalBalance}
               chainId={bondInfo.chainId}
               onMax={() => {
+                console.log(totalBalance, typeof totalBalance)
+
                 setNewValue(totalBalance)
               }}
               onUserSellAmountInput={(newValue) => {
