@@ -98,6 +98,8 @@ const Bond: React.FC<Props> = () => {
   const [txHash, setTxHash] = useState<string>('')
 
   const bigg = bondInfo && parseUnits(newValue, bondInfo.decimals)
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore its a big number i swear
   const tokenAmount = bondInfo && new TokenAmount(bondInfo, bigg)
   const [approval, approveCallback] = useApproveCallback(
     tokenAmount,
