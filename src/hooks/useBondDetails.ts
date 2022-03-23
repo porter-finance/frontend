@@ -37,7 +37,7 @@ const bondsQuery = (bondId: string) => gql`
 export const useBondDetails = (bondId: string): Maybe<{ data: BondInfo; loading: boolean }> => {
   const { data, error, loading } = useQuery(bondsQuery(bondId))
 
-  console.log(bondId)
+  console.log(bondId, 'useBondDetails')
 
   if (error) {
     logger.error('Error getting useBondDetails info', error)
