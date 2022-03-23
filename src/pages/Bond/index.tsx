@@ -16,11 +16,12 @@ import { NetworkIcon } from '../../components/icons/NetworkIcon'
 import WarningModal from '../../components/modals/WarningModal'
 import { PageTitle } from '../../components/pureStyledComponents/PageTitle'
 import { useTotalSupply } from '../../data/TotalSupply'
-import { ApprovalState } from '../../hooks/useApproveCallback'
+import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallback'
 import { useBondDetails } from '../../hooks/useBondDetails'
 import { useBondContract } from '../../hooks/useContract'
 import { useRedeemBond } from '../../hooks/useRedeemBond'
 import { useFetchTokenByAddress } from '../../state/user/hooks'
+import { ChainId, EASY_AUCTION_NETWORKS } from '../../utils'
 
 const Title = styled(PageTitle)`
   margin-bottom: 2px;
@@ -72,7 +73,7 @@ interface Props {
 
 const Bond: React.FC<Props> = () => {
   const navigate = useNavigate()
-  const { account } = useWeb3React()
+  const { account, chainId } = useWeb3React()
   const fetchTok = useFetchTokenByAddress()
   const [bondInfo, setBondInfo] = useState(null)
 
@@ -83,13 +84,18 @@ const Bond: React.FC<Props> = () => {
   const [newValue, setNewValue] = useState('0')
 
   const bigg = bondInfo && parseUnits(newValue, bondInfo.decimals)
-  console.log(bigg)
-
   const tokenAmount = bondInfo && new TokenAmount(bondInfo, bigg)
+  const [approval, approveCallback] = useApproveCallback(
+    tokenAmount,
+    EASY_AUCTION_NETWORKS[chainId as ChainId],
+    chainId as ChainId,
+  )
+
   const bondContract = useBondContract(bondIdentifier?.bondId)
   const { redeem } = useRedeemBond(tokenAmount, bondIdentifier?.bondId)
 
   const [totalBalance, setTotalBalance] = useState('0')
+  const notApproved = approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING
 
   const url = window.location.href
 
@@ -143,21 +149,13 @@ const Bond: React.FC<Props> = () => {
               balance={totalBalance}
               chainId={bondInfo.chainId}
               onMax={() => {
-                console.log(totalBalance, typeof totalBalance)
-
                 setNewValue(totalBalance)
               }}
               onUserSellAmountInput={(newValue) => {
-                setNewValue(newValue)
+                setNewValue(newValue || '0')
               }}
               token={bondInfo}
-              unlock={{
-                isLocked: false,
-                onUnlock: () => {
-                  console.log('unlocked')
-                },
-                unlockState: ApprovalState.APPROVED,
-              }}
+              unlock={{ isLocked: notApproved, onUnlock: approveCallback, unlockState: approval }}
               value={newValue}
               wrap={{ isWrappable: false, onClick: null }}
             />
