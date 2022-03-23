@@ -57,7 +57,7 @@ const BondOverviewCommon = ({ allBonds }: OverviewProps) => {
           size="26px"
         />
       ),
-      url: `/bond?bondId=${item.id}#topAnchor`,
+      url: `/bond/${item.id}#topAnchor`,
     })
   })
 

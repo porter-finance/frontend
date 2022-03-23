@@ -1,5 +1,5 @@
 import React from 'react'
-import { Redirect, Route, RouteComponentProps, Switch, withRouter } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 
 import ReactTooltip from 'react-tooltip'
@@ -27,8 +27,8 @@ const Inner = styled(InnerContainer)`
   padding-top: 22px;
 `
 
-const Routes: React.FC<RouteComponentProps> = (props) => {
-  const { history } = props
+const AppRoutes: React.FC = () => {
+  const { pathname } = useLocation()
   const [showCookiesBanner, setShowCookiesBanner] = React.useState(false)
   const [showTopWarning, setShowTopWarning] = React.useState(false)
 
@@ -37,12 +37,10 @@ const Routes: React.FC<RouteComponentProps> = (props) => {
   }
 
   React.useEffect(() => {
-    history.listen((location) => {
-      if (!location.pathname.includes('/auction')) {
-        setShowTopWarning(false)
-      }
-    })
-  }, [history])
+    if (!pathname.includes('/auction')) {
+      setShowTopWarning(false)
+    }
+  }, [pathname])
 
   return (
     <MainWrapper>
@@ -64,53 +62,33 @@ const Routes: React.FC<RouteComponentProps> = (props) => {
         <span id="topAnchor" />
         <Inner>
           <Web3ReactManager>
-            <Switch>
+            <Routes>
+              <Route element={<Auction showTokenWarning={tokenSupport} />} path="/auction" />
               <Route
-                exact
-                path="/auction"
-                render={(props) => <Auction showTokenWarning={tokenSupport} {...props} />}
-                strict
+                element={<Auction showTokenWarning={tokenSupport} />}
+                path="/auction/:auctionId/:chainId"
               />
-              <Route component={Overview} exact path="/overview" strict />
-              <Route component={Bond} exact path="/bond" strict />
-              <Route component={BondsOverview} exact path="/bonds" strict />
-              <Route component={Landing} exact path="/start" strict />
-              <Route component={Terms} exact path="/terms-and-conditions" strict />
-              <Route component={Licenses} exact path="/licenses" strict />
-              <Route component={Documentation} exact path="/docs" strict />
-              <Route component={Documentation} exact path="/docs/batch-auctions" strict />
-              <Route component={Documentation} exact path="/docs/use-cases" strict />
-              <Route component={Documentation} exact path="/docs/user-flow" strict />
-              <Route component={Documentation} exact path="/docs/participate-as-a-bidder" strict />
-              <Route
-                component={Documentation}
-                exact
-                path="/docs/participate-as-auctioneer"
-                strict
-              />
-              <Route
-                component={Documentation}
-                exact
-                path="/docs/starting-an-auction-with-safe"
-                strict
-              />
-              <Route component={Documentation} exact path="/docs/settle-an-auction" strict />
-              <Route
-                component={Documentation}
-                exact
-                path="/docs/Private-Auctions-And-KYC-solutions"
-                strict
-              />
-              <Route component={Documentation} exact path="/docs/vested-tokens" strict />
-              <Route component={Documentation} exact path="/docs/media-kit" strict />
-              <Route component={Documentation} exact path="/docs/faq" strict />
-              <Route exact path="/">
-                <Redirect to="/start" />
-              </Route>
-              <Route path="*">
-                <BaseCard>Page not found Error 404</BaseCard>
-              </Route>
-            </Switch>
+              <Route element={<Overview />} path="/overview" />
+              <Route element={<Bond showTokenWarning={tokenSupport} />} path="/bond/:bondId" />
+              <Route element={<BondsOverview />} path="/bonds" />
+              <Route element={<Landing />} path="/start" />
+              <Route element={<Terms />} path="/terms-and-conditions" />
+              <Route element={<Licenses />} path="/licenses" />
+              <Route element={<Documentation />} path="/docs" />
+              <Route element={<Documentation />} path="/docs/batch-auctions" />
+              <Route element={<Documentation />} path="/docs/use-cases" />
+              <Route element={<Documentation />} path="/docs/user-flow" />
+              <Route element={<Documentation />} path="/docs/participate-as-a-bidder" />
+              <Route element={<Documentation />} path="/docs/participate-as-auctioneer" />
+              <Route element={<Documentation />} path="/docs/starting-an-auction-with-safe" />
+              <Route element={<Documentation />} path="/docs/settle-an-auction" />
+              <Route element={<Documentation />} path="/docs/Private-Auctions-And-KYC-solutions" />
+              <Route element={<Documentation />} path="/docs/vested-tokens" />
+              <Route element={<Documentation />} path="/docs/media-kit" />
+              <Route element={<Documentation />} path="/docs/faq" />
+              <Route element={<Navigate to="/start" />} path="/" />
+              <Route element={<BaseCard>Page not found Error 404</BaseCard>} path="*" />
+            </Routes>
           </Web3ReactManager>
         </Inner>
         <Footer />
@@ -125,4 +103,4 @@ const Routes: React.FC<RouteComponentProps> = (props) => {
   )
 }
 
-export default withRouter(Routes)
+export default AppRoutes

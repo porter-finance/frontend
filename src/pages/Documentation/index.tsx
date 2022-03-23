@@ -194,46 +194,79 @@ export const Documentation: React.FC = (props) => {
       <Title>Porter Finance Documentation</Title>
       <Grid>
         <Sidebar>
-          <IndexLink activeClassName="isActive" exact to="/docs#topAnchor">
+          <IndexLink
+            className={({ isActive }) => 'nav-link' + (isActive ? ' isActive' : '')}
+            to="/docs#topAnchor"
+          >
             Overview
           </IndexLink>
-          <IndexLink activeClassName="isActive" to="/docs/batch-auctions#topAnchor">
+          <IndexLink
+            className={({ isActive }) => 'nav-link' + (isActive ? ' isActive' : '')}
+            to="/docs/batch-auctions#topAnchor"
+          >
             How do Batch Auctions work?
           </IndexLink>
-          <IndexLink activeClassName="isActive" to="/docs/use-cases#topAnchor">
+          <IndexLink
+            className={({ isActive }) => 'nav-link' + (isActive ? ' isActive' : '')}
+            to="/docs/use-cases#topAnchor"
+          >
             Use Cases
           </IndexLink>
-          <IndexLink activeClassName="isActive" to="/docs/user-flow#topAnchor">
+          <IndexLink
+            className={({ isActive }) => 'nav-link' + (isActive ? ' isActive' : '')}
+            to="/docs/user-flow#topAnchor"
+          >
             User flow
           </IndexLink>
-          <IndexLink activeClassName="isActive" to="/docs/participate-as-a-bidder#topAnchor">
+          <IndexLink
+            className={({ isActive }) => 'nav-link' + (isActive ? ' isActive' : '')}
+            to="/docs/participate-as-a-bidder#topAnchor"
+          >
             Participate as a bidder
           </IndexLink>
-          <IndexLink activeClassName="isActive" to="/docs/participate-as-auctioneer#topAnchor">
+          <IndexLink
+            className={({ isActive }) => 'nav-link' + (isActive ? ' isActive' : '')}
+            to="/docs/participate-as-auctioneer#topAnchor"
+          >
             Start an auction via scripts
           </IndexLink>
-          <IndexLink activeClassName="isActive" to="/docs/starting-an-auction-with-safe#topAnchor">
+          <IndexLink
+            className={({ isActive }) => 'nav-link' + (isActive ? ' isActive' : '')}
+            to="/docs/starting-an-auction-with-safe#topAnchor"
+          >
             Start an auction via UI
           </IndexLink>
-          <IndexLink activeClassName="isActive" to="/docs/settle-an-auction#topAnchor">
+          <IndexLink
+            className={({ isActive }) => 'nav-link' + (isActive ? ' isActive' : '')}
+            to="/docs/settle-an-auction#topAnchor"
+          >
             Settle an auction
           </IndexLink>
-          <IndexLink activeClassName="isActive" to="/docs/private-auctions-and-KYC-solutions">
+          <IndexLink
+            className={({ isActive }) => 'nav-link' + (isActive ? ' isActive' : '')}
+            to="/docs/private-auctions-and-KYC-solutions"
+          >
             Private auctions/KYC solutions
           </IndexLink>
-          <IndexLink activeClassName="isActive" to="/docs/vested-tokens">
+          <IndexLink
+            className={({ isActive }) => 'nav-link' + (isActive ? ' isActive' : '')}
+            to="/docs/vested-tokens"
+          >
             Vested tokens
           </IndexLink>
-          <IndexLink activeClassName="isActive" to="/docs/media-kit">
+          <IndexLink
+            className={({ isActive }) => 'nav-link' + (isActive ? ' isActive' : '')}
+            to="/docs/media-kit"
+          >
             Media kit
           </IndexLink>
-          <IndexLink activeClassName="isActive" to="/docs/faq#topAnchor">
+          <IndexLink
+            className={({ isActive }) => 'nav-link' + (isActive ? ' isActive' : '')}
+            to="/docs/faq#topAnchor"
+          >
             FAQ
           </IndexLink>
         </Sidebar>
-        <Content>
-          <ReactMarkdown escapeHtml={false} source={content} />
-        </Content>
       </Grid>
     </Wrapper>
   )

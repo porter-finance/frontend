@@ -1,5 +1,5 @@
 import React from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../constants/config'
@@ -38,8 +38,7 @@ export const OrderBook: React.FC<OrderbookProps> = (props) => {
     userOrderVolume,
   } = useOrderbookState()
 
-  const location = useLocation()
-  const { auctionId, chainId } = parseURL(location.search)
+  const { auctionId, chainId } = parseURL(useParams())
 
   const { auctioningToken: baseToken, biddingToken: quoteToken } = derivedAuctionInfo
 

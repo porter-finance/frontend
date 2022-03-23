@@ -14,7 +14,7 @@ In this setup, every user can use bidding tokens - e.g. USDC - to bid in the auc
 
 Further additions like linear vesting schedules can also be applied.
 
-An example of a vested token can be found [here](https://etherscan.io/address/0x0C033bb39e67eB598D399C06A8A519498dA1Cec9#code) with its associated [auction](https://gnosis-auction.eth.link/#/auction?auctionId=34&chainId=1#topAnchor).
+An example of a vested token can be found [here](https://etherscan.io/address/0x0C033bb39e67eB598D399C06A8A519498dA1Cec9#code) with its associated [auction](https://gnosis-auction.eth.link/#/auction/34/1#topAnchor).
 
 #### Procedure to start an auction for vested tokens
 
