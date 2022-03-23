@@ -12,6 +12,7 @@ import { Landing } from '../../../pages/Landing'
 import { Licenses } from '../../../pages/Licenses'
 import Overview from '../../../pages/Overview'
 import { Terms } from '../../../pages/Terms'
+import DarkModeQueryParamReader from '../../../theme/DarkModeQueryParamReader'
 import { CookiesBanner } from '../../common/CookiesBanner'
 import { TopDisclaimer } from '../../common/TopDisclaimer'
 import { Footer } from '../../layout/Footer'
@@ -27,7 +28,7 @@ const Inner = styled(InnerContainer)`
   padding-top: 22px;
 `
 
-const AppRoutes: React.FC = () => {
+const AppRoutes: React.FC = ({ children }) => {
   const { pathname } = useLocation()
   const [showCookiesBanner, setShowCookiesBanner] = React.useState(false)
   const [showTopWarning, setShowTopWarning] = React.useState(false)
@@ -61,6 +62,7 @@ const AppRoutes: React.FC = () => {
         {showTopWarning && <TopDisclaimer />}
         <span id="topAnchor" />
         <Inner>
+          <DarkModeQueryParamReader />
           <Web3ReactManager>
             <Routes>
               <Route element={<Auction showTokenWarning={tokenSupport} />} path="/auction" />
