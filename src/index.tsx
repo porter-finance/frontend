@@ -3,12 +3,13 @@ import ReactDOM from 'react-dom'
 
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { Web3Provider } from '@ethersproject/providers'
+import { DAppProvider, Mainnet, Rinkeby } from '@usedapp/core'
 import { Web3ReactProvider, createWeb3ReactRoot } from '@web3-react/core'
 import { Provider } from 'react-redux'
 
 import { NetworkContextName } from './constants'
 import './i18n'
-import { SUBGRAPH_URL_RINKEBY } from './constants/config'
+import { NETWORK_URL_MAINNET, NETWORK_URL_RINKEBY, SUBGRAPH_URL_RINKEBY } from './constants/config'
 import App from './pages/App'
 import store from './state'
 import ApplicationUpdater from './state/application/updater'
@@ -24,6 +25,14 @@ const apolloClient = new ApolloClient({
   connectToDevTools: true,
   cache: new InMemoryCache(),
 })
+
+const dappConfig = {
+  readOnlyChainId: Mainnet.chainId,
+  readOnlyUrls: {
+    [Rinkeby.chainId]: NETWORK_URL_RINKEBY,
+    [Mainnet.chainId]: NETWORK_URL_MAINNET,
+  },
+}
 
 const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
 
@@ -48,12 +57,14 @@ ReactDOM.render(
       <Web3ProviderNetwork getLibrary={getLibrary}>
         <Provider store={store}>
           <ApolloProvider client={apolloClient}>
-            <Updaters />
-            <ThemeProvider>
-              <GlobalStyle />
-              <ThemedGlobalStyle />
-              <App />
-            </ThemeProvider>
+            <DAppProvider config={dappConfig}>
+              <Updaters />
+              <ThemeProvider>
+                <GlobalStyle />
+                <ThemedGlobalStyle />
+                <App />
+              </ThemeProvider>
+            </DAppProvider>
           </ApolloProvider>
         </Provider>
       </Web3ProviderNetwork>
