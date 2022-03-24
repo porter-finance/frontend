@@ -4,6 +4,7 @@ import styled from 'styled-components'
 
 import { formatUnits, parseUnits } from '@ethersproject/units'
 import { TokenAmount } from '@josojo/honeyswap-sdk'
+import { useEthers, useTokenBalance } from '@usedapp/core'
 import { useWeb3React } from '@web3-react/core'
 
 import { ApprovalState, useApproveCallback } from '../../../hooks/useApproveCallback'
@@ -39,6 +40,14 @@ const BondAction = ({ actionType }: { actionType: BondActions }) => {
 
   const bondIdentifier = useParams()
   const { data: derivedBondInfo, loading: isLoading } = useBondDetails(bondIdentifier?.bondId)
+  const collateralTokenBalance = useTokenBalance(derivedBondInfo?.collateralToken, account, {
+    chainId,
+  })
+
+  const paymentTokenBalance = useTokenBalance(derivedBondInfo?.paymentToken, account, {
+    chainId,
+  })
+
   const isRepaid = !!useIsBondRepaid(bondIdentifier?.bondId)
   const isMatured = derivedBondInfo && new Date() > new Date(derivedBondInfo.maturityDate * 1000)
 
@@ -109,20 +118,25 @@ const BondAction = ({ actionType }: { actionType: BondActions }) => {
   }
 
   React.useEffect(() => {
-    if (!account || (!tokenInfo && bondContract)) return
-
-    if (actionType === BondActions.Convert) {
-      bondContract.totalCollateral().then((r) => {
-        setTotalBalance(formatUnits(r, tokenInfo.decimals))
-      })
-    }
+    if (!derivedBondInfo || !account || (!tokenInfo && bondContract)) return
 
     if (actionType === BondActions.Redeem) {
-      bondContract.totalSupply().then((r) => {
-        setTotalBalance(formatUnits(r, tokenInfo.decimals))
-      })
+      setTotalBalance(formatUnits(paymentTokenBalance || 0, tokenInfo.decimals))
     }
-  }, [actionType, account, bondContract, tokenInfo, attemptingTxn])
+
+    if (actionType === BondActions.Convert) {
+      setTotalBalance(formatUnits(collateralTokenBalance || 0, tokenInfo.decimals))
+    }
+  }, [
+    collateralTokenBalance,
+    paymentTokenBalance,
+    derivedBondInfo,
+    actionType,
+    account,
+    bondContract,
+    tokenInfo,
+    attemptingTxn,
+  ])
 
   const invalidBond = React.useMemo(
     () => !bondIdentifier || !derivedBondInfo,
@@ -204,6 +218,9 @@ const BondAction = ({ actionType }: { actionType: BondActions }) => {
           {actionType === BondActions.Convert && 'Convert'}
         </ActionButton>
       </div>
+
+      {actionType === BondActions.Redeem && <div>redeemable for this number of payment tokens</div>}
+      <div>redeemable for this number of collateral tokens</div>
 
       <ConfirmationModal
         attemptingTxn={attemptingTxn}
