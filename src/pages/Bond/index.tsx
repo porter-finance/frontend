@@ -2,13 +2,18 @@ import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import BondHeader from '../../components/bond/BondHeader'
-import Redeem from '../../components/bond/Redeem'
+import Redeem from '../../components/bond/BondAction'
 import { InlineLoading } from '../../components/common/InlineLoading'
 import WarningModal from '../../components/modals/WarningModal'
 import { useBondDetails } from '../../hooks/useBondDetails'
 
 interface Props {
   showTokenWarning: (bothTokensSupported: boolean) => void
+}
+
+export enum BondActions {
+  Redeem,
+  Convert,
 }
 
 const Bond: React.FC<Props> = () => {
@@ -31,7 +36,8 @@ const Bond: React.FC<Props> = () => {
         />
       )}
       <BondHeader bondId={bondIdentifier?.bondId} />
-      <Redeem />
+      <Redeem actionType={BondActions.Redeem} />
+      <Redeem actionType={BondActions.Convert} />
     </>
   )
 }
