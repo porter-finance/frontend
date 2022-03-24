@@ -1,41 +1,24 @@
-import React, { FunctionComponent } from 'react'
+import React from 'react'
 import styled, { css } from 'styled-components'
 
 import { ButtonCopy } from '../../buttons/ButtonCopy'
 import { NetworkIcon } from '../../icons/NetworkIcon'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
 
-const BondBody: FunctionComponent = ({ bondIdentifier, children, derivedBondInfo, tokenInfo }) => {
-  const url = window.location.href
-
-  return (
-    <>
-      <Title>Bond Details</Title>
-      <SubTitleWrapperStyled>
-        <SubTitle>
-          <Network>
-            <NetworkIconStyled />
-          </Network>
-          <BondId>Bond Ids #{bondIdentifier.bondId}</BondId>
-        </SubTitle>
-        <CopyButton copyValue={url} title="Copy URL" />
-      </SubTitleWrapperStyled>
-
-      <div>
-        <div>
-          graphql info
-          <code>{JSON.stringify(derivedBondInfo)}</code>
-        </div>
-        <div>
-          token info
-          <code>{JSON.stringify(tokenInfo)}</code>
-        </div>
-
-        {children}
-      </div>
-    </>
-  )
-}
+const BondHeader = ({ bondId }) => (
+  <>
+    <Title>Bond Details</Title>
+    <SubTitleWrapperStyled>
+      <SubTitle>
+        <Network>
+          <NetworkIconStyled />
+        </Network>
+        <BondId>Bond Id #{bondId}</BondId>
+      </SubTitle>
+      <CopyButton copyValue={bondId} title="Copy bond id" />
+    </SubTitleWrapperStyled>
+  </>
+)
 const Title = styled(PageTitle)`
   margin-bottom: 2px;
 `
@@ -78,4 +61,4 @@ const Network = styled.span`
 const NetworkIconStyled = styled(NetworkIcon)`
   ${IconCSS}
 `
-export default BondBody
+export default BondHeader
