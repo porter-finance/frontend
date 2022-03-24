@@ -88,14 +88,13 @@ const Bond: React.FC<Props> = () => {
   const isRepaid = !!useIsBondRepaid(bondIdentifier?.bondId)
   const isMatured = derivedBondInfo && new Date() > new Date(derivedBondInfo.maturityDate * 1000)
 
-  const [ownage, setOwnage] = useState(false)
-  const [newValue, setNewValue] = useState('0')
-  const [showConfirm, setShowConfirm] = useState<boolean>(false)
+  const [isOwner, setIsOwner] = useState(false)
+  const [bondsToRedeem, setBondsToRedeem] = useState('0')
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirmed
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true) // waiting for user confirmation
   const [txHash, setTxHash] = useState<string>('')
 
-  const bigg = bondInfo && parseUnits(newValue, bondInfo.decimals)
+  const bigg = bondInfo && parseUnits(bondsToRedeem, bondInfo.decimals)
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore its a big number i swear
   const tokenAmount = bondInfo && new TokenAmount(bondInfo, bigg)
@@ -109,10 +108,10 @@ const Bond: React.FC<Props> = () => {
   const { redeem } = useRedeemBond(tokenAmount, bondIdentifier?.bondId)
 
   const [totalBalance, setTotalBalance] = useState('0')
-  const notApproved = approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING
+  const isApproved = approval !== ApprovalState.NOT_APPROVED && approval !== ApprovalState.PENDING
 
   const onUserSellAmountInput = (theInput) => {
-    setNewValue(theInput || '0')
+    setBondsToRedeem(theInput || '0')
   }
   const url = window.location.href
 
@@ -127,14 +126,9 @@ const Bond: React.FC<Props> = () => {
   React.useEffect(() => {
     if (activePopups.length) {
       onUserSellAmountInput('')
-      setShowConfirm(false)
       setPendingConfirmation(false)
     }
   }, [activePopups, txHash])
-
-  const redeemBond = () => {
-    setShowConfirm(true)
-  }
 
   const doTheRedeem = () => {
     setAttemptingTxn(true)
@@ -146,7 +140,6 @@ const Bond: React.FC<Props> = () => {
       })
       .catch(() => {
         resetModal()
-        setShowConfirm(false)
       })
   }
 
@@ -164,7 +157,7 @@ const Bond: React.FC<Props> = () => {
 
   React.useEffect(() => {
     if (!isLoading && !invalidBond) {
-      setOwnage(derivedBondInfo.owner.toLowerCase() === account.toLowerCase())
+      setIsOwner(derivedBondInfo.owner.toLowerCase() === account.toLowerCase())
 
       fetchTok(bondIdentifier?.bondId).then((r) => {
         setBondInfo(r)
@@ -173,7 +166,13 @@ const Bond: React.FC<Props> = () => {
   }, [derivedBondInfo, isLoading, invalidBond, account, fetchTok, bondIdentifier])
 
   const isRedeemDisabled = () => {
-    if (!ownage || notApproved || !parseFloat(newValue)) {
+    if (
+      !isOwner ||
+      !isApproved ||
+      !parseFloat(bondsToRedeem) ||
+      !parseFloat(totalBalance) ||
+      parseFloat(bondsToRedeem) > parseFloat(totalBalance)
+    ) {
       return true
     }
 
@@ -221,19 +220,19 @@ const Bond: React.FC<Props> = () => {
               balance={totalBalance}
               chainId={bondInfo.chainId}
               onMax={() => {
-                setNewValue(totalBalance)
+                setBondsToRedeem(totalBalance)
               }}
               onUserSellAmountInput={onUserSellAmountInput}
               token={bondInfo}
-              unlock={{ isLocked: notApproved, onUnlock: approveCallback, unlockState: approval }}
-              value={newValue}
+              unlock={{ isLocked: !isApproved, onUnlock: approveCallback, unlockState: approval }}
+              value={bondsToRedeem}
               wrap={{ isWrappable: false, onClick: null }}
             />
             <div>
-              <div>{!ownage && "You don't own this bond"}</div>
+              <div>{!isOwner && "You don't own this bond"}</div>
               <div>isMatured: {JSON.stringify(isMatured)}</div>
               <div>isRepaid: {JSON.stringify(isRepaid)}</div>
-              <ActionButton disabled={isRedeemDisabled()} onClick={redeemBond}>
+              <ActionButton disabled={isRedeemDisabled()} onClick={doTheRedeem}>
                 Redeem
               </ActionButton>
             </div>
@@ -247,10 +246,9 @@ const Bond: React.FC<Props> = () => {
               </div>
             }
             hash={txHash}
-            isOpen={showConfirm}
+            isOpen={attemptingTxn}
             onDismiss={() => {
               resetModal()
-              setShowConfirm(false)
             }}
             pendingConfirmation={pendingConfirmation}
             pendingText={'Placing redeem order'}
