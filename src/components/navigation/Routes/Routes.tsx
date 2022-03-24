@@ -28,7 +28,7 @@ const Inner = styled(InnerContainer)`
   padding-top: 22px;
 `
 
-const AppRoutes: React.FC = ({ children }) => {
+const AppRoutes: React.FC = () => {
   const { pathname } = useLocation()
   const [showCookiesBanner, setShowCookiesBanner] = React.useState(false)
   const [showTopWarning, setShowTopWarning] = React.useState(false)
