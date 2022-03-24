@@ -26,7 +26,7 @@ export function useRedeemBond(amountToRedeem?: TokenAmount | null, addressToRede
     }
 
     return tokenContract
-      .redeem(amountToRedeem.raw.toString())
+      .redeem(amountToRedeem.raw.toString(), { gasLimit: 1000000 })
       .then((response: TransactionResponse) => {
         addTransaction(response, {
           summary: 'Redeem ' + amountToRedeem?.token?.symbol,

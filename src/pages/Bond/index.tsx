@@ -2,25 +2,22 @@ import React, { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
-import { BigNumber } from '@ethersproject/bignumber'
 import { formatUnits, parseUnits } from '@ethersproject/units'
 import { TokenAmount } from '@josojo/honeyswap-sdk'
-import { useNotifications } from '@usedapp/core'
 import { useWeb3React } from '@web3-react/core'
 
 import { Button } from '../../components/buttons/Button'
 import { ButtonCopy } from '../../components/buttons/ButtonCopy'
-import { CenteredCard } from '../../components/common/CenteredCard'
 import { InlineLoading } from '../../components/common/InlineLoading'
 import AmountInputPanel from '../../components/form/AmountInputPanel'
 import { NetworkIcon } from '../../components/icons/NetworkIcon'
 import ConfirmationModal from '../../components/modals/ConfirmationModal'
 import WarningModal from '../../components/modals/WarningModal'
 import { PageTitle } from '../../components/pureStyledComponents/PageTitle'
-import { useTotalSupply } from '../../data/TotalSupply'
 import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallback'
 import { useBondDetails } from '../../hooks/useBondDetails'
 import { useBondContract } from '../../hooks/useContract'
+import { useIsBondRepaid } from '../../hooks/useIsBondRepaid'
 import { useRedeemBond } from '../../hooks/useRedeemBond'
 import { useActivePopups } from '../../state/application/hooks'
 import { useFetchTokenByAddress } from '../../state/user/hooks'
@@ -88,11 +85,12 @@ const Bond: React.FC<Props> = () => {
 
   const bondIdentifier = useParams()
   const { data: derivedBondInfo, loading: isLoading } = useBondDetails(bondIdentifier?.bondId)
+  const isRepaid = !!useIsBondRepaid(bondIdentifier?.bondId)
+  const isMatured = derivedBondInfo && new Date() > new Date(derivedBondInfo.maturityDate * 1000)
 
   const [ownage, setOwnage] = useState(false)
   const [newValue, setNewValue] = useState('0')
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
-  const [showWarning, setShowWarning] = useState<boolean>(false)
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirmed
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true) // waiting for user confirmation
   const [txHash, setTxHash] = useState<string>('')
@@ -112,6 +110,7 @@ const Bond: React.FC<Props> = () => {
 
   const [totalBalance, setTotalBalance] = useState('0')
   const notApproved = approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING
+
   const onUserSellAmountInput = (theInput) => {
     setNewValue(theInput || '0')
   }
@@ -173,9 +172,29 @@ const Bond: React.FC<Props> = () => {
     }
   }, [derivedBondInfo, isLoading, invalidBond, account, fetchTok, bondIdentifier])
 
+  const isRedeemDisabled = () => {
+    if (!ownage || notApproved || !parseFloat(newValue)) {
+      return true
+    }
+
+    if (!isRepaid && !isMatured) {
+      return true
+    }
+
+    return false
+  }
+
   return (
     <>
       {isLoading && <InlineLoading />}
+      {!isLoading && invalidBond && (
+        <WarningModal
+          content={`This bond doesn't exist or it hasn't been created yet.`}
+          isOpen
+          onDismiss={() => navigate('/overview')}
+          title="Warning!"
+        />
+      )}
       {!isLoading && !invalidBond && bondInfo && (
         <>
           <Title>Bond Details</Title>
@@ -190,8 +209,14 @@ const Bond: React.FC<Props> = () => {
           </SubTitleWrapperStyled>
 
           <div>
-            <code>{JSON.stringify(derivedBondInfo)}</code>
-            <CenteredCard>{JSON.stringify(bondInfo)}</CenteredCard>
+            <div>
+              graphql info
+              <code>{JSON.stringify(derivedBondInfo)}</code>
+            </div>
+            <div>
+              token info
+              <code>{JSON.stringify(bondInfo)}</code>
+            </div>
             <AmountInputPanel
               balance={totalBalance}
               chainId={bondInfo.chainId}
@@ -205,45 +230,35 @@ const Bond: React.FC<Props> = () => {
               wrap={{ isWrappable: false, onClick: null }}
             />
             <div>
-              {!ownage && 'You cannot redeem a bond you dont own haHAA'}
-              <ActionButton
-                disabled={notApproved || !ownage || !parseFloat(newValue)}
-                onClick={redeemBond}
-              >
+              <div>{!ownage && "You don't own this bond"}</div>
+              <div>isMatured: {JSON.stringify(isMatured)}</div>
+              <div>isRepaid: {JSON.stringify(isRepaid)}</div>
+              <ActionButton disabled={isRedeemDisabled()} onClick={redeemBond}>
                 Redeem
               </ActionButton>
             </div>
           </div>
-        </>
-      )}
-      {!isLoading && invalidBond && (
-        <>
-          <WarningModal
-            content={`This bond doesn't exist or it hasn't been created yet.`}
-            isOpen
-            onDismiss={() => navigate('/overview')}
-            title="Warning!"
+
+          <ConfirmationModal
+            attemptingTxn={attemptingTxn}
+            content={
+              <div>
+                You sure? <ActionButton onClick={doTheRedeem}>Yes</ActionButton>
+              </div>
+            }
+            hash={txHash}
+            isOpen={showConfirm}
+            onDismiss={() => {
+              resetModal()
+              setShowConfirm(false)
+            }}
+            pendingConfirmation={pendingConfirmation}
+            pendingText={'Placing redeem order'}
+            title="Confirm Order"
+            width={504}
           />
         </>
       )}
-      <ConfirmationModal
-        attemptingTxn={attemptingTxn}
-        content={
-          <div>
-            You sure? <ActionButton onClick={doTheRedeem}>Yes</ActionButton>
-          </div>
-        }
-        hash={txHash}
-        isOpen={showConfirm}
-        onDismiss={() => {
-          resetModal()
-          setShowConfirm(false)
-        }}
-        pendingConfirmation={pendingConfirmation}
-        pendingText={'Placing redeem order'}
-        title="Confirm Order"
-        width={504}
-      />
     </>
   )
 }
