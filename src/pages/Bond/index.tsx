@@ -1,19 +1,17 @@
 import React, { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 
 import { formatUnits, parseUnits } from '@ethersproject/units'
 import { TokenAmount } from '@josojo/honeyswap-sdk'
 import { useWeb3React } from '@web3-react/core'
 
+import BondBody from '../../components/bond/BondBody'
 import { Button } from '../../components/buttons/Button'
-import { ButtonCopy } from '../../components/buttons/ButtonCopy'
 import { InlineLoading } from '../../components/common/InlineLoading'
 import AmountInputPanel from '../../components/form/AmountInputPanel'
-import { NetworkIcon } from '../../components/icons/NetworkIcon'
 import ConfirmationModal from '../../components/modals/ConfirmationModal'
 import WarningModal from '../../components/modals/WarningModal'
-import { PageTitle } from '../../components/pureStyledComponents/PageTitle'
 import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallback'
 import { useBondDetails } from '../../hooks/useBondDetails'
 import { useBondContract } from '../../hooks/useContract'
@@ -23,53 +21,10 @@ import { useActivePopups } from '../../state/application/hooks'
 import { useFetchTokenByAddress } from '../../state/user/hooks'
 import { ChainId, EASY_AUCTION_NETWORKS } from '../../utils'
 
-const Title = styled(PageTitle)`
-  margin-bottom: 2px;
-`
-
-const SubTitleWrapperStyled = styled.div`
-  align-items: center;
-  display: flex;
-  margin-bottom: 20px;
-`
-
-const SubTitle = styled.h2`
-  align-items: center;
-  color: ${({ theme }) => theme.text1};
-  display: flex;
-  font-size: 15px;
-  font-weight: 400;
-  line-height: 1.2;
-  margin: 0 8px 0 0;
-`
 const ActionButton = styled(Button)`
   flex-shrink: 0;
   height: 40px;
   margin-top: auto;
-`
-
-const BondId = styled.span`
-  align-items: center;
-  display: flex;
-`
-
-const IconCSS = css`
-  height: 14px;
-  width: 14px;
-`
-
-const CopyButton = styled(ButtonCopy)`
-  ${IconCSS}
-`
-
-const Network = styled.span`
-  align-items: center;
-  display: flex;
-  margin-right: 5px;
-`
-
-const NetworkIconStyled = styled(NetworkIcon)`
-  ${IconCSS}
 `
 
 interface Props {
@@ -80,7 +35,7 @@ const Bond: React.FC<Props> = () => {
   const navigate = useNavigate()
   const { account, chainId } = useWeb3React()
   const fetchTok = useFetchTokenByAddress()
-  const [bondInfo, setBondInfo] = useState(null)
+  const [tokenInfo, setBondInfo] = useState(null)
   const activePopups = useActivePopups()
 
   const bondIdentifier = useParams()
@@ -94,10 +49,10 @@ const Bond: React.FC<Props> = () => {
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true) // waiting for user confirmation
   const [txHash, setTxHash] = useState<string>('')
 
-  const bigg = bondInfo && parseUnits(bondsToRedeem, bondInfo.decimals)
+  const bigg = tokenInfo && parseUnits(bondsToRedeem, tokenInfo.decimals)
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore its a big number i swear
-  const tokenAmount = bondInfo && new TokenAmount(bondInfo, bigg)
+  const tokenAmount = tokenInfo && new TokenAmount(tokenInfo, bigg)
   const [approval, approveCallback] = useApproveCallback(
     tokenAmount,
     EASY_AUCTION_NETWORKS[chainId as ChainId],
@@ -113,7 +68,6 @@ const Bond: React.FC<Props> = () => {
   const onUserSellAmountInput = (theInput) => {
     setBondsToRedeem(theInput || '0')
   }
-  const url = window.location.href
 
   const resetModal = () => {
     if (!pendingConfirmation) {
@@ -145,11 +99,11 @@ const Bond: React.FC<Props> = () => {
   }
 
   React.useEffect(() => {
-    if (!account || (!bondInfo && bondContract)) return
+    if (!account || (!tokenInfo && bondContract)) return
     bondContract.totalSupply().then((r) => {
-      setTotalBalance(formatUnits(r, bondInfo.decimals))
+      setTotalBalance(formatUnits(r, tokenInfo.decimals))
     })
-  }, [account, bondContract, bondInfo, attemptingTxn])
+  }, [account, bondContract, tokenInfo, attemptingTxn])
 
   const invalidBond = React.useMemo(
     () => !bondIdentifier || !derivedBondInfo,
@@ -171,17 +125,17 @@ const Bond: React.FC<Props> = () => {
       account &&
       isOwner &&
       isApproved &&
-      parseUnits(bondsToRedeem, bondInfo?.decimals).gt(0) &&
-      parseUnits(totalBalance, bondInfo?.decimals).gt(0) &&
-      parseUnits(bondsToRedeem, bondInfo?.decimals).lte(
-        parseUnits(totalBalance, bondInfo?.decimals),
+      parseUnits(bondsToRedeem, tokenInfo?.decimals).gt(0) &&
+      parseUnits(totalBalance, tokenInfo?.decimals).gt(0) &&
+      parseUnits(bondsToRedeem, tokenInfo?.decimals).lte(
+        parseUnits(totalBalance, tokenInfo?.decimals),
       )
 
     return hasBonds && (isRepaid || isMatured)
   }, [
     account,
     totalBalance,
-    bondInfo?.decimals,
+    tokenInfo?.decimals,
     bondsToRedeem,
     isApproved,
     isMatured,
@@ -200,49 +154,36 @@ const Bond: React.FC<Props> = () => {
           title="Warning!"
         />
       )}
-      {!isLoading && !invalidBond && bondInfo && (
+      {!isLoading && !invalidBond && tokenInfo && (
         <>
-          <Title>Bond Details</Title>
-          <SubTitleWrapperStyled>
-            <SubTitle>
-              <Network>
-                <NetworkIconStyled />
-              </Network>
-              <BondId>Bond Ids #{bondIdentifier.bondId}</BondId>
-            </SubTitle>
-            <CopyButton copyValue={url} title="Copy URL" />
-          </SubTitleWrapperStyled>
-
-          <div>
+          <BondBody
+            bondIdentifier={bondIdentifier}
+            derivedBondInfo={derivedBondInfo}
+            tokenInfo={tokenInfo}
+          >
             <div>
-              graphql info
-              <code>{JSON.stringify(derivedBondInfo)}</code>
+              <AmountInputPanel
+                balance={totalBalance}
+                chainId={tokenInfo.chainId}
+                onMax={() => {
+                  setBondsToRedeem(totalBalance)
+                }}
+                onUserSellAmountInput={onUserSellAmountInput}
+                token={tokenInfo}
+                unlock={{ isLocked: !isApproved, onUnlock: approveCallback, unlockState: approval }}
+                value={bondsToRedeem}
+                wrap={{ isWrappable: false, onClick: null }}
+              />
+              <div>
+                <div>{!isOwner && "You don't own this bond"}</div>
+                <div>isMatured: {JSON.stringify(isMatured)}</div>
+                <div>isRepaid: {JSON.stringify(isRepaid)}</div>
+                <ActionButton disabled={!isRedeemable} onClick={doTheRedeem}>
+                  Redeem
+                </ActionButton>
+              </div>
             </div>
-            <div>
-              token info
-              <code>{JSON.stringify(bondInfo)}</code>
-            </div>
-            <AmountInputPanel
-              balance={totalBalance}
-              chainId={bondInfo.chainId}
-              onMax={() => {
-                setBondsToRedeem(totalBalance)
-              }}
-              onUserSellAmountInput={onUserSellAmountInput}
-              token={bondInfo}
-              unlock={{ isLocked: !isApproved, onUnlock: approveCallback, unlockState: approval }}
-              value={bondsToRedeem}
-              wrap={{ isWrappable: false, onClick: null }}
-            />
-            <div>
-              <div>{!isOwner && "You don't own this bond"}</div>
-              <div>isMatured: {JSON.stringify(isMatured)}</div>
-              <div>isRepaid: {JSON.stringify(isRepaid)}</div>
-              <ActionButton disabled={!isRedeemable} onClick={doTheRedeem}>
-                Redeem
-              </ActionButton>
-            </div>
-          </div>
+          </BondBody>
 
           <ConfirmationModal
             attemptingTxn={attemptingTxn}
