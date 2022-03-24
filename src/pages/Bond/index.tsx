@@ -169,9 +169,9 @@ const Bond: React.FC<Props> = () => {
     if (
       !isOwner ||
       !isApproved ||
-      !parseFloat(bondsToRedeem) ||
-      !parseFloat(totalBalance) ||
-      parseFloat(bondsToRedeem) > parseFloat(totalBalance)
+      !parseUnits(bondsToRedeem, bondInfo.decimals).gt(0) ||
+      !parseUnits(totalBalance, bondInfo.decimals).gt(0) ||
+      parseUnits(bondsToRedeem, bondInfo.decimals).gt(parseUnits(totalBalance, bondInfo.decimals))
     ) {
       return true
     }
