@@ -1,8 +1,9 @@
 import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
-import BondHeader from '../../components/bond/BondHeader'
+//
 import Redeem from '../../components/bond/BondAction'
+import BondHeader from '../../components/bond/BondHeader'
 import { InlineLoading } from '../../components/common/InlineLoading'
 import WarningModal from '../../components/modals/WarningModal'
 import { useBondDetails } from '../../hooks/useBondDetails'
