@@ -166,41 +166,18 @@ const Bond: React.FC<Props> = () => {
     }
   }, [derivedBondInfo, isLoading, invalidBond, account, fetchTok, bondIdentifier])
 
-  const isRedeemable = () => {
-    if (
+  const isRedeemable = React.useMemo(() => {
+    const hasBonds =
+      account &&
       isOwner &&
       isApproved &&
-      parseUnits(bondsToRedeem, bondInfo?.decimals).gte(0) &&
-      parseUnits(totalBalance, bondInfo?.decimals).gte(0) &&
-      parseUnits(bondsToRedeem, bondInfo?.decimals).lte(parseUnits(totalBalance, bondInfo.decimals))
-    ) {
-      if (!isRepaid && !isMatured) {
-        return false
-      }
+      parseUnits(bondsToRedeem, bondInfo?.decimals).gt(0) &&
+      parseUnits(totalBalance, bondInfo?.decimals).gt(0) &&
+      parseUnits(bondsToRedeem, bondInfo?.decimals).lte(
+        parseUnits(totalBalance, bondInfo?.decimals),
+      )
 
-      return true
-    }
-
-    return false
-  }
-
-  const isRedeemDisabled = React.useMemo(() => {
-    if (
-      !account ||
-      !isOwner ||
-      !isApproved ||
-      parseUnits(bondsToRedeem, bondInfo?.decimals).lte(0) ||
-      parseUnits(totalBalance, bondInfo?.decimals).lte(0) ||
-      parseUnits(bondsToRedeem, bondInfo?.decimals).gt(parseUnits(totalBalance, bondInfo.decimals))
-    ) {
-      return true
-    }
-
-    if (!isRepaid && !isMatured) {
-      return true
-    }
-
-    return false
+    return hasBonds && (isRepaid || isMatured)
   }, [
     account,
     totalBalance,
@@ -261,7 +238,7 @@ const Bond: React.FC<Props> = () => {
               <div>{!isOwner && "You don't own this bond"}</div>
               <div>isMatured: {JSON.stringify(isMatured)}</div>
               <div>isRepaid: {JSON.stringify(isRepaid)}</div>
-              <ActionButton disabled={isRedeemDisabled} onClick={doTheRedeem}>
+              <ActionButton disabled={!isRedeemable} onClick={doTheRedeem}>
                 Redeem
               </ActionButton>
             </div>
