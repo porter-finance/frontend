@@ -124,31 +124,32 @@ const Bond: React.FC<Props> = () => {
   }
 
   React.useEffect(() => {
-    if (activePopups.length) {
+    if (txHash && activePopups.length) {
       onUserSellAmountInput('')
       setPendingConfirmation(false)
+      setAttemptingTxn(false)
     }
   }, [activePopups, txHash])
 
-  const doTheRedeem = () => {
+  const doTheRedeem = async () => {
     setAttemptingTxn(true)
 
-    redeem()
-      .then((hash) => {
-        setTxHash(hash)
-        setPendingConfirmation(false)
-      })
-      .catch(() => {
-        resetModal()
-      })
+    const hash = await redeem().catch(() => {
+      resetModal()
+    })
+
+    if (hash) {
+      setTxHash(hash)
+      setPendingConfirmation(false)
+    }
   }
 
   React.useEffect(() => {
-    if (!bondInfo && bondContract) return
+    if (!account || (!bondInfo && bondContract)) return
     bondContract.totalSupply().then((r) => {
       setTotalBalance(formatUnits(r, bondInfo.decimals))
     })
-  }, [bondContract, bondInfo, pendingConfirmation])
+  }, [account, bondContract, bondInfo, attemptingTxn])
 
   const invalidBond = React.useMemo(
     () => !bondIdentifier || !derivedBondInfo,
@@ -156,7 +157,7 @@ const Bond: React.FC<Props> = () => {
   )
 
   React.useEffect(() => {
-    if (!isLoading && !invalidBond) {
+    if (!isLoading && !invalidBond && account && derivedBondInfo) {
       setIsOwner(derivedBondInfo.owner.toLowerCase() === account.toLowerCase())
 
       fetchTok(bondIdentifier?.bondId).then((r) => {
@@ -165,13 +166,32 @@ const Bond: React.FC<Props> = () => {
     }
   }, [derivedBondInfo, isLoading, invalidBond, account, fetchTok, bondIdentifier])
 
-  const isRedeemDisabled = () => {
+  const isRedeemable = () => {
     if (
+      isOwner &&
+      isApproved &&
+      parseUnits(bondsToRedeem, bondInfo?.decimals).gte(0) &&
+      parseUnits(totalBalance, bondInfo?.decimals).gte(0) &&
+      parseUnits(bondsToRedeem, bondInfo?.decimals).lte(parseUnits(totalBalance, bondInfo.decimals))
+    ) {
+      if (!isRepaid && !isMatured) {
+        return false
+      }
+
+      return true
+    }
+
+    return false
+  }
+
+  const isRedeemDisabled = React.useMemo(() => {
+    if (
+      !account ||
       !isOwner ||
       !isApproved ||
-      !parseUnits(bondsToRedeem, bondInfo.decimals).gt(0) ||
-      !parseUnits(totalBalance, bondInfo.decimals).gt(0) ||
-      parseUnits(bondsToRedeem, bondInfo.decimals).gt(parseUnits(totalBalance, bondInfo.decimals))
+      parseUnits(bondsToRedeem, bondInfo?.decimals).lte(0) ||
+      parseUnits(totalBalance, bondInfo?.decimals).lte(0) ||
+      parseUnits(bondsToRedeem, bondInfo?.decimals).gt(parseUnits(totalBalance, bondInfo.decimals))
     ) {
       return true
     }
@@ -181,7 +201,16 @@ const Bond: React.FC<Props> = () => {
     }
 
     return false
-  }
+  }, [
+    account,
+    totalBalance,
+    bondInfo?.decimals,
+    bondsToRedeem,
+    isApproved,
+    isMatured,
+    isOwner,
+    isRepaid,
+  ])
 
   return (
     <>
@@ -232,7 +261,7 @@ const Bond: React.FC<Props> = () => {
               <div>{!isOwner && "You don't own this bond"}</div>
               <div>isMatured: {JSON.stringify(isMatured)}</div>
               <div>isRepaid: {JSON.stringify(isRepaid)}</div>
-              <ActionButton disabled={isRedeemDisabled()} onClick={doTheRedeem}>
+              <ActionButton disabled={isRedeemDisabled} onClick={doTheRedeem}>
                 Redeem
               </ActionButton>
             </div>

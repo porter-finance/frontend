@@ -25,19 +25,19 @@ export function useRedeemBond(amountToRedeem?: TokenAmount | null, addressToRede
       return ''
     }
 
-    return tokenContract
-      .redeem(amountToRedeem.raw.toString(), { gasLimit: 1000000 })
-      .then((response: TransactionResponse) => {
-        addTransaction(response, {
-          summary: 'Redeem ' + amountToRedeem?.token?.symbol,
-          approval: { tokenAddress: amountToRedeem.token.address, spender: addressToRedeem },
-        })
-        return response.hash
-      })
+    const response: TransactionResponse = await tokenContract
+      .redeem(amountToRedeem.raw.toString())
       .catch((error: Error) => {
         logger.debug('Failed to redeem token', error)
         throw error
       })
+
+    addTransaction(response, {
+      summary: 'Redeem ' + amountToRedeem?.token?.symbol,
+      approval: { tokenAddress: amountToRedeem.token.address, spender: addressToRedeem },
+    })
+
+    return response.hash
   }, [tokenContract, addressToRedeem, amountToRedeem, addTransaction])
 
   return { redeem }
