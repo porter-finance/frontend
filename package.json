@@ -174,11 +174,6 @@
       "yarn run prettier:fix"
     ]
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "yarn lint-staged"
-    }
-  },
   "jest": {
     "transformIgnorePatterns": [
       "/node_modules/(?!@amcharts)"
