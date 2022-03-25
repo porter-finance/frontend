@@ -218,12 +218,10 @@ const AmountInputPanel: React.FC<Props> = (props) => {
         </FieldRowBottom>
       </FieldRowWrapper>
       <FieldRowInfo infoType={info?.type}>
-        {info ? (
+        {info && (
           <>
             <MiniInfoIcon /> {info.text}
           </>
-        ) : (
-          <>&nbsp;</>
         )}
       </FieldRowInfo>
     </>
