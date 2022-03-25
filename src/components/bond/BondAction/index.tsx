@@ -25,6 +25,7 @@ const ActionButton = styled(Button)`
   flex-shrink: 0;
   height: 40px;
   margin-top: auto;
+  margin-bottom: 20px;
 `
 
 const ActionPanel = styled.div`
@@ -204,13 +205,11 @@ const BondAction = ({ actionType }: { actionType: BondActions }) => {
     isRepaid,
   ])
 
-  if (isLoading || invalidBond || !bondTokenInfo) return null
-
   return (
     <ActionPanel>
       <AmountInputPanel
         balance={totalBalance}
-        chainId={bondTokenInfo.chainId}
+        chainId={bondTokenInfo?.chainId}
         onMax={() => {
           setBondsToRedeem(totalBalance)
         }}
@@ -221,7 +220,6 @@ const BondAction = ({ actionType }: { actionType: BondActions }) => {
         wrap={{ isWrappable: false, onClick: null }}
       />
       <div>
-        <div>{!isOwner && "You don't own this bond"}</div>
         <ActionButton
           disabled={actionType === BondActions.Convert ? !isConvertable : !isRedeemable}
           onClick={doTheAction}
@@ -231,10 +229,8 @@ const BondAction = ({ actionType }: { actionType: BondActions }) => {
         </ActionButton>
       </div>
 
-      {actionType === BondActions.Redeem && (
-        <div>redeemable for this number of payment tokens </div>
-      )}
-      <div>redeemable for this number of collateral tokens</div>
+      {actionType === BondActions.Redeem && <div>Redeemable for: x payment tokens </div>}
+      <div>Redeemable for: x collateral tokens</div>
 
       <ConfirmationModal
         attemptingTxn={attemptingTxn}
