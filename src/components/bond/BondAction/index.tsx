@@ -44,11 +44,7 @@ const BondAction = ({ actionType }: { actionType: BondActions }) => {
   const [collateralTokenInfo, setCollateralTokenInfo] = useState(null)
   const [paymentTokenInfo, setPaymentTokenInfo] = useState(null)
 
-  const collateralTokenBalance = useTokenBalance(derivedBondInfo?.collateralToken, account, {
-    chainId,
-  })
-
-  const paymentTokenBalance = useTokenBalance(derivedBondInfo?.paymentToken, account, {
+  const bondTokenBalance = useTokenBalance(derivedBondInfo?.id, account, {
     chainId,
   })
 
@@ -123,19 +119,8 @@ const BondAction = ({ actionType }: { actionType: BondActions }) => {
 
   React.useEffect(() => {
     if (!derivedBondInfo || !account || (!bondTokenInfo && bondContract)) return
-    setTotalBalance(formatUnits(paymentTokenBalance || 0, paymentTokenInfo?.decimals))
-  }, [
-    collateralTokenInfo,
-    paymentTokenInfo,
-    collateralTokenBalance,
-    paymentTokenBalance,
-    derivedBondInfo,
-    actionType,
-    account,
-    bondContract,
-    bondTokenInfo,
-    attemptingTxn,
-  ])
+    setTotalBalance(formatUnits(bondTokenBalance || 0, bondTokenInfo?.decimals))
+  }, [bondTokenBalance, derivedBondInfo, account, bondContract, bondTokenInfo, attemptingTxn])
 
   const invalidBond = React.useMemo(
     () => !bondIdentifier || !derivedBondInfo,
@@ -187,17 +172,17 @@ const BondAction = ({ actionType }: { actionType: BondActions }) => {
       account &&
       isOwner &&
       isApproved &&
-      parseUnits(bondsToRedeem, paymentTokenInfo?.decimals).gt(0) &&
-      parseUnits(totalBalance, paymentTokenInfo?.decimals).gt(0) &&
-      parseUnits(bondsToRedeem, paymentTokenInfo?.decimals).lte(
-        parseUnits(totalBalance, paymentTokenInfo?.decimals),
+      parseUnits(bondsToRedeem, bondTokenInfo?.decimals).gt(0) &&
+      parseUnits(totalBalance, bondTokenInfo?.decimals).gt(0) &&
+      parseUnits(bondsToRedeem, bondTokenInfo?.decimals).lte(
+        parseUnits(totalBalance, bondTokenInfo?.decimals),
       )
 
     return hasBonds && (isRepaid || isMatured)
   }, [
     account,
     totalBalance,
-    paymentTokenInfo?.decimals,
+    bondTokenInfo?.decimals,
     bondsToRedeem,
     isApproved,
     isMatured,
