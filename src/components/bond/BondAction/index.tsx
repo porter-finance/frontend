@@ -74,7 +74,6 @@ const BondAction = ({ actionType }: { actionType: BondActions }) => {
   const bondContract = useBondContract(bondIdentifier?.bondId)
   const { redeem } = useRedeemBond(tokenAmount, bondIdentifier?.bondId)
   const { convert } = useConvertBond(tokenAmount, bondIdentifier?.bondId)
-  const { preview } = usePreviewBond(tokenAmount, bondIdentifier?.bondId)
 
   const [totalBalance, setTotalBalance] = useState('0')
   const isApproved = approval !== ApprovalState.NOT_APPROVED && approval !== ApprovalState.PENDING
