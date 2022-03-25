@@ -23,6 +23,8 @@ export function useHasRole(): boolean | undefined {
       .catch((error) => {
         logger.error(error)
       })
+  } else {
+    return false
   }
 
   return hasRole
