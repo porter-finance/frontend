@@ -122,14 +122,7 @@ const BondAction = ({ actionType }: { actionType: BondActions }) => {
 
   React.useEffect(() => {
     if (!derivedBondInfo || !account || (!bondTokenInfo && bondContract)) return
-
-    if (actionType === BondActions.Redeem) {
-      setTotalBalance(formatUnits(paymentTokenBalance || 0, paymentTokenInfo?.decimals))
-    }
-
-    if (actionType === BondActions.Convert) {
-      setTotalBalance(formatUnits(collateralTokenBalance || 0, collateralTokenInfo?.decimals))
-    }
+    setTotalBalance(formatUnits(paymentTokenBalance || 0, paymentTokenInfo?.decimals))
   }, [
     collateralTokenInfo,
     paymentTokenInfo,
