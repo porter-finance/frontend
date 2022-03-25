@@ -12,7 +12,6 @@ import { useBondDetails } from '../../../hooks/useBondDetails'
 import { useBondContract } from '../../../hooks/useContract'
 import { useConvertBond } from '../../../hooks/useConvertBond'
 import { useIsBondRepaid } from '../../../hooks/useIsBondRepaid'
-import { usePreviewBond } from '../../../hooks/usePreviewBond'
 import { useRedeemBond } from '../../../hooks/useRedeemBond'
 import { BondActions } from '../../../pages/Bond'
 import { useActivePopups } from '../../../state/application/hooks'
@@ -26,6 +25,7 @@ const ActionButton = styled(Button)`
   flex-shrink: 0;
   height: 40px;
   margin-top: auto;
+  margin-bottom: 20px;
 `
 
 const ActionPanel = styled.div`
@@ -44,11 +44,7 @@ const BondAction = ({ actionType }: { actionType: BondActions }) => {
   const [collateralTokenInfo, setCollateralTokenInfo] = useState(null)
   const [paymentTokenInfo, setPaymentTokenInfo] = useState(null)
 
-  const collateralTokenBalance = useTokenBalance(derivedBondInfo?.collateralToken, account, {
-    chainId,
-  })
-
-  const paymentTokenBalance = useTokenBalance(derivedBondInfo?.paymentToken, account, {
+  const bondTokenBalance = useTokenBalance(derivedBondInfo?.id, account, {
     chainId,
   })
 
@@ -123,26 +119,8 @@ const BondAction = ({ actionType }: { actionType: BondActions }) => {
 
   React.useEffect(() => {
     if (!derivedBondInfo || !account || (!bondTokenInfo && bondContract)) return
-
-    if (actionType === BondActions.Redeem) {
-      setTotalBalance(formatUnits(paymentTokenBalance || 0, paymentTokenInfo?.decimals))
-    }
-
-    if (actionType === BondActions.Convert) {
-      setTotalBalance(formatUnits(collateralTokenBalance || 0, collateralTokenInfo?.decimals))
-    }
-  }, [
-    collateralTokenInfo,
-    paymentTokenInfo,
-    collateralTokenBalance,
-    paymentTokenBalance,
-    derivedBondInfo,
-    actionType,
-    account,
-    bondContract,
-    bondTokenInfo,
-    attemptingTxn,
-  ])
+    setTotalBalance(formatUnits(bondTokenBalance || 0, bondTokenInfo?.decimals))
+  }, [bondTokenBalance, derivedBondInfo, account, bondContract, bondTokenInfo, attemptingTxn])
 
   const invalidBond = React.useMemo(
     () => !bondIdentifier || !derivedBondInfo,
@@ -194,17 +172,17 @@ const BondAction = ({ actionType }: { actionType: BondActions }) => {
       account &&
       isOwner &&
       isApproved &&
-      parseUnits(bondsToRedeem, paymentTokenInfo?.decimals).gt(0) &&
-      parseUnits(totalBalance, paymentTokenInfo?.decimals).gt(0) &&
-      parseUnits(bondsToRedeem, paymentTokenInfo?.decimals).lte(
-        parseUnits(totalBalance, paymentTokenInfo?.decimals),
+      parseUnits(bondsToRedeem, bondTokenInfo?.decimals).gt(0) &&
+      parseUnits(totalBalance, bondTokenInfo?.decimals).gt(0) &&
+      parseUnits(bondsToRedeem, bondTokenInfo?.decimals).lte(
+        parseUnits(totalBalance, bondTokenInfo?.decimals),
       )
 
     return hasBonds && (isRepaid || isMatured)
   }, [
     account,
     totalBalance,
-    paymentTokenInfo?.decimals,
+    bondTokenInfo?.decimals,
     bondsToRedeem,
     isApproved,
     isMatured,
@@ -212,13 +190,11 @@ const BondAction = ({ actionType }: { actionType: BondActions }) => {
     isRepaid,
   ])
 
-  if (isLoading || invalidBond || !bondTokenInfo) return null
-
   return (
     <ActionPanel>
       <AmountInputPanel
         balance={totalBalance}
-        chainId={bondTokenInfo.chainId}
+        chainId={bondTokenInfo?.chainId}
         onMax={() => {
           setBondsToRedeem(totalBalance)
         }}
@@ -229,7 +205,6 @@ const BondAction = ({ actionType }: { actionType: BondActions }) => {
         wrap={{ isWrappable: false, onClick: null }}
       />
       <div>
-        <div>{!isOwner && "You don't own this bond"}</div>
         <ActionButton
           disabled={actionType === BondActions.Convert ? !isConvertable : !isRedeemable}
           onClick={doTheAction}
@@ -239,10 +214,8 @@ const BondAction = ({ actionType }: { actionType: BondActions }) => {
         </ActionButton>
       </div>
 
-      {actionType === BondActions.Redeem && (
-        <div>redeemable for this number of payment tokens </div>
-      )}
-      <div>redeemable for this number of collateral tokens</div>
+      {actionType === BondActions.Redeem && <div>Redeemable for: x payment tokens </div>}
+      <div>Redeemable for: x collateral tokens</div>
 
       <ConfirmationModal
         attemptingTxn={attemptingTxn}
