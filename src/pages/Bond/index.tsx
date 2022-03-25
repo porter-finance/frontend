@@ -1,8 +1,7 @@
 import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
-//
-import Redeem from '../../components/bond/BondAction'
+import BondAction from '../../components/bond/BondAction'
 import BondHeader from '../../components/bond/BondHeader'
 import { InlineLoading } from '../../components/common/InlineLoading'
 import WarningModal from '../../components/modals/WarningModal'
@@ -37,8 +36,8 @@ const Bond: React.FC<Props> = () => {
         />
       )}
       <BondHeader bondId={bondIdentifier?.bondId} />
-      <Redeem actionType={BondActions.Redeem} />
-      <Redeem actionType={BondActions.Convert} />
+      <BondAction actionType={BondActions.Redeem} />
+      <BondAction actionType={BondActions.Convert} />
     </>
   )
 }
