@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom'
 import { BrowserRouter, HashRouter } from 'react-router-dom'
 
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
+import { RestLink } from 'apollo-link-rest';
+
 import { Web3Provider } from '@ethersproject/providers'
 import { DAppProvider, Mainnet, Rinkeby } from '@usedapp/core'
 import { Web3ReactProvider, createWeb3ReactRoot } from '@web3-react/core'
@@ -26,10 +28,14 @@ import ThemeProvider from './theme'
 import { GlobalStyle, ThemedGlobalStyle } from './theme/globalStyle'
 import 'sanitize.css'
 
+const coinGekoURL = "https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses="
+const restLink = new RestLink({ uri: coinGekoURL });
+
 const apolloClient = new ApolloClient({
   uri: SUBGRAPH_URL_RINKEBY,
   connectToDevTools: true,
   cache: new InMemoryCache(),
+  link: restLink
 })
 
 const dappConfig = {
