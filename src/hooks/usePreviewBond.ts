@@ -3,42 +3,61 @@ import { useCallback } from 'react'
 import { TransactionResponse } from '@ethersproject/providers'
 import { TokenAmount } from '@josojo/honeyswap-sdk'
 
-import { useTransactionAdder } from '../state/transactions/hooks'
 import { getLogger } from '../utils/logger'
 import { useBondContract } from './useContract'
 
 const logger = getLogger('usePreviewBond')
 
 // returns a variable indicating the state of the approval and a function which converts if necessary or early returns
-export function usePreviewBond(amountToPreview?: TokenAmount | null, addressToConvert?: string) {
-  const tokenContract = useBondContract(amountToPreview?.token?.address)
-  const addTransaction = useTransactionAdder()
+export function usePreviewBond(bondAddress?: string) {
+  const tokenContract = useBondContract(bondAddress)
 
-  const convert = useCallback(async (): Promise<string> => {
-    if (!tokenContract) {
-      logger.error('tokenContract is null')
-      return ''
-    }
+  const previewRedeem = useCallback(
+    async (amountToPreview?: TokenAmount | null): Promise<string> => {
+      if (!tokenContract) {
+        logger.error('tokenContract is null')
+        return ''
+      }
 
-    if (!amountToPreview) {
-      logger.error('missing amount to convert')
-      return ''
-    }
+      if (!amountToPreview) {
+        logger.error('missing amount to preview')
+        return ''
+      }
 
-    const response: TransactionResponse = await tokenContract
-      .convert(amountToPreview.raw.toString())
-      .catch((error: Error) => {
-        logger.debug('Failed to convert token', error)
-        throw error
-      })
+      const response = await tokenContract
+        .previewRedeemAtMaturity(amountToPreview.raw.toString())
+        .catch((error: Error) => {
+          logger.debug('Failed to preview token', error)
+          throw error
+        })
 
-    addTransaction(response, {
-      summary: 'Convert ' + amountToPreview?.token?.symbol,
-      approval: { tokenAddress: amountToPreview.token.address, spender: addressToConvert },
-    })
+      return response
+    },
+    [tokenContract],
+  )
+  const previewConvert = useCallback(
+    async (amountToPreview?: TokenAmount | null): Promise<string> => {
+      if (!tokenContract) {
+        logger.error('tokenContract is null')
+        return ''
+      }
 
-    return response.hash
-  }, [tokenContract, addressToConvert, amountToPreview, addTransaction])
+      if (!amountToPreview) {
+        logger.error('missing amount to preview')
+        return ''
+      }
 
-  return { convert }
+      const response = await tokenContract
+        .previewConvertBeforeMaturity(amountToPreview.raw.toString())
+        .catch((error: Error) => {
+          logger.debug('Failed to preview token', error)
+          throw error
+        })
+
+      return response
+    },
+    [tokenContract],
+  )
+
+  return { previewRedeem, previewConvert }
 }
