@@ -7,7 +7,6 @@ import ReactTooltip from 'react-tooltip'
 import Auction from '../../../pages/Auction'
 import Bond from '../../../pages/Bond'
 import BondsOverview from '../../../pages/Bonds'
-import { Documentation } from '../../../pages/Documentation'
 import { Landing } from '../../../pages/Landing'
 import { Licenses } from '../../../pages/Licenses'
 import Overview from '../../../pages/Overview'
@@ -76,18 +75,6 @@ const AppRoutes: React.FC = () => {
               <Route element={<Landing />} path="/start" />
               <Route element={<Terms />} path="/terms-and-conditions" />
               <Route element={<Licenses />} path="/licenses" />
-              <Route element={<Documentation />} path="/docs" />
-              <Route element={<Documentation />} path="/docs/batch-auctions" />
-              <Route element={<Documentation />} path="/docs/use-cases" />
-              <Route element={<Documentation />} path="/docs/user-flow" />
-              <Route element={<Documentation />} path="/docs/participate-as-a-bidder" />
-              <Route element={<Documentation />} path="/docs/participate-as-auctioneer" />
-              <Route element={<Documentation />} path="/docs/starting-an-auction-with-safe" />
-              <Route element={<Documentation />} path="/docs/settle-an-auction" />
-              <Route element={<Documentation />} path="/docs/Private-Auctions-And-KYC-solutions" />
-              <Route element={<Documentation />} path="/docs/vested-tokens" />
-              <Route element={<Documentation />} path="/docs/media-kit" />
-              <Route element={<Documentation />} path="/docs/faq" />
               <Route element={<Navigate to="/start" />} path="/" />
               <Route element={<BaseCard>Page not found Error 404</BaseCard>} path="*" />
             </Routes>
