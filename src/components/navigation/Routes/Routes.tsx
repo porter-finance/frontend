@@ -6,6 +6,7 @@ import ReactTooltip from 'react-tooltip'
 
 import Auction from '../../../pages/Auction'
 import Bond from '../../../pages/Bond'
+import CreateBond from '../../../pages/Bond'
 import BondsOverview from '../../../pages/Bonds'
 import { Landing } from '../../../pages/Landing'
 import { Licenses } from '../../../pages/Licenses'
@@ -72,6 +73,7 @@ const AppRoutes: React.FC = () => {
               />
               <Route element={<Overview />} path="/overview" />
               <Route element={<Bond showTokenWarning={tokenSupport} />} path="/bond/:bondId" />
+              <Route element={<CreateBond />} path="/bonds/create" />
               <Route element={<BondsOverview />} path="/bonds" />
               <Route element={<Portfolio />} path="/portfolio" />
               <Route element={<Landing />} path="/start" />
