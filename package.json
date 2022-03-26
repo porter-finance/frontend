@@ -18,7 +18,8 @@
     "prettier:fix": "prettier --write \"./src/**/*.{js,jsx,ts,tsx}\"",
     "cy:run": "cypress run",
     "serve:build": "serve -s build -l 3000",
-    "integration-test": "yarn build && start-server-and-test 'yarn run serve:build' http://localhost:3000 cy:run"
+    "integration-test": "yarn build && start-server-and-test 'yarn run serve:build' http://localhost:3000 cy:run",
+    "prepare": "husky install"
   },
   "eslintConfig": {
     "extends": "react-app"

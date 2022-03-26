@@ -19,7 +19,7 @@ export const useTokenPrice = (
   const { data, error } = useSWR(
     `https://api.coingecko.com/api/v3/simple/token_price/ethereum?vs_currencies=usd&contract_addresses=${realOrTestToken}`,
     fetcher,
-    { refreshInterval: 5000 },
+    { refreshInterval: 60 * 1000 },
   )
 
   if (error) {
