@@ -26,7 +26,6 @@ import ThemeProvider from './theme'
 import { GlobalStyle, ThemedGlobalStyle } from './theme/globalStyle'
 import 'sanitize.css'
 
-
 const apolloClient = new ApolloClient({
   uri: SUBGRAPH_URL_RINKEBY,
   connectToDevTools: true,
