@@ -4,7 +4,11 @@ export const navItems = [
     url: '/overview#topAnchor',
   },
   {
-    title: 'Docs',
-    url: '/docs#topAnchor',
+    title: 'Portfolio',
+    url: '/portfolio',
+  },
+  {
+    title: 'Bonds',
+    url: '/bonds',
   },
 ]

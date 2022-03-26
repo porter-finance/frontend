@@ -22,6 +22,7 @@ import { ChainId, EASY_AUCTION_NETWORKS } from '../../../utils'
 import { Button } from '../../buttons/Button'
 import AmountInputPanel from '../../form/AmountInputPanel'
 import ConfirmationModal from '../../modals/ConfirmationModal'
+import { InfoType } from '../../pureStyledComponents/FieldRow'
 
 const ActionButton = styled(Button)`
   flex-shrink: 0;
@@ -225,12 +226,22 @@ const BondAction = ({ actionType }: { actionType: BondActions }) => {
       <AmountInputPanel
         balance={totalBalance}
         chainId={bondTokenInfo?.chainId}
+        info={
+          !isOwner && {
+            text: 'You do not own this bond',
+            type: InfoType.error,
+          }
+        }
         onMax={() => {
           setBondsToRedeem(totalBalance)
         }}
         onUserSellAmountInput={onUserSellAmountInput}
         token={bondTokenInfo}
-        unlock={{ isLocked: !isApproved, onUnlock: approveCallback, unlockState: approval }}
+        unlock={{
+          isLocked: isOwner && !isApproved,
+          onUnlock: approveCallback,
+          unlockState: approval,
+        }}
         value={bondsToRedeem}
         wrap={{ isWrappable: false, onClick: null }}
       />
