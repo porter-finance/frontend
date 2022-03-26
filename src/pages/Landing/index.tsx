@@ -11,6 +11,8 @@ import { ShapeIcon1 } from '../../components/icons/ShapeIcon1'
 import { ShapeIcon2 } from '../../components/icons/ShapeIcon2'
 import { ShapeIcon3 } from '../../components/icons/ShapeIcon3'
 import { useAllAuctionInfo } from '../../hooks/useAllAuctionInfos'
+import { useTokenPrice } from '../../hooks/useTokenPrice'
+
 import { useInterestingAuctionInfo } from '../../hooks/useInterestingAuctionDetails'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import AuctionsIcon from './img/eth.svg'
@@ -192,6 +194,7 @@ export const Landing: React.FC = () => {
   const allAuctions = useAllAuctionInfo()
   const featuredAuctions = useInterestingAuctionInfo()
   const highestVolumeAuctions = useInterestingAuctionInfo({ closedAuctions: true })
+  const price = useTokenPrice("0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9")
 
   useSetNoDefaultNetworkId()
 

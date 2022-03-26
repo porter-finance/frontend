@@ -28,8 +28,16 @@ import ThemeProvider from './theme'
 import { GlobalStyle, ThemedGlobalStyle } from './theme/globalStyle'
 import 'sanitize.css'
 
-const coinGekoURL = "https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses="
-const restLink = new RestLink({ uri: coinGekoURL });
+const restLink = new RestLink({
+  uri: 'https://api.coingecko.com/api/v3', // default endpoint that is used when endpoint is not provided in REST query like above comment
+  responseTransformer: async response => response.json().then((data) => {
+    // hack to transform the data - this is due to coingekos
+    // api returning a json with a dynamic key
+    const resp = { usd: data[Object.keys(data)[0]].usd }
+    return resp
+  }),
+
+})
 
 const apolloClient = new ApolloClient({
   uri: SUBGRAPH_URL_RINKEBY,
@@ -37,7 +45,6 @@ const apolloClient = new ApolloClient({
   cache: new InMemoryCache(),
   link: restLink
 })
-
 const dappConfig = {
   readOnlyChainId: Mainnet.chainId,
   readOnlyUrls: {

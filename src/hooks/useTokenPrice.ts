@@ -4,23 +4,20 @@ import { getLogger } from '../utils/logger'
 
 const logger = getLogger('useTokenPrice')
 
-const tokenPriceQuery = (tokenContractAddress: string) => gql`
+const tokenPriceQuery = gql`
   query Token {
-    token @rest(type: "Bond", path: "${tokenContractAddress}") {
-      price
+    token (address: $tokenContractAddress) @rest(type: "Price", path: "/simple/token_price/ethereum?vs_currencies=usd&contract_addresses={args.address}") {
+        usd
     }
   }
 `;
 
-
-
-export const useBondDetails = (tokenContractAddress: string): Maybe<{ data: any; loading: boolean }> => {
-    const { data, error, loading } = useQuery(tokenPriceQuery(tokenContractAddress))
+export const useTokenPrice = (tokenContractAddress: string): Maybe<{ data: any; loading: boolean }> => {
+    const { data, error, loading } = useQuery(tokenPriceQuery, { variables: { tokenContractAddress } })
 
     if (error) {
         logger.error('Error getting useBondDetails info', error)
     }
-    console.log({ data })
 
     return { data, loading }
 }
