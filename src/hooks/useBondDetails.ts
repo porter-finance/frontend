@@ -1,21 +1,9 @@
 import { gql, useQuery } from '@apollo/client'
 
 import { getLogger } from '../utils/logger'
+import { BondInfo } from './useAllBondInfos'
 
 const logger = getLogger('useBondDetails')
-
-export interface BondInfo {
-  id: string
-  name: string
-  symbol: string
-  owner: string
-  maturityDate: number
-  paymentToken: string
-  collateralToken: string
-  collateralRatio: number
-  convertibleRatio: number
-  isAuction: boolean
-}
 
 const bondsQuery = (bondId: string) => gql`
   query Bond {

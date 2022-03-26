@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 
+import { BigNumber } from '@ethersproject/bignumber'
 import { formatUnits, parseUnits } from '@ethersproject/units'
 import { TokenAmount } from '@josojo/honeyswap-sdk'
 import { useTokenBalance } from '@usedapp/core'
@@ -12,6 +13,7 @@ import { useBondDetails } from '../../../hooks/useBondDetails'
 import { useBondContract } from '../../../hooks/useContract'
 import { useConvertBond } from '../../../hooks/useConvertBond'
 import { useIsBondRepaid } from '../../../hooks/useIsBondRepaid'
+import { usePreviewBond } from '../../../hooks/usePreviewBond'
 import { useRedeemBond } from '../../../hooks/useRedeemBond'
 import { BondActions } from '../../../pages/Bond'
 import { useActivePopups } from '../../../state/application/hooks'
@@ -20,6 +22,7 @@ import { ChainId, EASY_AUCTION_NETWORKS } from '../../../utils'
 import { Button } from '../../buttons/Button'
 import AmountInputPanel from '../../form/AmountInputPanel'
 import ConfirmationModal from '../../modals/ConfirmationModal'
+import { InfoType } from '../../pureStyledComponents/FieldRow'
 
 const ActionButton = styled(Button)`
   flex-shrink: 0;
@@ -53,14 +56,18 @@ const BondAction = ({ actionType }: { actionType: BondActions }) => {
 
   const [isOwner, setIsOwner] = useState(false)
   const [bondsToRedeem, setBondsToRedeem] = useState('0')
-  const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirmed
-  const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true) // waiting for user confirmation
+  const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false)
+  const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true)
   const [txHash, setTxHash] = useState<string>('')
+  const [previewRedeemVal, setPreviewRedeemVal] = useState<string[]>(['0', '0'])
+  const [previewConvertVal, setPreviewConvertVal] = useState<string>('0')
 
-  const bigg = bondTokenInfo && parseUnits(bondsToRedeem, bondTokenInfo.decimals)
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore its a big number i swear
-  const tokenAmount = bondTokenInfo && new TokenAmount(bondTokenInfo, bigg)
+  const tokenAmount = React.useMemo(() => {
+    const bigg = bondTokenInfo && parseUnits(bondsToRedeem, bondTokenInfo.decimals)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore its a big number i swear
+    return bondTokenInfo && new TokenAmount(bondTokenInfo, bigg)
+  }, [bondTokenInfo, bondsToRedeem])
   const [approval, approveCallback] = useApproveCallback(
     tokenAmount,
     EASY_AUCTION_NETWORKS[chainId as ChainId],
@@ -70,6 +77,7 @@ const BondAction = ({ actionType }: { actionType: BondActions }) => {
   const bondContract = useBondContract(bondIdentifier?.bondId)
   const { redeem } = useRedeemBond(tokenAmount, bondIdentifier?.bondId)
   const { convert } = useConvertBond(tokenAmount, bondIdentifier?.bondId)
+  const { previewConvert, previewRedeem } = usePreviewBond(bondIdentifier?.bondId)
 
   const [totalBalance, setTotalBalance] = useState('0')
   const isApproved = approval !== ApprovalState.NOT_APPROVED && approval !== ApprovalState.PENDING
@@ -77,6 +85,29 @@ const BondAction = ({ actionType }: { actionType: BondActions }) => {
   const onUserSellAmountInput = (theInput) => {
     setBondsToRedeem(theInput || '0')
   }
+
+  React.useEffect(() => {
+    if (!tokenAmount) return
+
+    previewRedeem(tokenAmount).then((r) => {
+      const [paymentTokens, collateralTokens] = r
+      // returned in paymentTokens, collateralTokens
+      setPreviewRedeemVal([
+        formatUnits(paymentTokens, paymentTokenInfo?.decimals),
+        formatUnits(collateralTokens, collateralTokenInfo?.decimals),
+      ])
+    })
+
+    previewConvert(tokenAmount).then((r) => {
+      setPreviewConvertVal(formatUnits(r, collateralTokenInfo?.decimals))
+    })
+  }, [
+    paymentTokenInfo?.decimals,
+    collateralTokenInfo?.decimals,
+    previewRedeem,
+    previewConvert,
+    tokenAmount,
+  ])
 
   const resetModal = () => {
     if (!pendingConfirmation) {
@@ -195,12 +226,22 @@ const BondAction = ({ actionType }: { actionType: BondActions }) => {
       <AmountInputPanel
         balance={totalBalance}
         chainId={bondTokenInfo?.chainId}
+        info={
+          !isOwner && {
+            text: 'You do not own this bond',
+            type: InfoType.error,
+          }
+        }
         onMax={() => {
           setBondsToRedeem(totalBalance)
         }}
         onUserSellAmountInput={onUserSellAmountInput}
         token={bondTokenInfo}
-        unlock={{ isLocked: !isApproved, onUnlock: approveCallback, unlockState: approval }}
+        unlock={{
+          isLocked: isOwner && !isApproved,
+          onUnlock: approveCallback,
+          unlockState: approval,
+        }}
         value={bondsToRedeem}
         wrap={{ isWrappable: false, onClick: null }}
       />
@@ -214,8 +255,15 @@ const BondAction = ({ actionType }: { actionType: BondActions }) => {
         </ActionButton>
       </div>
 
-      {actionType === BondActions.Redeem && <div>Redeemable for: x payment tokens </div>}
-      <div>Redeemable for: x collateral tokens</div>
+      {actionType === BondActions.Redeem && (
+        <>
+          <div>Redeemable for: {previewRedeemVal[0]} payment tokens </div>
+          <div>Redeemable for: {previewRedeemVal[1]} collateral tokens </div>
+        </>
+      )}
+      {actionType === BondActions.Convert && (
+        <div>Redeemable for: {previewConvertVal} collateral tokens </div>
+      )}
 
       <ConfirmationModal
         attemptingTxn={attemptingTxn}
