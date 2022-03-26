@@ -10,6 +10,7 @@ import BondsOverview from '../../../pages/Bonds'
 import { Landing } from '../../../pages/Landing'
 import { Licenses } from '../../../pages/Licenses'
 import Overview from '../../../pages/Overview'
+import Portfolio from '../../../pages/Portfolio'
 import { Terms } from '../../../pages/Terms'
 import DarkModeQueryParamReader from '../../../theme/DarkModeQueryParamReader'
 import { CookiesBanner } from '../../common/CookiesBanner'
@@ -72,6 +73,7 @@ const AppRoutes: React.FC = () => {
               <Route element={<Overview />} path="/overview" />
               <Route element={<Bond showTokenWarning={tokenSupport} />} path="/bond/:bondId" />
               <Route element={<BondsOverview />} path="/bonds" />
+              <Route element={<Portfolio />} path="/portfolio" />
               <Route element={<Landing />} path="/start" />
               <Route element={<Terms />} path="/terms-and-conditions" />
               <Route element={<Licenses />} path="/licenses" />

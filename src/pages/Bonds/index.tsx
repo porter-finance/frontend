@@ -22,9 +22,10 @@ const BondsOverview = () => {
 
 interface OverviewProps {
   allBonds: Maybe<BondInfo[]>
+  title?: string
 }
 
-const BondOverviewCommon = ({ allBonds }: OverviewProps) => {
+export const BondOverviewCommon = ({ allBonds, title }: OverviewProps) => {
   const tableData = []
 
   useSetNoDefaultNetworkId()
@@ -66,7 +67,7 @@ const BondOverviewCommon = ({ allBonds }: OverviewProps) => {
   return (
     <>
       {isLoading && <InlineLoading />}
-      {!isLoading && <AllBonds tableData={tableData} />}
+      {!isLoading && <AllBonds tableData={tableData} title={title} />}
     </>
   )
 }
