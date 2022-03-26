@@ -72,7 +72,7 @@ const AppRoutes: React.FC = () => {
                 path="/auction/:auctionId/:chainId"
               />
               <Route element={<Overview />} path="/overview" />
-              <Route element={<Bond showTokenWarning={tokenSupport} />} path="/bond/:bondId" />
+              <Route element={<Bond />} path="/bond/:bondId" />
               <Route element={<CreateBond />} path="/bonds/create" />
               <Route element={<BondsOverview />} path="/bonds" />
               <Route element={<Portfolio />} path="/portfolio" />

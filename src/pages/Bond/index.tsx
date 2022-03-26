@@ -1,11 +1,11 @@
-import React from 'react'
-
-import { useWeb3React } from '@web3-react/core'
+import React, { useState } from 'react'
 
 import { useBondContract } from '../../hooks/useContract'
 import { useHasRole } from '../../hooks/useHasRole'
 
 const CreateBond: React.FC = () => {
+  const [success, setSuccess] = useState()
+  const [error, setError] = useState('')
   const hasRole = useHasRole()
   const contract = useBondContract('0xa148c9A96AE2c987AF86eC170e75719cf4CEa937')
 
@@ -17,7 +17,8 @@ const CreateBond: React.FC = () => {
     const controls = form.children
     const allInput = {}
     for (let i = 0, iLen = controls.length; i < iLen; i++) {
-      allInput[controls[i].children[1]?.id] = controls[i].children[1]?.value
+      if (controls[i].children[1]?.id)
+        allInput[controls[i].children[1]?.id] = controls[i].children[1]?.value
     }
     return allInput
   }
@@ -25,17 +26,20 @@ const CreateBond: React.FC = () => {
   return (
     <>
       create bond. hasRole: {JSON.stringify(hasRole || false)}
+      <div>error: {error}</div>
+      <div>success: {JSON.stringify(success)}</div>
       <form
         onSubmit={(e) => {
           e.preventDefault()
-          const ok = getFormValues(e.target)
+          const formValues = getFormValues(e.target)
+
           contract
-            .createBond(Object.values(ok))
+            .createBond(...Object.values(formValues))
             .then((r) => {
-              console.log(r)
+              setSuccess(r)
             })
             .catch((e) => {
-              console.log(e)
+              setError(e.message)
             })
         }}
       >
