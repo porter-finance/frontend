@@ -378,7 +378,7 @@ const BondAction = ({
         <div>Minting for: {previewMintVal} collateral tokens </div>
       )}
 
-      <div>Total Collateral Value: ${price} </div>
+      <div>Collateral Token Price: ${price} </div>
 
       <ConfirmationModal
         attemptingTxn={attemptingTxn}
