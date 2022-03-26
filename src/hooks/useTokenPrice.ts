@@ -17,7 +17,7 @@ export const useTokenPrice = (
     // this uses rocketpool token instead of the real tokens on any network
     // other than mainnet so we have pricing data
     const realOrTestToken = chainId === 1 ? tokenContractAddress : rocketpoolToken
-    const { data, error } = useSWR(`https://api.coingecko.com/api/v3/simple/token_price/ethereum?vs_currencies=usd&contract_addresses=${realOrTestToken}`, fetcher)
+    const { data, error } = useSWR(`https://api.coingecko.com/api/v3/simple/token_price/ethereum?vs_currencies=usd&contract_addresses=${realOrTestToken}`, fetcher, { refreshInterval: 5000 })
 
     if (error) {
         logger.error('Error getting useBondDetails info', error)
