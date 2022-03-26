@@ -6,7 +6,6 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { Web3Provider } from '@ethersproject/providers'
 import { DAppProvider, Mainnet, Rinkeby } from '@usedapp/core'
 import { Web3ReactProvider, createWeb3ReactRoot } from '@web3-react/core'
-import { RestLink } from 'apollo-link-rest'
 import { Provider } from 'react-redux'
 
 import { NetworkContextName } from './constants'
@@ -27,23 +26,13 @@ import ThemeProvider from './theme'
 import { GlobalStyle, ThemedGlobalStyle } from './theme/globalStyle'
 import 'sanitize.css'
 
-const restLink = new RestLink({
-  uri: 'https://api.coingecko.com/api/v3', // default endpoint that is used when endpoint is not provided in REST query like above comment
-  responseTransformer: async (response) =>
-    response.json().then((data) => {
-      // hack to transform the data - this is due to coingekos
-      // api returning a json with a dynamic key
-      const resp = { usd: data[Object.keys(data)[0]].usd }
-      return resp
-    }),
-})
 
 const apolloClient = new ApolloClient({
   uri: SUBGRAPH_URL_RINKEBY,
   connectToDevTools: true,
   cache: new InMemoryCache(),
-  link: restLink,
 })
+
 const dappConfig = {
   readOnlyChainId: Mainnet.chainId,
   readOnlyUrls: {

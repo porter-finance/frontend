@@ -15,6 +15,7 @@ import { useIsBondFullyPaid } from '../../../hooks/useIsBondFullyPaid'
 import { useMintBond } from '../../../hooks/useMintBond'
 import { usePreviewBond } from '../../../hooks/usePreviewBond'
 import { useRedeemBond } from '../../../hooks/useRedeemBond'
+import { useTokenPrice } from '../../../hooks/useTokenPrice'
 import { BondActions } from '../../../pages/BondDetail'
 import { useActivePopups } from '../../../state/application/hooks'
 import { useFetchTokenByAddress } from '../../../state/user/hooks'
@@ -50,6 +51,7 @@ const BondAction = ({
 
   const bondId = overwriteBondId || params?.bondId
   const { data: derivedBondInfo, loading: isLoading } = useBondDetails(bondId)
+  const { data: price } = useTokenPrice(derivedBondInfo?.collateralToken)
   const [bondTokenInfo, setBondTokenInfo] = useState(null)
   const [collateralTokenInfo, setCollateralTokenInfo] = useState(null)
   const [paymentTokenInfo, setPaymentTokenInfo] = useState(null)
@@ -375,6 +377,9 @@ const BondAction = ({
       {actionType === BondActions.Mint && (
         <div>Minting for: {previewMintVal} collateral tokens </div>
       )}
+
+      <div>Total Collateral Value: ${price} </div>
+
       <ConfirmationModal
         attemptingTxn={attemptingTxn}
         content={null}

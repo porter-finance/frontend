@@ -16,6 +16,7 @@ export enum BondActions {
 const Bond: React.FC = () => {
   const navigate = useNavigate()
   const bondIdentifier = useParams()
+
   const { data: derivedBondInfo, loading: isLoading } = useBondDetails(bondIdentifier?.bondId)
   const invalidBond = React.useMemo(
     () => !bondIdentifier || !derivedBondInfo,
