@@ -309,10 +309,11 @@ const TBody = styled.div`
 
 interface Props {
   tableData: any[]
+  title: string | null
 }
 
 const AllBonds = (props: Props) => {
-  const { tableData, ...restProps } = props
+  const { tableData, title, ...restProps } = props
   const columns = useMemo(
     () => [
       {
@@ -522,7 +523,7 @@ const AllBonds = (props: Props) => {
   }
   return (
     <Wrapper ref={sectionHead} {...restProps}>
-      <SectionTitle style={{ display: 'block' }}>Bonds</SectionTitle>
+      <SectionTitle style={{ display: 'block' }}>{title || 'Bonds'}</SectionTitle>
       <TableControls>
         <SearchWrapper>
           <Magnifier />
