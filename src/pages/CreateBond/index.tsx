@@ -1,48 +1,42 @@
-import React, { useState } from 'react'
+import React from 'react'
 
-import { useBondFactoryContract } from '../../hooks/useContract'
-import { useHasRole } from '../../hooks/useHasRole'
+import { BondInfo } from '../../hooks/useAllBondInfos'
+import { useCreateBond } from '../../hooks/useCreateBond'
 
 const CreateBond: React.FC = () => {
-  const [success, setSuccess] = useState()
-  const [error, setError] = useState('')
-  const hasRole = useHasRole()
-  const contract = useBondFactoryContract()
+  const { createBond, error, hasRole, success } = useCreateBond()
 
   if (!hasRole) {
     return <div>You can&apos;t create a bond!</div>
   }
 
-  function getFormValues(form) {
+  const getFormValues = (form): BondInfo => {
     const controls = form.children
     const allInput = {}
     for (let i = 0, iLen = controls.length; i < iLen; i++) {
       if (controls[i].children[1]?.id)
         allInput[controls[i].children[1]?.id] = controls[i].children[1]?.value
     }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore idk
     return allInput
   }
 
+  const onSubmit = useCallback(() => {
+    ;(e) => {
+      e.preventDefault()
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore idk
+      createBond(...getFormValues(e.target))
+    }
+  }, createBond)
+
   return (
     <>
-      create bond. hasRole: {JSON.stringify(hasRole || false)}
+      create bond. hasRole: {JSON.stringify(hasRole)}
       <div>error: {error}</div>
       <div>success: {JSON.stringify(success)}</div>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault()
-          const formValues = getFormValues(e.target)
-
-          contract
-            .createBond(...Object.values(formValues))
-            .then((r) => {
-              setSuccess(r)
-            })
-            .catch((e) => {
-              setError(e.message)
-            })
-        }}
-      >
+      <form onSubmit={onSubmit}>
         <div className="form-group">
           <label>name (string) </label>
           <input

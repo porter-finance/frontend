@@ -7,7 +7,7 @@ import { useBondFactoryContract } from './useContract'
 
 const logger = getLogger('useHasRole')
 
-export function useHasRole(): boolean | undefined {
+export function useHasRole(): { hasRole: boolean } {
   const contract = useBondFactoryContract()
   const { account } = useWeb3React()
   const [role, setRole] = useState()
@@ -21,11 +21,12 @@ export function useHasRole(): boolean | undefined {
         setHasRole(r)
       })
       .catch((error) => {
+        setHasRole(false)
         logger.error(error)
       })
   } else {
-    return false
+    return { hasRole: false }
   }
 
-  return hasRole
+  return { hasRole }
 }
