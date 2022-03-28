@@ -1,5 +1,8 @@
 import React from 'react'
 
+import { formatUnits, parseUnits } from '@ethersproject/units'
+import { useWeb3React } from '@web3-react/core'
+
 import { useCreateBond } from '../../hooks/useCreateBond'
 
 const getFormValues = (form) => {
@@ -12,7 +15,38 @@ const getFormValues = (form) => {
   return allInput
 }
 
+const getFakeData = (account: string): Array<string | number> => {
+  const bondName = 'Always be growing'
+  const bondSymbol = 'LEARN'
+  const collateralRatio = formatUnits(parseUnits('.5', 18), 18)
+  const convertibilityRatio = formatUnits(parseUnits('.5', 18), 18)
+  const maturityDate = Math.round(
+    new Date(new Date().setFullYear(new Date().getFullYear() + 3)).getTime() / 1000,
+  )
+  const collateralTokenAddress = '0x90eabcc82cd7ff622f9a68ec10019aedb3808938'
+  const paymentTokenAddress = '0xf4e2543879d3a7ca73f8c98ebc5206d77240043f'
+  const maxSupply = formatUnits(parseUnits('50000000', 18), 18)
+
+  const fakeData =
+    process.env.NODE_ENV === 'development'
+      ? [
+          bondName,
+          bondSymbol,
+          account,
+          maturityDate,
+          collateralTokenAddress,
+          paymentTokenAddress,
+          collateralRatio,
+          convertibilityRatio,
+          maxSupply,
+        ]
+      : []
+
+  return fakeData
+}
+
 const CreateBond: React.FC = () => {
+  const { account } = useWeb3React()
   const { approveAndMint, createBond, error, hasRole } = useCreateBond()
 
   const onSubmit = async (e) => {
@@ -29,6 +63,9 @@ const CreateBond: React.FC = () => {
     return <div>You can&apos;t create a bond!</div>
   }
 
+  const fakeData = getFakeData(account)
+  let i = 0
+
   return (
     <>
       create bond. hasRole: {JSON.stringify(hasRole)}
@@ -43,6 +80,7 @@ const CreateBond: React.FC = () => {
             name="input_1"
             placeholder="name (string)"
             type="text"
+            value={fakeData[i++] || ''}
           />
         </div>
         <div className="form-group">
@@ -54,6 +92,7 @@ const CreateBond: React.FC = () => {
             name="input_1"
             placeholder="symbol (string)"
             type="text"
+            value={fakeData[i++] || ''}
           />
         </div>
         <div className="form-group">
@@ -65,6 +104,7 @@ const CreateBond: React.FC = () => {
             name="input_1"
             placeholder="owner (address)"
             type="text"
+            value={fakeData[i++] || ''}
           />
         </div>
         <div className="form-group">
@@ -77,6 +117,7 @@ const CreateBond: React.FC = () => {
             name="input_1"
             placeholder="maturityDate (uint256)"
             type="text"
+            value={fakeData[i++] || ''}
           />
         </div>
         <div className="form-group">
@@ -88,6 +129,7 @@ const CreateBond: React.FC = () => {
             name="input_1"
             placeholder="paymentToken (address)"
             type="text"
+            value={fakeData[i++] || ''}
           />
         </div>
         <div className="form-group">
@@ -99,6 +141,7 @@ const CreateBond: React.FC = () => {
             name="input_1"
             placeholder="collateralToken (address)"
             type="text"
+            value={fakeData[i++] || ''}
           />
         </div>
         <div className="form-group">
@@ -111,6 +154,7 @@ const CreateBond: React.FC = () => {
             name="input_1"
             placeholder="collateralRatio (uint256)"
             type="text"
+            value={fakeData[i++] || ''}
           />
         </div>
         <div className="form-group">
@@ -123,6 +167,7 @@ const CreateBond: React.FC = () => {
             name="input_1"
             placeholder="convertibleRatio (uint256)"
             type="text"
+            value={fakeData[i++] || ''}
           />
         </div>
         <div className="form-group">
@@ -135,6 +180,7 @@ const CreateBond: React.FC = () => {
             name="input_1"
             placeholder="maxSupply (uint256)"
             type="text"
+            value={fakeData[i++] || ''}
           />
         </div>
         <button className="write-btn btn btn-xs btn-primary border disabled" type="submit">
