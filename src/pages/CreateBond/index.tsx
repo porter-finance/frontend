@@ -1,35 +1,28 @@
 import React from 'react'
 
-import { BondInfo } from '../../hooks/useAllBondInfos'
 import { useCreateBond } from '../../hooks/useCreateBond'
+
+const getFormValues = (form) => {
+  const controls = form.children
+  const allInput = {}
+  for (let i = 0, iLen = controls.length; i < iLen; i++) {
+    if (controls[i].children[1]?.id)
+      allInput[controls[i].children[1]?.id] = controls[i].children[1]?.value
+  }
+  return allInput
+}
 
 const CreateBond: React.FC = () => {
   const { createBond, error, hasRole, success } = useCreateBond()
 
+  const onSubmit = (e) => {
+    e.preventDefault()
+    createBond(Object.values(getFormValues(e.target)))
+  }
+
   if (!hasRole) {
     return <div>You can&apos;t create a bond!</div>
   }
-
-  const getFormValues = (form): BondInfo => {
-    const controls = form.children
-    const allInput = {}
-    for (let i = 0, iLen = controls.length; i < iLen; i++) {
-      if (controls[i].children[1]?.id)
-        allInput[controls[i].children[1]?.id] = controls[i].children[1]?.value
-    }
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore idk
-    return allInput
-  }
-
-  const onSubmit = useCallback(() => {
-    ;(e) => {
-      e.preventDefault()
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore idk
-      createBond(...getFormValues(e.target))
-    }
-  }, createBond)
 
   return (
     <>

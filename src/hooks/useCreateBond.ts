@@ -11,7 +11,7 @@ export function useCreateBond(): {
   success?: boolean
   newBondAddress?: string
   hasRole?: boolean
-  createBond?: (bondInfo: BondInfo) => void
+  createBond?: (bondInfo: string[]) => void
 } {
   const { account } = useWeb3React()
   const { hasRole } = useHasRole()
@@ -21,10 +21,10 @@ export function useCreateBond(): {
   const contract = useBondFactoryContract()
 
   const createBond = useCallback(
-    (bondInfo: BondInfo) => {
+    (bondInfo: string[]) => {
       contract &&
         contract
-          .createBond(bondInfo)
+          .createBond(...bondInfo)
           .then((newAddress: string) => {
             setSuccess(true)
             setNewBondAddress(newAddress)
