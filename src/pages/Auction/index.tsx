@@ -9,6 +9,7 @@ import { InlineLoading } from '../../components/common/InlineLoading'
 import { NetworkIcon } from '../../components/icons/NetworkIcon'
 import WarningModal from '../../components/modals/WarningModal'
 import { PageTitle } from '../../components/pureStyledComponents/PageTitle'
+import useShowTopWarning from '../../hooks/useShowTopWarning'
 import { useDerivedAuctionInfo } from '../../state/orderPlacement/hooks'
 import { RouteAuctionIdentifier, parseURL } from '../../state/orderPlacement/reducer'
 import { useTokenListState } from '../../state/tokenList/hooks'
@@ -64,13 +65,8 @@ const NetworkName = styled.span`
   text-transform: capitalize;
 `
 
-interface Props {
-  showTokenWarning: (bothTokensSupported: boolean) => void
-}
-
-const Auction: React.FC<Props> = (props) => {
-  const { showTokenWarning } = props
-
+const Auction: React.FC = () => {
+  const { setShowTopWarning } = useShowTopWarning()
   const navigate = useNavigate()
 
   const auctionIdentifier = parseURL(useParams<RouteAuctionIdentifier>())
@@ -97,16 +93,16 @@ const Auction: React.FC<Props> = (props) => {
       biddingTokenAddress === undefined ||
       auctioningTokenAddress === undefined
     ) {
-      showTokenWarning(false)
+      setShowTopWarning(false)
       return
     }
 
-    showTokenWarning(!validBiddingTokenAddress || !validAuctioningTokenAddress)
+    setShowTopWarning(!validBiddingTokenAddress || !validAuctioningTokenAddress)
   }, [
     auctioningTokenAddress,
     biddingTokenAddress,
     derivedAuctionInfo,
-    showTokenWarning,
+    setShowTopWarning,
     validAuctioningTokenAddress,
     validBiddingTokenAddress,
   ])

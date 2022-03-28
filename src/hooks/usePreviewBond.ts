@@ -1,6 +1,5 @@
 import { useCallback } from 'react'
 
-import { TransactionResponse } from '@ethersproject/providers'
 import { TokenAmount } from '@josojo/honeyswap-sdk'
 
 import { getLogger } from '../utils/logger'
