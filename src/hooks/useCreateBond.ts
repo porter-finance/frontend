@@ -1,42 +1,59 @@
 import { useCallback, useState } from 'react'
 
+import { MaxUint256 } from '@ethersproject/constants'
 import { useWeb3React } from '@web3-react/core'
 
-import { useBondFactoryContract } from './useContract'
+import { useBondContract, useBondFactoryContract, useContract } from './useContract'
 import { useHasRole } from './useHasRole'
 
 export function useCreateBond(): {
   error?: string
-  success?: boolean
   newBondAddress?: string
   hasRole?: boolean
+  approveToken?: (amount?: string) => void
   createBond?: (bondInfo: string[]) => void
 } {
   const { account } = useWeb3React()
   const { hasRole } = useHasRole()
-  const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
   const [newBondAddress, setNewBondAddress] = useState('')
   const contract = useBondFactoryContract()
+  const bondContract = useBondContract(newBondAddress)
+  const collateralTokenContract = useContract(bondContract?.collateralToken)
 
   const createBond = useCallback(
-    (bondInfo: string[]) => {
-      contract &&
-        contract
-          .createBond(...bondInfo)
-          .then((newAddress: string) => {
-            setSuccess(true)
-            setNewBondAddress(newAddress)
-          })
-          .catch((e: Error) => {
-            setError(e.message)
-          })
+    async (bondInfo: string[]) => {
+      if (!contract) return
+
+      const newAddress = await contract.createBond(...bondInfo).catch((e: Error) => {
+        setError(e.message)
+      })
+
+      setNewBondAddress(newAddress)
     },
     [contract],
+  )
+  const approveToken = useCallback(
+    async (amount?: string) => {
+      if (!collateralTokenContract || !bondContract) return
+
+      const approveResponse = await collateralTokenContract
+        .approve(bondContract, amount || MaxUint256)
+        .catch((e: Error) => {
+          setError(e.message)
+        })
+
+      const mintResponse = await bondContract.mint(amount || MaxUint256).catch((e: Error) => {
+        setError(e.message)
+      })
+
+      console.log(approveResponse, mintResponse)
+    },
+    [bondContract, collateralTokenContract],
   )
 
   if (!contract || !account || hasRole === null) return { error: 'LOADING' }
   if (hasRole === false) return { error: 'MISSING_ROLE' }
 
-  return { hasRole, success, error, createBond, newBondAddress }
+  return { hasRole, error, createBond, approveToken, newBondAddress }
 }

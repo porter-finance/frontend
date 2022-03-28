@@ -13,11 +13,11 @@ const getFormValues = (form) => {
 }
 
 const CreateBond: React.FC = () => {
-  const { createBond, error, hasRole, success } = useCreateBond()
+  const { createBond, error, hasRole } = useCreateBond()
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault()
-    createBond(Object.values(getFormValues(e.target)))
+    const bond = await createBond(Object.values(getFormValues(e.target)))
   }
 
   if (error === 'LOADING') {
@@ -32,7 +32,6 @@ const CreateBond: React.FC = () => {
     <>
       create bond. hasRole: {JSON.stringify(hasRole)}
       <div>error: {error}</div>
-      <div>success: {JSON.stringify(success)}</div>
       <form onSubmit={onSubmit}>
         <div className="form-group">
           <label>name (string) </label>
