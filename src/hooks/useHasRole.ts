@@ -7,11 +7,11 @@ import { useBondFactoryContract } from './useContract'
 
 const logger = getLogger('useHasRole')
 
-export function useHasRole(): { hasRole: boolean } {
+export function useHasRole(): { hasRole: boolean | null } {
   const contract = useBondFactoryContract()
   const { account } = useWeb3React()
   const [role, setRole] = useState()
-  const [hasRole, setHasRole] = useState(false)
+  const [hasRole, setHasRole] = useState<boolean | null>(null)
   contract?.ISSUER_ROLE().then((r) => setRole(r))
 
   if (contract && account && role) {

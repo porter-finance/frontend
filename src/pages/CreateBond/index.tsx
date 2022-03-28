@@ -20,7 +20,11 @@ const CreateBond: React.FC = () => {
     createBond(Object.values(getFormValues(e.target)))
   }
 
-  if (!hasRole) {
+  if (error === 'LOADING') {
+    return <div>Loading</div>
+  }
+
+  if (error === 'MISSING_ROLE') {
     return <div>You can&apos;t create a bond!</div>
   }
 

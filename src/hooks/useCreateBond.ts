@@ -2,7 +2,6 @@ import { useCallback, useState } from 'react'
 
 import { useWeb3React } from '@web3-react/core'
 
-import { BondInfo } from './useAllBondInfos'
 import { useBondFactoryContract } from './useContract'
 import { useHasRole } from './useHasRole'
 
@@ -36,8 +35,8 @@ export function useCreateBond(): {
     [contract],
   )
 
-  if (!contract || !account) return { error: 'Loading' }
-  if (!hasRole) return { error: 'Does not have role' }
+  if (!contract || !account || hasRole === null) return { error: 'LOADING' }
+  if (hasRole === false) return { error: 'MISSING_ROLE' }
 
   return { hasRole, success, error, createBond, newBondAddress }
 }
