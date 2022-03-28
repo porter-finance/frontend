@@ -14,7 +14,6 @@ export interface BondInfo {
   collateralToken: string
   collateralRatio: number
   convertibleRatio: number
-  isAuction: boolean
 }
 
 const bondsQuery = gql`
@@ -29,7 +28,6 @@ const bondsQuery = gql`
       collateralToken
       collateralRatio
       convertibleRatio
-      isAuction
     }
   }
 `

@@ -10,6 +10,7 @@ import { useBondDetails } from '../../hooks/useBondDetails'
 export enum BondActions {
   Redeem,
   Convert,
+  Mint,
 }
 
 const Bond: React.FC = () => {

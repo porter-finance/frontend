@@ -102,6 +102,7 @@ interface wrapProps {
 
 interface Props {
   balance?: string
+  balanceString?: string
   chainId: ChainId
   info?: FieldRowInfoProps
   onMax?: () => void
@@ -115,6 +116,7 @@ interface Props {
 const AmountInputPanel: React.FC<Props> = (props) => {
   const {
     balance,
+    balanceString,
     chainId,
     info,
     onMax,
@@ -137,7 +139,8 @@ const AmountInputPanel: React.FC<Props> = (props) => {
         <FieldRowTop>
           <FieldRowLabel>Amount</FieldRowLabel>
           <Balance disabled={!account}>
-            Balance: {balance === '0' || !account ? '0.00' : balance}
+            {balanceString ? balanceString : 'Balance'}:{' '}
+            {balance === '0' || !account ? '0.00' : balance}
           </Balance>
           <FieldRowLineButton disabled={!onMax || !account} onClick={onMax}>
             Max

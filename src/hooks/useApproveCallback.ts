@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react'
 
 import { MaxUint256 } from '@ethersproject/constants'
+import { Contract } from '@ethersproject/contracts'
 import { TransactionResponse } from '@ethersproject/providers'
 import { TokenAmount } from '@josojo/honeyswap-sdk'
 
