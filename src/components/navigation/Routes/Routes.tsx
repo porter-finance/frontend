@@ -2,9 +2,9 @@ import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 
 import Auction from '../../../pages/Auction'
-import CreateBond from '../../../pages/BondDetail'
+import BondDetail from '../../../pages/BondDetail'
 import BondsOverview from '../../../pages/Bonds'
-import Bond from '../../../pages/CreateBond'
+import CreateBond from '../../../pages/CreateBond'
 import { Landing } from '../../../pages/Landing'
 import { Licenses } from '../../../pages/Licenses'
 import Overview from '../../../pages/Overview'
@@ -19,8 +19,8 @@ const AppRoutes: React.FC = () => {
       <Route element={<Auction />} path="/auction/:auctionId/:chainId" />
       <Route element={<Overview />} path="/overview" />
       <Route element={<BondsOverview />} path="/bonds" />
-      <Route element={<Bond />} path="/bonds/create" />
-      <Route element={<CreateBond />} path="/bonds/:bondId" />
+      <Route element={<CreateBond />} path="/bonds/create" />
+      <Route element={<BondDetail />} path="/bonds/:bondId" />
       <Route element={<Portfolio />} path="/portfolio" />
       <Route element={<Landing />} path="/start" />
       <Route element={<Terms />} path="/terms-and-conditions" />

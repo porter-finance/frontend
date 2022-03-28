@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 
-import { useBondContract } from '../../hooks/useContract'
+import { useBondFactoryContract } from '../../hooks/useContract'
 import { useHasRole } from '../../hooks/useHasRole'
 
 const CreateBond: React.FC = () => {
   const [success, setSuccess] = useState()
   const [error, setError] = useState('')
   const hasRole = useHasRole()
-  const contract = useBondContract('0xa148c9A96AE2c987AF86eC170e75719cf4CEa937')
+  const contract = useBondFactoryContract()
 
   if (!hasRole) {
     return <div>You can&apos;t create a bond!</div>
