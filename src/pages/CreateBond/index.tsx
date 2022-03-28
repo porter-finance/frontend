@@ -13,11 +13,12 @@ const getFormValues = (form) => {
 }
 
 const CreateBond: React.FC = () => {
-  const { createBond, error, hasRole } = useCreateBond()
+  const { approveAndMint, createBond, error, hasRole } = useCreateBond()
 
   const onSubmit = async (e) => {
     e.preventDefault()
-    const bond = await createBond(Object.values(getFormValues(e.target)))
+    await createBond(Object.values(getFormValues(e.target)))
+    await approveAndMint()
   }
 
   if (error === 'LOADING') {

@@ -10,7 +10,7 @@ export function useCreateBond(): {
   error?: string
   newBondAddress?: string
   hasRole?: boolean
-  approveToken?: (amount?: string) => void
+  approveAndMint?: (amount?: string) => void
   createBond?: (bondInfo: string[]) => void
 } {
   const { account } = useWeb3React()
@@ -33,7 +33,7 @@ export function useCreateBond(): {
     },
     [contract],
   )
-  const approveToken = useCallback(
+  const approveAndMint = useCallback(
     async (amount?: string) => {
       if (!collateralTokenContract || !bondContract) return
 
@@ -55,5 +55,5 @@ export function useCreateBond(): {
   if (!contract || !account || hasRole === null) return { error: 'LOADING' }
   if (hasRole === false) return { error: 'MISSING_ROLE' }
 
-  return { hasRole, error, createBond, approveToken, newBondAddress }
+  return { hasRole, error, createBond, approveAndMint, newBondAddress }
 }
