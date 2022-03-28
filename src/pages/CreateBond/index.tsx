@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React from 'react'
 
 import { parseUnits } from '@ethersproject/units'
 import { useWeb3React } from '@web3-react/core'
@@ -72,17 +72,8 @@ const CreateBond: React.FC = () => {
     <>
       <h1>Create Bond</h1>
       {error && <div>error: {error}</div>}
-      {newBondAddress && (
-        <div>
-          Found you created a bond! At {newBondAddress}
-          <div>
-            How much would you like to mint please
-            <BondAction actionType={BondActions.Mint} overwriteBondId={newBondAddress} />
-          </div>
-        </div>
-      )}
 
-      {!newBondAddress && (
+      {
         <form onSubmit={onSubmit}>
           <div className="form-group">
             <label>name (string) </label>
@@ -204,6 +195,21 @@ const CreateBond: React.FC = () => {
             Write
           </button>
         </form>
+      }
+
+      <hr />
+
+      {newBondAddress && (
+        <div>
+          Found you created a bond! At {newBondAddress}
+          <div>
+            How much would you like to mint please
+            <BondAction
+              actionType={BondActions.Mint}
+              overwriteBondId={'0x68E9136ABE61132ea9ffDA783433bE49978d14b7'}
+            />
+          </div>
+        </div>
       )}
     </>
   )

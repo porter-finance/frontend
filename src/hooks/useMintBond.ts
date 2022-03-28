@@ -11,12 +11,12 @@ const logger = getLogger('useMintBond')
 
 // returns a variable indicating the state of the approval and a function which mints if necessary or early returns
 export function useMintBond(amountToMint?: TokenAmount | null, addressToMint?: string) {
-  const tokenContract = useBondContract(amountToMint?.token?.address)
+  const bondContract = useBondContract(addressToMint)
   const addTransaction = useTransactionAdder()
 
   const mint = useCallback(async (): Promise<string> => {
-    if (!tokenContract) {
-      logger.error('tokenContract is null')
+    if (!bondContract) {
+      logger.error('bondContract is null')
       return ''
     }
 
@@ -25,20 +25,19 @@ export function useMintBond(amountToMint?: TokenAmount | null, addressToMint?: s
       return ''
     }
 
-    const response: TransactionResponse = await tokenContract
+    return bondContract
       .mint(amountToMint.raw.toString())
+      .then((response: TransactionResponse) => {
+        addTransaction(response, {
+          summary: 'Mint ' + amountToMint?.token?.symbol,
+          approval: { tokenAddress: amountToMint.token.address, spender: addressToMint },
+        })
+      })
       .catch((error: Error) => {
         logger.debug('Failed to mint token', error)
         throw error
       })
-
-    addTransaction(response, {
-      summary: 'Mint ' + amountToMint?.token?.symbol,
-      approval: { tokenAddress: amountToMint.token.address, spender: addressToMint },
-    })
-
-    return response.hash
-  }, [tokenContract, addressToMint, amountToMint, addTransaction])
+  }, [bondContract, addressToMint, amountToMint, addTransaction])
 
   return { mint }
 }
