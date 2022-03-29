@@ -75,8 +75,11 @@ const Balance = styled.div<{ disabled?: boolean }>`
   font-size: 14px;
   font-weight: 400;
   line-height: 1.2;
-  margin: 0 8px 0 0;
+  margin: 0 8px 0 20px;
   ${(props) => props.disabled && 'opacity: 0.7;'}
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 `
 
 const Wrap = styled.div`
@@ -212,9 +215,7 @@ const AmountInputPanel: React.FC<Props> = (props) => {
             hasError={error}
             onBlur={() => setReadonly(true)}
             onFocus={() => setReadonly(false)}
-            onUserSellAmountInput={(val) => {
-              onUserSellAmountInput(val)
-            }}
+            onUserSellAmountInput={onUserSellAmountInput}
             readOnly={readonly}
             value={value}
           />
