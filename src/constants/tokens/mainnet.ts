@@ -1,6 +1,7 @@
 import { Token } from '@josojo/honeyswap-sdk'
 
 import { ChainId } from '../../utils'
+
 export default [
   new Token(
     ChainId.MAINNET,

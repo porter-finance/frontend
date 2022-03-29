@@ -11,24 +11,22 @@ The final clearing price will be the price where the supply and demand curve int
 <img src="/assets/BosonScreenShot.png" alt="drawing" width="500"/>
 
 #### I was bidding X tokens, how many can I claim?
-If the final clearing price was higher than your limit order price, you will receive back your funds using for bidding. Otherwise, you will receive the `bidding amount * clearing price` auctioned tokens.
 
+If the final clearing price was higher than your limit order price, you will receive back your funds using for bidding. Otherwise, you will receive the `bidding amount * clearing price` auctioned tokens.
 
 **Here is one example:**
 
 There is an auction ETH for DAI
+
 - You place a limit order of 1000 DAI with a limit price of 4000 DAI per ETH
 - If the clearing price ends up being 5000 DAI per ETH, you will receive your 1000 DAI back
-- If the clearing price ends up being 3000 DAI per ETH, you will receive 1000* 1/3000 ETH = 1/3 ETH
-
+- If the clearing price ends up being 3000 DAI per ETH, you will receive 1000\* 1/3000 ETH = 1/3 ETH
 
 #### How do I claim my tokens from the auction?
 
 Bidders: After the auction has ended, and the settlement transaction has been mined, you can click on the `claim` button on the interface.
 
 Auctioneers: After the auction time has ended, submit the transaction to settle the auction. Find an [example of the command here](https://ido-ux.dev.gnosisdev.com/#/docs/participate-as-auctioneer#topAnchor).
-
-
 
 #### Can I know what the closing price will be?
 
@@ -71,7 +69,6 @@ It is likely that you placed your bid price too low. Read the answer to "How is 
 #### What is the chart showing?
 
 <img src="/assets/BosonScreenShot.png" alt="drawing" width="500"/>
-
 
 - Dotted white line -> shows the "Current price", which is the closing price of the auction if no more bids are submitted or cancelled and the auction ends
 

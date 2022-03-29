@@ -5,6 +5,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { ChainId } from '../utils'
 import { getLogger } from '../utils/logger'
 import { useActiveWeb3React } from './index'
+
 const logger = getLogger('useGasPrice')
 
 export const useGasPrice = (chainId?: ChainId): BigNumber => {

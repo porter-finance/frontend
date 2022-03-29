@@ -10,7 +10,6 @@
 
 5. At the auction clearing, the auction calculates the final clearing price. This will be the price where the supply and demand curve intersect. (In the graph, it's where the red supply line meets the green demand curve, indicated by the white dashed line).
 
-
 <img src="/assets/BosonScreenShot.png" alt="drawing" width="500"/>
 
 6. This final clearing-price will be the final clearing price for **all participants**.
@@ -18,5 +17,3 @@
 7. Bidders who specified a maximum price in their limit order that is greater than the final clearing price receive auctioned tokens **at the clearing price**.
 
 8. Bidders that specified a maximum price in their limit order that is less than the final clearing price do not receive the auctioned tokens. But for sure, they can still withdraw their bidding tokens from the auction.
-
-

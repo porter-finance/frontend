@@ -149,6 +149,7 @@ const formatSeconds = (seconds: number): React.ReactNode => {
     </>
   )
 }
+
 interface AuctionTimerProps {
   derivedAuctionInfo: DerivedAuctionInfo
   loading?: boolean

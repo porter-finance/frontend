@@ -1,6 +1,6 @@
-### How to settle an auction 
+### How to settle an auction
 
-After the auction time has finished, the auction waits in a state that is called: **'Awaiting Settlement'**. 
+After the auction time has finished, the auction waits in a state that is called: **'Awaiting Settlement'**.
 ANY participant can settle the auction by running the following commands:
 
 First, one needs to clone and prepare the repo:
