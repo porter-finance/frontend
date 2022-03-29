@@ -18,7 +18,8 @@
     "prettier:fix": "prettier --write \"./src/**/*.{js,jsx,ts,tsx}\"",
     "cy:run": "cypress run",
     "serve:build": "serve -s build -l 3000",
-    "integration-test": "yarn build && start-server-and-test 'yarn run serve:build' http://localhost:3000 cy:run"
+    "integration-test": "yarn build && start-server-and-test 'yarn run serve:build' http://localhost:3000 cy:run",
+    "prepare": "husky install"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -163,6 +164,7 @@
     "serve": "^13.0.2",
     "start-server-and-test": "^1.11.0",
     "styled-components": "^5.3.5",
+    "swr": "^1.2.2",
     "tiny-invariant": "^1.1.0",
     "typescript": "^4.6.3",
     "uniswap-xdai-sdk": "^3.0.2-a3",
