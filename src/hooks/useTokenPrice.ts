@@ -25,7 +25,7 @@ export const useTokenPrice = (
   if (error) {
     logger.error('Error getting useBondDetails info', error)
   }
-  console.log({ data })
+
   return {
     data: data?.[realOrTestToken]?.usd,
     loading: !error && !data,
