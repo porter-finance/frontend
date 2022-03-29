@@ -58,7 +58,7 @@ const BondAction = ({
     chainId,
   })
 
-  const isFullyPaid = false
+  const isFullyPaid = !!useIsBondFullyPaid(bondId)
   const isMatured = derivedBondInfo && new Date() > new Date(derivedBondInfo.maturityDate * 1000)
 
   const [isOwner, setIsOwner] = useState(false)
