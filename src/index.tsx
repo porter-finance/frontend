@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { BrowserRouter, HashRouter } from 'react-router-dom'
 
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { Web3Provider } from '@ethersproject/providers'
@@ -9,7 +10,12 @@ import { Provider } from 'react-redux'
 
 import { NetworkContextName } from './constants'
 import './i18n'
-import { NETWORK_URL_MAINNET, NETWORK_URL_RINKEBY, SUBGRAPH_URL_RINKEBY } from './constants/config'
+import {
+  NETWORK_URL_MAINNET,
+  NETWORK_URL_RINKEBY,
+  PUBLIC_URL,
+  SUBGRAPH_URL_RINKEBY,
+} from './constants/config'
 import App from './pages/App'
 import store from './state'
 import ApplicationUpdater from './state/application/updater'
@@ -50,6 +56,7 @@ const Updaters = () => {
     </>
   )
 }
+const Router: React.ComponentType = PUBLIC_URL === '.' ? HashRouter : BrowserRouter
 
 ReactDOM.render(
   <>
@@ -62,7 +69,9 @@ ReactDOM.render(
               <ThemeProvider>
                 <GlobalStyle />
                 <ThemedGlobalStyle />
-                <App />
+                <Router>
+                  <App />
+                </Router>
               </ThemeProvider>
             </DAppProvider>
           </ApolloProvider>

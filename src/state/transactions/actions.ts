@@ -1,3 +1,4 @@
+import { Log } from '@ethersproject/providers'
 import { createAction } from '@reduxjs/toolkit'
 
 export interface SerializableTransactionReceipt {
@@ -9,6 +10,7 @@ export interface SerializableTransactionReceipt {
   transactionHash: string
   blockNumber: number
   status?: number
+  logs?: Log[]
 }
 
 export const addTransaction = createAction<{

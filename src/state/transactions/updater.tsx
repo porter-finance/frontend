@@ -47,6 +47,7 @@ export default function Updater() {
                     from: receipt.from,
                     status: receipt.status,
                     to: receipt.to,
+                    logs: receipt.logs,
                     transactionHash: receipt.transactionHash,
                     transactionIndex: receipt.transactionIndex,
                   },

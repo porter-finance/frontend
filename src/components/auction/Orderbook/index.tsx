@@ -1,5 +1,5 @@
 import React from 'react'
-import { useLocation, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../constants/config'
@@ -22,6 +22,7 @@ const Wrapper = styled(BaseCard)`
   min-height: 352px;
   min-width: 100%;
 `
+
 interface OrderbookProps {
   derivedAuctionInfo: DerivedAuctionInfo
 }

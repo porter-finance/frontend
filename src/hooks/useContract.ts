@@ -4,9 +4,15 @@ import { Contract } from '@ethersproject/contracts'
 import IUniswapV2PairABI from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 
 import Bond_ABI from '../constants/abis/bond.json'
+import BondFactory_ABI from '../constants/abis/bondFactory.json'
 import ERC20_ABI from '../constants/abis/erc20.json'
 import { MULTICALL_ABI, MULTICALL_NETWORKS } from '../constants/multicall'
-import { V1_EXCHANGE_ABI, V1_FACTORY_ABI, V1_FACTORY_ADDRESS } from '../constants/v1'
+import {
+  V1_BOND_FACTORY_ADDRESS,
+  V1_EXCHANGE_ABI,
+  V1_FACTORY_ABI,
+  V1_FACTORY_ADDRESS,
+} from '../constants/v1'
 import { ChainId, getContract } from '../utils'
 import { getLogger } from '../utils/logger'
 import { useActiveWeb3React } from './index'
@@ -58,6 +64,11 @@ export function useBondContract(
   withSignerIfPossible = true,
 ): Maybe<Contract> {
   return useContract(bondAddress, Bond_ABI, withSignerIfPossible)
+}
+
+export function useBondFactoryContract(withSignerIfPossible = true): Maybe<Contract> {
+  const { chainId } = useActiveWeb3React()
+  return useContract(V1_BOND_FACTORY_ADDRESS[chainId], BondFactory_ABI, withSignerIfPossible)
 }
 
 export function usePairContract(

@@ -17,13 +17,12 @@ const bondsQuery = (bondId: string) => gql`
       collateralToken
       collateralRatio
       convertibleRatio
-      isAuction
     }
   }
 `
 
 export const useBondDetails = (bondId: string): Maybe<{ data: BondInfo; loading: boolean }> => {
-  const { data, error, loading } = useQuery(bondsQuery(bondId))
+  const { data, error, loading } = useQuery(bondsQuery(bondId.toLowerCase()))
 
   if (error) {
     logger.error('Error getting useBondDetails info', error)

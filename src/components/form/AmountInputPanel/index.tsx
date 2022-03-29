@@ -75,8 +75,11 @@ const Balance = styled.div<{ disabled?: boolean }>`
   font-size: 14px;
   font-weight: 400;
   line-height: 1.2;
-  margin: 0 8px 0 0;
+  margin: 0 8px 0 20px;
   ${(props) => props.disabled && 'opacity: 0.7;'}
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 `
 
 const Wrap = styled.div`
@@ -102,6 +105,7 @@ interface wrapProps {
 
 interface Props {
   balance?: string
+  balanceString?: string
   chainId: ChainId
   info?: FieldRowInfoProps
   onMax?: () => void
@@ -115,6 +119,7 @@ interface Props {
 const AmountInputPanel: React.FC<Props> = (props) => {
   const {
     balance,
+    balanceString,
     chainId,
     info,
     onMax,
@@ -137,7 +142,8 @@ const AmountInputPanel: React.FC<Props> = (props) => {
         <FieldRowTop>
           <FieldRowLabel>Amount</FieldRowLabel>
           <Balance disabled={!account}>
-            Balance: {balance === '0' || !account ? '0.00' : balance}
+            {balanceString ? balanceString : 'Balance'}:{' '}
+            {balance === '0' || !account ? '0.00' : balance}
           </Balance>
           <FieldRowLineButton disabled={!onMax || !account} onClick={onMax}>
             Max
@@ -209,9 +215,7 @@ const AmountInputPanel: React.FC<Props> = (props) => {
             hasError={error}
             onBlur={() => setReadonly(true)}
             onFocus={() => setReadonly(false)}
-            onUserSellAmountInput={(val) => {
-              onUserSellAmountInput(val)
-            }}
+            onUserSellAmountInput={onUserSellAmountInput}
             readOnly={readonly}
             value={value}
           />
