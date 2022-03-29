@@ -24,6 +24,7 @@ numberFormatter.bigNumberPrefixes = [
 export interface XYChartProps {
   chartElement: HTMLElement
 }
+
 export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   const { chartElement } = props
 

@@ -74,6 +74,7 @@ const RowHead = styled.div<CellRowProps>`
 interface CellProps {
   fs?: string
 }
+
 const TableCell = styled(Cell)<Partial<CSS.Properties & CellProps>>`
   color: ${({ theme }) => theme.text1};
   display: flex;
@@ -521,6 +522,7 @@ const AllBonds = (props: Props) => {
     previousPage()
     sectionHead.current.scrollIntoView()
   }
+
   return (
     <Wrapper ref={sectionHead} {...restProps}>
       <SectionTitle style={{ display: 'block' }}>{title || 'Bonds'}</SectionTitle>

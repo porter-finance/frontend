@@ -11,4 +11,8 @@ export const navItems = [
     title: 'Bonds',
     url: '/bonds',
   },
+  {
+    title: 'Create Bond',
+    url: '/bonds/create',
+  },
 ]

@@ -3,14 +3,14 @@ module.exports = {
   singleQuote: true,
   semi: false,
   bracketSpacing: true,
-  trailingComma: "all",
-  endOfLine: "auto",
+  trailingComma: 'all',
+  endOfLine: 'auto',
   overrides: [
     {
-      files: "*.sol",
+      files: '*.sol',
       options: {
         bracketSpacing: false,
       },
     },
   ],
-};
+}
