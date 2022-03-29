@@ -1,3 +1,4 @@
+import { Log } from '@ethersproject/providers'
 import { createReducer } from '@reduxjs/toolkit'
 
 import {
@@ -17,6 +18,7 @@ export interface TransactionDetails {
   addedTime: number
   confirmedTime?: number
   from: string
+  logs?: Log[]
 
   // set to true when we receive a transaction count that exceeds the nonce of this transaction
   unknownStatus?: boolean

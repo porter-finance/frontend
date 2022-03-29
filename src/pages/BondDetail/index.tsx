@@ -7,18 +7,16 @@ import { InlineLoading } from '../../components/common/InlineLoading'
 import WarningModal from '../../components/modals/WarningModal'
 import { useBondDetails } from '../../hooks/useBondDetails'
 
-interface Props {
-  showTokenWarning: (bothTokensSupported: boolean) => void
-}
-
 export enum BondActions {
   Redeem,
   Convert,
+  Mint,
 }
 
-const Bond: React.FC<Props> = () => {
+const Bond: React.FC = () => {
   const navigate = useNavigate()
   const bondIdentifier = useParams()
+
   const { data: derivedBondInfo, loading: isLoading } = useBondDetails(bondIdentifier?.bondId)
   const invalidBond = React.useMemo(
     () => !bondIdentifier || !derivedBondInfo,
