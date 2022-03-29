@@ -12,7 +12,6 @@ import { ShapeIcon2 } from '../../components/icons/ShapeIcon2'
 import { ShapeIcon3 } from '../../components/icons/ShapeIcon3'
 import { useAllAuctionInfo } from '../../hooks/useAllAuctionInfos'
 import { useInterestingAuctionInfo } from '../../hooks/useInterestingAuctionDetails'
-import { useTokenPrice } from '../../hooks/useTokenPrice'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import AuctionsIcon from './img/eth.svg'
 

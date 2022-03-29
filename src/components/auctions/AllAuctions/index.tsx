@@ -74,12 +74,14 @@ const RowHead = styled.div<CellRowProps>`
 interface CellProps {
   fs?: string
 }
+
 const TableCell = styled(Cell)<Partial<CSS.Properties & CellProps>>`
   color: ${({ theme }) => theme.text1};
   display: flex;
   justify-content: center;
   flex-direction: column;
   font-size: ${(props) => props.fs || '16px'};
+
   &:last-child {
     position: absolute;
     right: 15px;
@@ -90,9 +92,11 @@ const TableCell = styled(Cell)<Partial<CSS.Properties & CellProps>>`
   > span {
     display: flex;
     align-items: center;
+
     > *:not(:last-child) {
       margin-right: 6px;
     }
+
     &:last-child {
       font-size: 16px;
       font-weight: bold;
@@ -301,6 +305,7 @@ const TBody = styled.div`
     > div:first-child {
       position: relative !important;
     }
+
     > div:not(:first-child) {
       display: none !important;
     }
@@ -535,6 +540,7 @@ const AllAuctions = (props: Props) => {
     previousPage()
     sectionHead.current.scrollIntoView()
   }
+
   return (
     <Wrapper ref={sectionHead} {...restProps}>
       <SectionTitle style={{ display: 'block' }}>Auctions</SectionTitle>

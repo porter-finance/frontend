@@ -365,8 +365,8 @@ const BondAction = ({
       </div>
       {actionType === BondActions.Redeem && (
         <>
-          <div>Redeemable for: {previewRedeemVal[0]} payment tokens </div>
-          <div>Redeemable for: {previewRedeemVal[1]} collateral tokens </div>
+          <div>Redeemable for: {previewRedeemVal[0]} payment tokens</div>
+          <div>Redeemable for: {previewRedeemVal[1]} collateral tokens</div>
         </>
       )}
 

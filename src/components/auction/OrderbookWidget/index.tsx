@@ -288,6 +288,7 @@ interface ProcessRawDataParams {
   baseToken: Token
   quoteToken: Token
 }
+
 export function findClearingPrice(
   sellOrders: PricePoint[],
   userOrder: PricePoint | undefined,

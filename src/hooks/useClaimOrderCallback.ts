@@ -107,6 +107,7 @@ interface getClaimableDataProps {
   minFundingThresholdNotReached: boolean
   clearingPriceVolume: BigNumber
 }
+
 export const getClaimableData = ({
   auctioningToken,
   biddingToken,
@@ -343,6 +344,7 @@ export function useGetClaimState(
         logger.error(error)
       }
     }
+
     userHasAvailableClaim()
 
     return (): void => {
