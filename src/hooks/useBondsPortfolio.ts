@@ -18,7 +18,6 @@ const bondsQuery = (account: string | null | undefined) => gql`
       collateralToken
       collateralRatio
       convertibleRatio
-      isAuction
     }
   }
 `

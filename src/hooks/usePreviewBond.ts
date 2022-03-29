@@ -1,6 +1,5 @@
 import { useCallback } from 'react'
 
-import { TransactionResponse } from '@ethersproject/providers'
 import { TokenAmount } from '@josojo/honeyswap-sdk'
 
 import { getLogger } from '../utils/logger'
@@ -59,5 +58,29 @@ export function usePreviewBond(bondAddress?: string) {
     [tokenContract],
   )
 
-  return { previewRedeem, previewConvert }
+  const previewMint = useCallback(
+    async (amountToPreview?: TokenAmount | null): Promise<string> => {
+      if (!tokenContract) {
+        logger.error('tokenContract is null')
+        return ''
+      }
+
+      if (!amountToPreview) {
+        logger.error('missing amount to preview')
+        return ''
+      }
+
+      const response = await tokenContract
+        .previewMintBeforeMaturity(amountToPreview.raw.toString())
+        .catch((error: Error) => {
+          logger.debug('Failed to preview token', error)
+          throw error
+        })
+
+      return response
+    },
+    [tokenContract],
+  )
+
+  return { previewRedeem, previewConvert, previewMint }
 }

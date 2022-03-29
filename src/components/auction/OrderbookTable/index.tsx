@@ -47,9 +47,11 @@ const TableBody = styled(Scrollbars)`
     }
   }
 `
+
 interface CellProps {
   width?: string
 }
+
 const TableCell = styled(Cell)<Partial<CSS.Properties & CellProps>>`
   text-align: right;
   min-width: ${(props) => (props.minWidth ? props.minWidth : 'auto')};
@@ -69,9 +71,11 @@ const TableCell = styled(Cell)<Partial<CSS.Properties & CellProps>>`
     }
   }
 `
+
 interface WrapProps {
   width?: string
 }
+
 const Wrap = styled.div<Partial<CSS.Properties & WrapProps>>`
   display: flex;
   align-items: center;
@@ -115,6 +119,7 @@ const StyledEmptyContentWrapper = styled(EmptyContentWrapper)`
   height: 100%;
   min-height: 352px;
 `
+
 interface OrderBookTableProps {
   derivedAuctionInfo: DerivedAuctionInfo
   granularity: string
