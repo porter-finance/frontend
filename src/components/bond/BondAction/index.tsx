@@ -78,10 +78,14 @@ const BondAction = ({
 
   const tokenAmount = useMemo(() => {
     const tokenInfo = tokenToAction
-    const bigg = tokenInfo && parseUnits(bondsToRedeem, tokenInfo.decimals)
+    // wait for token info to be filled before trying to convert into a redeemable number
+    // we need decimals
+    if (!tokenInfo) return null
+
+    const bondsToRedeemBigNumber = parseUnits(bondsToRedeem, tokenInfo.decimals)
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore its a big number i swear
-    return tokenInfo && new TokenAmount(tokenInfo, bigg)
+    return new TokenAmount(tokenInfo, bondsToRedeemBigNumber)
   }, [tokenToAction, bondsToRedeem])
   const [approval, approveCallback] = useApproveCallback(
     tokenAmount,
