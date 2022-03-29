@@ -5,9 +5,9 @@ import { BondInfo } from './useAllBondInfos'
 
 const logger = getLogger('useBondDetails')
 
-const bondsQuery = (bondId: string) => gql`
-  query Bond {
-    bond(id: "${bondId}") {
+const bondsQuery = gql`
+  query Bond($bondID: String!) {
+    bond(id: $bondID) {
       id
       name
       symbol
@@ -22,7 +22,9 @@ const bondsQuery = (bondId: string) => gql`
 `
 
 export const useBondDetails = (bondId: string): Maybe<{ data: BondInfo; loading: boolean }> => {
-  const { data, error, loading } = useQuery(bondsQuery(bondId.toLowerCase()))
+  const { data, error, loading } = useQuery(bondsQuery, {
+    variables: { bondID: bondId.toLowerCase() },
+  })
 
   if (error) {
     logger.error('Error getting useBondDetails info', error)

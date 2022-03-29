@@ -6,9 +6,9 @@ import { BondInfo } from './useAllBondInfos'
 
 const logger = getLogger('useBondsPortfolio')
 
-const bondsQuery = (account: string | null | undefined) => gql`
-  query BondList {
-    bonds(first: 100, where: { owner: "${account || '0x00'}" }) {
+const bondsQuery = gql`
+  query BondList($account: String!) {
+    bonds(first: 100, where: { owner: $account }) {
       id
       name
       symbol
@@ -24,7 +24,7 @@ const bondsQuery = (account: string | null | undefined) => gql`
 
 export const useBondsPortfolio = (): Maybe<BondInfo[]> => {
   const { account } = useWeb3React()
-  const { data, error } = useQuery(bondsQuery(account))
+  const { data, error } = useQuery(bondsQuery, { variables: { account: account || '0x00' } })
 
   if (error) {
     logger.error('Error getting useBondsPortfolio info', error)
