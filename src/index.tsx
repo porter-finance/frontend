@@ -25,6 +25,7 @@ import UserUpdater from './state/user/updater'
 import ThemeProvider from './theme'
 import { GlobalStyle, ThemedGlobalStyle } from './theme/globalStyle'
 import 'sanitize.css'
+import './index.css'
 
 const apolloClient = new ApolloClient({
   uri: SUBGRAPH_URL_RINKEBY,
