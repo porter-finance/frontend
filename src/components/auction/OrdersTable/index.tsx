@@ -202,7 +202,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
 
   return (
     <Wrapper {...restProps}>
-      <Title as="h2">Your Orders</Title>
+      <Title as="h2">My Orders</Title>
       {ordersEmpty && (
         <EmptyContentWrapper>
           <InfoIcon />
