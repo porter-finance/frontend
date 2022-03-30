@@ -3,7 +3,6 @@ import { useNavigate, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
 import AuctionBody from '../../components/auction/AuctionBody'
-import AuctionDetails from '../../components/auction/AuctionDetails'
 import { ButtonCopy } from '../../components/buttons/ButtonCopy'
 import { InlineLoading } from '../../components/common/InlineLoading'
 import { NetworkIcon } from '../../components/icons/NetworkIcon'
@@ -129,10 +128,7 @@ const Auction: React.FC = () => {
             </SubTitle>
             <CopyButton copyValue={url} title="Copy URL" />
           </SubTitleWrapperStyled>
-          <AuctionDetails
-            auctionIdentifier={auctionIdentifier}
-            derivedAuctionInfo={derivedAuctionInfo}
-          />
+
           <AuctionBody
             auctionIdentifier={auctionIdentifier}
             derivedAuctionInfo={derivedAuctionInfo}
