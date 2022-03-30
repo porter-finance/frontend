@@ -9,13 +9,11 @@ export const Footer: React.FC = ({ ...restProps }) => {
         <p>Porter Finance</p>
       </div>
       <div className="grid-flow-col gap-4 md:place-self-center md:justify-self-end">
-        <a>FAQ</a>
-        <a>Blog</a>
-        <a>Docs</a>
-        <a href="">Media kit</a>
-        <a href="">Discord</a>
-        <a href="">Twitter</a>
-        <a href="">Github</a>
+        <a href="https://docs.porter.finance">Docs</a>
+        <a href="https://medium.com/@porterfinance_">Blog</a>
+        <a href="https://discord.gg/mx8tsEaNut">Discord</a>
+        <a href="https://twitter.com/porterfinance_">Twitter</a>
+        <a href="https://github.com/orgs/porter-finance/">Github</a>
 
         <ThemeToggle />
       </div>
