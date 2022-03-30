@@ -169,6 +169,7 @@
     "start-server-and-test": "^1.11.0",
     "styled-components": "^5.3.5",
     "swr": "^1.2.2",
+    "theme-change": "^2.0.2",
     "tiny-invariant": "^1.1.0",
     "typescript": "^4.6.3",
     "uniswap-xdai-sdk": "^3.0.2-a3",
