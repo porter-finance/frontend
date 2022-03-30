@@ -17,10 +17,8 @@ const INNER_CIRCLE_SIZE = '138px'
 const Wrapper = styled.div`
   align-items: center;
   background: ${({ theme }) => theme.primary3};
-  border-radius: 50%;
   box-shadow: inset 0 0 3px 0 ${({ theme }) => theme.mainBackground};
   display: flex;
-  height: ${TIMER_SIZE};
   justify-content: center;
   position: relative;
   width: ${TIMER_SIZE};
@@ -32,9 +30,7 @@ const ProgressChart = styled.div<{ progress?: string }>`
     ${({ theme }) => theme.primary1} calc(${(props) => props.progress}),
     rgba(255, 255, 255, 0) 0%
   );
-  border-radius: 50%;
   display: flex;
-  height: calc(${TIMER_SIZE} - 5px);
   justify-content: center;
   width: calc(${TIMER_SIZE} - 5px);
 `
@@ -46,9 +42,7 @@ ProgressChart.defaultProps = {
 const InnerCircle = styled.div`
   align-items: center;
   background: ${({ theme }) => theme.primary3};
-  border-radius: 50%;
   display: flex;
-  height: ${INNER_CIRCLE_SIZE};
   justify-content: center;
   width: ${INNER_CIRCLE_SIZE};
 `
@@ -56,11 +50,9 @@ const InnerCircle = styled.div`
 const CenterCircle = styled.div`
   align-items: center;
   background-color: ${({ theme }) => theme.mainBackground};
-  border-radius: 50%;
   box-shadow: 0 0 10px 0px ${({ theme }) => theme.mainBackground};
   display: flex;
   flex-flow: column;
-  height: calc(${INNER_CIRCLE_SIZE} - 4px);
   justify-content: center;
   width: calc(${INNER_CIRCLE_SIZE} - 4px);
 `
@@ -203,46 +195,43 @@ export const AuctionTimer = (props: AuctionTimerProps) => {
   return (
     <Wrapper {...restProps}>
       <ProgressChart progress={progress}>
-        <InnerCircle>
-          <CenterCircle>
-            {!auctionState && <TextBig>Loading...</TextBig>}
-            {auctionState === AuctionState.NOT_YET_STARTED && (
-              <TextBig>
-                Auction
-                <br /> not
-                <br />
-                started
-              </TextBig>
-            )}
-            {auctionState === AuctionState.CLAIMING && (
-              <TextBig>
-                Auction
-                <br /> claiming
-              </TextBig>
-            )}
-            {(auctionState === AuctionState.ORDER_PLACING_AND_CANCELING ||
-              auctionState === AuctionState.ORDER_PLACING) && (
+        {!auctionState && <TextBig>Loading...</TextBig>}
+        {auctionState === AuctionState.NOT_YET_STARTED && (
+          <TextBig>
+            Auction
+            <br /> not
+            <br />
+            started
+          </TextBig>
+        )}
+        {auctionState === AuctionState.CLAIMING && (
+          <TextBig>
+            Auction
+            <br /> claiming
+          </TextBig>
+        )}
+
+        {auctionStateTitle && auctionStateTitle}
+      </ProgressChart>
+
+      {(auctionState === AuctionState.ORDER_PLACING_AND_CANCELING ||
+        auctionState === AuctionState.ORDER_PLACING) && (
+        <>
+          <Time>
+            {timeLeft && timeLeft > -1 ? (
+              formatSeconds(timeLeft)
+            ) : (
               <>
-                <Time>
-                  {timeLeft && timeLeft > -1 ? (
-                    formatSeconds(timeLeft)
-                  ) : (
-                    <>
-                      --
-                      <Blink />
-                      --
-                      <Blink />
-                      --
-                    </>
-                  )}
-                </Time>
-                <Text>Ends in</Text>
+                --
+                <Blink />
+                --
+                <Blink />
+                --
               </>
             )}
-            {auctionStateTitle}
-          </CenterCircle>
-        </InnerCircle>
-      </ProgressChart>
+          </Time>
+        </>
+      )}
     </Wrapper>
   )
 }
