@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 
 import { useDispatch } from 'react-redux'
+import { themeChange } from 'theme-change'
 
 import { AppDispatch } from '../state'
 import { updateUserDarkMode } from '../state/user/actions'
@@ -8,6 +9,10 @@ import { updateUserDarkMode } from '../state/user/actions'
 export default function DarkModeQueryParamReader() {
   const dispatch = useDispatch<AppDispatch>()
   const parsed = window.location.search
+
+  useEffect(() => {
+    themeChange(false)
+  }, [])
 
   useEffect(() => {
     if (!parsed.includes('theme')) return

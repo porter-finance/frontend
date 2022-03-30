@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 
 import * as CSS from 'csstype'
@@ -9,10 +9,7 @@ import {
   useOrderbookState,
 } from '../../../state/orderbook/hooks'
 import { ButtonSelect } from '../../buttons/ButtonSelect'
-import { ButtonToggle } from '../../buttons/ButtonToggle'
 import { Dropdown, DropdownItem, DropdownPosition } from '../../common/Dropdown'
-import { ChartIcon } from '../../icons/ChartIcon'
-import { TableIcon } from '../../icons/TableIcon'
 import { Checkbox } from '../../pureStyledComponents/Checkbox'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
 import { OrderBook } from '../Orderbook'
@@ -125,7 +122,6 @@ const StyledCheckbox = styled(Checkbox)`
 
 export const OrderBookContainer = (props) => {
   const { auctionIdentifier, derivedAuctionInfo } = props
-  const [isChartVisible, setChartVisibility] = useState(true)
   const { bids } = useOrderbookState()
   const { granularity, granularityOptions, setGranularity } = useGranularityOptions(bids)
 
@@ -134,9 +130,14 @@ export const OrderBookContainer = (props) => {
   return (
     <>
       <Wrap alignItems={['flex-start', 'center']} flexDir={['column', 'row']} margin={'0 0 16px 0'}>
+        <SectionTitle as="h2">Order graphs</SectionTitle>
+      </Wrap>
+      <OrderBook derivedAuctionInfo={derivedAuctionInfo} />
+      <div style={{ marginBottom: 20 }} />
+      <Wrap alignItems={['flex-start', 'center']} flexDir={['column', 'row']} margin={'0 0 16px 0'}>
         <SectionTitle as="h2">Orderbook</SectionTitle>
         <Wrap flexDir={['row-reverse', 'row']} margin={['20px 0', '0']}>
-          {!isChartVisible && granularityOptions.length > 0 && (
+          {granularityOptions.length > 0 && (
             <StyledDropdown
               disabled={!granularity}
               dropdownButtonContent={<StyledButtonSelect content={granularity} />}
@@ -149,18 +150,9 @@ export const OrderBookContainer = (props) => {
               ))}
             />
           )}
-          <ButtonToggle
-            activate={isChartVisible}
-            left={{ icon: <ChartIcon />, label: 'Chart', onClick: () => setChartVisibility(true) }}
-            right={{ icon: <TableIcon />, label: 'List', onClick: () => setChartVisibility(false) }}
-          />
         </Wrap>
       </Wrap>
-      {isChartVisible ? (
-        <OrderBook derivedAuctionInfo={derivedAuctionInfo} />
-      ) : (
-        <OrderBookTable derivedAuctionInfo={derivedAuctionInfo} granularity={granularity} />
-      )}
+      <OrderBookTable derivedAuctionInfo={derivedAuctionInfo} granularity={granularity} />
     </>
   )
 }
