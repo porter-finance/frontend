@@ -6,8 +6,7 @@ export const MainScroll = styled.div`
   flex-direction: column;
   flex-grow: 1;
   overflow: auto;
-  padding: 0;
   position: relative;
   z-index: 1;
-  margin-top: 65px;
+  padding: 45px 0 0;
 `

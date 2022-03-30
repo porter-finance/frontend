@@ -17,9 +17,7 @@ import useShowCookies from '../hooks/useShowCookies'
 import useShowTopWarning from '../hooks/useShowTopWarning'
 import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
 
-const Inner = styled(InnerContainer)`
-  padding-top: 22px;
-`
+const Inner = styled(InnerContainer)``
 
 const App: React.FC = () => {
   const { setShowCookiesBanner, showCookiesBanner } = useShowCookies()

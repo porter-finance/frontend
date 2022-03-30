@@ -14,7 +14,7 @@ const Wrapper = styled.nav`
 
 const Item = styled(NavLink)`
   align-items: center;
-  color: ${({ theme }) => theme.bg6};
+  color: #eeefeb;
   cursor: pointer;
   display: flex;
   font-size: 16px;
