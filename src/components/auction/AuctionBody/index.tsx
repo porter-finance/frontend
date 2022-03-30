@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { AuctionState, DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
+import AuctionDetails from '../AuctionDetails'
 import { AuctionNotStarted } from '../AuctionNotStarted'
 import Claimer from '../Claimer'
 import OrderPlacement from '../OrderPlacement'
@@ -66,6 +67,10 @@ const AuctionBody = (props: AuctionBodyProps) => {
       {auctionStarted && (
         <Grid>
           <GridCol>
+            <AuctionDetails
+              auctionIdentifier={auctionIdentifier}
+              derivedAuctionInfo={derivedAuctionInfo}
+            />
             <OrderBookContainer
               auctionIdentifier={auctionIdentifier}
               auctionState={auctionState}

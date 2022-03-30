@@ -490,6 +490,11 @@ const AuctionDetails = (props: Props) => {
 
   return (
     <Wrapper>
+      <div>
+        auction information
+        <div>days left</div>
+      </div>
+
       <MainDetails>
         <CellPair>
           <Cell
