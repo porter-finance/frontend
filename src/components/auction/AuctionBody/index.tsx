@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { AuctionState, DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
+import AuctionDetails from '../AuctionDetails'
 import { AuctionNotStarted } from '../AuctionNotStarted'
 import Claimer from '../Claimer'
 import OrderPlacement from '../OrderPlacement'
@@ -27,7 +28,7 @@ const GridCol = styled.div`
   display: flex;
   flex-direction: column;
   max-width: 100%;
-  justify-content: flex-end;
+  justify-content: flex-start;
   @media (max-width: ${({ theme }) => theme.themeBreakPoints.xxl}) {
     overflow-x: auto;
   }
@@ -66,6 +67,17 @@ const AuctionBody = (props: AuctionBodyProps) => {
       {auctionStarted && (
         <Grid>
           <GridCol>
+            <AuctionDetails
+              auctionIdentifier={auctionIdentifier}
+              derivedAuctionInfo={derivedAuctionInfo}
+            />
+            <OrderBookContainer
+              auctionIdentifier={auctionIdentifier}
+              auctionState={auctionState}
+              derivedAuctionInfo={derivedAuctionInfo}
+            />
+          </GridCol>
+          <GridCol>
             <Wrap>
               <SectionTitle as="h2">
                 {auctionState === AuctionState.CLAIMING ? 'Claiming Proceeds' : 'Place Order'}
@@ -85,13 +97,6 @@ const AuctionBody = (props: AuctionBodyProps) => {
                 derivedAuctionInfo={derivedAuctionInfo}
               />
             )}
-          </GridCol>
-          <GridCol>
-            <OrderBookContainer
-              auctionIdentifier={auctionIdentifier}
-              auctionState={auctionState}
-              derivedAuctionInfo={derivedAuctionInfo}
-            />
           </GridCol>
         </Grid>
       )}
