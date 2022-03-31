@@ -130,7 +130,7 @@ const DisconnectButton = styled(Button)`
   height: 28px;
   line-height: 1;
   width: 100%;
-  font-family: 'NeueHaasGroteskText', sans-serif;
+  font-family: 'Neue Haas Grotesk Display Pro', sans-serif;
 `
 
 const UserDropdownButton = () => {
