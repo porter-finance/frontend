@@ -13,12 +13,12 @@ const StyledDialogOverlay = styled(DialogOverlay)`
   align-items: center;
   background-color: ${({ theme }) => theme.modal.overlay.backgroundColor};
   display: flex;
-  height: 100vh;
   justify-content: center;
   left: 0;
   position: fixed;
   top: 0;
   width: 100vw;
+  height: 100vh;
   z-index: 100000;
 `
 

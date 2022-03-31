@@ -8,5 +8,4 @@ export const MainScroll = styled.div`
   overflow: auto;
   position: relative;
   z-index: 1;
-  padding: 45px 0 0;
 `
