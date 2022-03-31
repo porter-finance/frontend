@@ -5,7 +5,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['NeueHaasGroteskText', ...defaultTheme.fontFamily.sans],
+        sans: ['Neue Haas Grotesk Display Pro', ...defaultTheme.fontFamily.sans],
       },
     },
   },
