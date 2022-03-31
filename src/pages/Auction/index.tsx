@@ -131,7 +131,7 @@ const Auction: React.FC = () => {
                   fill="white"
                 />
               </svg>
-              <p className="ml-2">Offerings</p>
+              <p className="ml-2 text-sm font-medium">Offerings</p>
             </div>
             <div className="flex items-center content-center justify-between ...">
               <div className="flex">
@@ -199,8 +199,10 @@ const Auction: React.FC = () => {
                   </svg>
                 </div>
                 <div>
-                  <h1 className="text-3xl text-white">Uniswap</h1>
-                  <p className="text-blue-100">UNI CONVERT 24 AUG 2022 2p 25c USDC </p>
+                  <h1 className="text-[32px] text-white">Uniswap</h1>
+                  <p className="text-blue-100 text-sm font-medium">
+                    UNI CONVERT 24 AUG 2022 2p 25c USDC
+                  </p>
                 </div>
               </div>
               <div className="py-8">

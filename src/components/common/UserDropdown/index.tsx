@@ -7,7 +7,6 @@ import { useWeb3React } from '@web3-react/core'
 import { useActiveWeb3React } from '../../../hooks'
 import { getChainName, truncateStringInTheMiddle } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
-import { ButtonType } from '../../buttons/buttonStylingTypes'
 import { Dropdown, DropdownItem, DropdownPosition } from '../../common/Dropdown'
 import { ChevronRight } from '../../icons/ChevronRight'
 import { TransactionsModal } from '../../modals/TransactionsModal'
@@ -94,44 +93,11 @@ const DropdownItemStyled = styled(DropdownItem)`
   }
 `
 
-const Item = styled.div<{ hasOnClick?: boolean; disabled?: boolean; hide?: boolean }>`
-  align-items: center;
-  border-bottom: 1px solid ${({ theme }) => theme.border};
-  color: ${({ theme }) => theme.dropdown.item.color};
-  cursor: ${(props) => (props.hasOnClick ? 'pointer' : 'default')};
+const Item = styled.li<{ hasOnClick?: boolean; disabled?: boolean; hide?: boolean }>`
   display: ${(props) => (props.hide ? 'none' : 'flex')};
-  font-size: 13px;
-  justify-content: space-between;
-  line-height: 1.2;
-  padding: 12px;
-  width: 100%;
-
-  &:hover {
-    background-color: ${(props) =>
-      props.hasOnClick ? props.theme.dropdown.item.backgroundColorHover : 'transparent'};
-  }
-
-  ${(props) => props.disabled && 'pointer-events: none;'}
 `
 
-const Title = styled.div`
-  padding-right: 10px;
-`
-
-const Value = styled.div`
-  font-weight: 600;
-  text-transform: capitalize;
-  position: relative;
-`
-
-const DisconnectButton = styled(Button)`
-  border-radius: 4px;
-  font-size: 14px;
-  height: 28px;
-  line-height: 1;
-  width: 100%;
-  font-family: 'Neue Haas Grotesk Display Pro', sans-serif;
-`
+const DisconnectButton = styled(Button)``
 
 const UserDropdownButton = () => {
   const { account } = useWeb3React()
@@ -230,31 +196,24 @@ export const UserDropdown: React.FC<Props> = (props) => {
     ]
 
     return (
-      <Content>
-        {items.map((item, index) => {
-          return (
-            <Item
-              hasOnClick={item.onClick && item.onClick ? true : false}
-              key={index}
-              onClick={item.onClick && item.onClick}
-            >
-              <Title>{item.title}</Title>
-              <Value>{item.value}</Value>
-            </Item>
-          )
-        })}
-
-        <Item>
-          <DisconnectButton
-            buttonType={ButtonType.danger}
-            onClick={() => {
-              disconnect()
-            }}
+      <ul className="menu p-2 shadow bg-base-100 rounded-box w-52" tabIndex={0}>
+        {items.map((item, index) => (
+          <Item
+            hasOnClick={item.onClick && item.onClick ? true : false}
+            key={index}
+            onClick={item.onClick && item.onClick}
           >
-            Disconnect
-          </DisconnectButton>
-        </Item>
-      </Content>
+            <div className="justify-between">
+              <span>{item.title}</span>
+              <span>{item.value}</span>
+            </div>
+          </Item>
+        ))}
+
+        <button className="mt-5 btn btn-xs btn-error" onClick={disconnect}>
+          Disconnect
+        </button>
+      </ul>
     )
   }
 

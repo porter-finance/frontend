@@ -43,8 +43,10 @@ module.exports = {
   rules: {
     '@typescript-eslint/explicit-function-return-type': 'off',
     'prettier/prettier': ['error', { endOfLine: 'auto' }],
-    'import/no-extraneous-dependencies':
-      '["error", { "dependencies": true , "devDependencies": true }]',
+    'import/no-extraneous-dependencies': [
+      'error',
+      { optionalDependencies: false, peerDependencies: false },
+    ],
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/ban-types': 'off',
     'react/prop-types': 'off',
@@ -64,10 +66,6 @@ module.exports = {
     'no-warning-comments': 0,
     'import/extensions': 0,
     'import/no-unresolved': 0,
-    'import/no-extraneous-dependencies': [
-      'error',
-      { optionalDependencies: false, peerDependencies: false },
-    ],
     'import/order': [
       'error',
       {

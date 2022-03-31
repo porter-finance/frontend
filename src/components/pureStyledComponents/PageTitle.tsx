@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 export const PageTitle = styled.h1`
-  color: ${({ theme }) => theme.text1};
+  color: white;
   font-size: 24px;
   font-weight: 400;
   line-height: 1.2;

@@ -14,11 +14,11 @@ const Wrapper = styled.nav`
 
 const Item = styled(NavLink)`
   align-items: center;
-  color: #eeefeb;
+  color: #ffffff;
   cursor: pointer;
   display: flex;
   font-size: 16px;
-  font-weight: 400;
+  font-weight: 500;
   height: 100%;
   justify-content: center;
   margin-right: 50px;
@@ -26,10 +26,11 @@ const Item = styled(NavLink)`
 
   &:hover,
   &.active {
-    color: ${({ theme }) => theme.primary1};
+    color: #eeefeb;
+    opacity: 0.5;
 
     .fill {
-      fill: ${({ theme }) => theme.primary1};
+      fill: #eeefeb;
     }
   }
 
