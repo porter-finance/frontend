@@ -26,8 +26,8 @@ const App: React.FC = () => {
   return (
     <Suspense fallback={null}>
       <MainWrapper>
-        <Header />
         <MainScroll>
+          <Header />
           <Popups />
           <ReactTooltip
             arrowColor="#001429"
@@ -42,7 +42,7 @@ const App: React.FC = () => {
           />
           {showTopWarning && <TopDisclaimer />}
           <span id="topAnchor" />
-          <Inner>
+          <Inner style={{ marginTop: -112 }}>
             <DarkModeQueryParamReader />
             <Web3ReactManager>
               <Routes />
