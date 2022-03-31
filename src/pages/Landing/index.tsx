@@ -198,7 +198,7 @@ export const Landing: React.FC = () => {
   return (
     <>
       <Welcome>
-        <WelcomeTextBlock>
+        <WelcomeTextBlock className="-mt-5">
           <WelcomeTitle>
             The fairest mechanism
             <br />
