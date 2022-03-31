@@ -24,9 +24,11 @@ There is an auction ETH for DAI
 
 #### How do I claim my tokens from the auction?
 
-Bidders: After the auction has ended, and the settlement transaction has been mined, you can click on the `claim` button on the interface.
+Bidders: After the auction has ended, and the settlement transaction has been mined, you can click on the `claim` button
+on the interface.
 
-Auctioneers: After the auction time has ended, submit the transaction to settle the auction. Find an [example of the command here](https://ido-ux.dev.gnosisdev.com/#/docs/participate-as-auctioneer#topAnchor).
+Auctioneers: After the auction time has ended, submit the transaction to settle the auction. Find
+an [example of the command here](https://ido-ux.dev.gnosisdev.com/#/docs/participate-as-auctioneer).
 
 #### Can I know what the closing price will be?
 

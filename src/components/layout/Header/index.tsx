@@ -160,7 +160,7 @@ export const Component: React.FC = (props) => {
         <Inner>
           <ButtonMenuStyled className={mobileMenuVisible && 'active'} onClick={mobileMenuToggle} />
           {mobileMenuVisible && <Mobilemenu onClose={() => setMobileMenuVisible(false)} />}
-          <LogoLink className="logoLink" to="/#topAnchor">
+          <LogoLink className="logoLink" to="/">
             <Logo />
           </LogoLink>
           <Menu />

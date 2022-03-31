@@ -156,7 +156,7 @@ export const Terms: React.FC = () => {
             </LiMultiNumber>
             <LiMultiNumber>
               A detailed step-by-step guide on how to use the Platform may be found in the{' '}
-              <HashLink to="/docs#topAnchor">&quot;Docs&quot; section on the Platform</HashLink>.
+              <HashLink to="/docs">&quot;Docs&quot; section on the Platform</HashLink>.
             </LiMultiNumber>
             <LiMultiNumber>
               <span>To use the Platform you require: </span>

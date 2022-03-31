@@ -292,7 +292,7 @@ const HighestVolumeAuctions: FC<HVAuctionsProps> = ({ highestVolumeAuctions }) =
           {auctions.map((auction) => (
             <StyledTr
               key={auction.auctionId}
-              to={`/auctions/${auction.auctionId}/${Number(auction.chainId)}#topAnchor`}
+              to={`/auctions/${auction.auctionId}/${Number(auction.chainId)}`}
             >
               <StyledTd>
                 <StyledDoubleLogo

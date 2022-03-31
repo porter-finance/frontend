@@ -58,7 +58,7 @@ export const BondOverviewCommon = ({ allBonds, title }: OverviewProps) => {
           size="26px"
         />
       ),
-      url: `/bonds/${item.id}#topAnchor`,
+      url: `/bonds/${item.id}`,
     })
   })
 
