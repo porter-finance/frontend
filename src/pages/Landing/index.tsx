@@ -221,7 +221,7 @@ export const Landing: React.FC = () => {
               active auctions
             </AuctionsText>
           )}
-          <AuctionsButton to="/overview#topAnchor">
+          <AuctionsButton to="/auctions#topAnchor">
             <SendIcon />
             View Auctions
           </AuctionsButton>
@@ -273,7 +273,7 @@ export const Landing: React.FC = () => {
         </ImageBlock>
       </BlockGrid>
       <ButtonWrapper>
-        <AuctionsButton to="/overview#topAnchor">
+        <AuctionsButton to="/auctions#topAnchor">
           <SendIcon />
           View Auctions
         </AuctionsButton>

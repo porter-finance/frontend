@@ -14,7 +14,8 @@ const Wrapper = styled.nav`
 
 const Item = styled(NavLink)`
   align-items: center;
-  color: #ffffff;
+  color: #eeefeb;
+  opacity: 0.5;
   cursor: pointer;
   display: flex;
   font-size: 16px;
@@ -24,8 +25,7 @@ const Item = styled(NavLink)`
   margin-right: 50px;
   text-decoration: none;
 
-  &:hover,
-  &.active {
+  &:hover {
     color: #eeefeb;
     opacity: 0.5;
 
@@ -35,8 +35,14 @@ const Item = styled(NavLink)`
   }
 
   &.active {
+    color: #ffffff;
+    opacity: 1;
     cursor: default;
     pointer-events: none;
+
+    .fill {
+      fill: #eeefeb;
+    }
   }
 `
 

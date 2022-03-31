@@ -1,7 +1,7 @@
 export const navItems = [
   {
     title: 'Offerings',
-    url: '/overview#topAnchor',
+    url: '/auctions',
   },
   {
     title: 'Products',

@@ -268,7 +268,7 @@ const Auction: React.FC = () => {
           <WarningModal
             content={`This auction doesn't exist or it hasn't started yet.`}
             isOpen
-            onDismiss={() => navigate('/overview')}
+            onDismiss={() => navigate('/auctions')}
             title="Warning!"
           />
         </>
