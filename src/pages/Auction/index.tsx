@@ -117,7 +117,7 @@ const Auction: React.FC = () => {
       {isLoading && <InlineLoading />}
       {!isLoading && !invalidAuction && (
         <>
-          <div>
+          <div className="mb-5">
             <div className="flex items-center content-center text-white">
               <svg
                 fill="none"
@@ -131,9 +131,16 @@ const Auction: React.FC = () => {
                   fill="white"
                 />
               </svg>
-              <p className="ml-2 text-sm font-medium">Offerings</p>
+              <p
+                className="ml-2 text-sm font-medium"
+                style={{
+                  letterSpacing: '0.1em',
+                }}
+              >
+                Offerings
+              </p>
             </div>
-            <div className="flex items-center content-center justify-between ...">
+            <div className="py-2 flex items-center content-center justify-between ...">
               <div className="flex">
                 <div className="self-center mr-5">
                   <svg
@@ -199,33 +206,31 @@ const Auction: React.FC = () => {
                   </svg>
                 </div>
                 <div>
-                  <h1 className="text-[32px] text-white">Uniswap</h1>
+                  <h1 className="text-3xl text-white">Uniswap</h1>
                   <p className="text-blue-100 text-sm font-medium">
                     UNI CONVERT 24 AUG 2022 2p 25c USDC
                   </p>
                 </div>
               </div>
-              <div className="py-8">
+              <div className="flex">
                 <button className="btn btn-sm px-5 rounded-full bg-transparent text-white border-blue-100">
                   <svg
                     fill="none"
-                    height="12"
-                    viewBox="0 0 18 18"
-                    width="18"
+                    height="14"
+                    viewBox="0 0 14 14"
+                    width="14"
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
-                      d="M8.27227 0.999565L16.9999 8.9999L8.27227 17.0002"
+                      d="M6.70952 7.00007C6.70952 10.0191 4.30434 12.5204 1.21429 12.766V1.23413C4.30434 1.4797 6.70952 3.98105 6.70952 7.00007Z"
                       stroke="white"
-                      strokeMiterlimit="10"
                     />
                     <path
-                      d="M0.999999 0.999565L9.72764 8.9999L1 17.0002"
+                      d="M7.29048 6.99993C7.29048 3.98091 9.69566 1.47956 12.7857 1.23399L12.7857 12.7659C9.69566 12.5203 7.29048 10.0189 7.29048 6.99993Z"
                       stroke="white"
-                      strokeMiterlimit="10"
                     />
                   </svg>
-                  <span className="ml-2">Convert</span>
+                  <span className="ml-2 text-sm">Auction</span>
                 </button>
                 <button className="btn btn-sm px-5 rounded-full ml-2 text-indigo-500 bg-white">
                   <svg
@@ -235,7 +240,7 @@ const Auction: React.FC = () => {
                   >
                     <circle cx={4} cy={4} r={3} />
                   </svg>
-                  ongoing
+                  <span className="ml-2 text-sm">Ongoing</span>
                 </button>
               </div>
             </div>
