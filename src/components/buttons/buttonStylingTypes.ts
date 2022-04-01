@@ -103,7 +103,7 @@ export const ButtonCSS = css<ButtonCommonProps>`
   transition: all 0.15s ease-out;
   user-select: none;
   white-space: nowrap;
-  font-family: 'Averta', sans-serif;
+  font-family: 'Neue Haas Grotesk Display Pro', sans-serif;
 
   ${(props) => getButtonTypeStyles(props.buttonType)}
 `

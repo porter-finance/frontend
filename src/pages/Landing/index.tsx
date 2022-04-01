@@ -198,7 +198,7 @@ export const Landing: React.FC = () => {
   return (
     <>
       <Welcome>
-        <WelcomeTextBlock>
+        <WelcomeTextBlock className="-mt-5">
           <WelcomeTitle>
             The fairest mechanism
             <br />
@@ -221,11 +221,11 @@ export const Landing: React.FC = () => {
               active auctions
             </AuctionsText>
           )}
-          <AuctionsButton to="/overview#topAnchor">
+          <AuctionsButton to="/auctions">
             <SendIcon />
             View Auctions
           </AuctionsButton>
-          <AuctionsButton to="/bonds#topAnchor">
+          <AuctionsButton to="/bonds">
             <SendIcon />
             View Bonds
           </AuctionsButton>
@@ -273,7 +273,7 @@ export const Landing: React.FC = () => {
         </ImageBlock>
       </BlockGrid>
       <ButtonWrapper>
-        <AuctionsButton to="/overview#topAnchor">
+        <AuctionsButton to="/auctions">
           <SendIcon />
           View Auctions
         </AuctionsButton>
