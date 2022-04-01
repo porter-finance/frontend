@@ -1,8 +1,10 @@
 import styled from 'styled-components'
 
 export const BaseCard = styled.div<{ noPadding?: boolean }>`
-  background-color: ${({ theme }) => theme.cards.backgroundColor};
-  border-radius: ${({ theme }) => theme.cards.borderRadius};
+  background: #181a1c;
+  box-shadow: 0px 0px 1px rgba(30, 30, 30, 0.32), 0px 8px 16px rgba(0, 0, 0, 0.16);
+  border-radius: 8px;
+
   border: ${({ theme }) => theme.cards.border};
   display: flex;
   flex-direction: column;

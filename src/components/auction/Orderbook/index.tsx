@@ -14,12 +14,10 @@ import OrderBookChart, { OrderBookError } from '../OrderbookChart'
 import { processOrderbookData } from '../OrderbookWidget'
 
 const Wrapper = styled(BaseCard)`
-  align-items: center;
   display: flex;
-  justify-content: center;
   max-width: 100%;
   height: 100%;
-  min-height: 352px;
+  min-height: 372px;
   min-width: 100%;
 `
 
@@ -65,20 +63,18 @@ export const OrderBook: React.FC<OrderbookProps> = (props) => {
 
   return (
     <>
-      <Wrapper>
-        {orderbookAuctionId != auctionId || chainId != orderbookChainId ? (
-          <InlineLoading size={SpinnerSize.small} />
-        ) : error || !asks || asks.length === 0 ? (
-          <OrderBookError error={error} />
-        ) : (
-          <OrderBookChart
-            baseToken={baseToken}
-            chainId={chainId}
-            data={processedOrderbook}
-            quoteToken={quoteToken}
-          />
-        )}
-      </Wrapper>
+      {orderbookAuctionId != auctionId || chainId != orderbookChainId ? (
+        <InlineLoading size={SpinnerSize.small} />
+      ) : error || !asks || asks.length === 0 ? (
+        <OrderBookError error={error} />
+      ) : (
+        <OrderBookChart
+          baseToken={baseToken}
+          chainId={chainId}
+          data={processedOrderbook}
+          quoteToken={quoteToken}
+        />
+      )}
     </>
   )
 }
