@@ -6,7 +6,7 @@ import { NetworkIcon } from '../../icons/NetworkIcon'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
 
 const BondHeader = ({ bondId }) => (
-  <>
+  <div className="mt-16">
     <Title>Bond Details</Title>
     <SubTitleWrapperStyled>
       <SubTitle>
@@ -17,7 +17,7 @@ const BondHeader = ({ bondId }) => (
       </SubTitle>
       <CopyButton copyValue={bondId} title="Copy bond id" />
     </SubTitleWrapperStyled>
-  </>
+  </div>
 )
 const Title = styled(PageTitle)`
   margin-bottom: 2px;
