@@ -6,32 +6,26 @@ const Wrapper = styled.span`
   display: flex;
 `
 
-const LogoSVG = styled.svg`
-  .text {
-    font-family: ${(props) => props.theme.fonts.fontFamily};
-    font-size: 24px;
-    font-weight: 700;
-  }
-  .text,
-  .fill {
-    fill: ${({ theme }) => theme.bg6};
-  }
-`
-
 export const Logo: React.FC = (props) => {
   return (
     <Wrapper {...props}>
-      <LogoSVG height="33" viewBox="0 0 240 33" width="240" xmlns="http://www.w3.org/2000/svg">
-        <text className="text" transform="translate(40.5 24)">
-          <tspan x="0" y="0">
-            Porter Finance
-          </tspan>
-        </text>
-        <path
-          className="fill"
-          d="M17 3a15 15 0 0 1 10.607 25.607A14.9 14.9 0 0 1 17 33zm-2 27A15 15 0 0 1 4.394 4.394 14.9 14.9 0 0 1 15 0v30z"
-        />
-      </LogoSVG>
+      <svg
+        fill="none"
+        height="37"
+        viewBox="0 0 44 37"
+        width="44"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <g clipPath="url(#clip0_8725_2010)">
+          <path d="M29.9377 0L0 18.4908V32.6193L29.9377 14.1285V0Z" fill="white" />
+          <path d="M29.9377 14.1458V28.2742L44.0001 36.96V22.8315L29.9377 14.1458Z" fill="white" />
+        </g>
+        <defs>
+          <clipPath id="clip0_8725_2010">
+            <rect fill="white" height="36.96" width="44" />
+          </clipPath>
+        </defs>
+      </svg>
     </Wrapper>
   )
 }

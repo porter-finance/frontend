@@ -23,12 +23,13 @@ const ActionButton = styled(Button)`
 interface Props {
   connector?: AbstractConnector
   error?: boolean
+  reset: () => void
   setPendingError: (error: boolean) => void
   tryActivation: (connector: AbstractConnector) => void
 }
 
 const PendingView: React.FC<Props> = (props) => {
-  const { connector, error = false, setPendingError, tryActivation, ...restProps } = props
+  const { connector, error = false, reset, setPendingError, tryActivation, ...restProps } = props
 
   return (
     <Wrapper {...restProps}>
@@ -48,6 +49,9 @@ const PendingView: React.FC<Props> = (props) => {
           >
             Try Again
           </ActionButton>
+          <button className="btn btn-link w-full" onClick={reset}>
+            Go back
+          </button>
         </>
       )}
       {!error && <LoadingWrapper message={'Connecting...'} />}

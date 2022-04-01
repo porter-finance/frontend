@@ -17,9 +17,7 @@ import useShowCookies from '../hooks/useShowCookies'
 import useShowTopWarning from '../hooks/useShowTopWarning'
 import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
 
-const Inner = styled(InnerContainer)`
-  padding-top: 22px;
-`
+const Inner = styled(InnerContainer)``
 
 const App: React.FC = () => {
   const { setShowCookiesBanner, showCookiesBanner } = useShowCookies()
@@ -28,8 +26,8 @@ const App: React.FC = () => {
   return (
     <Suspense fallback={null}>
       <MainWrapper>
-        <Header />
         <MainScroll>
+          <Header />
           <Popups />
           <ReactTooltip
             arrowColor="#001429"
@@ -44,7 +42,7 @@ const App: React.FC = () => {
           />
           {showTopWarning && <TopDisclaimer />}
           <span id="topAnchor" />
-          <Inner>
+          <Inner style={{ marginTop: -112 }}>
             <DarkModeQueryParamReader />
             <Web3ReactManager>
               <Routes />

@@ -24,7 +24,6 @@ import TransactionUpdater from './state/transactions/updater'
 import UserUpdater from './state/user/updater'
 import ThemeProvider from './theme'
 import { GlobalStyle } from './theme/globalStyle'
-import 'sanitize.css'
 import './index.css'
 
 const apolloClient = new ApolloClient({

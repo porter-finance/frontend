@@ -12,9 +12,13 @@ Porter Finance enables permissionless P2P auctions applying a batch auction mech
 
 #### Typography
 
-Typography is a major part of the Porter brand. We've taken care to select a family of fonts that promote legibility and accessibility.
+Typography is a major part of the Porter brand. We've taken care to select a family of fonts that promote legibility and
+accessibility.
 
-We use [**Averta** font family](https://www.fonts.com/font/intelligent-design/averta?QueryFontType=Web&src=GoogleWebFonts) as a first choice. Otherwise we use [**Poppins**](https://fonts.google.com/specimen/Poppins?query=Poppins).
+We use [**
+Neue Haas Grotesk Display Pro** font family](https://www.fonts.com/font/intelligent-design/Neue Haas Grotesk Display
+Pro?QueryFontType=Web&src=GoogleWebFonts)
+as a first choice. Otherwise we use [**Poppins**](https://fonts.google.com/specimen/Poppins?query=Poppins).
 
 #### Colors
 
