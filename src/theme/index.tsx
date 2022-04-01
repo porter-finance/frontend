@@ -50,7 +50,7 @@ export function colors(darkMode: boolean): Colors {
     error: '#e73c3c',
     green1: ' #008c73',
     green2: ' #00cba7',
-    mainBackground: darkMode ? '#001429' : '#F7F8FA',
+    mainBackground: darkMode ? '#131415' : '#F7F8FA',
     modalBG: darkMode ? 'rgba(0,0,0,0.85)' : 'rgba(0,0,0,0.6)',
     primary1: darkMode ? '#e8663d' : '#e8663d',
     primary2: darkMode ? '#174172' : '#174172',
@@ -155,8 +155,7 @@ export const theme = (darkMode: boolean): DefaultTheme => ({
     paddingHorizontal: '14px',
   },
   cards: {
-    backgroundColor: darkMode ? '#001429' : '#F7F8FA',
-    border: `1px solid ${darkMode ? '#174172' : '#174172'}`,
+    backgroundColor: '#181A1C',
     borderRadius: '12px ',
     paddingHorizontal: '20px',
     paddingVertical: '25px',
