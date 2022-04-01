@@ -8,7 +8,7 @@ import { PageTitle } from '../../pureStyledComponents/PageTitle'
 import AuctionInfoCard from '../AuctionInfoCard'
 
 const Wrapper = styled.div`
-  margin: 0 auto 32px;
+  margin: 75px auto 32px;
   max-width: 100%;
   width: 400px;
 
@@ -55,7 +55,7 @@ export const FeaturedAuctions: React.FC<Props> = (props) => {
         </EmptyContentWrapper>
       )}
       {auctions && auctions.length > 0 && (
-        <Row>
+        <Row className="mt-5">
           {auctions.map((auction, index) => (
             <AuctionInfoCard auctionInfo={auction} key={index} />
           ))}
