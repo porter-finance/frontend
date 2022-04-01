@@ -4,7 +4,10 @@ import { ThemeToggle } from '../ThemeToggle'
 
 export const Footer: React.FC = ({ ...restProps }) => {
   return (
-    <footer className="footer items-center p-4 bg-neutral text-neutral-content" {...restProps}>
+    <footer
+      className="footer items-center p-4 py-10 mt-5 bg-neutral text-neutral-content"
+      {...restProps}
+    >
       <div className="items-center grid-flow-col">
         <p>Porter Finance</p>
       </div>
