@@ -21,7 +21,7 @@ interface WrapProps {
   alignItems?: any
 }
 
-const Wrap = styled.div<Partial<CSS.Properties & WrapProps>>`
+export const Wrap = styled.div<Partial<CSS.Properties & WrapProps>>`
   display: flex;
   align-items: ${(props) =>
     props.alignItems
@@ -64,7 +64,7 @@ const Wrap = styled.div<Partial<CSS.Properties & WrapProps>>`
   }
 `
 
-const SectionTitle = styled(PageTitle)`
+export const SectionTitle = styled(PageTitle)`
   margin-bottom: 0;
   margin-top: 0;
 `
@@ -129,14 +129,17 @@ export const OrderBookContainer = (props) => {
 
   return (
     <>
-      <Wrap alignItems={['flex-start', 'center']} flexDir={['column', 'row']} margin={'0 0 16px 0'}>
-        <SectionTitle as="h2">Order graphs</SectionTitle>
-      </Wrap>
-      <OrderBook derivedAuctionInfo={derivedAuctionInfo} />
-      <div style={{ marginBottom: 20 }} />
-      <Wrap alignItems={['flex-start', 'center']} flexDir={['column', 'row']} margin={'0 0 16px 0'}>
-        <SectionTitle as="h2">Orderbook</SectionTitle>
-        <Wrap flexDir={['row-reverse', 'row']} margin={['20px 0', '0']}>
+      <div className="card bg-neutral text-neutral-content h-full mb-8">
+        <div className="card-body">
+          <h2 className="card-title text-gray-100 font-normal text-xl">Orderbook graph</h2>
+          <OrderBook derivedAuctionInfo={derivedAuctionInfo} />
+        </div>
+      </div>
+
+      <div className="card bg-neutral text-neutral-content h-full mb-8">
+        <div className="card-body">
+          <h2 className="card-title text-gray-100 font-normal text-xl">Orderbook</h2>
+
           {granularityOptions.length > 0 && (
             <StyledDropdown
               disabled={!granularity}
@@ -150,9 +153,10 @@ export const OrderBookContainer = (props) => {
               ))}
             />
           )}
-        </Wrap>
-      </Wrap>
-      <OrderBookTable derivedAuctionInfo={derivedAuctionInfo} granularity={granularity} />
+
+          <OrderBookTable derivedAuctionInfo={derivedAuctionInfo} granularity={granularity} />
+        </div>
+      </div>
     </>
   )
 }

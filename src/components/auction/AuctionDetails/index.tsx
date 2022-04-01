@@ -110,7 +110,6 @@ const BreakCSS = css`
 `
 
 const Break = styled.div`
-  background-color: ${({ theme }) => theme.primary1};
   border-radius: 3px;
   margin: auto;
   ${BreakCSS}
@@ -216,11 +215,6 @@ const ExtraDetailsAnimWrapper = styled.div<{ wrapperHeight?: number }>`
 `
 
 const ExtraDetails = styled.div`
-  border-bottom-left-radius: 12px;
-  border-bottom-right-radius: 12px;
-  border-bottom: solid 1px ${({ theme }) => theme.primary2};
-  border-left: solid 1px ${({ theme }) => theme.primary2};
-  border-right: solid 1px ${({ theme }) => theme.primary2};
   column-gap: 15px;
   display: grid;
   grid-template-columns: 1fr;
@@ -489,8 +483,10 @@ const AuctionDetails = (props: Props) => {
   }
 
   return (
-    <Wrapper>
-      <MainDetails>
+    <div className="card bg-neutral text-neutral-content h-full mb-8">
+      <div className="card-body">
+        <h2 className="card-title text-gray-100 font-normal text-xl">Auction information</h2>
+
         <CellPair>
           <Cell
             itemKey={
@@ -553,7 +549,6 @@ const AuctionDetails = (props: Props) => {
             }
           />
         </CellPair>
-        <Timer derivedAuctionInfo={derivedAuctionInfo} />
         <CellPair>
           <Cell
             itemKey={
@@ -596,28 +591,21 @@ const AuctionDetails = (props: Props) => {
             }
           />
         </CellPair>
-      </MainDetails>
-      <ExtraDetailsWrapper>
-        <ToggleExtraDetails onClick={toggleExtraDetails}>
-          {showMoreDetails ? 'Less' : 'More Details'} <DoubleChevron isOpen={showMoreDetails} />
-        </ToggleExtraDetails>
-        <ExtraDetailsAnimWrapper wrapperHeight={showMoreDetails ? extraDetailsHeight : 0}>
-          <ExtraDetails ref={componentRef}>
-            {extraDetails.map((item, index) => (
-              <ExtraDetailsItem
-                key={index}
-                progress={item.progress}
-                showEmptyProgressColumn={showEmptyProgressColumn(index)}
-                title={item.title}
-                tooltip={item.tooltip}
-                url={item.url}
-                value={item.value}
-              />
-            ))}
-          </ExtraDetails>
-        </ExtraDetailsAnimWrapper>
-      </ExtraDetailsWrapper>
-    </Wrapper>
+        <ExtraDetails ref={componentRef}>
+          {extraDetails.map((item, index) => (
+            <ExtraDetailsItem
+              key={index}
+              progress={item.progress}
+              showEmptyProgressColumn={showEmptyProgressColumn(index)}
+              title={item.title}
+              tooltip={item.tooltip}
+              url={item.url}
+              value={item.value}
+            />
+          ))}
+        </ExtraDetails>
+      </div>
+    </div>
   )
 }
 

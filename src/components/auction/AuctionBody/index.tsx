@@ -14,7 +14,6 @@ import OrdersTable from '../OrdersTable'
 const Grid = styled.div`
   display: flex;
   flex-direction: column;
-  margin: 0 0 40px;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.xxl}) {
     display: grid;
@@ -78,25 +77,28 @@ const AuctionBody = (props: AuctionBodyProps) => {
             />
           </GridCol>
           <GridCol>
-            <Wrap>
-              <SectionTitle as="h2">
-                {auctionState === AuctionState.CLAIMING ? 'Claiming Proceeds' : 'Place Order'}
-              </SectionTitle>
-            </Wrap>
-            {(auctionState === AuctionState.ORDER_PLACING ||
-              auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && (
-              <OrderPlacement
-                auctionIdentifier={auctionIdentifier}
-                derivedAuctionInfo={derivedAuctionInfo}
-              />
-            )}
-            {(auctionState === AuctionState.CLAIMING ||
-              auctionState === AuctionState.PRICE_SUBMISSION) && (
-              <Claimer
-                auctionIdentifier={auctionIdentifier}
-                derivedAuctionInfo={derivedAuctionInfo}
-              />
-            )}
+            <div className="card bg-neutral text-neutral-content mb-8">
+              <div className="card-body">
+                <h2 className="card-title text-gray-100 font-normal text-xl">
+                  {auctionState === AuctionState.CLAIMING ? 'Claiming Proceeds' : 'Place Order'}
+                </h2>
+
+                {(auctionState === AuctionState.ORDER_PLACING ||
+                  auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && (
+                  <OrderPlacement
+                    auctionIdentifier={auctionIdentifier}
+                    derivedAuctionInfo={derivedAuctionInfo}
+                  />
+                )}
+                {(auctionState === AuctionState.CLAIMING ||
+                  auctionState === AuctionState.PRICE_SUBMISSION) && (
+                  <Claimer
+                    auctionIdentifier={auctionIdentifier}
+                    derivedAuctionInfo={derivedAuctionInfo}
+                  />
+                )}
+              </div>
+            </div>
           </GridCol>
         </Grid>
       )}
