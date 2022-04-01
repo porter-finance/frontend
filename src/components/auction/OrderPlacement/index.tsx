@@ -108,9 +108,9 @@ const Warning = styled.div`
 `
 
 const WarningText = styled.div`
-  color: ${({ theme }) => theme.text1};
+  color: #9f9f9f;
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 300;
   line-height: 1.2;
   margin-left: 8px;
   position: relative;
