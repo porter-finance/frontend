@@ -1,41 +1,10 @@
 import React from 'react'
 import styled from 'styled-components'
 
-const Wrapper = styled.button<{ disabled?: boolean }>`
-  align-items: center;
-  background-color: transparent;
-  border-radius: 12px;
-  border: solid 1px ${({ theme }) => theme.primary2};
-  cursor: pointer;
-  display: flex;
-  height: 54px;
-  justify-content: flex-start;
-  margin: 0 0 16px;
-  padding: 15px 18px;
-  width: 100%;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-
-  &:hover {
-    background-color: ${({ theme }) => theme.bg7};
-  }
-
+const Wrapper = styled.li<{ disabled?: boolean }>`
   ${(props) => props.disabled && `&[disabled] { opacity: 0.5; cursor: not-allowed;}`}
   ${(props) => props.disabled && `&[disabled]:hover { background-color: transparent; }`}
 `
-
-const IconWrapper = styled.div<{ size?: number }>`
-  align-items: center;
-  display: flex;
-  height: 28px;
-  justify-content: center;
-  margin-right: 12px;
-  width: 28px;
-`
-
-const TextWrapper = styled.div``
 
 const Text = styled.div`
   color: ${({ theme }) => theme.text1};
@@ -71,14 +40,21 @@ const Option: React.FC<Props> = (props) => {
   const { disabled = false, icon, onClick = null, subText = null, text, ...restProps } = props
 
   return (
-    <Wrapper disabled={disabled} onClick={onClick} {...restProps}>
-      <IconWrapper>
-        <Image alt={'Icon'} src={icon} />
-      </IconWrapper>
-      <TextWrapper>
-        <Text>{text}</Text>
-        {subText && <SubText>{subText}</SubText>}
-      </TextWrapper>
+    <Wrapper disabled={disabled} onClick={!disabled && onClick} {...restProps}>
+      <a
+        className="flex items-center p-3 text-base font-bold text-gray-900 bg-gray-50 rounded-lg hover:bg-gray-100 group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white"
+        href="#"
+      >
+        <div className="h-4">
+          <Image alt={'Icon'} src={icon} />
+        </div>
+        <span className="flex-1 ml-3 whitespace-nowrap">{text}</span>
+        {text === 'MetaMask' && (
+          <span className="inline-flex items-center justify-center px-2 py-0.5 ml-3 text-xs font-medium text-gray-500 bg-gray-200 rounded dark:bg-gray-700 dark:text-gray-400">
+            Popular
+          </span>
+        )}
+      </a>
     </Wrapper>
   )
 }

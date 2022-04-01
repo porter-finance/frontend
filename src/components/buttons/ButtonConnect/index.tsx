@@ -1,4 +1,3 @@
-import { darken } from 'polished'
 import React, { ButtonHTMLAttributes } from 'react'
 import styled from 'styled-components'
 
@@ -11,7 +10,7 @@ const Wrapper = styled.button`
   align-items: center;
   background: transparent;
   border: none;
-  color: ${({ theme }) => theme.primary1};
+  color: white;
   cursor: pointer;
   display: flex;
   font-size: 16px;
@@ -27,21 +26,21 @@ const Wrapper = styled.button`
   }
 
   .fill {
-    fill: ${({ theme }) => theme.primary1};
+    fill: white;
   }
 
   &:hover {
-    color: ${({ theme }) => darken(0.15, theme.primary1)};
+    color: white;
 
     .fill {
-      fill: ${({ theme }) => darken(0.15, theme.primary1)};
+      fill: white;
     }
   }
 `
 
 const Text = styled.span`
   margin-right: 10px;
-  font-family: 'Averta', sans-serif;
+  font-family: 'Neue Haas Grotesk Display Pro', sans-serif;
 `
 
 export const ButtonConnect: React.FC<ButtonHTMLAttributes<HTMLButtonElement>> = (props) => {
