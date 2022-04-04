@@ -25,6 +25,10 @@ import DoubleLogo from '../../token/DoubleLogo'
 const FieldRowLabelStyled = styled(FieldRowLabel)`
   align-items: center;
   display: flex;
+  font-weight: 400;
+  font-size: 12px;
+  color: #696969;
+  letter-spacing: 0.03em;
 `
 
 const FieldRowLabelStyledText = styled.span`
@@ -80,16 +84,16 @@ const PriceInputPanel = (props: Props) => {
     <>
       <FieldRowWrapper error={error} {...restProps}>
         <FieldRowTop>
-          <FieldRowLabelStyled>
-            <FieldRowLabelStyledText>
-              {invertPrices ? 'Min Bidding Price' : 'Max Bidding Price'}
-            </FieldRowLabelStyledText>
-            <Tooltip
-              text={invertPrices ? 'Min Bidding Price tooltip' : 'Max Bidding Price tooltip'}
-            />
-          </FieldRowLabelStyled>
-        </FieldRowTop>
-        <FieldRowBottom>
+          <FieldRowInput
+            hasError={error}
+            onBlur={() => setReadonly(true)}
+            onFocus={() => setReadonly(false)}
+            onUserSellAmountInput={(val) => {
+              onUserPriceInput(val, invertPrices)
+            }}
+            readOnly={readonly}
+            value={value}
+          />
           {tokens && (
             <>
               <FieldRowToken>
@@ -129,16 +133,16 @@ const PriceInputPanel = (props: Props) => {
               </InvertButton>
             </>
           )}
-          <FieldRowInput
-            hasError={error}
-            onBlur={() => setReadonly(true)}
-            onFocus={() => setReadonly(false)}
-            onUserSellAmountInput={(val) => {
-              onUserPriceInput(val, invertPrices)
-            }}
-            readOnly={readonly}
-            value={value}
-          />
+        </FieldRowTop>
+        <FieldRowBottom>
+          <FieldRowLabelStyled>
+            <FieldRowLabelStyledText>
+              {invertPrices ? 'Min Bidding Price' : 'Max Bidding Price'}
+            </FieldRowLabelStyledText>
+            <Tooltip
+              text={invertPrices ? 'Min Bidding Price tooltip' : 'Max Bidding Price tooltip'}
+            />
+          </FieldRowLabelStyled>
         </FieldRowBottom>
       </FieldRowWrapper>
       <FieldRowInfo infoType={info?.type}>
