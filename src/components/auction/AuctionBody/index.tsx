@@ -83,6 +83,23 @@ const AuctionBody = (props: AuctionBodyProps) => {
                   {auctionState === AuctionState.CLAIMING ? 'Claiming Proceeds' : 'Place Order'}
                 </h2>
 
+                {derivedAuctionInfo && (
+                  <div className="text-sm">
+                    <div style={{ color: '#EEEFEB' }}>
+                      {new Date(
+                        derivedAuctionInfo.orderCancellationEndDate * 1000,
+                      ).toLocaleString()}
+                    </div>
+                    <div
+                      style={{
+                        color: '#696969',
+                      }}
+                    >
+                      Order cancellation cutoff date
+                    </div>
+                  </div>
+                )}
+
                 {(auctionState === AuctionState.ORDER_PLACING ||
                   auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && (
                   <OrderPlacement

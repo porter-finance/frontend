@@ -84,7 +84,7 @@ const Balance = styled.div<{ disabled?: boolean }>`
 
 const Wrap = styled.div`
   display: flex;
-  flex-grow: 1;
+  flex-grow: 0;
   align-items: center;
 `
 
