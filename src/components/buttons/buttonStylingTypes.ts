@@ -91,8 +91,9 @@ export const ButtonCSS = css<ButtonCommonProps>`
   border-width: 1px;
   cursor: pointer;
   display: flex;
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.01em;
+  font-weight: 400;
   height: 44px;
   justify-content: center;
   line-height: 1;
