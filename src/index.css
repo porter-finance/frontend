@@ -39,6 +39,10 @@
     @apply mt-8;
 }
 
+.card-title {
+    @apply mb-4;
+}
+
 .btn-group > .btn:not(:first-of-type) {
     border-top-left-radius: inherit;
     border-bottom-left-radius: inherit;
@@ -47,4 +51,15 @@
 .btn-group > .btn:not(:last-of-type) {
     border-top-right-radius: inherit;
     border-bottom-right-radius: inherit;
+}
+
+.progress-primary::-webkit-progress-value {
+    background: linear-gradient(270deg, #404EED -0.07%, #2B3BF4 100%);
+    border-radius: 4px;
+}
+
+.progress-primary {
+    height: 12px;
+    border-radius: 4px;
+    background: rgba(213, 213, 213, 0.1);
 }

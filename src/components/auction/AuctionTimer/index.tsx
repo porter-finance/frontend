@@ -14,16 +14,6 @@ import {
 export const TIMER_SIZE = '162px'
 const INNER_CIRCLE_SIZE = '138px'
 
-const Wrapper = styled.div`
-  align-items: center;
-  background: ${({ theme }) => theme.primary3};
-  box-shadow: inset 0 0 3px 0 ${({ theme }) => theme.mainBackground};
-  display: flex;
-  justify-content: center;
-  position: relative;
-  width: ${TIMER_SIZE};
-`
-
 const ProgressChart = styled.div<{ progress?: string }>`
   align-items: center;
   background: conic-gradient(
@@ -57,12 +47,27 @@ const CenterCircle = styled.div`
   width: calc(${INNER_CIRCLE_SIZE} - 4px);
 `
 
+const DateTitle = styled.span`
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14px;
+  letter-spacing: 0.1em;
+  color: #696969;
+`
+const DateValue = styled.span`
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 18px;
+  letter-spacing: 0.06em;
+  color: #ffffff;
+`
+
 const Time = styled.div`
-  color: ${({ theme }) => theme.primary1};
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 18px;
+  color: #eeefeb;
   flex-shrink: 1;
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 1.1;
   margin-bottom: 2px;
   min-width: 0;
   text-align: center;
@@ -123,7 +128,7 @@ const formatSeconds = (seconds: number): React.ReactNode => {
 
   return (
     <>
-      {days > 0 && `${days}d `}
+      {days > 0 && `${days} days `}
       {hours >= 0 && hours < 10 && `0`}
       {hours}
       <>
@@ -189,49 +194,60 @@ export const AuctionTimer = (props: AuctionTimerProps) => {
       derivedAuctionInfo?.auctionEndDate,
     )
     // we do this so that the graph is in the same direction as a clock
-    return `${100 - progress}%`
+    return 100 - progress
   }, [derivedAuctionInfo])
 
   return (
-    <Wrapper {...restProps}>
-      <ProgressChart progress={progress}>
+    <div className="" {...restProps}>
+      <div>
         {!auctionState && <TextBig>Loading...</TextBig>}
-        {auctionState === AuctionState.NOT_YET_STARTED && (
-          <TextBig>
-            Auction
-            <br /> not
-            <br />
-            started
-          </TextBig>
-        )}
-        {auctionState === AuctionState.CLAIMING && (
-          <TextBig>
-            Auction
-            <br /> claiming
-          </TextBig>
-        )}
-
+        {auctionState === AuctionState.NOT_YET_STARTED && <TextBig>Auction not started</TextBig>}
+        {auctionState === AuctionState.CLAIMING && <TextBig>Auction claiming</TextBig>}
         {auctionStateTitle && auctionStateTitle}
-      </ProgressChart>
+      </div>
 
       {(auctionState === AuctionState.ORDER_PLACING_AND_CANCELING ||
         auctionState === AuctionState.ORDER_PLACING) && (
         <>
-          <Time>
-            {timeLeft && timeLeft > -1 ? (
-              formatSeconds(timeLeft)
-            ) : (
-              <>
-                --
-                <Blink />
-                --
-                <Blink />
-                --
-              </>
-            )}
-          </Time>
+          <div className="flex flex-col place-items-end mb-5">
+            <div className="flex mb-3">
+              <DateTitle>Time left</DateTitle>
+            </div>
+
+            <Time className="flex">
+              {timeLeft && timeLeft > -1 ? (
+                formatSeconds(timeLeft)
+              ) : (
+                <>
+                  --
+                  <Blink />
+                  --
+                  <Blink />
+                  --
+                </>
+              )}
+            </Time>
+          </div>
         </>
       )}
-    </Wrapper>
+
+      <div className="flex justify-between mb-3">
+        <DateTitle>Start Date</DateTitle>
+        <DateTitle>End Date</DateTitle>
+      </div>
+      <div className="flex justify-between mb-1">
+        <DateValue>
+          {derivedAuctionInfo &&
+            new Date(derivedAuctionInfo?.auctionStartDate * 1000).toLocaleString()}
+        </DateValue>
+        <DateValue>
+          {derivedAuctionInfo &&
+            new Date(derivedAuctionInfo?.auctionEndDate * 1000).toLocaleString()}
+        </DateValue>
+      </div>
+      <div className="flex w-full">
+        <progress className="progress progress-primary w-full" max="100" value={progress} />
+      </div>
+    </div>
   )
 }
