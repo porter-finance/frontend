@@ -1,3 +1,36 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.card {
+    @apply rounded-md;
+}
+
+.btn-group {
+    border-color: #454545;
+    @apply rounded-full;
+}
+
+.btn-group .btn-active {
+    background-color: #2c2c2c;
+    border-color: #454545;
+}
+
+.btn-group button {
+    @apply btn-sm;
+    @apply text-xs;
+    @apply rounded-full;
+}
+
+.card-title {
+    @apply text-gray-100;
+    @apply font-normal;
+    @apply text-xl;
+}
+
+.card {
+    @apply bg-neutral;
+    @apply text-neutral-content;
+    @apply h-min;
+    @apply mt-8;
+}

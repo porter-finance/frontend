@@ -199,117 +199,113 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
   )
 
   return (
-    <div className="card bg-neutral text-neutral-content h-full mb-8" {...restProps}>
-      <div className="card-body">
-        <h2 className="card-title text-gray-100 font-normal text-xl">My orders</h2>
-
-        {ordersEmpty && (
-          <EmptyContentWrapper>
-            <InfoIcon />
-            <EmptyContentText>You have no orders for this auction.</EmptyContentText>
-          </EmptyContentWrapper>
-        )}
-        {!ordersEmpty && (
-          <TableWrapper>
-            <Row columns={hideCancelButton ? 4 : 5} hiddenMd>
-              <StyledCell>
-                <div>Amount</div>
-                <Tooltip text={'The amount of bidding token committed to the order.'} />
-              </StyledCell>
-              <StyledCell>
-                <div>Limit Price</div>
-                <Tooltip text={priceExplainer} />
-              </StyledCell>
-              <StyledCell>
-                <div>Status</div>
-              </StyledCell>
-              <StyledCell>
-                <div>Network</div>
-              </StyledCell>
+    <>
+      {ordersEmpty && (
+        <EmptyContentWrapper>
+          <InfoIcon />
+          <EmptyContentText>You have no orders for this auction.</EmptyContentText>
+        </EmptyContentWrapper>
+      )}
+      {!ordersEmpty && (
+        <TableWrapper>
+          <Row columns={hideCancelButton ? 4 : 5} hiddenMd>
+            <StyledCell>
+              <div>Amount</div>
+              <Tooltip text={'The amount of bidding token committed to the order.'} />
+            </StyledCell>
+            <StyledCell>
+              <div>Limit Price</div>
+              <Tooltip text={priceExplainer} />
+            </StyledCell>
+            <StyledCell>
+              <div>Status</div>
+            </StyledCell>
+            <StyledCell>
+              <div>Network</div>
+            </StyledCell>
+          </Row>
+          {ordersSortered.map((order) => (
+            <Row columns={hideCancelButton ? 4 : 5} key={order.id}>
+              <Cell>
+                <p>
+                  <span>Amount</span>
+                  <Tooltip text={'The amount of bidding token committed to the order.'} />
+                </p>
+                <span>{abbreviation(order.sellAmount)}</span>
+              </Cell>
+              <Cell>
+                <p>
+                  <span>Limit Price</span>
+                  <Tooltip text={priceExplainer} />
+                </p>
+                <span>
+                  {abbreviation(
+                    showPriceInverted
+                      ? getInverse(order.price, NUMBER_OF_DIGITS_FOR_INVERSION)
+                      : order.price,
+                  )}
+                </span>
+              </Cell>
+              <Cell>
+                <p>Status</p>
+                <span>
+                  <span>{orderStatusText[order.status]}</span>
+                  {order.status === OrderStatus.PLACED ? <OrderPlaced /> : <OrderPending />}
+                </span>
+              </Cell>
+              <Cell>
+                <p>Network</p>
+                <span>{getChainName(order.chainId)}</span>
+              </Cell>
+              {!hideCancelButton && (
+                <ButtonCell>
+                  <ButtonWrapper>
+                    <ActionButton
+                      disabled={
+                        isOrderCancellationExpired ||
+                        order.status === OrderStatus.PENDING_CANCELLATION
+                      }
+                      onClick={() => {
+                        setOrderId(order.id)
+                        setShowConfirm(true)
+                      }}
+                    >
+                      Cancel
+                    </ActionButton>
+                  </ButtonWrapper>
+                </ButtonCell>
+              )}
             </Row>
-            {ordersSortered.map((order) => (
-              <Row columns={hideCancelButton ? 4 : 5} key={order.id}>
-                <Cell>
-                  <p>
-                    <span>Amount</span>
-                    <Tooltip text={'The amount of bidding token committed to the order.'} />
-                  </p>
-                  <span>{abbreviation(order.sellAmount)}</span>
-                </Cell>
-                <Cell>
-                  <p>
-                    <span>Limit Price</span>
-                    <Tooltip text={priceExplainer} />
-                  </p>
-                  <span>
-                    {abbreviation(
-                      showPriceInverted
-                        ? getInverse(order.price, NUMBER_OF_DIGITS_FOR_INVERSION)
-                        : order.price,
-                    )}
-                  </span>
-                </Cell>
-                <Cell>
-                  <p>Status</p>
-                  <span>
-                    <span>{orderStatusText[order.status]}</span>
-                    {order.status === OrderStatus.PLACED ? <OrderPlaced /> : <OrderPending />}
-                  </span>
-                </Cell>
-                <Cell>
-                  <p>Network</p>
-                  <span>{getChainName(order.chainId)}</span>
-                </Cell>
-                {!hideCancelButton && (
-                  <ButtonCell>
-                    <ButtonWrapper>
-                      <ActionButton
-                        disabled={
-                          isOrderCancellationExpired ||
-                          order.status === OrderStatus.PENDING_CANCELLATION
-                        }
-                        onClick={() => {
-                          setOrderId(order.id)
-                          setShowConfirm(true)
-                        }}
-                      >
-                        Cancel
-                      </ActionButton>
-                    </ButtonWrapper>
-                  </ButtonCell>
-                )}
-              </Row>
-            ))}
-            <ConfirmationModal
-              attemptingTxn={attemptingTxn}
-              content={
-                <CancelModalFooter confirmText={'Cancel Order'} onCancelOrder={onCancelOrder} />
-              }
-              hash={txHash}
-              isOpen={showConfirm}
-              onDismiss={() => {
-                resetModal()
-                setShowConfirm(false)
-              }}
-              pendingConfirmation={pendingConfirmation}
-              pendingText={pendingText}
-              title="Warning!"
-              width={394}
-            />
-            <WarningModal
-              content={orderError}
-              isOpen={showWarning}
-              onDismiss={() => {
-                resetModal()
-                setOrderError(null)
-                setShowWarning(false)
-              }}
-              title="Warning!"
-            />
-          </TableWrapper>
-        )}
-      </div>
-    </div>
+          ))}
+          <ConfirmationModal
+            attemptingTxn={attemptingTxn}
+            content={
+              <CancelModalFooter confirmText={'Cancel Order'} onCancelOrder={onCancelOrder} />
+            }
+            hash={txHash}
+            isOpen={showConfirm}
+            onDismiss={() => {
+              resetModal()
+              setShowConfirm(false)
+            }}
+            pendingConfirmation={pendingConfirmation}
+            pendingText={pendingText}
+            title="Warning!"
+            width={394}
+          />
+          <WarningModal
+            content={orderError}
+            isOpen={showWarning}
+            onDismiss={() => {
+              resetModal()
+              setOrderError(null)
+              setShowWarning(false)
+            }}
+            title="Warning!"
+          />
+        </TableWrapper>
+      )}
+    </>
   )
 }
 
