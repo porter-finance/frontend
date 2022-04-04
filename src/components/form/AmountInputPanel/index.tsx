@@ -140,16 +140,15 @@ const AmountInputPanel: React.FC<Props> = (props) => {
     <>
       <FieldRowWrapper error={error} {...restProps}>
         <FieldRowTop>
-          <FieldRowLabel>Amount</FieldRowLabel>
-          <Balance disabled={!account}>
-            {balanceString ? balanceString : 'Balance'}:{' '}
-            {balance === '0' || !account ? '0.00' : balance}
-          </Balance>
-          <FieldRowLineButton disabled={!onMax || !account} onClick={onMax}>
-            Max
-          </FieldRowLineButton>
-        </FieldRowTop>
-        <FieldRowBottom>
+          <FieldRowInput
+            disabled={!account}
+            hasError={error}
+            onBlur={() => setReadonly(true)}
+            onFocus={() => setReadonly(false)}
+            onUserSellAmountInput={onUserSellAmountInput}
+            readOnly={readonly}
+            value={value}
+          />
           <Wrap>
             {token && (
               <FieldRowToken>
@@ -210,15 +209,16 @@ const AmountInputPanel: React.FC<Props> = (props) => {
               </FieldRowPrimaryButton>
             )}
           </Wrap>
-          <FieldRowInput
-            disabled={!account}
-            hasError={error}
-            onBlur={() => setReadonly(true)}
-            onFocus={() => setReadonly(false)}
-            onUserSellAmountInput={onUserSellAmountInput}
-            readOnly={readonly}
-            value={value}
-          />
+        </FieldRowTop>
+        <FieldRowBottom>
+          <FieldRowLabel>Amount</FieldRowLabel>
+          <Balance disabled={!account}>
+            {balanceString ? balanceString : 'Balance'}:{' '}
+            {balance === '0' || !account ? '0.00' : balance}
+          </Balance>
+          <FieldRowLineButton disabled={!onMax || !account} onClick={onMax}>
+            Max
+          </FieldRowLineButton>
         </FieldRowBottom>
       </FieldRowWrapper>
       <FieldRowInfo infoType={info?.type}>
