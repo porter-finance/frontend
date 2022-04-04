@@ -4,6 +4,12 @@ module.exports = {
   content: ['./src/**/*.{js,ts,jsx,tsx}', './public/index.html'],
   theme: {
     fontSize: {
+      xs: [
+        '11px',
+        {
+          letterSpacing: '0.1em',
+        },
+      ],
       sm: [
         '14px',
         {
