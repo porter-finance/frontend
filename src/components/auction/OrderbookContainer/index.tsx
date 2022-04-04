@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 
 import * as CSS from 'csstype'
@@ -14,6 +14,7 @@ import { Checkbox } from '../../pureStyledComponents/Checkbox'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
 import { OrderBook } from '../Orderbook'
 import { OrderBookTable } from '../OrderbookTable'
+import OrdersTable from '../OrdersTable'
 
 interface WrapProps {
   margin?: any
@@ -85,10 +86,12 @@ const StyledButtonSelect = styled(ButtonSelect)`
 
 const StyledDropdown = styled(Dropdown)`
   margin-left: 16px;
+  width: 58px;
   @media (min-width: 768px) {
     margin-left: 0;
     margin-right: 16px;
   }
+
   &.isOpen {
     button {
       background-color: ${({ theme }) => theme.bg6};
@@ -115,46 +118,75 @@ const StyledDropdownItem = styled(DropdownItem)`
 const StyledCheckbox = styled(Checkbox)`
   border-radius: 50%;
   background-color: ${({ theme }) => theme.textField.color};
+
   &:before {
     border-radius: 50%;
   }
 `
 
 export const OrderBookContainer = (props) => {
-  const { auctionIdentifier, derivedAuctionInfo } = props
+  const { auctionIdentifier, auctionStarted, derivedAuctionInfo } = props
   const { bids } = useOrderbookState()
   const { granularity, granularityOptions, setGranularity } = useGranularityOptions(bids)
+  const [myOrders, setMyOrders] = useState(false)
+
+  const toggleMyOrders = () => {
+    setMyOrders(!myOrders)
+  }
 
   useOrderbookDataCallback(auctionIdentifier)
 
   return (
     <>
-      <div className="card bg-neutral text-neutral-content h-full mb-8">
+      <div className="card ">
         <div className="card-body">
-          <h2 className="card-title text-gray-100 font-normal text-xl">Orderbook graph</h2>
+          <h2 className="card-title ">Orderbook graph</h2>
           <OrderBook derivedAuctionInfo={derivedAuctionInfo} />
         </div>
       </div>
 
-      <div className="card bg-neutral text-neutral-content h-full mb-8">
+      <div className="card ">
         <div className="card-body">
-          <h2 className="card-title text-gray-100 font-normal text-xl">Orderbook</h2>
+          <div className="flex justify-between mb-5">
+            <h2 className="card-title">Orderbook</h2>
 
-          {granularityOptions.length > 0 && (
-            <StyledDropdown
-              disabled={!granularity}
-              dropdownButtonContent={<StyledButtonSelect content={granularity} />}
-              dropdownPosition={DropdownPosition.right}
-              items={granularityOptions.map((item, index) => (
-                <StyledDropdownItem key={index} onClick={() => setGranularity(item)}>
-                  {item}
-                  <StyledCheckbox checked={item === granularity} />
-                </StyledDropdownItem>
-              ))}
+            <div className="flex items-center">
+              {granularityOptions.length > 0 && (
+                <StyledDropdown
+                  disabled={!granularity}
+                  dropdownButtonContent={<StyledButtonSelect content={granularity} />}
+                  dropdownPosition={DropdownPosition.right}
+                  items={granularityOptions.map((item, index) => (
+                    <StyledDropdownItem key={index} onClick={() => setGranularity(item)}>
+                      {item}
+                      <StyledCheckbox checked={item === granularity} />
+                    </StyledDropdownItem>
+                  ))}
+                />
+              )}
+
+              {auctionStarted && (
+                <button className="btn-group">
+                  <button className={`btn ${!myOrders && 'btn-active'}`} onClick={toggleMyOrders}>
+                    Orders
+                  </button>
+                  <button className={`btn ${myOrders && 'btn-active'}`} onClick={toggleMyOrders}>
+                    My Orders
+                  </button>
+                </button>
+              )}
+            </div>
+          </div>
+          {myOrders && auctionStarted && (
+            <OrdersTable
+              auctionIdentifier={auctionIdentifier}
+              derivedAuctionInfo={derivedAuctionInfo}
             />
           )}
 
-          <OrderBookTable derivedAuctionInfo={derivedAuctionInfo} granularity={granularity} />
+          {!myOrders && (
+            <OrderBookTable derivedAuctionInfo={derivedAuctionInfo} granularity={granularity} />
+          )}
         </div>
       </div>
     </>

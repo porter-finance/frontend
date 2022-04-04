@@ -9,7 +9,6 @@ import { AuctionNotStarted } from '../AuctionNotStarted'
 import Claimer from '../Claimer'
 import OrderPlacement from '../OrderPlacement'
 import { OrderBookContainer } from '../OrderbookContainer'
-import OrdersTable from '../OrdersTable'
 
 const Grid = styled.div`
   display: flex;
@@ -72,14 +71,15 @@ const AuctionBody = (props: AuctionBodyProps) => {
             />
             <OrderBookContainer
               auctionIdentifier={auctionIdentifier}
+              auctionStarted={auctionStarted}
               auctionState={auctionState}
               derivedAuctionInfo={derivedAuctionInfo}
             />
           </GridCol>
           <GridCol>
-            <div className="card bg-neutral text-neutral-content mb-8">
+            <div className="card">
               <div className="card-body">
-                <h2 className="card-title text-gray-100 font-normal text-xl">
+                <h2 className="card-title ">
                   {auctionState === AuctionState.CLAIMING ? 'Claiming Proceeds' : 'Place Order'}
                 </h2>
 
@@ -103,12 +103,6 @@ const AuctionBody = (props: AuctionBodyProps) => {
         </Grid>
       )}
       {auctionState === AuctionState.NOT_YET_STARTED && <AuctionNotStarted />}
-      {auctionStarted && (
-        <OrdersTable
-          auctionIdentifier={auctionIdentifier}
-          derivedAuctionInfo={derivedAuctionInfo}
-        />
-      )}
     </>
   )
 }
