@@ -1,4 +1,3 @@
-import { rgba } from 'polished'
 import styled, { css } from 'styled-components'
 
 import { NumericalInput } from '../form/NumericalInput'
@@ -41,10 +40,10 @@ export const FieldRowBottom = styled.div`
 `
 
 export const FieldRowLabel = styled.label`
-  color: ${({ theme }) => rgba(theme.text1, 0.8)};
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1.2;
+  font-weight: 400;
+  font-size: 12px;
+  color: #696969;
+  letter-spacing: 0.03em;
   margin-right: auto;
   text-align: left;
 `
@@ -61,10 +60,13 @@ export const FieldRowToken = styled.div`
 `
 
 export const FieldRowTokenSymbol = styled.div`
-  color: ${({ theme }) => theme.text1};
-  font-size: 17px;
   font-weight: 400;
-  line-height: 1;
+  font-size: 10px;
+  display: flex;
+  color: #9f9f9f;
+  align-items: flex-end;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   margin-bottom: -3px;
   text-align: left;
   white-space: nowrap;
@@ -77,29 +79,27 @@ export const FieldRowInput = styled(NumericalInput)<{ hasError?: boolean }>`
   flex-grow: 1;
   flex-shrink: 1;
   font-family: 'Neue Haas Grotesk Display Pro', sans-serif;
-  font-size: 23px;
   font-weight: 400;
+  font-size: 16px;
   height: 22px;
   line-height: 1;
-  margin: 0 0 0 20px;
+  letter-spacing: 0.06em;
   min-width: 0;
   outline: none;
   padding: 0;
-  text-align: right;
   transition: color 0.15s linear;
   width: auto;
 
   &::placeholder {
-    color: #bfdeff;
-    font-size: 23px;
+    color: ${(props) => (props.hasError ? ({ theme }) => theme.error : ({ theme }) => 'white')};
     font-style: italic;
-    font-weight: 400;
-    opacity: 1;
+    opacity: 0.5;
   }
 
   &[disabled] {
     opacity: 0.7;
   }
+
   &[readonly] {
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -208,9 +208,10 @@ const InfoTypeOKCSS = css`
 
 export const FieldRowInfo = styled.div<{ infoType: InfoType }>`
   display: inline-flex;
-  font-size: 13px;
   font-weight: 400;
+  font-size: 12px;
   line-height: 1.2;
+  letter-spacing: 0.03em;
   margin-bottom: 16px;
   padding-top: 5px;
   text-align: left;
