@@ -483,9 +483,9 @@ const AuctionDetails = (props: Props) => {
   }
 
   return (
-    <div className="card bg-neutral text-neutral-content h-full mb-8">
+    <div className="card ">
       <div className="card-body">
-        <h2 className="card-title text-gray-100 font-normal text-xl">Auction information</h2>
+        <h2 className="card-title ">Auction information</h2>
 
         <CellPair>
           <Cell
