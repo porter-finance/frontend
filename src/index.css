@@ -7,7 +7,7 @@
 }
 
 .btn-group {
-    border-color: #454545;
+    border: 1px solid #454545;
     @apply rounded-full;
 }
 
@@ -37,4 +37,14 @@
     @apply text-neutral-content;
     @apply h-min;
     @apply mt-8;
+}
+
+.btn-group > .btn:not(:first-of-type) {
+    border-top-left-radius: inherit;
+    border-bottom-left-radius: inherit;
+}
+
+.btn-group > .btn:not(:last-of-type) {
+    border-top-right-radius: inherit;
+    border-bottom-right-radius: inherit;
 }
