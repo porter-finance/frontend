@@ -28,6 +28,10 @@
     @apply text-xl;
 }
 
+.bg-neutral {
+    background-color: #181A1C;
+}
+
 .card {
     @apply bg-neutral;
     @apply text-neutral-content;
