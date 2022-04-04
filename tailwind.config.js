@@ -37,7 +37,7 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        sans: ['Neue Haas Grotesk Display Pro', ...defaultTheme.fontFamily.sans],
+        sans: ['Neue Haas Grotesk Display', ...defaultTheme.fontFamily.sans],
       },
     },
   },
