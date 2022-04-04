@@ -65,7 +65,6 @@ const ExternalLink = styled.a`
 
 const Wrapper = styled(BaseCard)`
   max-width: 100%;
-  min-height: 392px;
   min-width: 100%;
   padding: 10px 0 0;
 `
