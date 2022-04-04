@@ -1,5 +1,4 @@
-import { rgba } from 'polished'
-import React from 'react'
+import React, { ReactElement } from 'react'
 import styled from 'styled-components'
 
 import { Tooltip } from '../../common/Tooltip'
@@ -78,12 +77,14 @@ const TextContents = styled.div<{ showEmptyProgressColumn?: boolean }>`
 `
 
 const Value = styled.p`
-  align-items: center;
-  color: ${({ theme }) => theme.text1};
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 18px;
   display: flex;
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 1.2;
+  align-items: flex-end;
+  letter-spacing: 0.06em;
+  color: #ffffff;
   margin: 0 0 2px;
   white-space: nowrap;
 `
@@ -94,11 +95,12 @@ const ValueText = styled.span`
 
 const Title = styled.h4`
   align-items: center;
-  color: ${({ theme }) => rgba(theme.text1, 0.9)};
   display: flex;
-  font-size: 14px;
+  font-style: normal;
   font-weight: 400;
-  letter-spacing: -0.5px;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: #696969;
   line-height: 1.2;
   margin: 0;
   text-transform: capitalize;
@@ -120,7 +122,7 @@ export interface Props {
   title: string
   tooltip?: string
   url?: string
-  value: string
+  value: string | ReactElement
 }
 
 export const ExtraDetailsItem: React.FC<Props> = (props) => {
