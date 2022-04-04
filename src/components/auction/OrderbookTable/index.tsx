@@ -1,4 +1,3 @@
-import { transparentize } from 'polished'
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 
@@ -26,6 +25,7 @@ export interface Props {
 
 const Table = styled(BaseCard)`
   padding: 0;
+  width: 737px;
   min-height: 352px;
   max-height: 100%;
   height: 100%;
@@ -81,37 +81,53 @@ const Wrap = styled.div<Partial<CSS.Properties & WrapProps>>`
   align-items: center;
   justify-content: flex-end;
   height: 100%;
-  color: ${({ theme }) => theme.text1};
-  font-weight: 600;
-  font-size: 14px;
+  color: #696969;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   margin: ${(props) => (props.margin ? props.margin : '0')};
   white-space: normal;
+
+  .tooltipIcon .fill {
+    fill: #696969;
+  }
 `
 
 const OverflowWrap = styled.div`
   max-width: 100%;
-  overflow-x: auto;
   flex-grow: 1;
+  margin-left: -32px;
+  margin-right: -32px;
 `
 
 const StyledRow = styled(Row)`
-  border-bottom: ${({ theme }) => theme.cards.border};
+  border-bottom: 1px solid rgba(213, 213, 213, 0.1);
   margin-bottom: 0;
   padding: 0 13px;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-column-gap: 15px;
   min-width: 560px;
-  &:nth-child(odd) {
-    ${({ theme }) => `background-color: ${transparentize(0.98, theme.textField.color)};`}
-  }
+
   &:first-child {
     &:before {
       border-top-left-radius: ${({ theme }) => theme.cards.borderRadius};
       border-top-right-radius: ${({ theme }) => theme.cards.borderRadius};
     }
   }
+
   @media (min-width: 1180px) {
     min-width: auto;
+  }
+
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 25px;
+
+  span {
+    color: #d2d2d2 !important;
   }
 `
 
