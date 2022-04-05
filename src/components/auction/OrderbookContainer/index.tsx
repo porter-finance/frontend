@@ -147,7 +147,7 @@ export const OrderBookContainer = (props) => {
 
       <div className="card ">
         <div className="card-body">
-          <div className="flex justify-between mb-5">
+          <div className="flex justify-between mb-5 flex-wrap">
             <h2 className="card-title">Orderbook</h2>
 
             <div className="flex items-center">
