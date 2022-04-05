@@ -190,120 +190,126 @@ const Claimer: React.FC<Props> = (props) => {
     : `https://app.uniswap.org/#/swap?inputCurrency=${biddingToken.address}`
 
   return (
-    <Wrapper>
-      {isLoading && <InlineLoading size={SpinnerSize.small} />}
-      {!isLoading && (
-        <>
-          <TokensWrapper>
-            <TokenItem>
-              <Token>
-                {biddingToken && biddingTokenDisplay ? (
-                  <>
-                    <TokenLogo
-                      size={'34px'}
-                      token={{
-                        address: biddingToken.address,
-                        symbol: biddingTokenDisplay,
-                      }}
-                    />
-                    <Text>{biddingTokenDisplayCut}</Text>
-                    {showUnwrapButton && (
-                      <span
-                        className={`tooltipComponent`}
-                        data-for={'wrap_button'}
-                        data-html={true}
-                        data-multiline={true}
-                        data-tip={unwrapTooltip}
-                      >
-                        <ReactTooltip
-                          arrowColor={'#001429'}
-                          backgroundColor={'#001429'}
-                          border
-                          borderColor={'#174172'}
-                          className="customTooltip"
-                          delayHide={50}
-                          delayShow={250}
-                          effect="solid"
-                          id={'wrap_button'}
-                          textColor="#fff"
-                        />
-                        <ButtonWrap
-                          buttonType={ButtonType.primaryInverted}
-                          href={unwrapURL}
-                          target="_blank"
+    <>
+      <h2 className="card-title ">Claiming proceeds</h2>
+
+      <Wrapper>
+        {isLoading && <InlineLoading size={SpinnerSize.small} />}
+        {!isLoading && (
+          <>
+            <TokensWrapper>
+              <TokenItem>
+                <Token>
+                  {biddingToken && biddingTokenDisplay ? (
+                    <>
+                      <TokenLogo
+                        size={'34px'}
+                        token={{
+                          address: biddingToken.address,
+                          symbol: biddingTokenDisplay,
+                        }}
+                      />
+                      <Text>{biddingTokenDisplayCut}</Text>
+                      {showUnwrapButton && (
+                        <span
+                          className={`tooltipComponent`}
+                          data-for={'wrap_button'}
+                          data-html={true}
+                          data-multiline={true}
+                          data-tip={unwrapTooltip}
                         >
-                          Unwrap
-                        </ButtonWrap>
-                      </span>
-                    )}
-                  </>
-                ) : (
-                  '-'
-                )}
-              </Token>
-              <Text>
-                {claimableBiddingToken ? `${claimableBiddingToken.toSignificant(6)} ` : `0.00`}
-              </Text>
-            </TokenItem>
-            <TokenItem>
-              <Token>
-                {auctioningToken && auctioningTokenDisplay ? (
+                          <ReactTooltip
+                            arrowColor={'#001429'}
+                            backgroundColor={'#001429'}
+                            border
+                            borderColor={'#174172'}
+                            className="customTooltip"
+                            delayHide={50}
+                            delayShow={250}
+                            effect="solid"
+                            id={'wrap_button'}
+                            textColor="#fff"
+                          />
+                          <ButtonWrap
+                            buttonType={ButtonType.primaryInverted}
+                            href={unwrapURL}
+                            target="_blank"
+                          >
+                            Unwrap
+                          </ButtonWrap>
+                        </span>
+                      )}
+                    </>
+                  ) : (
+                    '-'
+                  )}
+                </Token>
+                <Text>
+                  {claimableBiddingToken ? `${claimableBiddingToken.toSignificant(6)} ` : `0.00`}
+                </Text>
+              </TokenItem>
+              <TokenItem>
+                <Token>
+                  {auctioningToken && auctioningTokenDisplay ? (
+                    <>
+                      <TokenLogo
+                        size={'34px'}
+                        token={{
+                          address: auctioningToken.address,
+                          symbol: auctioningTokenDisplay,
+                        }}
+                      />
+                      <Text>{auctioningTokenDisplayCut}</Text>
+                    </>
+                  ) : (
+                    '-'
+                  )}
+                </Token>
+                <Text>
+                  {claimableAuctioningToken
+                    ? `${claimableAuctioningToken.toSignificant(6)}`
+                    : `0.00`}
+                </Text>
+              </TokenItem>
+            </TokensWrapper>
+            {!account ? (
+              <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
+            ) : (
+              <ActionButton
+                disabled={isClaimButtonDisabled}
+                onClick={() => {
+                  setShowConfirm(true)
+                  onClaimOrder()
+                }}
+              >
+                {claimStatus === ClaimState.PENDING ? (
+                  `Claiming `
+                ) : !isValid && account ? (
                   <>
-                    <TokenLogo
-                      size={'34px'}
-                      token={{
-                        address: auctioningToken.address,
-                        symbol: auctioningTokenDisplay,
-                      }}
-                    />
-                    <Text>{auctioningTokenDisplayCut}</Text>
+                    <ErrorRow>
+                      <ErrorInfo />
+                      <ErrorText>{error}</ErrorText>
+                    </ErrorRow>
                   </>
                 ) : (
-                  '-'
+                  `Claim`
                 )}
-              </Token>
-              <Text>
-                {claimableAuctioningToken ? `${claimableAuctioningToken.toSignificant(6)}` : `0.00`}
-              </Text>
-            </TokenItem>
-          </TokensWrapper>
-          {!account ? (
-            <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
-          ) : (
-            <ActionButton
-              disabled={isClaimButtonDisabled}
-              onClick={() => {
-                setShowConfirm(true)
-                onClaimOrder()
+              </ActionButton>
+            )}
+            <ClaimConfirmationModal
+              hash={txHash}
+              isOpen={showConfirm}
+              onDismiss={() => {
+                resetModal()
+                setShowConfirm(false)
               }}
-            >
-              {claimStatus === ClaimState.PENDING ? (
-                `Claiming `
-              ) : !isValid && account ? (
-                <>
-                  <ErrorRow>
-                    <ErrorInfo />
-                    <ErrorText>{error}</ErrorText>
-                  </ErrorRow>
-                </>
-              ) : (
-                `Claim`
-              )}
-            </ActionButton>
-          )}
-          <ClaimConfirmationModal
-            hash={txHash}
-            isOpen={showConfirm}
-            onDismiss={() => {
-              resetModal()
-              setShowConfirm(false)
-            }}
-            pendingConfirmation={pendingConfirmation}
-            pendingText={pendingText}
-          />
-        </>
-      )}
-    </Wrapper>
+              pendingConfirmation={pendingConfirmation}
+              pendingText={pendingText}
+            />
+          </>
+        )}
+      </Wrapper>
+    </>
   )
 }
 
