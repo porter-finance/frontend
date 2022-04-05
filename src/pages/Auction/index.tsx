@@ -7,7 +7,6 @@ import { ButtonCopy } from '../../components/buttons/ButtonCopy'
 import { InlineLoading } from '../../components/common/InlineLoading'
 import { NetworkIcon } from '../../components/icons/NetworkIcon'
 import WarningModal from '../../components/modals/WarningModal'
-import { PageTitle } from '../../components/pureStyledComponents/PageTitle'
 import DoubleLogo from '../../components/token/DoubleLogo'
 import useShowTopWarning from '../../hooks/useShowTopWarning'
 import { useDerivedAuctionInfo } from '../../state/orderPlacement/hooks'
@@ -15,26 +14,6 @@ import { RouteAuctionIdentifier, parseURL } from '../../state/orderPlacement/red
 import { useTokenListState } from '../../state/tokenList/hooks'
 import { isAddress } from '../../utils'
 import { getChainName } from '../../utils/tools'
-
-const Title = styled(PageTitle)`
-  margin-bottom: 2px;
-`
-
-const SubTitleWrapperStyled = styled.div`
-  align-items: center;
-  display: flex;
-  margin-bottom: 20px;
-`
-
-const SubTitle = styled.h2`
-  align-items: center;
-  color: ${({ theme }) => theme.text1};
-  display: flex;
-  font-size: 15px;
-  font-weight: 400;
-  line-height: 1.2;
-  margin: 0 8px 0 0;
-`
 
 const AuctionId = styled.span`
   align-items: center;
@@ -179,8 +158,8 @@ const Auction: React.FC = () => {
                   </p>
                 </div>
               </div>
-              <div className="flex justify-center md:mt-0 mt-5">
-                <button className="btn btn-sm px-5 rounded-full bg-transparent text-white border-blue-100">
+              <div className="flex justify-center md:mt-0 mt-5 space-x-3">
+                <span className="space-x-2 inline-flex items-center px-5 py-1.5 rounded-full bg-transparent text-white border-blue-100 border uppercase border-opacity-50 pointer-events-none">
                   <svg
                     fill="none"
                     height="14"
@@ -197,19 +176,14 @@ const Auction: React.FC = () => {
                       stroke="white"
                     />
                   </svg>
-                  <span className="ml-2 text-sm">Auction</span>
-                </button>
-                <button className="btn btn-sm border-0 px-5 rounded-full ml-2 text-sm text-indigo-500 bg-white">
-                  <svg
-                    className="-ml-0.5 mr-1.5 h-2 w-2"
-                    fill="#404EED"
-                    opacity="0.5"
-                    viewBox="0 0 8 8"
-                  >
+                  <span className="text-xs">Auction</span>
+                </span>
+                <span className="inline-flex items-center px-2 space-x-1 py-1.5 rounded-full bg-white border-blue-100 border uppercase border-opacity-50 pointer-events-none text-[#404EED] font-medium">
+                  <svg className="h-2 w-2" fill="#404EED" opacity="0.5" viewBox="0 0 8 8">
                     <circle cx={4} cy={4} r={3} />
                   </svg>
-                  <span className="ml-2 text-sm">{statusLabel}</span>
-                </button>
+                  <span className="text-xs">{statusLabel}</span>
+                </span>
               </div>
             </div>
           </div>
