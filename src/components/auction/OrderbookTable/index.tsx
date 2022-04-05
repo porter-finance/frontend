@@ -97,6 +97,7 @@ const OverflowWrap = styled.div`
   max-width: 100%;
   flex-grow: 1;
   overflow-x: auto;
+  overflow-y: auto;
 `
 
 const StyledRow = styled(Row)`

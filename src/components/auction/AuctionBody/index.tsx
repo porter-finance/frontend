@@ -12,8 +12,13 @@ import { OrderBookContainer } from '../OrderbookContainer'
 
 const Grid = styled.div`
   display: flex;
-  flex-direction: column;
   justify-content: center;
+  flex-direction: column;
+
+  @media (max-width: ${({ theme }) => theme.themeBreakPoints.sm}) {
+    flex-wrap: wrap-reverse;
+    flex-direction: row;
+  }
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.xxl}) {
     display: grid;
