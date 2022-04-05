@@ -10,15 +10,26 @@ module.exports = {
           letterSpacing: '0.1em',
         },
       ],
-      sm: ['14px'],
+      sm: [
+        '14px',
+        {
+          letterSpacing: '0.05em',
+        },
+      ],
       base: [
         '16px',
         {
-          letterSpacing: '0.01em',
+          letterSpacing: '0.05em',
         },
       ],
       xl: [
         '22px',
+        {
+          letterSpacing: '0.01em',
+        },
+      ],
+      '2xl': [
+        '23px',
         {
           letterSpacing: '0.01em',
         },
