@@ -113,7 +113,7 @@ const ErrorText = styled.span`
   margin-right: 8px;
 `
 
-export const Component: React.FC = (props) => {
+export const Component = (props) => {
   const location = useLocation()
   const { account, activate } = useWeb3React()
   const { chainId } = useOrderPlacementState()
@@ -157,7 +157,7 @@ export const Component: React.FC = (props) => {
   return (
     <>
       <Wrapper className="siteHeader" {...props}>
-        <Inner>
+        <Inner className="max-w-3xl mx-auto px-4 sm:px-6 lg:max-w-7xl lg:px-8">
           <ButtonMenuStyled className={mobileMenuVisible && 'active'} onClick={mobileMenuToggle} />
           {mobileMenuVisible && <Mobilemenu onClose={() => setMobileMenuVisible(false)} />}
           <LogoLink className="logoLink" to="/">
