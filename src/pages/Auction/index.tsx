@@ -148,9 +148,9 @@ const Auction: React.FC = () => {
                 Offerings
               </p>
             </div>
-            <div className="py-2 flex items-center content-center justify-between">
-              <div className="flex">
-                <div className="mr-5 self-center">
+            <div className="py-2 flex items-center content-center justify-center md:justify-between flex-wrap">
+              <div className="flex flex-wrap">
+                <div className="mr-5 self-center hidden md:block">
                   <DoubleLogo
                     auctioningToken={{
                       address: derivedAuctionInfo.auctioningToken.address,
@@ -179,7 +179,7 @@ const Auction: React.FC = () => {
                   </p>
                 </div>
               </div>
-              <div className="flex">
+              <div className="flex justify-center md:mt-0 mt-5">
                 <button className="btn btn-sm px-5 rounded-full bg-transparent text-white border-blue-100">
                   <svg
                     fill="none"
