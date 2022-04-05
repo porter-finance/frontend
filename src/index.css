@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+    background-color: #131415;
+}
+
 .card {
     @apply rounded-md;
 }
@@ -23,9 +27,8 @@
 }
 
 .card-title {
-    @apply text-gray-100;
-    @apply font-normal;
-    @apply text-xl;
+    @apply text-gray-100 font-normal;
+    font-size: 24px;
 }
 
 .bg-neutral {
