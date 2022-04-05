@@ -21,6 +21,7 @@ const Row = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   row-gap: 18px;
+  justify-content: center;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     column-gap: 18px;

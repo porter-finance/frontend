@@ -95,7 +95,7 @@ const UserDropdownButton = () => {
   return (
     <DropdownButton className="btn btn-sm">
       <Address>
-        <div className="flex flex-col w-full lg:flex-row items-center">
+        <div className="flex flex-row nowrap w-full lg:flex-row items-center">
           <AddressText className="addressText" title={account}>
             {account ? truncateStringInTheMiddle(account, 5, 3) : 'Invalid address.'}
           </AddressText>

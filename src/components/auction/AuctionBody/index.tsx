@@ -13,6 +13,7 @@ import { OrderBookContainer } from '../OrderbookContainer'
 const Grid = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: center;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.xxl}) {
     display: grid;
