@@ -53,12 +53,6 @@ const AuctionBody = (props: AuctionBodyProps) => {
                 <section aria-labelledby="section-2-title">
                   <div className="card">
                     <div className="card-body">
-                      <h2 className="card-title ">
-                        {auctionState === AuctionState.CLAIMING
-                          ? 'Claiming Proceeds'
-                          : 'Place Order'}
-                      </h2>
-
                       {(auctionState === AuctionState.ORDER_PLACING ||
                         auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && (
                         <OrderPlacement
