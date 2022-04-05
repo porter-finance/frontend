@@ -15,13 +15,12 @@ import { MainWrapper } from '../components/pureStyledComponents/MainWrapper'
 import Web3ReactManager from '../components/web3/Web3ReactManager'
 import useShowCookies from '../hooks/useShowCookies'
 import useShowTopWarning from '../hooks/useShowTopWarning'
-import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
 
 const Inner = styled(InnerContainer)`
-  margin-top: -112px;
+  margin-top: -85px;
 
   @media (max-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    margin-top: -152px;
+    margin-top: -120px;
   }
 `
 
@@ -48,8 +47,7 @@ const App: React.FC = () => {
           />
           {showTopWarning && <TopDisclaimer />}
           <span id="topAnchor" />
-          <Inner>
-            <DarkModeQueryParamReader />
+          <Inner className="max-w-3xl mx-auto px-4 sm:px-6 lg:max-w-7xl lg:px-8">
             <Web3ReactManager>
               <Routes />
             </Web3ReactManager>

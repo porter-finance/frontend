@@ -32,7 +32,6 @@ const Wrapper = styled.div`
 const Content = styled.div`
   max-width: 100%;
   position: relative;
-  width: ${(props) => props.theme.layout.maxWidth};
 `
 
 const Text = styled.p`
