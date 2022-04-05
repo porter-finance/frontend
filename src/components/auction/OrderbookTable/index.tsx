@@ -25,16 +25,13 @@ export interface Props {
 
 const Table = styled(BaseCard)`
   padding: 0;
-  width: 737px;
   min-height: 352px;
   max-height: 100%;
   height: 100%;
-  overflow-x: auto;
 `
 
 const TableBody = styled(Scrollbars)`
   max-height: 100%;
-  overflow-x: hidden;
   min-width: 560px;
   min-height: 280px;
   @media (min-width: 1180px) {
@@ -99,8 +96,7 @@ const Wrap = styled.div<Partial<CSS.Properties & WrapProps>>`
 const OverflowWrap = styled.div`
   max-width: 100%;
   flex-grow: 1;
-  margin-left: -32px;
-  margin-right: -32px;
+  overflow-x: auto;
 `
 
 const StyledRow = styled(Row)`
