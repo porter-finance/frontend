@@ -10,16 +10,11 @@ module.exports = {
           letterSpacing: '0.1em',
         },
       ],
-      sm: [
-        '14px',
-        {
-          letterSpacing: '0.1em',
-        },
-      ],
+      sm: ['14px'],
       base: [
         '16px',
         {
-          letterSpacing: '0.05em',
+          letterSpacing: '0.01em',
         },
       ],
       xl: [
