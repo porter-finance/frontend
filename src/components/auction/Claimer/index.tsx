@@ -191,7 +191,7 @@ const Claimer: React.FC<Props> = (props) => {
 
   return (
     <>
-      <h2 className="card-title ">Claiming proceeds</h2>
+      <h2 className="card-title ">Claim bid funds and bonds</h2>
 
       <Wrapper>
         {isLoading && <InlineLoading size={SpinnerSize.small} />}
