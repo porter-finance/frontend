@@ -39,7 +39,6 @@ import { SpinnerSize } from '../../common/Spinner'
 import AmountInputPanel from '../../form/AmountInputPanel'
 import PriceInputPanel from '../../form/PriceInputPanel'
 import { Calendar } from '../../icons/Calendar'
-import { LockBig } from '../../icons/LockBig'
 import ConfirmationModal from '../../modals/ConfirmationModal'
 import WarningModal from '../../modals/WarningModal'
 import SwapModalFooter from '../../modals/common/PlaceOrderModalFooter'
@@ -348,28 +347,28 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const linkForKYC = auctioningTokenAddress ? kycLinks[auctioningTokenAddress] : null
   return (
     <>
+      {!auctionInfoLoading && isPrivate && !signatureAvailable ? (
+        <h2 className="card-title">Private Auction</h2>
+      ) : (
+        <h2 className="card-title">Place Order</h2>
+      )}
+
       <Wrapper>
         {auctionInfoLoading && <InlineLoading size={SpinnerSize.small} />}
         {!auctionInfoLoading && isPrivate && !signatureAvailable && (
           <>
-            <PrivateWrapper>
-              <LockBig />
-              <TextBig>Private auction</TextBig>
+            <div>
               {account !== null && (
-                <EmptyContentTextNoMargin>
-                  You need to get allowed to participate.
-                </EmptyContentTextNoMargin>
+                <span className="text-sm text-[#696969]">
+                  This auction is only available for allowlisted wallets
+                </span>
               )}
-            </PrivateWrapper>
+            </div>
             {account == null ? (
               <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
             ) : (
               <EmptyContentTextSmall>
-                {linkForKYC ? (
-                  <ExternalLink href={linkForKYC}>Get Allowed ↗</ExternalLink>
-                ) : (
-                  <>Ask the auctioneer to get allow-listed.</>
-                )}{' '}
+                {linkForKYC && <ExternalLink href={linkForKYC}>Get Allowed ↗</ExternalLink>}
               </EmptyContentTextSmall>
             )}
           </>
