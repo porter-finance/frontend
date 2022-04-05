@@ -35,6 +35,12 @@ html {
     background-color: #181A1C;
 }
 
+.btn-warning {
+    background-color: #EDA651;
+    border-color: #EDA651;
+    color: #2C2C2C;
+}
+
 .card {
     @apply bg-neutral;
     @apply text-neutral-content;
