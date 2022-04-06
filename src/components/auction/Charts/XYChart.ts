@@ -54,14 +54,11 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   const priceAxis = chart.xAxes.push(new am4charts.ValueAxis())
   const volumeAxis = chart.yAxes.push(new am4charts.ValueAxis())
   volumeAxis.renderer.grid.template.stroke = am4core.color('#9F9F9F')
-  volumeAxis.renderer.grid.template.strokeWidth = 0.5
-  volumeAxis.renderer.grid.template.strokeOpacity = 0.5
+  volumeAxis.renderer.grid.template.strokeOpacity = 0
   volumeAxis.title.fill = am4core.color('#9F9F9F')
   volumeAxis.renderer.labels.template.fill = am4core.color('#9F9F9F')
 
-  priceAxis.renderer.grid.template.stroke = am4core.color('#9F9F9F')
-  priceAxis.renderer.grid.template.strokeWidth = 0.5
-  priceAxis.renderer.grid.template.strokeOpacity = 0.5
+  priceAxis.renderer.grid.template.strokeOpacity = 0
   priceAxis.title.fill = am4core.color('#9F9F9F')
   priceAxis.renderer.labels.template.fill = am4core.color('#9F9F9F')
 
