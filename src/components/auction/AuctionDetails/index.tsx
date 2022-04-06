@@ -133,7 +133,7 @@ const AuctionDetails = (props: Props) => {
     () => [
       {
         title: 'Offering size',
-        value: graphInfo?.size || '0',
+        value: graphInfo?.size,
         tooltip: 'Total number of bonds to be auctioned',
       },
       {
