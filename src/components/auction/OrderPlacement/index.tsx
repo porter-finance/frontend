@@ -425,10 +425,10 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
               value={price}
             />
             {!account ? (
-              <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
+              <ActionButton onClick={toggleWalletModal}>Connect wallet</ActionButton>
             ) : (
               <ActionButton disabled={disablePlaceOrder} onClick={handleShowConfirm}>
-                Place Order
+                Place order
               </ActionButton>
             )}
           </>
