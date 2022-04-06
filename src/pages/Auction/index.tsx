@@ -13,6 +13,7 @@ import { useDerivedAuctionInfo } from '../../state/orderPlacement/hooks'
 import { RouteAuctionIdentifier, parseURL } from '../../state/orderPlacement/reducer'
 import { useTokenListState } from '../../state/tokenList/hooks'
 import { isAddress } from '../../utils'
+import { getChainName } from '../../utils/tools'
 
 const AuctionId = styled.span`
   align-items: center;
@@ -104,8 +105,8 @@ const Auction: React.FC = () => {
       {!isLoading && !invalidAuction && (
         <>
           <div className="py-2 flex content-center justify-center md:justify-between flex-wrap items-end">
-            <div className="flex flex-wrap">
-              <div className="mr-5 self-center hidden md:block">
+            <div className="flex flex-wrap items-center space-x-6">
+              <div className="hidden md:block">
                 <TokenLogo
                   square
                   token={{
@@ -117,7 +118,18 @@ const Auction: React.FC = () => {
               <div>
                 <h1 className="text-3xl text-white">{auctionSymbolAuctioningToken} Auction</h1>
                 <p className="text-blue-100 text-sm font-medium">
-                  {derivedAuctionInfo?.graphInfo?.bond?.symbol}
+                  {!derivedAuctionInfo?.graphInfo?.isSellingPorterBond ? (
+                    <Network>
+                      <NetworkIconStyled />
+                      <NetworkName>
+                        Selling on {getChainName(auctionIdentifier.chainId)} -
+                      </NetworkName>
+                      <AuctionId>Auction Id #{auctionIdentifier.auctionId}</AuctionId>
+                      <CopyButton copyValue={url} title="Copy URL" />
+                    </Network>
+                  ) : (
+                    derivedAuctionInfo?.graphInfo?.bond?.symbol
+                  )}
                 </p>
               </div>
             </div>
