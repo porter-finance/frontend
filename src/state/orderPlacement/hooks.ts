@@ -132,7 +132,7 @@ export function useOrderPlacementState(): AppState['orderPlacement'] {
 
 export function useSwapActionHandlers(): {
   onUserSellAmountInput: (sellAmount: string) => void
-  onUserPriceInput: (price: string, isInvertedPrice: boolean) => void
+  onUserPriceInput: (price: string) => void
   onInvertPrices: () => void
 } {
   const dispatch = useDispatch<AppDispatch>()
@@ -149,13 +149,11 @@ export function useSwapActionHandlers(): {
   }, [dispatch])
 
   const onUserPriceInput = useCallback(
-    (price: string, isInvertedPrice: boolean) => {
+    (price: string) => {
       if (isNumeric(price)) {
         dispatch(
           resetUserPrice({
-            price: isInvertedPrice
-              ? parseFloat(getInverse(price, NUMBER_OF_DIGITS_FOR_INVERSION))
-              : parseFloat(price),
+            price: parseFloat(price),
           }),
         )
       }
