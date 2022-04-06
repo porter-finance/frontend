@@ -7,13 +7,12 @@ import { ButtonCopy } from '../../components/buttons/ButtonCopy'
 import { InlineLoading } from '../../components/common/InlineLoading'
 import { NetworkIcon } from '../../components/icons/NetworkIcon'
 import WarningModal from '../../components/modals/WarningModal'
-import DoubleLogo from '../../components/token/DoubleLogo'
+import TokenLogo from '../../components/token/TokenLogo'
 import useShowTopWarning from '../../hooks/useShowTopWarning'
 import { useDerivedAuctionInfo } from '../../state/orderPlacement/hooks'
 import { RouteAuctionIdentifier, parseURL } from '../../state/orderPlacement/reducer'
 import { useTokenListState } from '../../state/tokenList/hooks'
 import { isAddress } from '../../utils'
-import { getChainName } from '../../utils/tools'
 
 const AuctionId = styled.span`
   align-items: center;
@@ -107,31 +106,18 @@ const Auction: React.FC = () => {
           <div className="py-2 flex content-center justify-center md:justify-between flex-wrap items-end">
             <div className="flex flex-wrap">
               <div className="mr-5 self-center hidden md:block">
-                <DoubleLogo
-                  auctioningToken={{
-                    address: derivedAuctionInfo.auctioningToken.address,
-                    symbol: derivedAuctionInfo.auctioningToken.symbol,
+                <TokenLogo
+                  square
+                  token={{
+                    address: derivedAuctionInfo?.graphInfo?.bond?.collateralToken,
+                    symbol: derivedAuctionInfo?.graphInfo?.bond?.symbol,
                   }}
-                  biddingToken={{
-                    address: derivedAuctionInfo.biddingToken.address,
-                    symbol: derivedAuctionInfo.biddingToken.symbol,
-                  }}
-                  size="26px"
                 />
               </div>
               <div>
-                <h1 className="text-3xl text-white">
-                  {auctionSymbolAuctioningToken} / {auctionSymbolBiddingToken}
-                </h1>
+                <h1 className="text-3xl text-white">{auctionSymbolAuctioningToken} Auction</h1>
                 <p className="text-blue-100 text-sm font-medium">
-                  <Network>
-                    <NetworkIconStyled />
-                    <NetworkName>
-                      Selling on {getChainName(auctionIdentifier.chainId)} -
-                    </NetworkName>
-                    <AuctionId>Auction Id #{auctionIdentifier.auctionId}</AuctionId>
-                    <CopyButton copyValue={url} title="Copy URL" />
-                  </Network>
+                  {derivedAuctionInfo?.graphInfo?.bond?.symbol}
                 </p>
               </div>
             </div>
