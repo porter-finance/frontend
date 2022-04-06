@@ -94,7 +94,7 @@ const BondCard = ({ graphInfo }) => {
                 {graphInfo?.bond?.name || 'Loading'}
               </h2>
               <p className="text-[#9F9F9F] text-xs font-normal uppercase">
-                This will show a bond description
+                {graphInfo?.bond?.symbol}
               </p>
             </div>
           </div>
@@ -132,7 +132,6 @@ const AuctionBody = (props: AuctionBodyProps) => {
       {auctionStarted && (
         <main className="pb-8 px-0">
           <div className="max-w-3xl mx-auto lg:max-w-7xl">
-            <h1 className="sr-only">Page title</h1>
             {/* Main 3 column grid */}
             <div className="grid grid-cols-1 gap-4 items-start lg:grid-cols-3 lg:gap-8">
               {/* Left column */}

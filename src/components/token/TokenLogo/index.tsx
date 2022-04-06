@@ -52,7 +52,7 @@ const TokenLogo: React.FC<TokenLogoProps> = (props) => {
   if (square && imageURL) {
     return (
       <div className="avatar placeholder">
-        <div className="w-14 bg-white rounded">{ImageToken}</div>
+        <div className="w-14 bg-white rounded-xl">{ImageToken}</div>
       </div>
     )
   }
@@ -64,7 +64,7 @@ const TokenLogo: React.FC<TokenLogoProps> = (props) => {
   if (square) {
     return (
       <div className="avatar placeholder">
-        <div className="w-14 bg-white rounded">{UnTok}</div>
+        <div className="w-14 bg-white rounded-xl">{UnTok}</div>
       </div>
     )
   }
