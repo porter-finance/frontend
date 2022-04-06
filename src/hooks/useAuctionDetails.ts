@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 
+import { gql, useQuery } from '@apollo/client'
+
 import { additionalServiceApi } from '../api'
 import { PricePoint } from '../api/AdditionalServicesApi'
 import { AuctionIdentifier } from '../state/orderPlacement/reducer'
@@ -30,13 +32,80 @@ export interface AuctionInfoDetail {
   allowListSigner: string
 }
 
+export interface AuctionGraphDetail {
+  id: string
+  isSellingPorterBond: string
+  bond: {
+    id: string
+    name: string
+    symbol: string
+    owner: string
+    maturityDate: string
+    paymentToken: string
+    collateralToken: string
+    collateralRatio: string
+    convertibleRatio: string
+    maxSupply: number
+    type: 'simple' | 'convert'
+  }
+  bidding: string
+  minimum: string
+  size: string
+  start: string
+  end: string
+  filled: string
+  clearing: string
+  live: boolean
+}
+
+const auctionsQuery = gql`
+  query Auction($auctionID: String!) {
+    auction(id: $auctionID) {
+      id
+      isSellingPorterBond
+      bond {
+        id
+        name
+        symbol
+        owner
+        maturityDate
+        paymentToken
+        collateralToken
+        collateralRatio
+        convertibleRatio
+        maxSupply
+        type
+      }
+      bidding
+      minimum
+      size
+      start
+      end
+      filled
+      clearing
+      live
+    }
+  }
+`
+
 export const useAuctionDetails = (
   auctionIdentifier: AuctionIdentifier,
 ): {
   auctionDetails: Maybe<AuctionInfoDetail>
   auctionInfoLoading: boolean
+  graphInfo: Maybe<AuctionGraphDetail>
 } => {
   const { auctionId, chainId } = auctionIdentifier
+  const { data, error, loading } = useQuery(auctionsQuery, {
+    variables: { auctionID: `${auctionId}` },
+  })
+
+  if (error) {
+    logger.error('Error getting useBondDetails info', error)
+  }
+
+  const graphInfo = data?.auction
+
   const [auctionInfo, setAuctionInfo] = useState<Maybe<AuctionInfoDetail>>(null)
   const [auctionInfoLoading, setLoading] = useState<boolean>(true)
 
@@ -76,5 +145,5 @@ export const useAuctionDetails = (
     }
   }, [setAuctionInfo, auctionId, chainId])
 
-  return { auctionDetails: auctionInfo, auctionInfoLoading }
+  return { auctionDetails: auctionInfo, auctionInfoLoading, graphInfo }
 }
