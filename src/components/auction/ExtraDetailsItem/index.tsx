@@ -5,69 +5,10 @@ import { Tooltip } from '../../common/Tooltip'
 import { ExternalLink } from '../../navigation/ExternalLink'
 
 const Wrapper = styled.div<{ showProgressColumn?: boolean }>`
-  align-items: center;
   column-gap: 8px;
   display: grid;
+  align-items: flex-start;
   grid-template-columns: ${(props) => (props.showProgressColumn ? '36px 1fr' : '1fr')};
-`
-
-const PROGRESS_SIZE = '38px'
-const INNER_CIRCLE_SIZE = '28px'
-
-const Chart = styled.div`
-  align-items: center;
-  background-color: #236e61;
-  border-radius: 50%;
-  box-shadow: inset 0 0 2px 0 ${({ theme }) => theme.mainBackground};
-  display: flex;
-  flex-grow: 0;
-  flex-shrink: 0;
-  height: ${PROGRESS_SIZE};
-  justify-content: center;
-  position: relative;
-  width: ${PROGRESS_SIZE};
-`
-
-const ChartProgress = styled.div<{ progress?: string }>`
-  align-items: center;
-  background: conic-gradient(#00e1b9 calc(${(props) => props.progress}), rgba(255, 255, 255, 0) 0%);
-  border-radius: 50%;
-  display: flex;
-  height: calc(${PROGRESS_SIZE} - 3px);
-  justify-content: center;
-  width: calc(${PROGRESS_SIZE} - 3px);
-`
-
-ChartProgress.defaultProps = {
-  progress: '0%',
-}
-
-const InnerChartCircle = styled.div`
-  align-items: center;
-  background: #236e61;
-  border-radius: 50%;
-  display: flex;
-  height: ${INNER_CIRCLE_SIZE};
-  justify-content: center;
-  width: ${INNER_CIRCLE_SIZE};
-`
-
-const CenterChartCircle = styled.div`
-  align-items: center;
-  background-color: ${({ theme }) => theme.mainBackground};
-  border-radius: 50%;
-  box-shadow: 0 0 2px 0 ${({ theme }) => theme.mainBackground};
-  color: ${({ theme }) => theme.text1};
-  display: flex;
-  flex-flow: column;
-  font-size: 9px;
-  font-weight: 600;
-  height: calc(${INNER_CIRCLE_SIZE} - 3px);
-  justify-content: center;
-  letter-spacing: -1px;
-  line-height: 1;
-  text-align: center;
-  width: calc(${INNER_CIRCLE_SIZE} - 3px);
 `
 
 const TextContents = styled.div<{ showEmptyProgressColumn?: boolean }>`
@@ -151,15 +92,6 @@ export const ExtraDetailsItem: React.FC<Props> = (props) => {
 
   return (
     <Wrapper showProgressColumn={progress !== undefined || showEmptyProgressColumn} {...restProps}>
-      {progress && (
-        <Chart>
-          <ChartProgress progress={progress}>
-            <InnerChartCircle>
-              <CenterChartCircle>{progress}</CenterChartCircle>
-            </InnerChartCircle>
-          </ChartProgress>
-        </Chart>
-      )}
       <TextContents className="space-y-2" showEmptyProgressColumn={showEmptyProgressColumn}>
         <Value>
           <ValueText>{value}</ValueText>
