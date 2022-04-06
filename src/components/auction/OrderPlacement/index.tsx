@@ -144,7 +144,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     auctionIdentifier,
     showPriceInverted,
   )
-  const { onInvertPrices } = useSwapActionHandlers()
   const { onUserSellAmountInput } = useSwapActionHandlers()
   const { onUserPriceInput } = useSwapActionHandlers()
   const { auctionDetails, auctionInfoLoading } = useAuctionDetails(auctionIdentifier)
@@ -421,10 +420,8 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
             <PriceInputPanel
               chainId={chainId}
               info={priceInfo}
-              invertPrices={showPriceInverted}
-              onInvertPrices={onInvertPrices}
               onUserPriceInput={onUserPriceInput}
-              tokens={{ auctioningToken: auctioningToken, biddingToken: biddingToken }}
+              token={{ biddingToken: biddingToken }}
               value={price}
             />
             {!account ? (
