@@ -49,10 +49,6 @@ export const FieldRowLabel = styled.label`
 `
 
 export const FieldRowToken = styled.div`
-  align-items: center;
-  display: flex;
-  margin-right: 12px;
-
   .tokenLogo {
     border-width: 1px;
     margin-right: 6px;
@@ -62,13 +58,9 @@ export const FieldRowToken = styled.div`
 export const FieldRowTokenSymbol = styled.div`
   font-weight: 400;
   font-size: 10px;
-  display: flex;
   color: #9f9f9f;
-  align-items: flex-end;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  margin-bottom: -3px;
-  text-align: left;
   white-space: nowrap;
 `
 
