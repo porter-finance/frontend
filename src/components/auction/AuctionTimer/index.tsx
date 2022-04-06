@@ -142,23 +142,6 @@ export const AuctionTimer = (props: AuctionTimerProps) => {
     }
   }, [derivedAuctionInfo?.auctionEndDate])
 
-  const auctionStateTitle = React.useMemo(() => {
-    if (auctionState === AuctionState.PRICE_SUBMISSION) {
-      return <TextBig>Waiting settlement</TextBig>
-    } else if (
-      auctionState !== AuctionState.NOT_YET_STARTED &&
-      auctionState !== AuctionState.ORDER_PLACING_AND_CANCELING &&
-      auctionState !== AuctionState.ORDER_PLACING &&
-      auctionState !== AuctionState.CLAIMING &&
-      auctionState !== null &&
-      auctionState !== undefined
-    ) {
-      return <TextBig>Auction Settled</TextBig>
-    } else {
-      return null
-    }
-  }, [auctionState])
-
   const progress = React.useMemo(() => {
     const progress = calculateTimeProgress(
       derivedAuctionInfo?.auctionStartDate,
@@ -170,13 +153,6 @@ export const AuctionTimer = (props: AuctionTimerProps) => {
 
   return (
     <div className="" {...restProps}>
-      <div>
-        {!auctionState && <TextBig>Loading...</TextBig>}
-        {auctionState === AuctionState.NOT_YET_STARTED && <TextBig>Auction not started</TextBig>}
-        {auctionState === AuctionState.CLAIMING && <TextBig>Auction claiming</TextBig>}
-        {auctionStateTitle && auctionStateTitle}
-      </div>
-
       {(auctionState === AuctionState.ORDER_PLACING_AND_CANCELING ||
         auctionState === AuctionState.ORDER_PLACING) && (
         <div className="flex flex-col place-items-start space-y-1 mb-7">
