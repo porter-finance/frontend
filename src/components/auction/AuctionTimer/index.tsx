@@ -2,8 +2,7 @@ import React from 'react'
 import styled, { keyframes } from 'styled-components'
 
 import dayjs from 'dayjs'
-import advanced from 'dayjs/plugin/advancedFormat'
-import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
 
 import { AuctionState, DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import {
@@ -17,8 +16,7 @@ import {
 import { Tooltip } from '../../common/Tooltip'
 
 export const TIMER_SIZE = '162px'
-dayjs.extend(advanced)
-dayjs.extend(timezone)
+dayjs.extend(utc)
 
 const DateTitle = styled.div`
   font-weight: 400;
@@ -203,11 +201,15 @@ export const AuctionTimer = (props: AuctionTimerProps) => {
       <div className="flex justify-between mb-3">
         <DateValue>
           {derivedAuctionInfo &&
-            dayjs(derivedAuctionInfo?.auctionStartDate * 1000).format('YYYY-MM-DD HH:mm z')}
+            dayjs(derivedAuctionInfo?.auctionStartDate * 1000)
+              .utc()
+              .format('YYYY-MM-DD HH:mm UTC')}
         </DateValue>
         <DateValue>
           {derivedAuctionInfo &&
-            dayjs(derivedAuctionInfo?.auctionEndDate * 1000).format('YYYY-MM-DD HH:mm z')}
+            dayjs(derivedAuctionInfo?.auctionEndDate * 1000)
+              .utc()
+              .format('YYYY-MM-DD HH:mm UTC')}
         </DateValue>
       </div>
       <div className="flex justify-between mb-3">
