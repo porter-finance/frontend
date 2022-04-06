@@ -69,3 +69,15 @@ html {
     border-radius: 4px;
     background: rgba(213, 213, 213, 0.1);
 }
+
+/*charts */
+
+svg text tspan  {
+    @apply normal-case;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 10px;
+    line-height: 11px;
+    letter-spacing: 0.06em;
+    color: #9F9F9F;
+}
