@@ -109,10 +109,17 @@ const Auction: React.FC = () => {
               <div className="hidden md:block">
                 <TokenLogo
                   square
-                  token={{
-                    address: derivedAuctionInfo?.graphInfo?.bond?.collateralToken,
-                    symbol: derivedAuctionInfo?.graphInfo?.bond?.symbol,
-                  }}
+                  token={
+                    derivedAuctionInfo?.graphInfo?.isSellingPorterBond
+                      ? {
+                          address: derivedAuctionInfo?.graphInfo?.bond?.collateralToken,
+                          symbol: derivedAuctionInfo?.graphInfo?.bond?.symbol,
+                        }
+                      : {
+                          address: derivedAuctionInfo?.auctioningToken.address,
+                          symbol: derivedAuctionInfo?.auctioningToken.symbol,
+                        }
+                  }
                 />
               </div>
               <div>
