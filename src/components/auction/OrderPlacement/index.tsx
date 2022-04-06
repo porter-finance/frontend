@@ -103,17 +103,23 @@ const Warning = styled.div`
   align-items: center;
   display: flex;
   margin-bottom: 16px;
+
+  .fill {
+    fill: #9f9f9f;
+  }
 `
 
 const WarningText = styled.div`
   color: #9f9f9f;
-  font-size: 15px;
-  font-weight: 300;
-  line-height: 1.2;
   margin-left: 8px;
-  position: relative;
-  top: 2px;
-  text-align: left;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14px;
+  /* identical to box height */
+
+  display: flex;
+  align-items: flex-end;
+  letter-spacing: 0.03em;
 `
 
 interface OrderPlacementProps {
