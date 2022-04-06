@@ -6,10 +6,6 @@ html {
     background-color: #131415;
 }
 
-.card {
-    @apply rounded-md;
-}
-
 .btn-group {
     border: 1px solid #454545;
     @apply rounded-full;
@@ -26,9 +22,14 @@ html {
     @apply rounded-full;
 }
 
-.card-title {
-    @apply text-gray-100 font-normal;
-    font-size: 24px;
+.btn-group > .btn:not(:first-of-type) {
+    border-top-left-radius: inherit;
+    border-bottom-left-radius: inherit;
+}
+
+.btn-group > .btn:not(:last-of-type) {
+    border-top-right-radius: inherit;
+    border-bottom-right-radius: inherit;
 }
 
 .bg-neutral {
@@ -42,6 +43,7 @@ html {
 }
 
 .card {
+    @apply rounded-md;
     @apply bg-neutral;
     @apply text-neutral-content;
     @apply h-min;
@@ -49,17 +51,12 @@ html {
 }
 
 .card-title {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 22px;
+    letter-spacing: 0.01em;
+    color: #EEEFEB;
     @apply mb-4;
-}
-
-.btn-group > .btn:not(:first-of-type) {
-    border-top-left-radius: inherit;
-    border-bottom-left-radius: inherit;
-}
-
-.btn-group > .btn:not(:last-of-type) {
-    border-top-right-radius: inherit;
-    border-bottom-right-radius: inherit;
 }
 
 .progress-primary::-webkit-progress-value {
