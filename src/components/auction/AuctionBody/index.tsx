@@ -91,10 +91,10 @@ const BondCard = ({ graphInfo }) => {
 
             <div className="space-y-2">
               <h2 className="text-2xl text-white font-normal">
-                {graphInfo?.bond?.name || 'Loading'}
+                {graphInfo?.bond?.name || 'Bond name'}
               </h2>
               <p className="text-[#9F9F9F] text-xs font-normal uppercase">
-                {graphInfo?.bond?.symbol}
+                {graphInfo?.bond?.symbol || 'Bond symbol'}
               </p>
             </div>
           </div>
@@ -142,7 +142,7 @@ const AuctionBody = (props: AuctionBodyProps) => {
                     derivedAuctionInfo={derivedAuctionInfo}
                   />
 
-                  <BondCard graphInfo={graphInfo} />
+                  {graphInfo?.isSellingPorterBond && <BondCard graphInfo={graphInfo} />}
 
                   <OrderBookContainer
                     auctionIdentifier={auctionIdentifier}
