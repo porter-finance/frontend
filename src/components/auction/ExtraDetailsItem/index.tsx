@@ -92,9 +92,12 @@ export const ExtraDetailsItem: React.FC<Props> = (props) => {
 
   return (
     <Wrapper showProgressColumn={progress !== undefined || showEmptyProgressColumn} {...restProps}>
-      <TextContents className="space-y-2" showEmptyProgressColumn={showEmptyProgressColumn}>
+      <TextContents
+        className="space-y-2 overflow-hidden min-w-[100px]"
+        showEmptyProgressColumn={showEmptyProgressColumn}
+      >
         <Value>
-          <ValueText>{value}</ValueText>
+          <ValueText className="overflow-hidden overflow-ellipsis">{value}</ValueText>
           {url && <Link href={url} />}
         </Value>
         <Title>
