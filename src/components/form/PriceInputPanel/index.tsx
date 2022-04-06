@@ -5,7 +5,6 @@ import { Token } from '@josojo/honeyswap-sdk'
 
 import { getTokenDisplay } from '../../../utils'
 import { Tooltip } from '../../common/Tooltip'
-import { InvertIcon } from '../../icons/InvertIcon'
 import { MiniInfoIcon } from '../../icons/MiniInfoIcon'
 import {
   FieldRowBottom,
@@ -13,7 +12,6 @@ import {
   FieldRowInfoProps,
   FieldRowInput,
   FieldRowLabel,
-  FieldRowLineButton,
   FieldRowToken,
   FieldRowTokenSymbol,
   FieldRowTop,
@@ -21,6 +19,7 @@ import {
   InfoType,
 } from '../../pureStyledComponents/FieldRow'
 import DoubleLogo from '../../token/DoubleLogo'
+import TokenLogo from '../../token/TokenLogo'
 
 const FieldRowLabelStyled = styled(FieldRowLabel)`
   align-items: center;
@@ -39,46 +38,29 @@ const DoubleLogoStyled = styled(DoubleLogo)`
   margin-right: 6px;
 `
 
-const InvertButton = styled(FieldRowLineButton)`
-  flex-shrink: 0;
-  height: 16px;
-`
-
 interface Props {
   chainId: number
   info?: FieldRowInfoProps
-  invertPrices: boolean
-  onInvertPrices: () => void
-  onUserPriceInput: (val: string, isInvertedPrice: boolean) => void
+  onUserPriceInput: (val: string) => void
   tokens: { auctioningToken: Maybe<Token>; biddingToken: Maybe<Token> } | null
   value: string
 }
 
 const PriceInputPanel = (props: Props) => {
-  const {
-    chainId,
-    info,
-    invertPrices,
-    onInvertPrices,
-    onUserPriceInput,
-    tokens = null,
-    value,
-    ...restProps
-  } = props
+  const { chainId, info, onUserPriceInput, token = null, value, ...restProps } = props
 
   const [readonly, setReadonly] = useState(true)
   const error = info?.type === InfoType.error
 
-  const { auctioningTokenDisplay, biddingTokenDisplay } = useMemo(() => {
-    if (tokens && chainId && tokens.auctioningToken && tokens.biddingToken) {
+  const { biddingTokenDisplay } = useMemo(() => {
+    if (token && chainId && token.biddingToken) {
       return {
-        auctioningTokenDisplay: getTokenDisplay(tokens.auctioningToken, chainId),
-        biddingTokenDisplay: getTokenDisplay(tokens.biddingToken, chainId),
+        biddingTokenDisplay: getTokenDisplay(token.biddingToken, chainId),
       }
     } else {
-      return { auctioningTokenDisplay: '-', biddingTokenDisplay: '-' }
+      return { biddingTokenDisplay: '-' }
     }
-  }, [chainId, tokens])
+  }, [chainId, token])
 
   return (
     <>
@@ -88,60 +70,29 @@ const PriceInputPanel = (props: Props) => {
             hasError={error}
             onBlur={() => setReadonly(true)}
             onFocus={() => setReadonly(false)}
-            onUserSellAmountInput={(val) => {
-              onUserPriceInput(val, invertPrices)
-            }}
+            onUserSellAmountInput={onUserPriceInput}
             readOnly={readonly}
             value={value}
           />
-          {tokens && (
+          {token && (
             <>
-              <FieldRowToken>
-                {invertPrices ? (
-                  <DoubleLogoStyled
-                    auctioningToken={{
-                      address: tokens.biddingToken.address,
-                      symbol: tokens.biddingToken.symbol,
-                    }}
-                    biddingToken={{
-                      address: tokens.auctioningToken.address,
-                      symbol: tokens.auctioningToken.symbol,
-                    }}
-                    size="16px"
-                  />
-                ) : (
-                  <DoubleLogoStyled
-                    auctioningToken={{
-                      address: tokens.auctioningToken.address,
-                      symbol: tokens.auctioningToken.symbol,
-                    }}
-                    biddingToken={{
-                      address: tokens.biddingToken.address,
-                      symbol: tokens.biddingToken.symbol,
-                    }}
-                    size="16px"
-                  />
-                )}
-                <FieldRowTokenSymbol>
-                  {invertPrices
-                    ? `${auctioningTokenDisplay} per ${biddingTokenDisplay}`
-                    : `${biddingTokenDisplay} per ${auctioningTokenDisplay}`}
-                </FieldRowTokenSymbol>
+              <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#222222] rounded-full p-1">
+                <TokenLogo
+                  size="16px"
+                  token={{
+                    address: token.biddingToken.address,
+                    symbol: token.biddingToken.symbol,
+                  }}
+                />
+                <FieldRowTokenSymbol>{biddingTokenDisplay}</FieldRowTokenSymbol>
               </FieldRowToken>
-              <InvertButton onClick={onInvertPrices} title="Invert">
-                <InvertIcon />
-              </InvertButton>
             </>
           )}
         </FieldRowTop>
         <FieldRowBottom>
           <FieldRowLabelStyled>
-            <FieldRowLabelStyledText>
-              {invertPrices ? 'Min Bidding Price' : 'Max Bidding Price'}
-            </FieldRowLabelStyledText>
-            <Tooltip
-              text={invertPrices ? 'Min Bidding Price tooltip' : 'Max Bidding Price tooltip'}
-            />
+            <FieldRowLabelStyledText>Price</FieldRowLabelStyledText>
+            <Tooltip text="Bidding Price tooltip" />
           </FieldRowLabelStyled>
         </FieldRowBottom>
       </FieldRowWrapper>
