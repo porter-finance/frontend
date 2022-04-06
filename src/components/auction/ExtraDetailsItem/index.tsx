@@ -116,17 +116,38 @@ const Link = styled(ExternalLink)`
   margin-top: -2px;
 `
 
+const LinearBorder = () => (
+  <svg fill="none" height="2" viewBox="0 0 248 2" width="248" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 1L248 0.999978" stroke="url(#paint0_linear_8725_2152)" strokeWidth="2" />
+    <defs>
+      <linearGradient
+        gradientUnits="userSpaceOnUse"
+        id="paint0_linear_8725_2152"
+        x1="0"
+        x2="252.5"
+        y1="1"
+        y2="1"
+      >
+        <stop stopColor="#404EED" />
+        <stop offset="1" stopColor="#404EED" stopOpacity="0" />
+      </linearGradient>
+    </defs>
+  </svg>
+)
+
 export interface Props {
   progress?: string
   showEmptyProgressColumn?: boolean
   title: string
   tooltip?: string
+  bordered?: boolean
   url?: string
-  value: string | ReactElement
+  value: string | ReactElement | Element
 }
 
 export const ExtraDetailsItem: React.FC<Props> = (props) => {
-  const { progress, showEmptyProgressColumn, title, tooltip, url, value, ...restProps } = props
+  const { bordered, progress, showEmptyProgressColumn, title, tooltip, url, value, ...restProps } =
+    props
 
   return (
     <Wrapper showProgressColumn={progress !== undefined || showEmptyProgressColumn} {...restProps}>
@@ -139,7 +160,7 @@ export const ExtraDetailsItem: React.FC<Props> = (props) => {
           </ChartProgress>
         </Chart>
       )}
-      <TextContents showEmptyProgressColumn={showEmptyProgressColumn}>
+      <TextContents className="space-y-2" showEmptyProgressColumn={showEmptyProgressColumn}>
         <Value>
           <ValueText>{value}</ValueText>
           {url && <Link href={url} />}
@@ -149,6 +170,11 @@ export const ExtraDetailsItem: React.FC<Props> = (props) => {
           {tooltip && <Tooltip text={tooltip} />}
         </Title>
       </TextContents>
+      {bordered && (
+        <div className="mt-5">
+          <LinearBorder />
+        </div>
+      )}
     </Wrapper>
   )
 }
