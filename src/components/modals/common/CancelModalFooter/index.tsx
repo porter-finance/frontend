@@ -7,7 +7,7 @@ import { IconWrapper } from '../pureStyledComponents/IconWrapper'
 import { Text } from '../pureStyledComponents/Text'
 
 const ActionButton = styled(Button)`
-  margin-top: 40px;
+  margin-top: 42px;
   width: 100%;
 `
 

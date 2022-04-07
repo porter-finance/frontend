@@ -14,29 +14,30 @@ import { useWalletModalToggle } from '../../../state/application/hooks'
 import { DerivedAuctionInfo, useDerivedClaimInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { getFullTokenDisplay, isTokenWETH, isTokenWMATIC, isTokenXDAI } from '../../../utils'
-import { Button } from '../../buttons/Button'
 import { ButtonAnchor } from '../../buttons/ButtonAnchor'
 import { ButtonType } from '../../buttons/buttonStylingTypes'
 import { InlineLoading } from '../../common/InlineLoading'
 import { SpinnerSize } from '../../common/Spinner'
-import { ErrorInfo } from '../../icons/ErrorInfo'
 import ClaimConfirmationModal from '../../modals/ClaimConfirmationModal'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
-import { ErrorRow, ErrorText } from '../../pureStyledComponents/Error'
 import TokenLogo from '../../token/TokenLogo'
 
 const Wrapper = styled(BaseCard)`
   max-width: 100%;
-  min-height: 352px;
   min-width: 100%;
-  height: calc(100% - 35px);
+  padding: 0;
 `
 
-const ActionButton = styled(Button)`
-  flex-shrink: 0;
-  height: 52px;
-  margin-top: auto;
-`
+const ActionButton = ({ children, ...props }) => (
+  <button
+    className={`btn btn-sm normal-case w-full hover:bg-blue-500 ${
+      props.disabled ? '!bg-[#2C2C2C] !text-[#696969]' : 'bg-[#404EED] text-white'
+    } font-normal`}
+    {...props}
+  >
+    {children}
+  </button>
+)
 
 const TokensWrapper = styled.div`
   background-color: ${({ theme }) => theme.bg7};
@@ -86,7 +87,7 @@ interface Props {
 
 // TODO: Currently unused, see https://canary.discord.com/channels/903094151002857492/919775985396760626/961672566995566672
 const ClaimDisabled = () => (
-  <div className="card card-bordered border-color-[#D5D5D5]">
+  <div className="card card-bordered">
     <div className="card-body">
       <h2 className="card-title">Claim bid funds and bonds</h2>
       <div className="space-y-6">
@@ -105,7 +106,7 @@ const ClaimDisabled = () => (
   </div>
 )
 const NoParticipation = () => (
-  <div className="card card-bordered border-color-[#D5D5D5]">
+  <div className="card card-bordered">
     <div className="card-body">
       <h2 className="card-title !text-[#696969]">This auction is closed</h2>
       <div className="space-y-6">
@@ -224,19 +225,14 @@ const Claimer: React.FC<Props> = (props) => {
     ? 'https://quickswap.exchange/#/swap?inputCurrency=${biddingToken.address}'
     : `https://app.uniswap.org/#/swap?inputCurrency=${biddingToken.address}`
 
-  if (!participatingBids) {
+  if (participatingBids) {
     return <NoParticipation />
   }
 
   return (
-    <div
-      className={`card card-bordered ${
-        !isLoading ? 'border-color-[#D5D5D5]' : 'border-[#404EEDA4]'
-      }`}
-    >
+    <div className="card card-bordered border-[#404EEDA4]">
       <div className="card-body">
         <h2 className="card-title">Claim bid funds and bonds</h2>
-
         <Wrapper>
           {isLoading && <InlineLoading size={SpinnerSize.small} />}
           {!isLoading && (
@@ -317,7 +313,7 @@ const Claimer: React.FC<Props> = (props) => {
                 </TokenItem>
               </TokensWrapper>
               {!account ? (
-                <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
+                <ActionButton onClick={toggleWalletModal}>Connect wallet</ActionButton>
               ) : (
                 <ActionButton
                   disabled={isClaimButtonDisabled}
@@ -326,18 +322,11 @@ const Claimer: React.FC<Props> = (props) => {
                     onClaimOrder()
                   }}
                 >
-                  {claimStatus === ClaimState.PENDING ? (
-                    `Claiming `
-                  ) : !isValid && account ? (
-                    <>
-                      <ErrorRow>
-                        <ErrorInfo />
-                        <ErrorText>{error}</ErrorText>
-                      </ErrorRow>
-                    </>
-                  ) : (
-                    `Claim`
-                  )}
+                  {claimStatus === ClaimState.PENDING
+                    ? `Claiming`
+                    : !isValid && account
+                    ? error
+                    : `Claim funds`}
                 </ActionButton>
               )}
               <ClaimConfirmationModal
