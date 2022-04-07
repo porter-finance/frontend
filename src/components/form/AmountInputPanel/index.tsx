@@ -10,7 +10,6 @@ import { useActiveWeb3React } from '../../../hooks'
 import { ApprovalState } from '../../../hooks/useApproveCallback'
 import { ChainId, getTokenDisplay } from '../../../utils'
 import { Tooltip } from '../../common/Tooltip'
-import { MiniInfoIcon } from '../../icons/MiniInfoIcon'
 import { MiniLock } from '../../icons/MiniLock'
 import { MiniSpinner } from '../../icons/MiniSpinner'
 import {
@@ -221,9 +220,7 @@ const AmountInputPanel: React.FC<Props> = (props) => {
         <FieldRowBottom>
           {info ? (
             <FieldRowLabelStyled className="space-x-1">
-              <FieldRowInfo infoType={info?.type}>
-                <MiniInfoIcon /> {info.text}
-              </FieldRowInfo>
+              <FieldRowInfo infoType={info?.type}>{info.text}</FieldRowInfo>
             </FieldRowLabelStyled>
           ) : (
             <FieldRowLabelStyled className="space-x-1">
