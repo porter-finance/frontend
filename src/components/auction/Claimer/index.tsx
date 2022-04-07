@@ -83,6 +83,24 @@ interface Props {
   derivedAuctionInfo: DerivedAuctionInfo
 }
 
+const ClosedAuction = () => (
+  <>
+    <h2 className="card-title">Claim bid funds and bonds</h2>
+    <div className="space-y-6">
+      <div className="text-sm text-[#696969]">
+        There are no funds to claim as you did not participate in the auction.
+      </div>
+
+      <button
+        className="btn btn-sm normal-case w-full !bg-[#2C2C2C] !text-[#696969] font-normal"
+        disabled
+      >
+        Claim funds
+      </button>
+    </div>
+  </>
+)
+
 const Claimer: React.FC<Props> = (props) => {
   const { auctionIdentifier, derivedAuctionInfo } = props
   const { chainId } = auctionIdentifier
@@ -189,9 +207,13 @@ const Claimer: React.FC<Props> = (props) => {
     ? 'https://quickswap.exchange/#/swap?inputCurrency=${biddingToken.address}'
     : `https://app.uniswap.org/#/swap?inputCurrency=${biddingToken.address}`
 
+  if (claimStatus === ClaimState.NOT_APPLICABLE) {
+    return <ClosedAuction />
+  }
+
   return (
     <>
-      <h2 className="card-title ">Claim bid funds and bonds</h2>
+      <h2 className="card-title">Claim bid funds and bonds</h2>
 
       <Wrapper>
         {isLoading && <InlineLoading size={SpinnerSize.small} />}
