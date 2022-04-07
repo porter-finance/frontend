@@ -49,7 +49,7 @@ export const NumericalInput = React.memo(function InnerInput(
       }}
       onFocus={onFocus}
       pattern="^[0-9]*[.,]?[0-9]*$"
-      placeholder={placeholder || '0.0'}
+      placeholder={placeholder || '0'}
       readOnly={readOnly}
       spellCheck="false"
       type="text"

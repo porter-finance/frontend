@@ -46,7 +46,7 @@ import WarningModal from '../../modals/WarningModal'
 import SwapModalFooter from '../../modals/common/PlaceOrderModalFooter'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { EmptyContentText } from '../../pureStyledComponents/EmptyContent'
-import { InfoType } from '../../pureStyledComponents/FieldRow'
+import { FieldRowInput, InfoType } from '../../pureStyledComponents/FieldRow'
 
 const LinkCSS = css`
   color: ${({ theme }) => theme.text1};
@@ -139,15 +139,15 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const { account, chainId: chainIdFromWeb3 } = useActiveWeb3React()
   const orders: OrderState | undefined = useOrderState()
   const toggleWalletModal = useWalletModalToggle()
-  const { price, sellAmount, showPriceInverted } = useOrderPlacementState()
+  const { interestRate, price, sellAmount, showPriceInverted } = useOrderPlacementState()
   const { errorAmount, errorPrice } = useGetOrderPlacementError(
     derivedAuctionInfo,
     auctionState,
     auctionIdentifier,
     showPriceInverted,
   )
-  const { onUserSellAmountInput } = useSwapActionHandlers()
-  const { onUserPriceInput } = useSwapActionHandlers()
+  const { onUserInterestRateInput, onUserPriceInput, onUserSellAmountInput } =
+    useSwapActionHandlers()
   const { auctionDetails, auctionInfoLoading } = useAuctionDetails(auctionIdentifier)
   const { signature } = useSignature(auctionIdentifier, account)
 
@@ -444,6 +444,13 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                 token={{ biddingToken: biddingToken }}
                 value={price}
               />
+
+              <FieldRowInput
+                disabled={!account}
+                onUserSellAmountInput={onUserInterestRateInput}
+                value={interestRate}
+              />
+
               {!account ? (
                 <ActionButton onClick={toggleWalletModal}>Connect wallet</ActionButton>
               ) : (
