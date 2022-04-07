@@ -3,9 +3,7 @@ import numbro from 'numbro'
 export const abbreviation = (_value: string | number, mantissa = 6) => {
   const value = Number(_value)
 
-  console.log('trying')
   if (!isNaN(value)) {
-    console.log(value, 'found')
     const valueSplitted: Array<string> = value.toString().split('.')
     const leftSide: String | null = valueSplitted[0] || null
     const parseValue: numbro.Numbro = numbro(value)
