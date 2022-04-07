@@ -26,11 +26,12 @@ import { convertPriceIntoBuyAndSellAmount, getInverse } from '../../utils/prices
 import { calculateTimeLeft } from '../../utils/tools'
 import { AppDispatch, AppState } from '../index'
 import { useSingleCallResult } from '../multicall/hooks'
-import { resetUserPrice, resetUserVolume } from '../orderbook/actions'
+import { resetUserInterestRate, resetUserPrice, resetUserVolume } from '../orderbook/actions'
 import { useOrderActionHandlers } from '../orders/hooks'
 import { OrderDisplay, OrderStatus } from '../orders/reducer'
 import { useTokenBalancesTreatWETHAsETH } from '../wallet/hooks'
 import {
+  interestRateInput,
   invertPrice,
   priceInput,
   sellAmountInput,
@@ -133,6 +134,7 @@ export function useOrderPlacementState(): AppState['orderPlacement'] {
 export function useSwapActionHandlers(): {
   onUserSellAmountInput: (sellAmount: string) => void
   onUserPriceInput: (price: string) => void
+  onUserInterestRateInput: (interestRate: string) => void
   onInvertPrices: () => void
 } {
   const dispatch = useDispatch<AppDispatch>()
@@ -162,7 +164,21 @@ export function useSwapActionHandlers(): {
     [dispatch],
   )
 
-  return { onUserPriceInput, onUserSellAmountInput, onInvertPrices }
+  const onUserInterestRateInput = useCallback(
+    (interestRate: string) => {
+      if (isNumeric(interestRate)) {
+        dispatch(
+          resetUserInterestRate({
+            interestRate: parseFloat(interestRate),
+          }),
+        )
+      }
+      dispatch(interestRateInput({ interestRate }))
+    },
+    [dispatch],
+  )
+
+  return { onUserPriceInput, onUserSellAmountInput, onInvertPrices, onUserInterestRateInput }
 }
 
 function isNumeric(str: string) {
