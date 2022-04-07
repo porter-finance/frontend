@@ -2,24 +2,8 @@ import React from 'react'
 import styled from 'styled-components'
 
 const Wrapper = styled.li<{ disabled?: boolean }>`
-  ${(props) => props.disabled && `&[disabled] { opacity: 0.5; cursor: not-allowed;}`}
-  ${(props) => props.disabled && `&[disabled]:hover { background-color: transparent; }`}
-`
-
-const Text = styled.div`
-  color: ${({ theme }) => theme.text1};
-  font-size: 22px;
-  font-weight: 600;
-  line-height: 1.2;
-  text-align: left;
-`
-
-const SubText = styled.div`
-  color: ${({ theme }) => theme.text1};
-  font-size: 18px;
-  font-weight: 400;
-  line-height: 1.2;
-  text-align: left;
+  ${(props) => props.disabled && `&[disabled] a { opacity: 0.5; cursor: not-allowed;}`}
+  ${(props) => props.disabled && `&[disabled] a:hover { background-color: rgb(75, 85, 99); }`}
 `
 
 const Image = styled.img`
@@ -41,10 +25,7 @@ const Option: React.FC<Props> = (props) => {
 
   return (
     <Wrapper disabled={disabled} onClick={!disabled && onClick} {...restProps}>
-      <a
-        className="flex items-center p-3 text-base font-bold text-gray-900 bg-gray-50 rounded-lg hover:bg-gray-100 group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white"
-        href="#"
-      >
+      <a className="cursor-pointer flex items-center p-3 text-base font-bold text-gray-900 bg-gray-50 rounded-lg hover:bg-gray-100 group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white">
         <div className="h-4">
           <Image alt={'Icon'} src={icon} />
         </div>
