@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import { Fraction, TokenAmount } from '@josojo/honeyswap-sdk'
+import dayjs from 'dayjs'
 
 import kycLinks from '../../../assets/links/kycLinks.json'
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../constants/config'
@@ -36,6 +37,7 @@ import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
 import { InlineLoading } from '../../common/InlineLoading'
 import { SpinnerSize } from '../../common/Spinner'
+import { Tooltip } from '../../common/Tooltip'
 import AmountInputPanel from '../../form/AmountInputPanel'
 import PriceInputPanel from '../../form/PriceInputPanel'
 import { Calendar } from '../../icons/Calendar'
@@ -359,6 +361,20 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
           <h2 className="card-title">Private Auction</h2>
         ) : (
           <h2 className="card-title">Place Order</h2>
+        )}
+
+        {derivedAuctionInfo && (
+          <div className="space-y-1">
+            <div className="text-[#EEEFEB] text-sm">
+              {dayjs(derivedAuctionInfo.orderCancellationEndDate * 1000)
+                .utc()
+                .format('MMM DD, YYYY HH:mm UTC')}
+            </div>
+            <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
+              <span>Order cancellation cutoff date</span>
+              <Tooltip text="Order cutoff date tooltip" />
+            </div>
+          </div>
         )}
 
         <Wrapper>
