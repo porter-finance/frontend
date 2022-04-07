@@ -14,6 +14,7 @@ import { Order, decodeOrder } from './Order'
 import { useActiveWeb3React } from './index'
 import { useAuctionDetails } from './useAuctionDetails'
 import { useGasPrice } from './useGasPrice'
+import { useParticipatingAuctionBids } from './useParticipatingAuctionBids'
 
 const logger = getLogger('useClaimOrderCallback')
 
@@ -48,6 +49,7 @@ export enum ClaimState {
 export const useGetClaimInfo = (auctionIdentifier: AuctionIdentifier): UseGetClaimInfoReturn => {
   const { account, library } = useActiveWeb3React()
   const [claimInfo, setClaimInfo] = useState<ClaimInformation>({ sellOrdersFormUser: [] })
+  const participatingBids = useParticipatingAuctionBids()
   const [error, setError] = useState<Maybe<Error>>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const { auctionId, chainId } = auctionIdentifier
