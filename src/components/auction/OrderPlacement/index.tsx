@@ -73,7 +73,7 @@ const Wrapper = styled(BaseCard)`
 
 const ActionButton = styled(Button)`
   flex-shrink: 0;
-  height: 40px;
+  height: 42px;
 `
 
 const EmptyContentTextSmall = styled(EmptyContentText)`
@@ -346,7 +346,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
 
   if (!auctionInfoLoading && isPrivate && !signatureAvailable) {
     return (
-      <div className="card card-bordered border-color-[#D5D5D5]">
+      <div className="card card-bordered">
         <div className="card-body">
           <h2 className="card-title !text-[#696969]">Private auction</h2>
 
