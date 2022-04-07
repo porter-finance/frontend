@@ -196,8 +196,7 @@ const Claimer: React.FC<Props> = (props) => {
       claimableBiddingToken.greaterThan('0'),
     [Web3ChainId, account, chainId, claimableBiddingToken, isWETH, isXDAI, isMATIC],
   )
-  // eslint-disable-next-line
-  console.log('isMATIC', isMATIC)
+
   const unwrapTooltip = `Unwrap ${biddingToken.symbol} on ${
     isXDAI ? 'Honeyswap' : isMATIC ? 'QuickSwap' : 'Uniswap'
   }. Do it after you claimed your ${biddingTokenDisplayWrapped}`

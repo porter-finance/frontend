@@ -94,7 +94,6 @@ const Auction: React.FC = () => {
     [auctionIdentifier, derivedAuctionInfo],
   )
 
-  const auctionSymbolBiddingToken = derivedAuctionInfo?.biddingToken.symbol.slice(0, 7)
   const auctionSymbolAuctioningToken = derivedAuctionInfo?.auctioningToken.symbol.slice(0, 7)
   const statusLabel =
     new Date(derivedAuctionInfo?.auctionEndDate * 1000) > new Date() ? 'Ongoing' : 'Ended'
