@@ -187,13 +187,11 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
               .invert()
               .multiply(new Fraction('999', '1000'))
               .toSignificant(4),
-            true,
           )
         : onUserPriceInput(
             derivedAuctionInfo?.clearingPrice
               .multiply(new Fraction('1001', '1000'))
               .toSignificant(4),
-            false,
           )
     }
   }, [onUserPriceInput, price, derivedAuctionInfo, showPriceInverted])
