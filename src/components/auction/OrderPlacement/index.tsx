@@ -417,6 +417,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
             />
             <PriceInputPanel
               chainId={chainId}
+              disabled={!account}
               info={priceInfo}
               onUserPriceInput={onUserPriceInput}
               token={{ biddingToken: biddingToken }}
