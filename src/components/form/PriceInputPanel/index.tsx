@@ -18,7 +18,6 @@ import {
   FieldRowWrapper,
   InfoType,
 } from '../../pureStyledComponents/FieldRow'
-import DoubleLogo from '../../token/DoubleLogo'
 import TokenLogo from '../../token/TokenLogo'
 
 const FieldRowLabelStyled = styled(FieldRowLabel)`
@@ -34,15 +33,11 @@ const FieldRowLabelStyledText = styled.span`
   margin-right: 5px;
 `
 
-const DoubleLogoStyled = styled(DoubleLogo)`
-  margin-right: 6px;
-`
-
 interface Props {
   chainId: number
   info?: FieldRowInfoProps
   onUserPriceInput: (val: string) => void
-  tokens: { auctioningToken: Maybe<Token>; biddingToken: Maybe<Token> } | null
+  token: { biddingToken: Maybe<Token> } | null
   value: string
 }
 
