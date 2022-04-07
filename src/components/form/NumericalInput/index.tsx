@@ -8,6 +8,7 @@ interface Props {
   hasError?: boolean
   onUserSellAmountInput: (string) => void
   value: string | number
+  disabled?: boolean
   className?: string
   onFocus?: any
   onBlur?: any
@@ -17,7 +18,16 @@ interface Props {
 export const NumericalInput = React.memo(function InnerInput(
   props: Props & Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChange' | 'as'>,
 ) {
-  const { className, onBlur, onFocus, onUserSellAmountInput, placeholder, readOnly, value } = props
+  const {
+    className,
+    disabled,
+    onBlur,
+    onFocus,
+    onUserSellAmountInput,
+    placeholder,
+    readOnly,
+    value,
+  } = props
   const enforcer = (nextUserInput: string) => {
     if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
       onUserSellAmountInput(nextUserInput)
@@ -29,6 +39,7 @@ export const NumericalInput = React.memo(function InnerInput(
       autoComplete="off"
       autoCorrect="off"
       className={className}
+      disabled={disabled === true}
       inputMode="decimal"
       maxLength={79}
       minLength={1}

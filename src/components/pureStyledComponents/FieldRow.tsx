@@ -84,7 +84,6 @@ export const FieldRowInput = styled(NumericalInput)<{ hasError?: boolean }>`
 
   &::placeholder {
     color: ${(props) => (props.hasError ? ({ theme }) => theme.error : ({ theme }) => 'white')};
-    font-style: italic;
     opacity: 0.5;
   }
 
