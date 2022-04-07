@@ -171,7 +171,7 @@ const AuctionDetails = (props: Props) => {
       {
         bordered: true,
         title: 'Current auction interest rate/price',
-        tooltip: `This will be the auction's Closing Price if no more bids are submitted or canceled, OR it will be the auction's Clearing Price if the auction concludes without additional bids.`,
+        tooltip: `This will be the auction's Closing Price if no more bids are submitted or cancelled, OR it will be the auction's Clearing Price if the auction concludes without additional bids.`,
         value: clearingPriceDisplay ? clearingPriceDisplay : '-',
       },
       {
