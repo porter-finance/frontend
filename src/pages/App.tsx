@@ -42,7 +42,6 @@ const App: React.FC = () => {
             textColor="#fff"
           />
           {showTopWarning && <TopDisclaimer />}
-          <span id="topAnchor" />
           <Inner className="max-w-3xl mx-auto px-4 sm:px-6 lg:max-w-7xl lg:px-8">
             <Web3ReactManager>
               <Routes />

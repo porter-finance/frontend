@@ -97,7 +97,7 @@ export const ExtraDetailsItem: React.FC<Props> = (props) => {
         showEmptyProgressColumn={showEmptyProgressColumn}
       >
         <Value>
-          <ValueText className="overflow-hidden overflow-ellipsis">{value}</ValueText>
+          <ValueText className="overflow-hidden overflow-ellipsis">{value || 'Unknown'}</ValueText>
           {url && <Link href={url} />}
         </Value>
         <Title>

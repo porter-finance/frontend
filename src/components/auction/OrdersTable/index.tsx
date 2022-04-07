@@ -95,7 +95,7 @@ const ButtonWrapper = styled.div`
 `
 
 const ActionButton = styled(Button)`
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
   height: 28px;
