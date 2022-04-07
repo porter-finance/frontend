@@ -16,8 +16,7 @@ export interface FieldRowInfoProps {
 export const FieldRowWrapper = styled.div<{ error?: boolean }>`
   border-style: solid;
   border-width: 1px;
-  border-color: ${(props) =>
-    props.error ? ({ theme }) => theme.error : ({ theme }) => theme.border} !important;
+  border-color: ${({ theme }) => theme.border};
   display: flex;
   flex-direction: column;
   min-height: 62px;
@@ -198,14 +197,6 @@ const InfoTypeOKCSS = css`
 
 export const FieldRowInfo = styled.div<{ infoType: InfoType }>`
   display: inline-flex;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 1.2;
-  letter-spacing: 0.03em;
-  text-align: left;
-
-  margin-bottom: 10px;
-  margin-top: 10px;
 
   > svg {
     margin: 1px 4px 0 0;
