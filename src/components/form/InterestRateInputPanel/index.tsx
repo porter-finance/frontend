@@ -53,7 +53,7 @@ const InterestRateInputPanel = (props: Props) => {
 
   return (
     <>
-      <FieldRowWrapper className="justify-center" error={error} {...restProps}>
+      <FieldRowWrapper className="justify-center mt-4" error={error} {...restProps}>
         <div className="flex flex-row items-center justify-center">
           <FieldRowInput
             disabled={disabled === true}

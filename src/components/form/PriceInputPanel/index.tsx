@@ -94,20 +94,22 @@ const PriceInputPanel = (props: Props) => {
             </>
           )}
         </FieldRowTop>
+
         <FieldRowBottom>
-          <FieldRowLabelStyled>
-            <FieldRowLabelStyledText>Price</FieldRowLabelStyledText>
-            <Tooltip text="Bidding Price tooltip" />
-          </FieldRowLabelStyled>
+          {info ? (
+            <FieldRowLabelStyled className="space-x-1">
+              <FieldRowInfo infoType={info?.type}>
+                <MiniInfoIcon /> {info.text}
+              </FieldRowInfo>
+            </FieldRowLabelStyled>
+          ) : (
+            <FieldRowLabelStyled className="space-x-1">
+              <span>Price</span>
+              <Tooltip text="Bidding price tooltip" />
+            </FieldRowLabelStyled>
+          )}
         </FieldRowBottom>
       </FieldRowWrapper>
-      <FieldRowInfo infoType={info?.type}>
-        {info && (
-          <>
-            <MiniInfoIcon /> {info.text}
-          </>
-        )}
-      </FieldRowInfo>
     </>
   )
 }

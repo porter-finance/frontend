@@ -47,7 +47,7 @@ export function colors(darkMode: boolean): Colors {
     buttonGradient1: '#8958FF',
     buttonGradient2: '#3F77FF',
     disabled: darkMode ? '#31323e' : 'rgb(237, 238, 242)',
-    error: '#D25453',
+    error: '#EDA651',
     green1: ' #008c73',
     green2: ' #00cba7',
     mainBackground: darkMode ? '#131415' : '#F7F8FA',
