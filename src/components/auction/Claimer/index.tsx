@@ -9,6 +9,7 @@ import {
   useClaimOrderCallback,
   useGetAuctionProceeds,
 } from '../../../hooks/useClaimOrderCallback'
+import { useParticipatingAuctionBids } from '../../../hooks/useParticipatingAuctionBids'
 import { useWalletModalToggle } from '../../../state/application/hooks'
 import { DerivedAuctionInfo, useDerivedClaimInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
@@ -84,21 +85,35 @@ interface Props {
 }
 
 const ClosedAuction = () => (
-  <>
-    <h2 className="card-title">Claim bid funds and bonds</h2>
-    <div className="space-y-6">
-      <div className="text-sm text-[#696969]">
-        There are no funds to claim as you did not participate in the auction.
-      </div>
+  <div className="card card-bordered border-color-[#D5D5D5]">
+    <div className="card-body">
+      <h2 className="card-title">Claim bid funds and bonds</h2>
+      <div className="space-y-6">
+        <div className="text-sm text-[#696969]">
+          There are no funds to claim as you did not participate in the auction.
+        </div>
 
-      <button
-        className="btn btn-sm normal-case w-full !bg-[#2C2C2C] !text-[#696969] font-normal"
-        disabled
-      >
-        Claim funds
-      </button>
+        <button
+          className="btn btn-sm normal-case w-full !bg-[#2C2C2C] !text-[#696969] font-normal"
+          disabled
+        >
+          Claim funds
+        </button>
+      </div>
     </div>
-  </>
+  </div>
+)
+const NoParticipation = () => (
+  <div className="card card-bordered border-color-[#D5D5D5]">
+    <div className="card-body">
+      <h2 className="card-title !text-[#696969]">This auction is closed</h2>
+      <div className="space-y-6">
+        <div className="text-sm text-[#696969]">
+          Only Investor that participated can claim bonds and funds.
+        </div>
+      </div>
+    </div>
+  </div>
 )
 
 const Claimer: React.FC<Props> = (props) => {
@@ -110,6 +125,8 @@ const Claimer: React.FC<Props> = (props) => {
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true)
   const [txHash, setTxHash] = useState<string>('')
   const pendingText = `Claiming Funds`
+  const participatingBids = useParticipatingAuctionBids()
+
   const [claimStatus, claimOrderCallback] = useClaimOrderCallback(auctionIdentifier)
   const { error, isLoading: isDerivedClaimInfoLoading } = useDerivedClaimInfo(
     auctionIdentifier,
@@ -206,131 +223,137 @@ const Claimer: React.FC<Props> = (props) => {
     ? 'https://quickswap.exchange/#/swap?inputCurrency=${biddingToken.address}'
     : `https://app.uniswap.org/#/swap?inputCurrency=${biddingToken.address}`
 
-  if (claimStatus === ClaimState.NOT_APPLICABLE) {
-    return <ClosedAuction />
+  if (!participatingBids) {
+    return <NoParticipation />
   }
 
   return (
-    <>
-      <h2 className="card-title">Claim bid funds and bonds</h2>
+    <div
+      className={`card card-bordered ${
+        !isLoading ? 'border-color-[#D5D5D5]' : 'border-[#404EEDA4]'
+      }`}
+    >
+      <div className="card-body">
+        <h2 className="card-title">Claim bid funds and bonds</h2>
 
-      <Wrapper>
-        {isLoading && <InlineLoading size={SpinnerSize.small} />}
-        {!isLoading && (
-          <>
-            <TokensWrapper>
-              <TokenItem>
-                <Token>
-                  {biddingToken && biddingTokenDisplay ? (
-                    <>
-                      <TokenLogo
-                        size={'34px'}
-                        token={{
-                          address: biddingToken.address,
-                          symbol: biddingTokenDisplay,
-                        }}
-                      />
-                      <Text>{biddingTokenDisplayCut}</Text>
-                      {showUnwrapButton && (
-                        <span
-                          className={`tooltipComponent`}
-                          data-for={'wrap_button'}
-                          data-html={true}
-                          data-multiline={true}
-                          data-tip={unwrapTooltip}
-                        >
-                          <ReactTooltip
-                            arrowColor={'#001429'}
-                            backgroundColor={'#001429'}
-                            border
-                            borderColor={'#174172'}
-                            className="customTooltip"
-                            delayHide={50}
-                            delayShow={250}
-                            effect="solid"
-                            id={'wrap_button'}
-                            textColor="#fff"
-                          />
-                          <ButtonWrap
-                            buttonType={ButtonType.primaryInverted}
-                            href={unwrapURL}
-                            target="_blank"
+        <Wrapper>
+          {isLoading && <InlineLoading size={SpinnerSize.small} />}
+          {!isLoading && (
+            <>
+              <TokensWrapper>
+                <TokenItem>
+                  <Token>
+                    {biddingToken && biddingTokenDisplay ? (
+                      <>
+                        <TokenLogo
+                          size={'34px'}
+                          token={{
+                            address: biddingToken.address,
+                            symbol: biddingTokenDisplay,
+                          }}
+                        />
+                        <Text>{biddingTokenDisplayCut}</Text>
+                        {showUnwrapButton && (
+                          <span
+                            className={`tooltipComponent`}
+                            data-for={'wrap_button'}
+                            data-html={true}
+                            data-multiline={true}
+                            data-tip={unwrapTooltip}
                           >
-                            Unwrap
-                          </ButtonWrap>
-                        </span>
-                      )}
-                    </>
-                  ) : (
-                    '-'
-                  )}
-                </Token>
-                <Text>
-                  {claimableBiddingToken ? `${claimableBiddingToken.toSignificant(6)} ` : `0.00`}
-                </Text>
-              </TokenItem>
-              <TokenItem>
-                <Token>
-                  {auctioningToken && auctioningTokenDisplay ? (
+                            <ReactTooltip
+                              arrowColor={'#001429'}
+                              backgroundColor={'#001429'}
+                              border
+                              borderColor={'#174172'}
+                              className="customTooltip"
+                              delayHide={50}
+                              delayShow={250}
+                              effect="solid"
+                              id={'wrap_button'}
+                              textColor="#fff"
+                            />
+                            <ButtonWrap
+                              buttonType={ButtonType.primaryInverted}
+                              href={unwrapURL}
+                              target="_blank"
+                            >
+                              Unwrap
+                            </ButtonWrap>
+                          </span>
+                        )}
+                      </>
+                    ) : (
+                      '-'
+                    )}
+                  </Token>
+                  <Text>
+                    {claimableBiddingToken ? `${claimableBiddingToken.toSignificant(6)} ` : `0.00`}
+                  </Text>
+                </TokenItem>
+                <TokenItem>
+                  <Token>
+                    {auctioningToken && auctioningTokenDisplay ? (
+                      <>
+                        <TokenLogo
+                          size={'34px'}
+                          token={{
+                            address: auctioningToken.address,
+                            symbol: auctioningTokenDisplay,
+                          }}
+                        />
+                        <Text>{auctioningTokenDisplayCut}</Text>
+                      </>
+                    ) : (
+                      '-'
+                    )}
+                  </Token>
+                  <Text>
+                    {claimableAuctioningToken
+                      ? `${claimableAuctioningToken.toSignificant(6)}`
+                      : `0.00`}
+                  </Text>
+                </TokenItem>
+              </TokensWrapper>
+              {!account ? (
+                <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
+              ) : (
+                <ActionButton
+                  disabled={isClaimButtonDisabled}
+                  onClick={() => {
+                    setShowConfirm(true)
+                    onClaimOrder()
+                  }}
+                >
+                  {claimStatus === ClaimState.PENDING ? (
+                    `Claiming `
+                  ) : !isValid && account ? (
                     <>
-                      <TokenLogo
-                        size={'34px'}
-                        token={{
-                          address: auctioningToken.address,
-                          symbol: auctioningTokenDisplay,
-                        }}
-                      />
-                      <Text>{auctioningTokenDisplayCut}</Text>
+                      <ErrorRow>
+                        <ErrorInfo />
+                        <ErrorText>{error}</ErrorText>
+                      </ErrorRow>
                     </>
                   ) : (
-                    '-'
+                    `Claim`
                   )}
-                </Token>
-                <Text>
-                  {claimableAuctioningToken
-                    ? `${claimableAuctioningToken.toSignificant(6)}`
-                    : `0.00`}
-                </Text>
-              </TokenItem>
-            </TokensWrapper>
-            {!account ? (
-              <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
-            ) : (
-              <ActionButton
-                disabled={isClaimButtonDisabled}
-                onClick={() => {
-                  setShowConfirm(true)
-                  onClaimOrder()
+                </ActionButton>
+              )}
+              <ClaimConfirmationModal
+                hash={txHash}
+                isOpen={showConfirm}
+                onDismiss={() => {
+                  resetModal()
+                  setShowConfirm(false)
                 }}
-              >
-                {claimStatus === ClaimState.PENDING ? (
-                  `Claiming `
-                ) : !isValid && account ? (
-                  <>
-                    <ErrorRow>
-                      <ErrorInfo />
-                      <ErrorText>{error}</ErrorText>
-                    </ErrorRow>
-                  </>
-                ) : (
-                  `Claim`
-                )}
-              </ActionButton>
-            )}
-            <ClaimConfirmationModal
-              hash={txHash}
-              isOpen={showConfirm}
-              onDismiss={() => {
-                resetModal()
-                setShowConfirm(false)
-              }}
-              pendingConfirmation={pendingConfirmation}
-              pendingText={pendingText}
-            />
-          </>
-        )}
-      </Wrapper>
-    </>
+                pendingConfirmation={pendingConfirmation}
+                pendingText={pendingText}
+              />
+            </>
+          )}
+        </Wrapper>
+      </div>
+    </div>
   )
 }
 

@@ -349,139 +349,145 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const auctioningTokenAddress = auctioningToken && auctioningToken?.address
   const linkForKYC = auctioningTokenAddress ? kycLinks[auctioningTokenAddress] : null
   return (
-    <>
-      {!auctionInfoLoading && isPrivate && !signatureAvailable ? (
-        <h2 className="card-title">Private Auction</h2>
-      ) : (
-        <h2 className="card-title">Place Order</h2>
-      )}
+    <div
+      className={`card card-bordered ${
+        !auctionInfoLoading && isPrivate ? 'border-color-[#D5D5D5]' : 'border-[#404EEDA4]'
+      }`}
+    >
+      <div className="card-body">
+        {!auctionInfoLoading && isPrivate && !signatureAvailable ? (
+          <h2 className="card-title">Private Auction</h2>
+        ) : (
+          <h2 className="card-title">Place Order</h2>
+        )}
 
-      <Wrapper>
-        {auctionInfoLoading && <InlineLoading size={SpinnerSize.small} />}
-        {!auctionInfoLoading && isPrivate && !signatureAvailable && (
-          <>
-            <div>
-              {account !== null && (
-                <span className="text-sm text-[#696969]">
-                  This auction is only available for allowlisted wallets
-                </span>
+        <Wrapper>
+          {auctionInfoLoading && <InlineLoading size={SpinnerSize.small} />}
+          {!auctionInfoLoading && isPrivate && !signatureAvailable && (
+            <>
+              <div>
+                {account !== null && (
+                  <span className="text-sm text-[#696969]">
+                    This auction is only available for allowlisted wallets
+                  </span>
+                )}
+              </div>
+              {account == null ? (
+                <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
+              ) : (
+                <EmptyContentTextSmall>
+                  {linkForKYC && <ExternalLink href={linkForKYC}>Get Allowed ↗</ExternalLink>}
+                </EmptyContentTextSmall>
               )}
-            </div>
-            {account == null ? (
-              <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
-            ) : (
-              <EmptyContentTextSmall>
-                {linkForKYC && <ExternalLink href={linkForKYC}>Get Allowed ↗</ExternalLink>}
-              </EmptyContentTextSmall>
-            )}
-          </>
-        )}
-        {!auctionInfoLoading && (!isPrivate || signatureAvailable) && (
-          <>
-            {showTopWarning && (
-              <Warning>
-                <Calendar />
-                <WarningText>
-                  {orderPlacingOnly &&
-                    `Orders cannot be cancelled once you confirm the transaction.`}
-                  {cancelDate &&
-                    !orderPlacingOnly &&
-                    `Orders cannot be cancelled after ${cancelDate}`}
-                </WarningText>
-              </Warning>
-            )}
-            <AmountInputPanel
-              balance={balanceString}
-              chainId={chainId}
-              info={amountInfo}
-              onMax={onMaxInput}
-              onUserSellAmountInput={onUserSellAmountInput}
-              token={biddingToken}
-              unlock={{ isLocked: notApproved, onUnlock: approveCallback, unlockState: approval }}
-              value={sellAmount}
-              wrap={{
-                isWrappable,
-                onClick: () =>
-                  chainId == 100
-                    ? window.open(
-                        `https://app.honeyswap.org/#/swap?inputCurrency=${biddingToken.address}`,
-                      )
-                    : chainId == 137
-                    ? window.open(
-                        `https://quickswap.exchange/#/swap?inputCurrency=${biddingToken.address}`,
-                      )
-                    : window.open(
-                        `https://app.uniswap.org/#/swap?inputCurrency=${biddingToken.address}`,
-                      ),
-              }}
-            />
-            <PriceInputPanel
-              chainId={chainId}
-              disabled={!account}
-              info={priceInfo}
-              onUserPriceInput={onUserPriceInput}
-              token={{ biddingToken: biddingToken }}
-              value={price}
-            />
-            {!account ? (
-              <ActionButton onClick={toggleWalletModal}>Connect wallet</ActionButton>
-            ) : (
-              <ActionButton disabled={disablePlaceOrder} onClick={handleShowConfirm}>
-                Place order
-              </ActionButton>
-            )}
+            </>
+          )}
+          {!auctionInfoLoading && (!isPrivate || signatureAvailable) && (
+            <>
+              {showTopWarning && (
+                <Warning>
+                  <Calendar />
+                  <WarningText>
+                    {orderPlacingOnly &&
+                      `Orders cannot be cancelled once you confirm the transaction.`}
+                    {cancelDate &&
+                      !orderPlacingOnly &&
+                      `Orders cannot be cancelled after ${cancelDate}`}
+                  </WarningText>
+                </Warning>
+              )}
+              <AmountInputPanel
+                balance={balanceString}
+                chainId={chainId}
+                info={amountInfo}
+                onMax={onMaxInput}
+                onUserSellAmountInput={onUserSellAmountInput}
+                token={biddingToken}
+                unlock={{ isLocked: notApproved, onUnlock: approveCallback, unlockState: approval }}
+                value={sellAmount}
+                wrap={{
+                  isWrappable,
+                  onClick: () =>
+                    chainId == 100
+                      ? window.open(
+                          `https://app.honeyswap.org/#/swap?inputCurrency=${biddingToken.address}`,
+                        )
+                      : chainId == 137
+                      ? window.open(
+                          `https://quickswap.exchange/#/swap?inputCurrency=${biddingToken.address}`,
+                        )
+                      : window.open(
+                          `https://app.uniswap.org/#/swap?inputCurrency=${biddingToken.address}`,
+                        ),
+                }}
+              />
+              <PriceInputPanel
+                chainId={chainId}
+                disabled={!account}
+                info={priceInfo}
+                onUserPriceInput={onUserPriceInput}
+                token={{ biddingToken: biddingToken }}
+                value={price}
+              />
+              {!account ? (
+                <ActionButton onClick={toggleWalletModal}>Connect wallet</ActionButton>
+              ) : (
+                <ActionButton disabled={disablePlaceOrder} onClick={handleShowConfirm}>
+                  Place order
+                </ActionButton>
+              )}
 
-            {!account && <div className="mt-4 text-xs text-[#9F9F9F]">Wallet not connected</div>}
-          </>
-        )}
-      </Wrapper>
-      <WarningModal
-        content={`Pick a different price, you already have an order for ${price} ${biddingTokenDisplay} per ${auctioningTokenDisplay}`}
-        isOpen={showWarning}
-        onDismiss={() => {
-          setShowWarning(false)
-        }}
-        title="Warning!"
-      />
-      <WarningModal
-        content={`In order to place this order, please connect to the ${getChainName(
-          chainId,
-        )} network`}
-        isOpen={showWarningWrongChainId}
-        onDismiss={() => {
-          setShowWarningWrongChainId(false)
-        }}
-        title="Warning!"
-      />
-      <ConfirmationModal
-        attemptingTxn={attemptingTxn}
-        content={
-          <SwapModalFooter
-            auctioningToken={auctioningToken}
-            biddingToken={biddingToken}
-            cancelDate={cancelDate}
-            chainId={chainId}
-            confirmText={'Confirm'}
-            hasRiskNotCoveringClearingPrice={hasRiskNotCoveringClearingPrice}
-            isPriceInverted={showPriceInverted}
-            onPlaceOrder={onPlaceOrder}
-            orderPlacingOnly={orderPlacingOnly}
-            price={price}
-            sellAmount={sellAmount}
-          />
-        }
-        hash={txHash}
-        isOpen={showConfirm}
-        onDismiss={() => {
-          resetModal()
-          setShowConfirm(false)
-        }}
-        pendingConfirmation={pendingConfirmation}
-        pendingText={pendingText}
-        title="Confirm Order"
-        width={504}
-      />
-    </>
+              {!account && <div className="mt-4 text-xs text-[#9F9F9F]">Wallet not connected</div>}
+            </>
+          )}
+        </Wrapper>
+        <WarningModal
+          content={`Pick a different price, you already have an order for ${price} ${biddingTokenDisplay} per ${auctioningTokenDisplay}`}
+          isOpen={showWarning}
+          onDismiss={() => {
+            setShowWarning(false)
+          }}
+          title="Warning!"
+        />
+        <WarningModal
+          content={`In order to place this order, please connect to the ${getChainName(
+            chainId,
+          )} network`}
+          isOpen={showWarningWrongChainId}
+          onDismiss={() => {
+            setShowWarningWrongChainId(false)
+          }}
+          title="Warning!"
+        />
+        <ConfirmationModal
+          attemptingTxn={attemptingTxn}
+          content={
+            <SwapModalFooter
+              auctioningToken={auctioningToken}
+              biddingToken={biddingToken}
+              cancelDate={cancelDate}
+              chainId={chainId}
+              confirmText={'Confirm'}
+              hasRiskNotCoveringClearingPrice={hasRiskNotCoveringClearingPrice}
+              isPriceInverted={showPriceInverted}
+              onPlaceOrder={onPlaceOrder}
+              orderPlacingOnly={orderPlacingOnly}
+              price={price}
+              sellAmount={sellAmount}
+            />
+          }
+          hash={txHash}
+          isOpen={showConfirm}
+          onDismiss={() => {
+            resetModal()
+            setShowConfirm(false)
+          }}
+          pendingConfirmation={pendingConfirmation}
+          pendingText={pendingText}
+          title="Confirm Order"
+          width={504}
+        />
+      </div>
+    </div>
   )
 }
 
