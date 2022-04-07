@@ -118,14 +118,10 @@ const AuctionBody = (props: AuctionBodyProps) => {
     derivedAuctionInfo: { auctionState },
     derivedAuctionInfo,
   } = props
-  const { auctionDetails, auctionInfoLoading, graphInfo } = useAuctionDetails(auctionIdentifier)
+  const { graphInfo } = useAuctionDetails(auctionIdentifier)
   const auctionStarted = React.useMemo(
     () => auctionState !== undefined && auctionState !== AuctionState.NOT_YET_STARTED,
     [auctionState],
-  )
-  const isPrivate = React.useMemo(
-    () => auctionDetails && auctionDetails.isPrivateAuction,
-    [auctionDetails],
   )
   return (
     <>
