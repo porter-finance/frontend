@@ -6,6 +6,7 @@ import {
   pullOrderbookData,
   removeBid,
   resetOrderbookData,
+  resetUserInterestRate,
   resetUserPrice,
   resetUserVolume,
 } from './actions'
@@ -73,6 +74,12 @@ export default createReducer<OrderbookState>(initialState, (builder) =>
       return {
         ...state,
         userOrderPrice: price,
+      }
+    })
+    .addCase(resetUserInterestRate, (state: OrderbookState, { payload: { interestRate } }) => {
+      return {
+        ...state,
+        userInterestRate: interestRate,
       }
     })
     .addCase(resetUserVolume, (state, { payload: { volume } }) => {
