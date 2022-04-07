@@ -225,6 +225,9 @@ const Claimer: React.FC<Props> = (props) => {
     ? 'https://quickswap.exchange/#/swap?inputCurrency=${biddingToken.address}'
     : `https://app.uniswap.org/#/swap?inputCurrency=${biddingToken.address}`
 
+  const claimStatusString =
+    claimStatus === ClaimState.PENDING ? `Claiming` : !isValid && account ? error : ''
+
   if (participatingBids) {
     return <NoParticipation />
   }
@@ -322,12 +325,12 @@ const Claimer: React.FC<Props> = (props) => {
                     onClaimOrder()
                   }}
                 >
-                  {claimStatus === ClaimState.PENDING
-                    ? `Claiming`
-                    : !isValid && account
-                    ? error
-                    : `Claim funds`}
+                  Claim funds
                 </ActionButton>
+              )}
+
+              {claimStatusString && (
+                <div className="mt-4 text-xs text-[#9F9F9F]">{claimStatusString}</div>
               )}
               <ClaimConfirmationModal
                 hash={txHash}
