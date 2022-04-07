@@ -151,7 +151,7 @@ const Claimer: React.FC<Props> = (props) => {
     claimStatus === ClaimState.PENDING ? `Claiming` : !isValid && account ? error : ''
 
   if (!participatingBids && account) {
-    // return <ClaimDisabled />
+    return <ClaimDisabled />
   }
 
   return (
