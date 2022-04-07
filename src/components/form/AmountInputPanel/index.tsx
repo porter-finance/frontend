@@ -9,6 +9,7 @@ import { unwrapMessage } from '../../../constants'
 import { useActiveWeb3React } from '../../../hooks'
 import { ApprovalState } from '../../../hooks/useApproveCallback'
 import { ChainId, getTokenDisplay } from '../../../utils'
+import { Tooltip } from '../../common/Tooltip'
 import { MiniInfoIcon } from '../../icons/MiniInfoIcon'
 import { MiniLock } from '../../icons/MiniLock'
 import { MiniSpinner } from '../../icons/MiniSpinner'
@@ -17,7 +18,6 @@ import {
   FieldRowInfo,
   FieldRowInfoProps,
   FieldRowInput,
-  FieldRowLabel,
   FieldRowPrimaryButton,
   FieldRowPrimaryButtonText,
   FieldRowToken,
@@ -27,6 +27,7 @@ import {
   InfoType,
 } from '../../pureStyledComponents/FieldRow'
 import TokenLogo from '../../token/TokenLogo'
+import { FieldRowLabelStyled } from '../PriceInputPanel'
 
 const rotate = keyframes`
   from {
@@ -225,7 +226,10 @@ const AmountInputPanel: React.FC<Props> = (props) => {
           </Wrap>
         </FieldRowTop>
         <FieldRowBottom>
-          <FieldRowLabel>Amount</FieldRowLabel>
+          <FieldRowLabelStyled className="space-x-1">
+            <span>Amount</span>
+            <Tooltip text="Amount tooltip" />
+          </FieldRowLabelStyled>
         </FieldRowBottom>
       </FieldRowWrapper>
     </>
