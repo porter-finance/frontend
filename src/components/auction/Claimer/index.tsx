@@ -84,7 +84,8 @@ interface Props {
   derivedAuctionInfo: DerivedAuctionInfo
 }
 
-const ClosedAuction = () => (
+// TODO: Currently unused, see https://canary.discord.com/channels/903094151002857492/919775985396760626/961672566995566672
+const ClaimDisabled = () => (
   <div className="card card-bordered border-color-[#D5D5D5]">
     <div className="card-body">
       <h2 className="card-title">Claim bid funds and bonds</h2>
@@ -109,7 +110,7 @@ const NoParticipation = () => (
       <h2 className="card-title !text-[#696969]">This auction is closed</h2>
       <div className="space-y-6">
         <div className="text-sm text-[#696969]">
-          Only Investor that participated can claim bonds and funds.
+          Only investors that participated can claim bonds and funds.
         </div>
       </div>
     </div>
