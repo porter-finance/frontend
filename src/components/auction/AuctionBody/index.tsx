@@ -17,7 +17,7 @@ interface AuctionBodyProps {
 }
 
 const WarningCard = () => (
-  <div className="card card-bordered border-color-[#D5D5D5]">
+  <div className="card card-bordered">
     <div className="card-body">
       <div className="flex flex-row items-center space-x-2">
         <svg
