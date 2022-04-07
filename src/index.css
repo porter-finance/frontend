@@ -6,6 +6,11 @@ html {
     background-color: #131415;
 }
 
+.btn-sm {
+    height: 41px;
+    @apply text-base;
+}
+
 .btn-group {
     border: 1px solid #454545;
     @apply rounded-full;
