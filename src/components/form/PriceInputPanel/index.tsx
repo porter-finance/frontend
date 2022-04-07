@@ -20,7 +20,7 @@ import {
 } from '../../pureStyledComponents/FieldRow'
 import TokenLogo from '../../token/TokenLogo'
 
-const FieldRowLabelStyled = styled(FieldRowLabel)`
+export const FieldRowLabelStyled = styled(FieldRowLabel)`
   align-items: center;
   display: flex;
   font-weight: 400;
