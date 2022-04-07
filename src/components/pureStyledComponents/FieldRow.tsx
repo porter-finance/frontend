@@ -14,16 +14,16 @@ export interface FieldRowInfoProps {
 }
 
 export const FieldRowWrapper = styled.div<{ error?: boolean }>`
-  border-radius: 6px;
   border-style: solid;
   border-width: 1px;
   border-color: ${(props) =>
-    props.error ? ({ theme }) => theme.error : ({ theme }) => theme.border};
+    props.error ? ({ theme }) => theme.error : ({ theme }) => theme.border} !important;
   display: flex;
   flex-direction: column;
   min-height: 62px;
   padding: 6px 10px;
   transition: border-color 0.15s linear;
+  border-radius: 6px;
 `
 
 export const FieldRowTop = styled.div`
@@ -83,8 +83,7 @@ export const FieldRowInput = styled(NumericalInput)<{ hasError?: boolean }>`
   width: auto;
 
   &::placeholder {
-    color: ${(props) => (props.hasError ? ({ theme }) => theme.error : ({ theme }) => 'white')};
-    opacity: 0.5;
+    color: ${(props) => (props.hasError ? ({ theme }) => theme.error : ({ theme }) => '#9F9F9F')};
   }
 
   &[disabled] {
@@ -203,9 +202,10 @@ export const FieldRowInfo = styled.div<{ infoType: InfoType }>`
   font-size: 12px;
   line-height: 1.2;
   letter-spacing: 0.03em;
-  margin-bottom: 16px;
-  padding-top: 5px;
   text-align: left;
+
+  margin-bottom: 10px;
+  margin-top: 10px;
 
   > svg {
     margin: 1px 4px 0 0;

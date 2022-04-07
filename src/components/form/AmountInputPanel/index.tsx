@@ -18,7 +18,6 @@ import {
   FieldRowInfoProps,
   FieldRowInput,
   FieldRowLabel,
-  FieldRowLineButton,
   FieldRowPrimaryButton,
   FieldRowPrimaryButtonText,
   FieldRowToken,
@@ -138,7 +137,22 @@ const AmountInputPanel: React.FC<Props> = (props) => {
 
   return (
     <>
-      <FieldRowWrapper error={error} {...restProps}>
+      <FieldRowInfo infoType={info?.type}>
+        {info && (
+          <>
+            <MiniInfoIcon /> {info.text}
+          </>
+        )}
+      </FieldRowInfo>
+      <FieldRowWrapper
+        error={error}
+        style={{
+          borderBottomLeftRadius: 0,
+          borderBottomRightRadius: 0,
+          borderBottomWidth: 0.5,
+        }}
+        {...restProps}
+      >
         <FieldRowTop>
           <FieldRowInput
             disabled={!account}
@@ -212,22 +226,8 @@ const AmountInputPanel: React.FC<Props> = (props) => {
         </FieldRowTop>
         <FieldRowBottom>
           <FieldRowLabel>Amount</FieldRowLabel>
-          <Balance disabled={!account}>
-            {balanceString ? balanceString : 'Balance'}:{' '}
-            {balance === '0' || !account ? '0.00' : balance}
-          </Balance>
-          <FieldRowLineButton disabled={!onMax || !account} onClick={onMax}>
-            Max
-          </FieldRowLineButton>
         </FieldRowBottom>
       </FieldRowWrapper>
-      <FieldRowInfo infoType={info?.type}>
-        {info && (
-          <>
-            <MiniInfoIcon /> {info.text}
-          </>
-        )}
-      </FieldRowInfo>
     </>
   )
 }
