@@ -260,7 +260,7 @@ export const useGetOrderPlacementError = (
     balanceIn &&
     amountIn &&
     balanceIn.lessThan(amountIn) &&
-    `Insufficient ${getFullTokenDisplay(amountIn.token, chainId)}` + ' balance.'
+    `You do not have enough ${getFullTokenDisplay(amountIn.token, chainId)} on this account`
 
   const messageHigherInitialPrice = `Price must be higher than ${derivedAuctionInfo?.initialPrice?.toSignificant(
     5,
