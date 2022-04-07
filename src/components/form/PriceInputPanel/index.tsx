@@ -60,7 +60,15 @@ const PriceInputPanel = (props: Props) => {
 
   return (
     <>
-      <FieldRowWrapper error={error} {...restProps}>
+      <FieldRowWrapper
+        error={error}
+        style={{
+          borderTopLeftRadius: 0,
+          borderTopRightRadius: 0,
+          borderTopWidth: 0.5,
+        }}
+        {...restProps}
+      >
         <FieldRowTop>
           <FieldRowInput
             disabled={disabled === true}
