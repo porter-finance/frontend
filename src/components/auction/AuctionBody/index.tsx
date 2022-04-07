@@ -156,30 +156,20 @@ const AuctionBody = (props: AuctionBodyProps) => {
               {/* Right column */}
               <div className="grid grid-cols-1 gap-4">
                 <section aria-labelledby="section-2-title">
-                  <div
-                    className={`card card-bordered ${
-                      !auctionInfoLoading && isPrivate
-                        ? 'border-color-[#D5D5D5]'
-                        : 'border-[#404EEDA4]'
-                    }`}
-                  >
-                    <div className="card-body">
-                      {(auctionState === AuctionState.ORDER_PLACING ||
-                        auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && (
-                        <OrderPlacement
-                          auctionIdentifier={auctionIdentifier}
-                          derivedAuctionInfo={derivedAuctionInfo}
-                        />
-                      )}
-                      {(auctionState === AuctionState.CLAIMING ||
-                        auctionState === AuctionState.PRICE_SUBMISSION) && (
-                        <Claimer
-                          auctionIdentifier={auctionIdentifier}
-                          derivedAuctionInfo={derivedAuctionInfo}
-                        />
-                      )}
-                    </div>
-                  </div>
+                  {(auctionState === AuctionState.ORDER_PLACING ||
+                    auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && (
+                    <OrderPlacement
+                      auctionIdentifier={auctionIdentifier}
+                      derivedAuctionInfo={derivedAuctionInfo}
+                    />
+                  )}
+                  {(auctionState === AuctionState.CLAIMING ||
+                    auctionState === AuctionState.PRICE_SUBMISSION) && (
+                    <Claimer
+                      auctionIdentifier={auctionIdentifier}
+                      derivedAuctionInfo={derivedAuctionInfo}
+                    />
+                  )}
                   <WarningCard />
                 </section>
               </div>
