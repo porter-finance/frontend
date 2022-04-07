@@ -74,26 +74,6 @@ const Wrapper = styled(BaseCard)`
 const ActionButton = styled(Button)`
   flex-shrink: 0;
   height: 40px;
-  margin-top: auto;
-`
-
-const PrivateWrapper = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  height: 300px;
-  justify-content: center;
-`
-
-const TextBig = styled(EmptyContentText)`
-  font-size: 22px;
-  margin-bottom: 15px;
-  margin-top: 5px;
-`
-
-const EmptyContentTextNoMargin = styled(EmptyContentText)`
-  line-height: 1.2;
-  margin-top: 0;
 `
 
 const EmptyContentTextSmall = styled(EmptyContentText)`
@@ -105,7 +85,7 @@ const EmptyContentTextSmall = styled(EmptyContentText)`
 const Warning = styled.div`
   align-items: center;
   display: flex;
-  margin-bottom: 16px;
+  margin-top: 16px;
 
   .fill {
     fill: #9f9f9f;
@@ -300,7 +280,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     return biddingTokenBalance?.toSignificant(6)
   }, [biddingTokenBalance])
 
-  const showTopWarning = orderPlacingOnly || cancelDate
+  const showBottomWarning = orderPlacingOnly || cancelDate
 
   const amountInfo = React.useMemo(
     () =>
@@ -363,18 +343,35 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
 
   const auctioningTokenAddress = auctioningToken && auctioningToken?.address
   const linkForKYC = auctioningTokenAddress ? kycLinks[auctioningTokenAddress] : null
+
+  if (!auctionInfoLoading && isPrivate && !signatureAvailable) {
+    return (
+      <div className="card card-bordered border-color-[#D5D5D5]">
+        <div className="card-body">
+          <h2 className="card-title !text-[#696969]">Private auction</h2>
+
+          <div className="text-sm text-[#696969]">
+            This auction is only available for allow-listed wallets
+          </div>
+          {account && linkForKYC && (
+            <EmptyContentTextSmall>
+              <ExternalLink href={linkForKYC}>Get Allowed ↗</ExternalLink>
+            </EmptyContentTextSmall>
+          )}
+          {!account && (
+            <ActionButton className="mt-4" onClick={toggleWalletModal}>
+              Connect wallet
+            </ActionButton>
+          )}
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div
-      className={`card card-bordered ${
-        !auctionInfoLoading && isPrivate ? 'border-color-[#D5D5D5]' : 'border-[#404EEDA4]'
-      }`}
-    >
+    <div className={`card card-bordered 'border-[#404EEDA4]`}>
       <div className="card-body">
-        {!auctionInfoLoading && isPrivate && !signatureAvailable ? (
-          <h2 className="card-title">Private Auction</h2>
-        ) : (
-          <h2 className="card-title">Place Order</h2>
-        )}
+        <h2 className="card-title">Place Order</h2>
 
         {derivedAuctionInfo && (
           <div className="space-y-1">
@@ -392,38 +389,9 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
 
         <Wrapper>
           {auctionInfoLoading && <InlineLoading size={SpinnerSize.small} />}
-          {!auctionInfoLoading && isPrivate && !signatureAvailable && (
-            <>
-              <div>
-                {account !== null && (
-                  <span className="text-sm text-[#696969]">
-                    This auction is only available for allowlisted wallets
-                  </span>
-                )}
-              </div>
-              {account == null ? (
-                <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
-              ) : (
-                <EmptyContentTextSmall>
-                  {linkForKYC && <ExternalLink href={linkForKYC}>Get Allowed ↗</ExternalLink>}
-                </EmptyContentTextSmall>
-              )}
-            </>
-          )}
+
           {!auctionInfoLoading && (!isPrivate || signatureAvailable) && (
             <>
-              {showTopWarning && (
-                <Warning>
-                  <Calendar />
-                  <WarningText>
-                    {orderPlacingOnly &&
-                      `Orders cannot be cancelled once you confirm the transaction.`}
-                    {cancelDate &&
-                      !orderPlacingOnly &&
-                      `Orders cannot be cancelled after ${cancelDate}`}
-                  </WarningText>
-                </Warning>
-              )}
               <AmountInputPanel
                 balance={balanceString}
                 chainId={chainId}
@@ -473,8 +441,20 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                   Place order
                 </ActionButton>
               )}
-
               {!account && <div className="mt-4 text-xs text-[#9F9F9F]">Wallet not connected</div>}
+
+              {showBottomWarning && (
+                <Warning>
+                  <Calendar />
+                  <WarningText>
+                    {orderPlacingOnly &&
+                      `Orders cannot be cancelled once you confirm the transaction.`}
+                    {cancelDate &&
+                      !orderPlacingOnly &&
+                      `Orders cannot be cancelled after ${cancelDate}`}
+                  </WarningText>
+                </Warning>
+              )}
             </>
           )}
         </Wrapper>
