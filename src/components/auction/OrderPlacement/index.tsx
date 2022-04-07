@@ -437,12 +437,26 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
               {!account ? (
                 <ActionButton onClick={toggleWalletModal}>Connect wallet</ActionButton>
               ) : (
-                <ActionButton disabled={disablePlaceOrder} onClick={handleShowConfirm}>
-                  Place order
-                </ActionButton>
+                <>
+                  <ActionButton disabled={disablePlaceOrder} onClick={handleShowConfirm}>
+                    Place order
+                  </ActionButton>
+                  <div className="flex flex-row justify-between items-center text-xs text-[#9F9F9F] mt-4 mb-3">
+                    <div>{biddingTokenDisplay} Balance</div>
+                    <div>
+                      <button
+                        className="btn btn-xs btn-link text-[#9F9F9F] font-normal text-xs"
+                        disabled={!onMaxInput || !account}
+                        onClick={onMaxInput}
+                      >
+                        {balanceString === '0' || !account ? '0.00' : balanceString}{' '}
+                        {biddingTokenDisplay}
+                      </button>
+                    </div>
+                  </div>
+                </>
               )}
               {!account && <div className="mt-4 text-xs text-[#9F9F9F]">Wallet not connected</div>}
-
               {showBottomWarning && (
                 <Warning>
                   <Calendar />

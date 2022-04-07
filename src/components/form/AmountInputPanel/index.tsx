@@ -70,7 +70,7 @@ const SpinningLaVidaLoca = styled.span`
   margin-right: 2px;
 `
 
-const Balance = styled.div<{ disabled?: boolean }>`
+export const Balance = styled.div<{ disabled?: boolean }>`
   color: ${({ theme }) => theme.text1};
   font-size: 14px;
   font-weight: 400;
@@ -138,13 +138,6 @@ const AmountInputPanel: React.FC<Props> = (props) => {
 
   return (
     <>
-      <FieldRowInfo infoType={info?.type}>
-        {info && (
-          <>
-            <MiniInfoIcon /> {info.text}
-          </>
-        )}
-      </FieldRowInfo>
       <FieldRowWrapper
         error={error}
         style={{
@@ -226,10 +219,18 @@ const AmountInputPanel: React.FC<Props> = (props) => {
           </Wrap>
         </FieldRowTop>
         <FieldRowBottom>
-          <FieldRowLabelStyled className="space-x-1">
-            <span>Amount</span>
-            <Tooltip text="Amount tooltip" />
-          </FieldRowLabelStyled>
+          {info ? (
+            <FieldRowLabelStyled className="space-x-1">
+              <FieldRowInfo infoType={info?.type}>
+                <MiniInfoIcon /> {info.text}
+              </FieldRowInfo>
+            </FieldRowLabelStyled>
+          ) : (
+            <FieldRowLabelStyled className="space-x-1">
+              <span>Amount</span>
+              <Tooltip text="Amount tooltip" />
+            </FieldRowLabelStyled>
+          )}
         </FieldRowBottom>
       </FieldRowWrapper>
     </>
