@@ -35,6 +35,7 @@ const FieldRowLabelStyledText = styled.span`
 
 interface Props {
   chainId: number
+  disabled?: boolean
   info?: FieldRowInfoProps
   onUserPriceInput: (val: string) => void
   token: { biddingToken: Maybe<Token> } | null
@@ -42,7 +43,7 @@ interface Props {
 }
 
 const PriceInputPanel = (props: Props) => {
-  const { chainId, info, onUserPriceInput, token = null, value, ...restProps } = props
+  const { chainId, disabled, info, onUserPriceInput, token = null, value, ...restProps } = props
 
   const [readonly, setReadonly] = useState(true)
   const error = info?.type === InfoType.error
@@ -62,6 +63,7 @@ const PriceInputPanel = (props: Props) => {
       <FieldRowWrapper error={error} {...restProps}>
         <FieldRowTop>
           <FieldRowInput
+            disabled={disabled === true}
             hasError={error}
             onBlur={() => setReadonly(true)}
             onFocus={() => setReadonly(false)}
