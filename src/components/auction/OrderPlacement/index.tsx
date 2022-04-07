@@ -383,10 +383,10 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                 <Calendar />
                 <WarningText>
                   {orderPlacingOnly &&
-                    `Orders cannot be canceled once you confirm the transaction.`}
+                    `Orders cannot be cancelled once you confirm the transaction.`}
                   {cancelDate &&
                     !orderPlacingOnly &&
-                    `Orders cannot be canceled after ${cancelDate}`}
+                    `Orders cannot be cancelled after ${cancelDate}`}
                 </WarningText>
               </Warning>
             )}
