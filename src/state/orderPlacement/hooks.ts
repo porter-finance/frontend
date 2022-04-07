@@ -205,6 +205,7 @@ export function tryParseAmount(value?: string, token?: Token): TokenAmount | und
 interface Errors {
   errorAmount: string | undefined
   errorPrice: string | undefined
+  errorInterestRate: string | undefined
 }
 interface AuctionInfoDefined
   extends Omit<DerivedAuctionInfo, 'minBiddingAmountPerOrder' | 'biddingToken'> {
@@ -322,9 +323,13 @@ export const useGetOrderPlacementError = (
     invalidSellAmount ||
     undefined
 
+  // TODO: add error checking to interest rate input
+  const errorInterestRate = undefined
+
   return {
     errorAmount,
     errorPrice,
+    errorInterestRate,
   }
 }
 
