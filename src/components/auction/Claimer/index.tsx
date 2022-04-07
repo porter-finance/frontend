@@ -85,7 +85,6 @@ interface Props {
   derivedAuctionInfo: DerivedAuctionInfo
 }
 
-// TODO: Currently unused, see https://canary.discord.com/channels/903094151002857492/919775985396760626/961672566995566672
 const ClaimDisabled = () => (
   <div className="card card-bordered">
     <div className="card-body">
@@ -105,6 +104,8 @@ const ClaimDisabled = () => (
     </div>
   </div>
 )
+
+// TODO: Currently unused, see https://canary.discord.com/channels/903094151002857492/919775985396760626/961672566995566672
 const NoParticipation = () => (
   <div className="card card-bordered">
     <div className="card-body">
@@ -137,7 +138,7 @@ const Claimer: React.FC<Props> = (props) => {
   const isValid = !error
   const toggleWalletModal = useWalletModalToggle()
 
-  const { claimableAuctioningToken, claimableBiddingToken } = useGetAuctionProceeds(
+  const { claimableBidFunds, claimableBonds } = useGetAuctionProceeds(
     auctionIdentifier,
     derivedAuctionInfo,
   )
@@ -186,9 +187,8 @@ const Claimer: React.FC<Props> = (props) => {
   const auctioningTokenDisplayCut = auctioningTokenDisplay.slice(0, 7)
 
   const isLoading = useMemo(
-    () =>
-      (account && isDerivedClaimInfoLoading) || !claimableBiddingToken || !claimableAuctioningToken,
-    [account, isDerivedClaimInfoLoading, claimableBiddingToken, claimableAuctioningToken],
+    () => (account && isDerivedClaimInfoLoading) || !claimableBidFunds || !claimableBonds,
+    [account, isDerivedClaimInfoLoading, claimableBidFunds, claimableBonds],
   )
 
   const isClaimButtonDisabled = useMemo(
@@ -211,9 +211,9 @@ const Claimer: React.FC<Props> = (props) => {
       (isXDAI || isWETH || isMATIC) &&
       account &&
       chainId === Web3ChainId &&
-      claimableBiddingToken &&
-      claimableBiddingToken.greaterThan('0'),
-    [Web3ChainId, account, chainId, claimableBiddingToken, isWETH, isXDAI, isMATIC],
+      claimableBidFunds &&
+      claimableBidFunds.greaterThan('0'),
+    [Web3ChainId, account, chainId, claimableBidFunds, isWETH, isXDAI, isMATIC],
   )
 
   const unwrapTooltip = `Unwrap ${biddingToken.symbol} on ${
@@ -228,8 +228,8 @@ const Claimer: React.FC<Props> = (props) => {
   const claimStatusString =
     claimStatus === ClaimState.PENDING ? `Claiming` : !isValid && account ? error : ''
 
-  if (!participatingBids) {
-    return <NoParticipation />
+  if (!participatingBids && account) {
+    // return <ClaimDisabled />
   }
 
   return (
@@ -288,7 +288,7 @@ const Claimer: React.FC<Props> = (props) => {
                     )}
                   </Token>
                   <Text>
-                    {claimableBiddingToken ? `${claimableBiddingToken.toSignificant(6)} ` : `0.00`}
+                    {claimableBidFunds ? `${claimableBidFunds.toSignificant(6)} ` : `0.00`}
                   </Text>
                 </TokenItem>
                 <TokenItem>
@@ -308,11 +308,7 @@ const Claimer: React.FC<Props> = (props) => {
                       '-'
                     )}
                   </Token>
-                  <Text>
-                    {claimableAuctioningToken
-                      ? `${claimableAuctioningToken.toSignificant(6)}`
-                      : `0.00`}
-                  </Text>
+                  <Text>{claimableBonds ? `${claimableBonds.toSignificant(6)}` : `0.00`}</Text>
                 </TokenItem>
               </TokensWrapper>
               {!account ? (
