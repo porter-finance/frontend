@@ -81,7 +81,7 @@ const PriceInputPanel = (props: Props) => {
           />
           {token && (
             <>
-              <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#222222] rounded-full p-1">
+              <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#2C2C2C] rounded-full p-1 px-2">
                 <TokenLogo
                   size="16px"
                   token={{
