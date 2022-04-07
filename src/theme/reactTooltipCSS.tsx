@@ -3,8 +3,9 @@ import { css } from 'styled-components'
 export const reactTooltipCSS = css`
   .__react_component_tooltip.show.customTooltip {
     border-radius: 6px;
-    box-shadow: 0 0 24px 0 rgba(0, 34, 73, 0.7);
+    box-shadow: 0 0 24px 0 rgba(0, 0, 0, 0.7);
     font-size: 12px;
+    letter-spacing: 0.1em;
     font-weight: normal;
     hyphens: auto;
     line-height: 1.2;
