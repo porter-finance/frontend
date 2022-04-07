@@ -1,8 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
 
-import ReactTooltip from 'react-tooltip'
-
 import { useActiveWeb3React } from '../../../hooks'
 import {
   ClaimState,
@@ -13,13 +11,14 @@ import { useParticipatingAuctionBids } from '../../../hooks/useParticipatingAuct
 import { useWalletModalToggle } from '../../../state/application/hooks'
 import { DerivedAuctionInfo, useDerivedClaimInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
-import { getFullTokenDisplay, isTokenWETH, isTokenWMATIC, isTokenXDAI } from '../../../utils'
-import { ButtonAnchor } from '../../buttons/ButtonAnchor'
-import { ButtonType } from '../../buttons/buttonStylingTypes'
+import { getFullTokenDisplay, getTokenDisplay } from '../../../utils'
 import { InlineLoading } from '../../common/InlineLoading'
 import { SpinnerSize } from '../../common/Spinner'
+import { Tooltip } from '../../common/Tooltip'
+import { FieldRowLabelStyled } from '../../form/PriceInputPanel'
 import ClaimConfirmationModal from '../../modals/ClaimConfirmationModal'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
+import { FieldRowToken, FieldRowTokenSymbol } from '../../pureStyledComponents/FieldRow'
 import TokenLogo from '../../token/TokenLogo'
 
 const Wrapper = styled(BaseCard)`
@@ -39,46 +38,13 @@ const ActionButton = ({ children, ...props }) => (
   </button>
 )
 
-const TokensWrapper = styled.div`
-  background-color: ${({ theme }) => theme.bg7};
-  border-radius: 12px;
-  border: 1px solid ${({ theme }) => theme.textField.borderColor};
-  margin-bottom: 20px;
-`
-
 const TokenItem = styled.div`
   align-items: center;
-  border-bottom: 1px solid ${({ theme }) => theme.textField.borderColor};
-  display: flex;
-  justify-content: space-between;
-  padding: 7px 14px;
-
-  &:last-child {
-    border-bottom: none;
-  }
-`
-
-const Token = styled.div`
-  align-items: center;
   display: flex;
   justify-content: space-between;
 `
 
-const Text = styled.div`
-  color: ${({ theme }) => theme.text1};
-  font-size: 24px;
-  font-weight: 600;
-  line-height: 1.2;
-  margin-left: 10px;
-`
-
-const ButtonWrap = styled(ButtonAnchor)`
-  border-radius: 4px;
-  font-size: 12px;
-  height: 20px;
-  margin: -2px 0 0 15px;
-  padding: 0 5px;
-`
+const Text = styled.div``
 
 interface Props {
   auctionIdentifier: AuctionIdentifier
@@ -165,27 +131,6 @@ const Claimer: React.FC<Props> = (props) => {
     [biddingToken, chainId],
   )
 
-  const biddingTokenDisplayWrapped = useMemo(
-    () =>
-      biddingTokenDisplay === 'XDAI'
-        ? 'WXDAI'
-        : biddingTokenDisplay === 'ETH'
-        ? 'WETH'
-        : biddingTokenDisplay === 'WMATIC'
-        ? 'MATIC'
-        : biddingTokenDisplay,
-    [biddingTokenDisplay],
-  )
-
-  const biddingTokenDisplayCut = biddingTokenDisplayWrapped.slice(0, 7)
-
-  const auctioningTokenDisplay = useMemo(
-    () => getFullTokenDisplay(auctioningToken, chainId),
-    [auctioningToken, chainId],
-  )
-
-  const auctioningTokenDisplayCut = auctioningTokenDisplay.slice(0, 7)
-
   const isLoading = useMemo(
     () => (account && isDerivedClaimInfoLoading) || !claimableBidFunds || !claimableBonds,
     [account, isDerivedClaimInfoLoading, claimableBidFunds, claimableBonds],
@@ -202,29 +147,6 @@ const Claimer: React.FC<Props> = (props) => {
     [isValid, showConfirm, isLoading, userConfirmedTx, claimStatus, chainId, Web3ChainId],
   )
 
-  const isXDAI = isTokenXDAI(derivedAuctionInfo.biddingToken.address, chainId)
-  const isWETH = isTokenWETH(derivedAuctionInfo.biddingToken.address, chainId)
-  const isMATIC = isTokenWMATIC(derivedAuctionInfo.biddingToken.address, chainId)
-
-  const showUnwrapButton = useMemo(
-    () =>
-      (isXDAI || isWETH || isMATIC) &&
-      account &&
-      chainId === Web3ChainId &&
-      claimableBidFunds &&
-      claimableBidFunds.greaterThan('0'),
-    [Web3ChainId, account, chainId, claimableBidFunds, isWETH, isXDAI, isMATIC],
-  )
-
-  const unwrapTooltip = `Unwrap ${biddingToken.symbol} on ${
-    isXDAI ? 'Honeyswap' : isMATIC ? 'QuickSwap' : 'Uniswap'
-  }. Do it after you claimed your ${biddingTokenDisplayWrapped}`
-  const unwrapURL = isXDAI
-    ? `https://app.honeyswap.org/#/swap?inputCurrency=${biddingToken.address}`
-    : isMATIC
-    ? 'https://quickswap.exchange/#/swap?inputCurrency=${biddingToken.address}'
-    : `https://app.uniswap.org/#/swap?inputCurrency=${biddingToken.address}`
-
   const claimStatusString =
     claimStatus === ClaimState.PENDING ? `Claiming` : !isValid && account ? error : ''
 
@@ -240,77 +162,57 @@ const Claimer: React.FC<Props> = (props) => {
           {isLoading && <InlineLoading size={SpinnerSize.small} />}
           {!isLoading && (
             <>
-              <TokensWrapper>
+              <div className="mb-7">
                 <TokenItem>
-                  <Token>
-                    {biddingToken && biddingTokenDisplay ? (
-                      <>
-                        <TokenLogo
-                          size={'34px'}
-                          token={{
-                            address: biddingToken.address,
-                            symbol: biddingTokenDisplay,
-                          }}
-                        />
-                        <Text>{biddingTokenDisplayCut}</Text>
-                        {showUnwrapButton && (
-                          <span
-                            className={`tooltipComponent`}
-                            data-for={'wrap_button'}
-                            data-html={true}
-                            data-multiline={true}
-                            data-tip={unwrapTooltip}
-                          >
-                            <ReactTooltip
-                              arrowColor={'#001429'}
-                              backgroundColor={'#001429'}
-                              border
-                              borderColor={'#174172'}
-                              className="customTooltip"
-                              delayHide={50}
-                              delayShow={250}
-                              effect="solid"
-                              id={'wrap_button'}
-                              textColor="#fff"
-                            />
-                            <ButtonWrap
-                              buttonType={ButtonType.primaryInverted}
-                              href={unwrapURL}
-                              target="_blank"
-                            >
-                              Unwrap
-                            </ButtonWrap>
-                          </span>
-                        )}
-                      </>
-                    ) : (
-                      '-'
-                    )}
-                  </Token>
-                  <Text>
-                    {claimableBidFunds ? `${claimableBidFunds.toSignificant(6)} ` : `0.00`}
+                  <Text className="text-base text-white">
+                    {claimableBidFunds ? `${claimableBidFunds.toSignificant(6)}` : `0.00`}
                   </Text>
-                </TokenItem>
-                <TokenItem>
-                  <Token>
-                    {auctioningToken && auctioningTokenDisplay ? (
-                      <>
-                        <TokenLogo
-                          size={'34px'}
-                          token={{
-                            address: auctioningToken.address,
-                            symbol: auctioningTokenDisplay,
-                          }}
-                        />
-                        <Text>{auctioningTokenDisplayCut}</Text>
-                      </>
-                    ) : (
-                      '-'
+                  <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#2C2C2C] rounded-full p-1 px-2">
+                    {biddingToken.address && (
+                      <TokenLogo
+                        size={'16px'}
+                        token={{ address: biddingToken.address, symbol: biddingToken.symbol }}
+                      />
                     )}
-                  </Token>
-                  <Text>{claimableBonds ? `${claimableBonds.toSignificant(6)}` : `0.00`}</Text>
+                    {biddingToken && biddingToken.symbol && (
+                      <FieldRowTokenSymbol>
+                        {getTokenDisplay(biddingToken, chainId)}
+                      </FieldRowTokenSymbol>
+                    )}
+                  </FieldRowToken>
                 </TokenItem>
-              </TokensWrapper>
+
+                <FieldRowLabelStyled className="space-x-1">
+                  <span>Unfilled bid funds</span>
+                  <Tooltip text="Unfilled bid funds tooltip" />
+                </FieldRowLabelStyled>
+
+                <div className="divider" />
+
+                <TokenItem>
+                  <Text className="text-base text-white">
+                    {claimableBonds ? `${claimableBonds.toSignificant(6)}` : `0.00`}
+                  </Text>
+                  <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#2C2C2C] rounded-full p-1 px-2">
+                    {auctioningToken.address && (
+                      <TokenLogo
+                        size={'16px'}
+                        token={{ address: auctioningToken.address, symbol: auctioningToken.symbol }}
+                      />
+                    )}
+                    {auctioningToken && auctioningToken.symbol && (
+                      <FieldRowTokenSymbol>
+                        {getTokenDisplay(auctioningToken, chainId)}
+                      </FieldRowTokenSymbol>
+                    )}
+                  </FieldRowToken>
+                </TokenItem>
+
+                <FieldRowLabelStyled className="space-x-1">
+                  <span>Bonds purchased</span>
+                  <Tooltip text="Bonds purchased tooltip" />
+                </FieldRowLabelStyled>
+              </div>
               {!account ? (
                 <ActionButton onClick={toggleWalletModal}>Connect wallet</ActionButton>
               ) : (

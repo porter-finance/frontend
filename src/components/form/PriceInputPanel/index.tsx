@@ -28,10 +28,6 @@ export const FieldRowLabelStyled = styled(FieldRowLabel)`
   letter-spacing: 0.03em;
 `
 
-const FieldRowLabelStyledText = styled.span`
-  margin-right: 5px;
-`
-
 interface Props {
   chainId: number
   disabled?: boolean
