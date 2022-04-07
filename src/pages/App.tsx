@@ -35,10 +35,6 @@ const App: React.FC = () => {
           <Header />
           <Popups />
           <ReactTooltip
-            arrowColor="#001429"
-            backgroundColor="#001429"
-            border
-            borderColor="#174172"
             className="customTooltip"
             delayHide={250}
             delayShow={50}
