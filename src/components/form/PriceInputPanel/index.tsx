@@ -5,7 +5,6 @@ import { Token } from '@josojo/honeyswap-sdk'
 
 import { getTokenDisplay } from '../../../utils'
 import { Tooltip } from '../../common/Tooltip'
-import { MiniInfoIcon } from '../../icons/MiniInfoIcon'
 import {
   FieldRowBottom,
   FieldRowInfo,
@@ -98,9 +97,7 @@ const PriceInputPanel = (props: Props) => {
         <FieldRowBottom>
           {info ? (
             <FieldRowLabelStyled className="space-x-1">
-              <FieldRowInfo infoType={info?.type}>
-                <MiniInfoIcon /> {info.text}
-              </FieldRowInfo>
+              <FieldRowInfo infoType={info?.type}>{info.text}</FieldRowInfo>
             </FieldRowLabelStyled>
           ) : (
             <FieldRowLabelStyled className="space-x-1">

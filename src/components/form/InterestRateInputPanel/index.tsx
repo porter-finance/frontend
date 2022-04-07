@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 
 import { Tooltip } from '../../common/Tooltip'
-import { MiniInfoIcon } from '../../icons/MiniInfoIcon'
 import {
   FieldRowInfo,
   FieldRowInfoProps,
@@ -53,7 +52,7 @@ const InterestRateInputPanel = (props: Props) => {
 
   return (
     <>
-      <FieldRowWrapper className="justify-center mt-4" error={error} {...restProps}>
+      <FieldRowWrapper className="justify-center my-4" error={error} {...restProps}>
         <div className="flex flex-row items-center justify-center">
           <FieldRowInput
             disabled={disabled === true}
@@ -65,20 +64,19 @@ const InterestRateInputPanel = (props: Props) => {
             value={value}
           />
           <FieldRowLabelStyled className="space-x-1">
-            <FieldRowLabelStyledText className="text-sm">Interest rate</FieldRowLabelStyledText>
-            <Tooltip text="Interest rate tooltip" />
+            {info ? (
+              <>
+                <FieldRowInfo infoType={info?.type}>{info.text}</FieldRowInfo>
+              </>
+            ) : (
+              <>
+                <FieldRowLabelStyledText className="text-sm">Interest rate</FieldRowLabelStyledText>
+                <Tooltip text="Interest rate tooltip" />
+              </>
+            )}
           </FieldRowLabelStyled>
         </div>
       </FieldRowWrapper>
-      <FieldRowInfo infoType={info?.type}>
-        {info ? (
-          <>
-            <MiniInfoIcon /> {info.text}
-          </>
-        ) : (
-          <>&nbsp;</>
-        )}
-      </FieldRowInfo>
     </>
   )
 }
