@@ -102,12 +102,10 @@ const PriceInputPanel = (props: Props) => {
         </FieldRowBottom>
       </FieldRowWrapper>
       <FieldRowInfo infoType={info?.type}>
-        {info ? (
+        {info && (
           <>
             <MiniInfoIcon /> {info.text}
           </>
-        ) : (
-          <>&nbsp;</>
         )}
       </FieldRowInfo>
     </>

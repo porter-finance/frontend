@@ -39,6 +39,7 @@ import { InlineLoading } from '../../common/InlineLoading'
 import { SpinnerSize } from '../../common/Spinner'
 import { Tooltip } from '../../common/Tooltip'
 import AmountInputPanel from '../../form/AmountInputPanel'
+import InterestRateInputPanel from '../../form/InterestRateInputPanel'
 import PriceInputPanel from '../../form/PriceInputPanel'
 import { Calendar } from '../../icons/Calendar'
 import ConfirmationModal from '../../modals/ConfirmationModal'
@@ -46,7 +47,7 @@ import WarningModal from '../../modals/WarningModal'
 import SwapModalFooter from '../../modals/common/PlaceOrderModalFooter'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { EmptyContentText } from '../../pureStyledComponents/EmptyContent'
-import { FieldRowInput, InfoType } from '../../pureStyledComponents/FieldRow'
+import { InfoType } from '../../pureStyledComponents/FieldRow'
 
 const LinkCSS = css`
   color: ${({ theme }) => theme.text1};
@@ -140,7 +141,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const orders: OrderState | undefined = useOrderState()
   const toggleWalletModal = useWalletModalToggle()
   const { interestRate, price, sellAmount, showPriceInverted } = useOrderPlacementState()
-  const { errorAmount, errorPrice } = useGetOrderPlacementError(
+  const { errorAmount, errorInterestRate, errorPrice } = useGetOrderPlacementError(
     derivedAuctionInfo,
     auctionState,
     auctionIdentifier,
@@ -328,9 +329,21 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     [errorPrice],
   )
 
+  const interestRateInfo = React.useMemo(
+    () =>
+      errorInterestRate
+        ? {
+            text: errorInterestRate,
+            type: InfoType.error,
+          }
+        : null,
+    [errorInterestRate],
+  )
+
   const disablePlaceOrder =
     (errorAmount ||
       errorPrice ||
+      errorInterestRate ||
       notApproved ||
       showWarning ||
       showWarningWrongChainId ||
@@ -445,9 +458,11 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                 value={price}
               />
 
-              <FieldRowInput
+              <InterestRateInputPanel
+                chainId={chainId}
                 disabled={!account}
-                onUserSellAmountInput={onUserInterestRateInput}
+                info={interestRateInfo}
+                onUserInterestRateInput={onUserInterestRateInput}
                 value={interestRate}
               />
 
