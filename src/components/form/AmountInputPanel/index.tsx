@@ -159,7 +159,7 @@ const AmountInputPanel: React.FC<Props> = (props) => {
           />
           <Wrap>
             {token && (
-              <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#222222] rounded-full p-1">
+              <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#2C2C2C] rounded-full p-1 px-2">
                 {token.address && (
                   <TokenLogo
                     size={'16px'}
