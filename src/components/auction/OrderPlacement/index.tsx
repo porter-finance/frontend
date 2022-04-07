@@ -429,6 +429,8 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                 Place order
               </ActionButton>
             )}
+
+            {!account && <div className="mt-4 text-xs text-[#9F9F9F]">Wallet not connected</div>}
           </>
         )}
       </Wrapper>
