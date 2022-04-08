@@ -42,7 +42,7 @@ const App: React.FC = () => {
             textColor="#fff"
           />
           {showTopWarning && <TopDisclaimer />}
-          <Inner className="max-w-3xl mx-auto px-4 sm:px-6 lg:max-w-7xl lg:px-8">
+          <Inner className="fullPage">
             <Web3ReactManager>
               <Routes />
             </Web3ReactManager>
