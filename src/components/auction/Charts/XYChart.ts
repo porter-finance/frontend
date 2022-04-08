@@ -73,7 +73,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   const bidSeries = chart.series.push(new am4charts.StepLineSeries())
   bidSeries.dataFields.valueX = 'priceNumber'
   bidSeries.dataFields.valueY = 'bidValueY'
-  bidSeries.strokeWidth = 4
+  bidSeries.strokeWidth = 2
   bidSeries.stroke = am4core.color(colors.blue)
   bidSeries.startLocation = 0.5
   bidSeries.name = 'Bids'
@@ -86,7 +86,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   const askSeries = chart.series.push(new am4charts.LineSeries())
   askSeries.dataFields.valueX = 'priceNumber'
   askSeries.dataFields.valueY = 'askValueY'
-  askSeries.strokeWidth = 4
+  askSeries.strokeWidth = 2
   askSeries.stroke = am4core.color(colors.red)
   askSeries.name = 'Sell supply'
   askSeries.dummyData = {
@@ -98,7 +98,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   const inputSeries = chart.series.push(new am4charts.LineSeries())
   inputSeries.dataFields.valueX = 'priceNumber'
   inputSeries.dataFields.valueY = 'newOrderValueY'
-  inputSeries.strokeWidth = 4
+  inputSeries.strokeWidth = 2
   inputSeries.stroke = am4core.color(colors.cyan)
   inputSeries.name = 'New order'
   inputSeries.dummyData = {
@@ -111,7 +111,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   const priceSeries = chart.series.push(new am4charts.LineSeries())
   priceSeries.dataFields.valueX = 'priceNumber'
   priceSeries.dataFields.valueY = 'clearingPriceValueY'
-  priceSeries.strokeWidth = 4
+  priceSeries.strokeWidth = 2
   priceSeries.strokeDasharray = '3,3'
   priceSeries.stroke = am4core.color('#9F9F9F')
   priceSeries.name = 'Current price'
