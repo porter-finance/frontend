@@ -28,7 +28,7 @@ const Wrapper = styled.header`
   background: #404eed;
 `
 
-const Inner = styled(InnerContainer)`
+export const Inner = styled(InnerContainer)`
   align-items: center;
   flex-flow: row;
   flex-grow: 1;
