@@ -6,6 +6,10 @@ html {
     background-color: #131415;
 }
 
+.fullPage {
+    @apply max-w-3xl mx-auto px-4 sm:px-6 lg:max-w-7xl lg:px-8 xl:max-w-8xl xl:px-12;
+}
+
 .btn-sm {
     height: 41px;
     @apply text-base;
@@ -81,7 +85,9 @@ html {
     background: rgba(213, 213, 213, 0.1);
 }
 
-/*charts */
+
+
+/* Charts */
 
 svg text tspan  {
     @apply normal-case;
