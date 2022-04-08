@@ -427,11 +427,12 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
               />
 
               <InterestRateInputPanel
+                auctionEndDate={derivedAuctionInfo?.auctionEndDate}
                 chainId={chainId}
                 disabled={!account}
                 info={interestRateInfo}
                 onUserInterestRateInput={onUserInterestRateInput}
-                value={interestRate}
+                price={price}
               />
 
               {!account ? (
