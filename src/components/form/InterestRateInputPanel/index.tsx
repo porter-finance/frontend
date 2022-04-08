@@ -1,6 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
 
+import dayjs from 'dayjs'
+import round from 'lodash.round'
+
 import { Tooltip } from '../../common/Tooltip'
 import {
   FieldRowInfo,
@@ -41,11 +44,20 @@ interface Props {
   disabled?: boolean
   info?: FieldRowInfoProps
   onUserInterestRateInput: (val: string) => void
-  value: string
+  price: string
+  auctionEndDate: number
+}
+
+// Interest rate = (1-Price) / Price / (years to maturity)
+const calculateRate = (price, auctionEndDate) => {
+  const years = dayjs().diff(auctionEndDate * 1000, 'year', true)
+  const interestRate = (1 - price) / price / years
+  return !Number(price) ? '-' : `${round(interestRate, 2)}%`
 }
 
 const InterestRateInputPanel = (props: Props) => {
-  const { chainId, disabled, info, onUserInterestRateInput, value, ...restProps } = props
+  const { auctionEndDate, chainId, disabled, info, onUserInterestRateInput, price, ...restProps } =
+    props
   const error = info?.type === InfoType.error
 
   return (
@@ -57,7 +69,7 @@ const InterestRateInputPanel = (props: Props) => {
             hasError={error}
             onUserSellAmountInput={onUserInterestRateInput}
             readOnly
-            value={value}
+            value={calculateRate(price, auctionEndDate)}
           />
           <FieldRowLabelStyled className="space-x-1">
             {info ? (
