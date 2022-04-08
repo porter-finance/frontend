@@ -143,11 +143,15 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   // Legend
   chart.legend = new am4charts.Legend()
   chart.legend.labels.template.fill = am4core.color('#9F9F9F')
+  chart.legend.markers.template.strokeWidth = 44
+  chart.legend.markers.template.height = 5
+  chart.legend.markers.template.width = 14
+  chart.legend.itemContainers.template.tooltipHTML =
+    '<div style="white-space: normal!important;max-width: 300px;padding:0 5px 5px;">{dataContext.dummyData.description}</div>'
+
   chart.tooltip.getFillFromObject = false
   chart.tooltip.background.fill = am4core.color(colors.tooltipBg)
   chart.tooltip.background.stroke = am4core.color(colors.tooltipBorder)
-  chart.legend.itemContainers.template.tooltipHTML =
-    '<div style="white-space: normal!important;max-width: 300px;padding:0 5px 5px;">{dataContext.dummyData.description}</div>'
 
   return chart
 }
@@ -180,6 +184,7 @@ export const drawInformation = (props: DrawInformation) => {
   const [yAxis] = chart.yAxes
 
   xAxis.title.text = priceTitle
+  xAxis.title.align = 'left'
   // yAxis.title.text = volumeTitle
 
   const {

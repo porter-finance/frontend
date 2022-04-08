@@ -17,10 +17,10 @@ import useShowCookies from '../hooks/useShowCookies'
 import useShowTopWarning from '../hooks/useShowTopWarning'
 
 const Inner = styled(InnerContainer)`
-  margin-top: -85px;
+  margin-top: -100px;
 
   @media (max-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    margin-top: -120px;
+    margin-top: -130px;
   }
 `
 
