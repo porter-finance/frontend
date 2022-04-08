@@ -197,7 +197,7 @@ const AuctionDetails = (props: Props) => {
         <h2 className="card-title">Auction information</h2>
         <Timer derivedAuctionInfo={derivedAuctionInfo} />
 
-        <div className="grid gap-x-12 gap-y-8 grid-cols-3 pt-12">
+        <div className="grid gap-x-12 gap-y-8 grid-cols-1 pt-12 md:grid-cols-3">
           {extraDetails.map((item, index) => (
             <ExtraDetailsItem key={index} {...item} />
           ))}
