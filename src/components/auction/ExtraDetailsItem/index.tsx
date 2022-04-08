@@ -4,19 +4,6 @@ import styled from 'styled-components'
 import { Tooltip } from '../../common/Tooltip'
 import { ExternalLink } from '../../navigation/ExternalLink'
 
-const Wrapper = styled.div<{ showProgressColumn?: boolean }>`
-  column-gap: 8px;
-  display: grid;
-  align-items: flex-start;
-  grid-template-columns: ${(props) => (props.showProgressColumn ? '36px 1fr' : '1fr')};
-`
-
-const TextContents = styled.div<{ showEmptyProgressColumn?: boolean }>`
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.xl}) {
-    margin-left: ${(props) => (props.showEmptyProgressColumn ? '46px' : '0')};
-  }
-`
-
 const Value = styled.p`
   font-style: normal;
   font-weight: 400;
@@ -58,7 +45,7 @@ const Link = styled(ExternalLink)`
 `
 
 const LinearBorder = () => (
-  <svg fill="none" height="2" viewBox="0 0 248 2" width="248" xmlns="http://www.w3.org/2000/svg">
+  <svg fill="none" height="2" viewBox="0 0 248 2" width="100%" xmlns="http://www.w3.org/2000/svg">
     <path d="M0 1L248 0.999978" stroke="url(#paint0_linear_8725_2152)" strokeWidth="2" />
     <defs>
       <linearGradient
@@ -91,11 +78,8 @@ export const ExtraDetailsItem: React.FC<Props> = (props) => {
     props
 
   return (
-    <Wrapper showProgressColumn={progress !== undefined || showEmptyProgressColumn} {...restProps}>
-      <TextContents
-        className="space-y-2 overflow-hidden min-w-[100px]"
-        showEmptyProgressColumn={showEmptyProgressColumn}
-      >
+    <div className="col-span-1" {...restProps}>
+      <div className="space-y-2 overflow-hidden">
         <Value>
           <ValueText className="overflow-hidden overflow-ellipsis">{value || 'Unknown'}</ValueText>
           {url && <Link href={url} />}
@@ -104,12 +88,11 @@ export const ExtraDetailsItem: React.FC<Props> = (props) => {
           <TitleText className="text">{title}</TitleText>
           {tooltip && <Tooltip text={tooltip} />}
         </Title>
-      </TextContents>
-      {bordered && (
-        <div className="mt-5">
-          <LinearBorder />
-        </div>
-      )}
-    </Wrapper>
+      </div>
+
+      <div className={`mt-5 ${!bordered && 'border border-[#222222]'}`}>
+        {bordered && <LinearBorder />}
+      </div>
+    </div>
   )
 }
