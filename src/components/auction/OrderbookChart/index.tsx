@@ -105,7 +105,7 @@ const VolumeLabel = styled.div`
   font-size: 10px;
   letter-spacing: 0.06em;
   color: #9f9f9f;
-  margin-left: 12px;
+  margin-left: 8px;
 `
 
 const OrderBookChart: React.FC<Props> = (props) => {
