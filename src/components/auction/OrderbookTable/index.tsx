@@ -17,14 +17,14 @@ export interface Props {
   tableData?: any[]
 }
 
-const Table = styled(BaseCard)`
+export const Table = styled(BaseCard)`
   padding: 0;
   min-height: 352px;
   max-height: 100%;
   height: 100%;
 `
 
-const TableBody = styled(Scrollbars)`
+export const TableBody = styled(Scrollbars)`
   max-height: 100%;
   min-width: 560px;
   min-height: 280px;
@@ -43,7 +43,7 @@ interface CellProps {
   width?: string
 }
 
-const TableCell = styled(Cell)<Partial<CSS.Properties & CellProps>>`
+export const TableCell = styled(Cell)<Partial<CSS.Properties & CellProps>>`
   text-align: left;
   min-width: ${(props) => (props.minWidth ? props.minWidth : 'auto')};
   padding: 13px 5px;
@@ -67,10 +67,10 @@ interface WrapProps {
   width?: string
 }
 
-const Wrap = styled.div<Partial<CSS.Properties & WrapProps>>`
+export const Wrap = styled.div<Partial<CSS.Properties & WrapProps>>`
   display: flex;
   align-items: center;
-  justify-content: flex-start
+  justify-content: flex-start;
   height: 100%;
   color: #696969;
   font-style: normal;
@@ -87,14 +87,14 @@ const Wrap = styled.div<Partial<CSS.Properties & WrapProps>>`
   }
 `
 
-const OverflowWrap = styled.div`
+export const OverflowWrap = styled.div`
   max-width: 100%;
   flex-grow: 1;
   overflow-x: auto;
   overflow-y: auto;
 `
 
-const StyledRow = styled(Row)`
+export const StyledRow = styled(Row)`
   border-bottom: 1px solid rgba(213, 213, 213, 0.1);
   margin-bottom: 0;
   padding: 0 13px;
