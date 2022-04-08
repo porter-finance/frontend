@@ -48,26 +48,6 @@ const TokenSymbol = styled.span`
   }
 `
 
-const ExtraDetails = styled.div`
-  column-gap: 70px;
-  display: grid;
-  grid-template-columns: 1fr;
-  overflow: hidden;
-  padding: 35px 20px 15px;
-  row-gap: 33px;
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(3, 1fr);
-    row-gap: 33px;
-  }
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.xl}) {
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-  }
-`
-
 interface Props {
   auctionIdentifier: AuctionIdentifier
   derivedAuctionInfo: DerivedAuctionInfo
@@ -212,16 +192,16 @@ const AuctionDetails = (props: Props) => {
   )
 
   return (
-    <div className="card ">
+    <div className="card">
       <div className="card-body">
         <h2 className="card-title">Auction information</h2>
         <Timer derivedAuctionInfo={derivedAuctionInfo} />
 
-        <ExtraDetails>
+        <div className="grid gap-x-12 gap-y-8 grid-cols-3 pt-12">
           {extraDetails.map((item, index) => (
             <ExtraDetailsItem key={index} {...item} />
           ))}
-        </ExtraDetails>
+        </div>
       </div>
     </div>
   )
