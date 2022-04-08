@@ -100,8 +100,7 @@ export const AuctionTimer = (props: AuctionTimerProps) => {
       derivedAuctionInfo?.auctionStartDate,
       derivedAuctionInfo?.auctionEndDate,
     )
-    // we do this so that the graph is in the same direction as a clock
-    return 100 - progress
+    return progress === 100 ? progress : 100 - progress
   }, [derivedAuctionInfo])
 
   return (
