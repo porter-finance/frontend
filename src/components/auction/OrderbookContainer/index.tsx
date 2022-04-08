@@ -65,11 +65,7 @@ export const OrderBookContainer = (props) => {
   const { auctionIdentifier, auctionStarted, derivedAuctionInfo } = props
   const { bids } = useOrderbookState()
   const { granularity } = useGranularityOptions(bids)
-  const [myOrders, setMyOrders] = useState(false)
-
-  const toggleMyOrders = () => {
-    setMyOrders(!myOrders)
-  }
+  const [showAllOrders, setShowAllOrders] = useState(false)
 
   useOrderbookDataCallback(auctionIdentifier)
 
@@ -90,24 +86,30 @@ export const OrderBookContainer = (props) => {
             <div className="flex items-center">
               {auctionStarted && (
                 <button className="btn-group">
-                  <button className={`btn ${!myOrders && 'btn-active'}`} onClick={toggleMyOrders}>
+                  <button
+                    className={`btn ${!showAllOrders && 'btn-active'}`}
+                    onClick={() => showAllOrders && setShowAllOrders(false)}
+                  >
                     Orders
                   </button>
-                  <button className={`btn ${myOrders && 'btn-active'}`} onClick={toggleMyOrders}>
+                  <button
+                    className={`btn ${showAllOrders && 'btn-active'}`}
+                    onClick={() => !showAllOrders && setShowAllOrders(true)}
+                  >
                     My Orders
                   </button>
                 </button>
               )}
             </div>
           </div>
-          {myOrders && auctionStarted && (
+          {showAllOrders && auctionStarted && (
             <OrdersTable
               auctionIdentifier={auctionIdentifier}
               derivedAuctionInfo={derivedAuctionInfo}
             />
           )}
 
-          {!myOrders && (
+          {!showAllOrders && (
             <OrderBookTable derivedAuctionInfo={derivedAuctionInfo} granularity={granularity} />
           )}
         </div>
