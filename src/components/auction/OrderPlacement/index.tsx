@@ -41,7 +41,6 @@ import { Tooltip } from '../../common/Tooltip'
 import AmountInputPanel from '../../form/AmountInputPanel'
 import InterestRateInputPanel from '../../form/InterestRateInputPanel'
 import PriceInputPanel from '../../form/PriceInputPanel'
-import { Calendar } from '../../icons/Calendar'
 import ConfirmationModal from '../../modals/ConfirmationModal'
 import WarningModal from '../../modals/WarningModal'
 import SwapModalFooter from '../../modals/common/PlaceOrderModalFooter'
@@ -373,7 +372,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
       <div className="card-body">
         <h2 className="card-title">Place Order</h2>
 
-        {derivedAuctionInfo && (
+        {cancelDate && derivedAuctionInfo && (
           <div className="space-y-1">
             <div className="text-[#EEEFEB] text-sm">
               {dayjs(derivedAuctionInfo.orderCancellationEndDate * 1000)
@@ -450,7 +449,12 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                         disabled={!onMaxInput || !account}
                         onClick={onMaxInput}
                       >
-                        {balanceString === '0' || !account ? '0.00' : balanceString}{' '}
+                        {!balanceString ||
+                        balanceString === '0' ||
+                        !Number(balanceString) ||
+                        !account
+                          ? '0.00'
+                          : balanceString}{' '}
                         {biddingTokenDisplay}
                       </button>
                     </div>
@@ -458,18 +462,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                 </>
               )}
               {!account && <div className="mt-4 text-xs text-[#9F9F9F]">Wallet not connected</div>}
-              {showBottomWarning && (
-                <Warning>
-                  <Calendar />
-                  <WarningText>
-                    {orderPlacingOnly &&
-                      `Orders cannot be cancelled once you confirm the transaction.`}
-                    {cancelDate &&
-                      !orderPlacingOnly &&
-                      `Orders cannot be cancelled after ${cancelDate}`}
-                  </WarningText>
-                </Warning>
-              )}
             </>
           )}
         </Wrapper>

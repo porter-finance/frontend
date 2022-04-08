@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom'
 
-import { gql, useQuery } from '@apollo/client'
+import { ApolloError, gql, useQuery } from '@apollo/client'
 
 import { RouteAuctionIdentifier, parseURL } from '../state/orderPlacement/reducer'
 import { getLogger } from '../utils/logger'
@@ -45,14 +45,17 @@ export interface BidInfo {
 
 const bidsQuery = gql`
   query BidList($account: String!, $auctionId: String!) {
-    bids(first: 5, where: { account: { id: $account }, auction: $auctionId }) {
+    bids(first: 100, where: { account: { id: $account }, auction: $auctionId }) {
       id
       timestamp
     }
   }
 `
 
-export const useParticipatingAuctionBids = (): Maybe<BidInfo[]> => {
+export const useParticipatingAuctionBids = (): Maybe<{
+  bids: BidInfo[]
+  error: ApolloError | undefined
+}> => {
   const { auctionId } = parseURL(useParams<RouteAuctionIdentifier>())
   const { account } = useActiveWeb3React()
 
@@ -64,5 +67,5 @@ export const useParticipatingAuctionBids = (): Maybe<BidInfo[]> => {
     logger.error('Error getting useParticipatingAuctionBids info', error)
   }
 
-  return data?.bids
+  return { bids: data?.bids, error }
 }
