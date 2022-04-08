@@ -53,6 +53,12 @@ html {
     @apply text-neutral-content;
     @apply h-min;
     @apply mt-8;
+    box-shadow: 0px 0px 1px rgba(30, 30, 30, 0.32), 0px 8px 16px rgba(0, 0, 0, 0.16);
+}
+
+.card.place-order-color {
+    border-image: conic-gradient(black, black, black, black, black, black, black) 1;
+    border-image-source: linear-gradient(131.96deg, #404EED 0%, rgba(64, 78, 237, 0) 100%);
 }
 
 .card-title {
