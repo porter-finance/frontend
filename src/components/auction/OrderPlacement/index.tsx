@@ -417,6 +417,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                 }}
               />
               <PriceInputPanel
+                account={account}
                 chainId={chainId}
                 disabled={!account}
                 info={priceInfo}
@@ -426,6 +427,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
               />
 
               <InterestRateInputPanel
+                account={account}
                 auctionEndDate={derivedAuctionInfo?.auctionEndDate}
                 chainId={chainId}
                 disabled={!account}

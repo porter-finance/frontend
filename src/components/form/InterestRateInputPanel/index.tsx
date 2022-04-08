@@ -40,6 +40,7 @@ const FieldRowWrapper = styled.div<{ error?: boolean }>`
   padding-right: 10px;
 `
 interface Props {
+  account: string
   chainId: number
   disabled?: boolean
   info?: FieldRowInfoProps
@@ -56,8 +57,16 @@ const calculateRate = (price, auctionEndDate) => {
 }
 
 const InterestRateInputPanel = (props: Props) => {
-  const { auctionEndDate, chainId, disabled, info, onUserInterestRateInput, price, ...restProps } =
-    props
+  const {
+    account,
+    auctionEndDate,
+    chainId,
+    disabled,
+    info,
+    onUserInterestRateInput,
+    price,
+    ...restProps
+  } = props
   const error = info?.type === InfoType.error
 
   return (
@@ -69,7 +78,7 @@ const InterestRateInputPanel = (props: Props) => {
             hasError={error}
             onUserSellAmountInput={onUserInterestRateInput}
             readOnly
-            value={calculateRate(price, auctionEndDate)}
+            value={!account ? '-' : calculateRate(price, auctionEndDate)}
           />
           <FieldRowLabelStyled className="space-x-1">
             {info ? (

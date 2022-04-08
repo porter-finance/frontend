@@ -29,6 +29,7 @@ export const FieldRowLabelStyled = styled(FieldRowLabel)`
 `
 
 interface Props {
+  account: string
   chainId: number
   disabled?: boolean
   info?: FieldRowInfoProps
@@ -38,7 +39,16 @@ interface Props {
 }
 
 const PriceInputPanel = (props: Props) => {
-  const { chainId, disabled, info, onUserPriceInput, token = null, value, ...restProps } = props
+  const {
+    account,
+    chainId,
+    disabled,
+    info,
+    onUserPriceInput,
+    token = null,
+    value,
+    ...restProps
+  } = props
 
   const [readonly, setReadonly] = useState(true)
   const error = info?.type === InfoType.error
@@ -66,13 +76,13 @@ const PriceInputPanel = (props: Props) => {
       >
         <FieldRowTop>
           <FieldRowInput
-            disabled={disabled === true}
+            disabled={!account || disabled === true}
             hasError={error}
             onBlur={() => setReadonly(true)}
             onFocus={() => setReadonly(false)}
             onUserSellAmountInput={onUserPriceInput}
-            readOnly={readonly}
-            value={value}
+            readOnly={!account || readonly}
+            value={!account ? 0 : value}
           />
           {token && (
             <>
