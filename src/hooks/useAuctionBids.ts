@@ -9,7 +9,7 @@ import { BidInfo } from './useParticipatingAuctionBids'
 const logger = getLogger('useAuctionBids')
 
 const bidsQuery = gql`
-  query AuctionBidList($auctionId: String!) {
+  query AuctionBidList($auctionId: Int!) {
     bids(first: 100, where: { auction: $auctionId }) {
       id
       timestamp

@@ -2,12 +2,14 @@ import React, { useMemo } from 'react'
 import styled from 'styled-components'
 
 import * as CSS from 'csstype'
+import round from 'lodash.round'
 import { Scrollbars } from 'react-custom-scrollbars'
 
 import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { useOrderbookState } from '../../../state/orderbook/hooks'
 import { getTokenDisplay } from '../../../utils'
 import { Tooltip } from '../../common/Tooltip'
+import { calculateInterestRate } from '../../form/InterestRateInputPanel'
 import { InfoIcon } from '../../icons/InfoIcon'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { Cell } from '../../pureStyledComponents/Cell'
@@ -137,11 +139,9 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({
   derivedAuctionInfo,
   granularity,
 }) => {
-  // TODO: add the current user order?
-  const { bids, chainId, error, userOrderPrice, userOrderVolume } = useOrderbookState()
-  // const { bids, error } = useAuctionBids()
+  const { bids, chainId, error } = useOrderbookState()
 
-  console.log(bids, chainId, error, userOrderPrice, userOrderVolume)
+  console.log(bids, chainId, error)
 
   const biddingTokenDisplay = useMemo(
     () => getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId),
@@ -204,14 +204,18 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({
           {bids.map((row, i) => {
             return (
               <StyledRow key={i}>
-                {/*<TableCell title={String(row.claimtx)}>*/}
-                {/*  {row.bytes} {auctioningTokenDisplay}*/}
-                {/*</TableCell>*/}
-                {/*<TableCell title={row.id}>*/}
-                {/*  {round(row.bytes, 6)} {auctioningTokenDisplay}*/}
-                {/*</TableCell>*/}
-                {/*<TableCell title={round(row.bytes, 6)}>{round(row.bytes, 6)}</TableCell>*/}
-                {/*<TableCell>{row.bytes}%</TableCell>*/}
+                <TableCell>Unknown</TableCell>
+                <TableCell>
+                  {round(row.price, 6)} {auctioningTokenDisplay}
+                </TableCell>
+                <TableCell>
+                  {calculateInterestRate(row.price, derivedAuctionInfo?.auctionEndDate)}
+                </TableCell>
+                <TableCell>
+                  {round(row.volume, 6)} {auctioningTokenDisplay}
+                </TableCell>
+                <TableCell>Unknown</TableCell>
+                <TableCell>Cancel</TableCell>
               </StyledRow>
             )
           })}

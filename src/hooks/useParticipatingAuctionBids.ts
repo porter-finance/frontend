@@ -44,7 +44,7 @@ export interface BidInfo {
 }
 
 const bidsQuery = gql`
-  query BidList($account: String!, $auctionId: String!) {
+  query BidList($account: String!, $auctionId: Int!) {
     bids(first: 100, where: { account: { id: $account }, auction: $auctionId }) {
       id
       timestamp
