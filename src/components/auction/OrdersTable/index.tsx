@@ -19,7 +19,6 @@ import { getInverse } from '../../../utils/prices'
 import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
 import { Tooltip } from '../../common/Tooltip'
-import { InfoIcon } from '../../icons/InfoIcon'
 import { OrderPending } from '../../icons/OrderPending'
 import { OrderPlaced } from '../../icons/OrderPlaced'
 import ConfirmationModal from '../../modals/ConfirmationModal'
@@ -27,11 +26,11 @@ import WarningModal from '../../modals/WarningModal'
 import CancelModalFooter from '../../modals/common/CancelModalFooter'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { Cell, CellRow, getColumns } from '../../pureStyledComponents/Cell'
-import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponents/EmptyContent'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
 
 const TableWrapper = styled(BaseCard)`
   padding: 4px 0;
+  min-height: 352px;
 `
 
 const Title = styled(PageTitle)`
@@ -200,13 +199,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
 
   return (
     <>
-      {ordersEmpty && (
-        <EmptyContentWrapper>
-          <InfoIcon />
-          <EmptyContentText>You have no orders for this auction.</EmptyContentText>
-        </EmptyContentWrapper>
-      )}
-      {!ordersEmpty && (
+      {
         <TableWrapper>
           <Row columns={hideCancelButton ? 4 : 5} hiddenMd>
             <StyledCell>
@@ -224,6 +217,30 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
               <div>Network</div>
             </StyledCell>
           </Row>
+          {ordersEmpty && (
+            <div className="flex flex-col items-center mx-auto pt-[100px] text-[#696969] space-y-4">
+              <div>
+                <svg
+                  fill="none"
+                  height="40"
+                  viewBox="0 0 32 40"
+                  width="32"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M27.202 4.35355L27.2113 4.36285L27.2211 4.37165L31.5 8.22268V39.5H0.5V0.5H23.3484L27.202 4.35355Z"
+                    stroke="white"
+                    strokeOpacity="0.6"
+                  />
+                  <path d="M7 14H25" stroke="white" strokeOpacity="0.6" />
+                  <path d="M7 19H25" stroke="white" strokeOpacity="0.6" />
+                  <path d="M7 24H25" stroke="white" strokeOpacity="0.6" />
+                  <path d="M7 29H25" stroke="white" strokeOpacity="0.6" />
+                </svg>
+              </div>
+              <div className="text-base">You didn&apos;t place any orders yet</div>
+            </div>
+          )}
           {ordersSortered.map((order) => (
             <Row columns={hideCancelButton ? 4 : 5} key={order.id}>
               <Cell>
@@ -304,7 +321,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
             title="Warning!"
           />
         </TableWrapper>
-      )}
+      }
     </>
   )
 }
