@@ -132,13 +132,13 @@ export const AuctionTimer = (props: AuctionTimerProps) => {
           {derivedAuctionInfo &&
             dayjs(derivedAuctionInfo?.auctionStartDate * 1000)
               .utc()
-              .format('DD MMM YYYY UTC')}
+              .format('DD MMM YYYY HH:mm UTC')}
         </DateValue>
         <DateValue className="uppercase">
           {derivedAuctionInfo &&
             dayjs(derivedAuctionInfo?.auctionEndDate * 1000)
               .utc()
-              .format('DD MMM YYYY UTC')}
+              .format('DD MMM YYYY HH:mm UTC')}
         </DateValue>
       </div>
       <div className="flex justify-between mb-3">
