@@ -184,7 +184,7 @@ export const drawInformation = (props: DrawInformation) => {
   const [yAxis] = chart.yAxes
 
   xAxis.title.text = priceTitle
-  yAxis.title.text = volumeTitle
+  // yAxis.title.text = volumeTitle
 
   const {
     values: [askPricesSeries, bidPricesSeries],
