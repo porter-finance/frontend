@@ -153,8 +153,8 @@ const AmountInputPanel: React.FC<Props> = (props) => {
             onBlur={() => setReadonly(true)}
             onFocus={() => setReadonly(false)}
             onUserSellAmountInput={onUserSellAmountInput}
-            readOnly={readonly}
-            value={value}
+            readOnly={!account || readonly}
+            value={!account ? 0 : value}
           />
           <Wrap>
             {token && (
