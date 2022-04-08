@@ -157,7 +157,7 @@ export const Component = (props) => {
   return (
     <>
       <Wrapper className="siteHeader" {...props}>
-        <Inner className="max-w-3xl mx-auto px-4 sm:px-6 lg:max-w-7xl lg:px-8">
+        <Inner className="fullPage">
           <ButtonMenuStyled className={mobileMenuVisible && 'active'} onClick={mobileMenuToggle} />
           {mobileMenuVisible && <Mobilemenu onClose={() => setMobileMenuVisible(false)} />}
           <LogoLink className="logoLink" to="/">
