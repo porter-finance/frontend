@@ -65,6 +65,11 @@ html {
     border-image-source: linear-gradient(131.96deg, #404EED 0%, rgba(64, 78, 237, 0) 100%);
 }
 
+.card.bond-card-color {
+    border-image: conic-gradient(black, black, black, black, black, black, black) 1;
+    border-image-source: linear-gradient(131.96deg, #532DBE 0%, rgba(83, 45, 190, 0.15) 100%);
+}
+
 .card-title {
     font-style: normal;
     font-weight: 400;
