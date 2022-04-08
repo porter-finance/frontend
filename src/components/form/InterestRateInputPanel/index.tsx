@@ -50,9 +50,9 @@ interface Props {
 
 // Interest rate = (1-Price) / Price / (years to maturity)
 const calculateRate = (price, auctionEndDate) => {
-  const years = dayjs().diff(auctionEndDate * 1000, 'year', true)
+  const years = Math.abs(dayjs().diff(auctionEndDate * 1000, 'year', true))
   const interestRate = (1 - price) / price / years
-  return !Number(price) ? '-' : `${round(interestRate, 2)}%`
+  return !Number(price) ? '-' : `${round(interestRate * 100, 2)}%`
 }
 
 const InterestRateInputPanel = (props: Props) => {
