@@ -8,7 +8,6 @@ import { Scrollbars } from 'react-custom-scrollbars'
 import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { useOrderbookState } from '../../../state/orderbook/hooks'
 import { getTokenDisplay } from '../../../utils'
-import { Tooltip } from '../../common/Tooltip'
 import { calculateInterestRate } from '../../form/InterestRateInputPanel'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { Cell } from '../../pureStyledComponents/Cell'
@@ -155,31 +154,26 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({
           <TableCell>
             <Wrap>
               <Wrap margin={'0 10px 0 0'}>Status</Wrap>
-              <Tooltip text={`Status tooltip`} />
             </Wrap>
           </TableCell>
           <TableCell>
             <Wrap>
               <Wrap margin={'0 10px 0 0'}>Price</Wrap>
-              <Tooltip text={`Price tooltip`} />
             </Wrap>
           </TableCell>
           <TableCell>
             <Wrap>
               <Wrap margin={'0 10px 0 0'}>Interest rate</Wrap>
-              <Tooltip text={`Interest rate tooltip`} />
             </Wrap>
           </TableCell>
           <TableCell>
             <Wrap>
               <Wrap margin={'0 10px 0 0'}>Amount</Wrap>
-              <Tooltip text={`Amount tooltip`} />
             </Wrap>
           </TableCell>
           <TableCell>
             <Wrap>
               <Wrap margin={'0 10px 0 0'}>Time</Wrap>
-              <Tooltip text={`Time tooltip`} />
             </Wrap>
           </TableCell>
           <TableCell>
