@@ -73,11 +73,10 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   const bidSeries = chart.series.push(new am4charts.StepLineSeries())
   bidSeries.dataFields.valueX = 'priceNumber'
   bidSeries.dataFields.valueY = 'bidValueY'
-  bidSeries.strokeWidth = 1
+  bidSeries.strokeWidth = 4
   bidSeries.stroke = am4core.color(colors.blue)
-  bidSeries.fill = bidSeries.stroke
   bidSeries.startLocation = 0.5
-  bidSeries.fillOpacity = 0.1
+  bidSeries.name = 'Bids'
   bidSeries.dummyData = {
     description:
       'Shows the price (x axis) and size (y axis) of the bids that have been placed, both expressed in the bid token',
@@ -87,10 +86,9 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   const askSeries = chart.series.push(new am4charts.LineSeries())
   askSeries.dataFields.valueX = 'priceNumber'
   askSeries.dataFields.valueY = 'askValueY'
-  askSeries.strokeWidth = 1
+  askSeries.strokeWidth = 4
   askSeries.stroke = am4core.color(colors.red)
-  askSeries.fill = askSeries.stroke
-  askSeries.fillOpacity = 0.1
+  askSeries.name = 'Sell supply'
   askSeries.dummyData = {
     description:
       'Shows sell supply of the auction based on the price and nominated in the bidding token',
@@ -100,10 +98,9 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   const inputSeries = chart.series.push(new am4charts.LineSeries())
   inputSeries.dataFields.valueX = 'priceNumber'
   inputSeries.dataFields.valueY = 'newOrderValueY'
-  inputSeries.strokeWidth = 1
+  inputSeries.strokeWidth = 4
   inputSeries.stroke = am4core.color(colors.cyan)
-  inputSeries.fill = inputSeries.stroke
-  inputSeries.fillOpacity = 0.1
+  inputSeries.name = 'New order'
   inputSeries.dummyData = {
     description:
       'Shows the new order that would be placed based on the current amount and price input',
@@ -114,11 +111,10 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   const priceSeries = chart.series.push(new am4charts.LineSeries())
   priceSeries.dataFields.valueX = 'priceNumber'
   priceSeries.dataFields.valueY = 'clearingPriceValueY'
-  priceSeries.strokeWidth = 2
+  priceSeries.strokeWidth = 4
   priceSeries.strokeDasharray = '3,3'
   priceSeries.stroke = am4core.color('#9F9F9F')
-  priceSeries.fill = inputSeries.stroke
-  priceSeries.fillOpacity = 0.1
+  priceSeries.name = 'Current price'
   priceSeries.dummyData = {
     description:
       'Shows the current price. This price would be the closing price of the auction if no more bids are submitted or cancelled',
