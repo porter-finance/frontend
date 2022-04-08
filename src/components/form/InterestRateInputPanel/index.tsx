@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 
 import { Tooltip } from '../../common/Tooltip'
@@ -46,8 +46,6 @@ interface Props {
 
 const InterestRateInputPanel = (props: Props) => {
   const { chainId, disabled, info, onUserInterestRateInput, value, ...restProps } = props
-
-  const [readonly, setReadonly] = useState(true)
   const error = info?.type === InfoType.error
 
   return (
@@ -57,10 +55,8 @@ const InterestRateInputPanel = (props: Props) => {
           <FieldRowInput
             disabled={disabled === true}
             hasError={error}
-            onBlur={() => setReadonly(true)}
-            onFocus={() => setReadonly(false)}
             onUserSellAmountInput={onUserInterestRateInput}
-            readOnly={readonly}
+            readOnly
             value={value}
           />
           <FieldRowLabelStyled className="space-x-1">
