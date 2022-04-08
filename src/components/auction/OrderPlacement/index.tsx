@@ -369,7 +369,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   }
 
   return (
-    <div className={`card card-bordered 'border-[#404EEDA4]`}>
+    <div className="card card-bordered place-order-color">
       <div className="card-body">
         <h2 className="card-title">Place Order</h2>
 
