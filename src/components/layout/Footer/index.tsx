@@ -23,7 +23,7 @@ const Wrapper = styled.footer`
 export const Footer: React.FC = ({ ...restProps }) => {
   return (
     <Wrapper {...restProps} className="flex pt-10">
-      <Inner className="max-w-3xl mx-auto px-4 sm:px-6 lg:max-w-7xl lg:px-8">
+      <Inner className="fullPage">
         <div className="footer p-4 py-10 mt-5 text-neutral-content">
           <FooterLogo className="items-center grid-flow-col text-2xl font-medium">
             <svg

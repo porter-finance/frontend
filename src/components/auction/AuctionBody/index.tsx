@@ -127,48 +127,46 @@ const AuctionBody = (props: AuctionBodyProps) => {
     <>
       {auctionStarted && (
         <main className="pb-8 px-0">
-          <div className="max-w-3xl mx-auto lg:max-w-7xl">
-            {/* Main 3 column grid */}
-            <div className="grid grid-cols-1 gap-4 items-start lg:grid-cols-3 lg:gap-8">
-              {/* Left column */}
-              <div className="grid grid-cols-1 gap-4 lg:col-span-2">
-                <section aria-labelledby="section-1-title">
-                  <AuctionDetails
+          {/* Main 3 column grid */}
+          <div className="grid grid-cols-1 gap-4 items-start lg:grid-cols-3 lg:gap-8">
+            {/* Left column */}
+            <div className="grid grid-cols-1 gap-4 lg:col-span-2">
+              <section aria-labelledby="section-1-title">
+                <AuctionDetails
+                  auctionIdentifier={auctionIdentifier}
+                  derivedAuctionInfo={derivedAuctionInfo}
+                />
+
+                {graphInfo?.isSellingPorterBond && <BondCard graphInfo={graphInfo} />}
+
+                <OrderBookContainer
+                  auctionIdentifier={auctionIdentifier}
+                  auctionStarted={auctionStarted}
+                  auctionState={auctionState}
+                  derivedAuctionInfo={derivedAuctionInfo}
+                />
+              </section>
+            </div>
+
+            {/* Right column */}
+            <div className="grid grid-cols-1 gap-4">
+              <section aria-labelledby="section-2-title">
+                {(auctionState === AuctionState.ORDER_PLACING ||
+                  auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && (
+                  <OrderPlacement
                     auctionIdentifier={auctionIdentifier}
                     derivedAuctionInfo={derivedAuctionInfo}
                   />
-
-                  {graphInfo?.isSellingPorterBond && <BondCard graphInfo={graphInfo} />}
-
-                  <OrderBookContainer
+                )}
+                {(auctionState === AuctionState.CLAIMING ||
+                  auctionState === AuctionState.PRICE_SUBMISSION) && (
+                  <Claimer
                     auctionIdentifier={auctionIdentifier}
-                    auctionStarted={auctionStarted}
-                    auctionState={auctionState}
                     derivedAuctionInfo={derivedAuctionInfo}
                   />
-                </section>
-              </div>
-
-              {/* Right column */}
-              <div className="grid grid-cols-1 gap-4">
-                <section aria-labelledby="section-2-title">
-                  {(auctionState === AuctionState.ORDER_PLACING ||
-                    auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && (
-                    <OrderPlacement
-                      auctionIdentifier={auctionIdentifier}
-                      derivedAuctionInfo={derivedAuctionInfo}
-                    />
-                  )}
-                  {(auctionState === AuctionState.CLAIMING ||
-                    auctionState === AuctionState.PRICE_SUBMISSION) && (
-                    <Claimer
-                      auctionIdentifier={auctionIdentifier}
-                      derivedAuctionInfo={derivedAuctionInfo}
-                    />
-                  )}
-                  <WarningCard />
-                </section>
-              </div>
+                )}
+                <WarningCard />
+              </section>
             </div>
           </div>
         </main>
