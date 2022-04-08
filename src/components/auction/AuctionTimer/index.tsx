@@ -2,21 +2,15 @@ import React from 'react'
 import styled, { keyframes } from 'styled-components'
 
 import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
 import utc from 'dayjs/plugin/utc'
 
 import { AuctionState, DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
-import {
-  calculateTimeLeft,
-  calculateTimeProgress,
-  getDays,
-  getHours,
-  getMinutes,
-  getSeconds,
-} from '../../../utils/tools'
+import { calculateTimeLeft, calculateTimeProgress } from '../../../utils/tools'
 import { Tooltip } from '../../common/Tooltip'
 
-export const TIMER_SIZE = '162px'
 dayjs.extend(utc)
+dayjs.extend(relativeTime)
 
 const DateTitle = styled.div`
   font-weight: 400;
@@ -44,15 +38,10 @@ const Time = styled.div`
   min-width: 0;
   text-align: center;
   white-space: nowrap;
-`
 
-const TextBig = styled.div`
-  color: ${({ theme }) => theme.primary1};
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 1.2;
-  text-align: center;
-  text-transform: uppercase;
+  &:first-letter {
+    text-transform: capitalize;
+  }
 `
 
 const Blinker = keyframes`
@@ -81,42 +70,6 @@ const Blink = styled.span`
     content: ':';
   }
 `
-
-const formatSeconds = (seconds: number): React.ReactNode => {
-  const days = getDays(seconds)
-  const hours = getHours(seconds)
-  const minutes = getMinutes(seconds)
-  const remainderSeconds = getSeconds(seconds)
-
-  if (days >= 1) {
-    return (
-      <>
-        {`${days} days`}
-        {hours && `, ${hours} ${hours > 1 ? 'hours' : 'hour'}`}
-      </>
-    )
-  }
-
-  return (
-    <>
-      {days > 0 && `${days} days `}
-      {hours >= 0 && hours < 10 && `0`}
-      {hours}
-      <>
-        <Blink />
-        {minutes >= 0 && minutes < 10 && `0`}
-        {minutes}
-      </>
-      {days === 0 && (
-        <>
-          <Blink />
-          {remainderSeconds >= 0 && remainderSeconds < 10 && `0`}
-          {remainderSeconds}
-        </>
-      )}
-    </>
-  )
-}
 
 interface AuctionTimerProps {
   derivedAuctionInfo: DerivedAuctionInfo
@@ -158,7 +111,7 @@ export const AuctionTimer = (props: AuctionTimerProps) => {
         <div className="flex flex-col place-items-start space-y-1 mb-7">
           <Time>
             {timeLeft && timeLeft > -1 ? (
-              formatSeconds(timeLeft)
+              dayjs(derivedAuctionInfo?.auctionEndDate * 1000).toNow(true)
             ) : (
               <>
                 --
@@ -175,17 +128,17 @@ export const AuctionTimer = (props: AuctionTimerProps) => {
       )}
 
       <div className="flex justify-between mb-3">
-        <DateValue>
+        <DateValue className="uppercase">
           {derivedAuctionInfo &&
             dayjs(derivedAuctionInfo?.auctionStartDate * 1000)
               .utc()
-              .format('YYYY-MM-DD HH:mm UTC')}
+              .format('DD MMM YYYY UTC')}
         </DateValue>
-        <DateValue>
+        <DateValue className="uppercase">
           {derivedAuctionInfo &&
             dayjs(derivedAuctionInfo?.auctionEndDate * 1000)
               .utc()
-              .format('YYYY-MM-DD HH:mm UTC')}
+              .format('DD MMM YYYY UTC')}
         </DateValue>
       </div>
       <div className="flex justify-between mb-3">
