@@ -74,6 +74,8 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   priceAxis.extraMin = 0.02
   priceAxis.extraMax = 0.02
 
+  // background: linear-gradient(180deg, rgba(64, 78, 237, 0.24) 0%, rgba(64, 78, 237, 0) 100%);
+
   // Create series, shows the price (x axis) and size (y axis) of the bids that have been placed, both expressed in the bid token
   const bidSeries = chart.series.push(new am4charts.StepLineSeries())
   bidSeries.dataFields.valueX = 'priceNumber'
@@ -81,13 +83,20 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   bidSeries.strokeWidth = 2
   bidSeries.stroke = am4core.color(colors.blue)
   bidSeries.fill = bidSeries.stroke
-  bidSeries.fillOpacity = 0.1
+  bidSeries.fillOpacity = 0.25
   bidSeries.startLocation = 0.5
   bidSeries.name = 'Bids'
   bidSeries.dummyData = {
     description:
       'Shows the price (x axis) and size (y axis) of the bids that have been placed, both expressed in the bid token',
   }
+  const gradient = new am4core.LinearGradient()
+  gradient.addColor(am4core.color(colors.blue), 1)
+  gradient.addColor(am4core.color(colors.blue), 0.7)
+  gradient.addColor(am4core.color(colors.blue), 0.24)
+  gradient.addColor(am4core.color(colors.blue), 0)
+  gradient.rotation = 90
+  bidSeries.fill = gradient
 
   // Create series, shows the minimum sell price (x axis) the auctioneer is willing to accept
   const askSeries = chart.series.push(new am4charts.LineSeries())
