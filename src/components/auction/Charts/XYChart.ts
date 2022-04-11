@@ -50,6 +50,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
     white: '#FFFFFF',
     grey: '#9F9F9F',
     cyan: '#1BBFE3',
+    newOrder: '#D2D2D2',
     tooltipBg: '#001429',
     tooltipBorder: '#174172',
   }
@@ -73,7 +74,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   priceAxis.extraMin = 0.02
   priceAxis.extraMax = 0.02
 
-  // Create serie, blue line shows the price (x axis) and size (y axis) of the bids that have been placed, both expressed in the bid token
+  // Create series, shows the price (x axis) and size (y axis) of the bids that have been placed, both expressed in the bid token
   const bidSeries = chart.series.push(new am4charts.StepLineSeries())
   bidSeries.dataFields.valueX = 'priceNumber'
   bidSeries.dataFields.valueY = 'bidValueY'
@@ -88,7 +89,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
       'Shows the price (x axis) and size (y axis) of the bids that have been placed, both expressed in the bid token',
   }
 
-  // Create serie, red line, shows the minimum sell price (x axis) the auctioneer is willing to accept
+  // Create series, shows the minimum sell price (x axis) the auctioneer is willing to accept
   const askSeries = chart.series.push(new am4charts.LineSeries())
   askSeries.dataFields.valueX = 'priceNumber'
   askSeries.dataFields.valueY = 'askValueY'
@@ -101,12 +102,24 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
       'Shows sell supply of the auction based on the price and nominated in the bidding token',
   }
 
+  // Create series, shows the minimum sell price (x axis) the auctioneer is willing to accept
+  const minFunding = chart.series.push(new am4charts.LineSeries())
+  minFunding.dataFields.valueX = 'priceNumber'
+  minFunding.dataFields.valueY = 'minFundY'
+  minFunding.strokeWidth = 2
+  minFunding.stroke = am4core.color(colors.red)
+  minFunding.fill = minFunding.stroke
+  minFunding.name = 'Min. funding threshold'
+  minFunding.dummyData = {
+    description: 'Auction will not be executed, unless this minimum funding threshold is met',
+  }
+
   // New order to be placed
   const inputSeries = chart.series.push(new am4charts.LineSeries())
   inputSeries.dataFields.valueX = 'priceNumber'
   inputSeries.dataFields.valueY = 'newOrderValueY'
   inputSeries.strokeWidth = 2
-  inputSeries.stroke = am4core.color(colors.cyan)
+  inputSeries.stroke = am4core.color(colors.newOrder)
   inputSeries.fill = inputSeries.stroke
   inputSeries.name = 'New order'
   inputSeries.dummyData = {
