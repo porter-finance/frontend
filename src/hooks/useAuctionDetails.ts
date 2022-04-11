@@ -48,7 +48,6 @@ export interface AuctionGraphDetail {
     maxSupply: number
     type: 'simple' | 'convert'
   }
-  bidding: string
   minimum: string
   size: string
   start: string
@@ -76,7 +75,6 @@ const auctionsQuery = gql`
         maxSupply
         type
       }
-      bidding
       minimum
       size
       start
