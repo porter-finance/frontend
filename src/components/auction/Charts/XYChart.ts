@@ -41,11 +41,11 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
 
   // Colors
   const colors = {
-    green: '#28a745',
-    red: '#dc3545',
+    blue: '#404EED',
+    red: '#D25453',
     white: '#FFFFFF',
     grey: '#565A69',
-    orange: '#FF6347',
+    cyan: '#1BBFE3',
     tooltipBg: '#001429',
     tooltipBorder: '#174172',
   }
@@ -53,17 +53,14 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   // Create axes
   const priceAxis = chart.xAxes.push(new am4charts.ValueAxis())
   const volumeAxis = chart.yAxes.push(new am4charts.ValueAxis())
-  volumeAxis.renderer.grid.template.stroke = am4core.color(colors.white)
-  volumeAxis.renderer.grid.template.strokeWidth = 0.5
-  volumeAxis.renderer.grid.template.strokeOpacity = 0.5
-  volumeAxis.title.fill = am4core.color(colors.white)
-  volumeAxis.renderer.labels.template.fill = am4core.color(colors.white)
+  volumeAxis.renderer.grid.template.stroke = am4core.color('#9F9F9F')
+  volumeAxis.renderer.grid.template.strokeOpacity = 0
+  volumeAxis.title.fill = am4core.color('#9F9F9F')
+  volumeAxis.renderer.labels.template.fill = am4core.color('#9F9F9F')
 
-  priceAxis.renderer.grid.template.stroke = am4core.color(colors.white)
-  priceAxis.renderer.grid.template.strokeWidth = 0.5
-  priceAxis.renderer.grid.template.strokeOpacity = 0.5
-  priceAxis.title.fill = am4core.color(colors.white)
-  priceAxis.renderer.labels.template.fill = am4core.color(colors.white)
+  priceAxis.renderer.grid.template.strokeOpacity = 0
+  priceAxis.title.fill = am4core.color('#9F9F9F')
+  priceAxis.renderer.labels.template.fill = am4core.color('#9F9F9F')
 
   volumeAxis.numberFormatter = numberFormatter
   //priceAxis.numberFormatter = numberFormatter
@@ -72,15 +69,14 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   priceAxis.extraMin = 0.02
   priceAxis.extraMax = 0.02
 
-  // Create serie, green line shows the price (x axis) and size (y axis) of the bids that have been placed, both expressed in the bid token
+  // Create serie, blue line shows the price (x axis) and size (y axis) of the bids that have been placed, both expressed in the bid token
   const bidSeries = chart.series.push(new am4charts.StepLineSeries())
   bidSeries.dataFields.valueX = 'priceNumber'
   bidSeries.dataFields.valueY = 'bidValueY'
-  bidSeries.strokeWidth = 1
-  bidSeries.stroke = am4core.color(colors.green)
-  bidSeries.fill = bidSeries.stroke
+  bidSeries.strokeWidth = 2
+  bidSeries.stroke = am4core.color(colors.blue)
   bidSeries.startLocation = 0.5
-  bidSeries.fillOpacity = 0.1
+  bidSeries.name = 'Bids'
   bidSeries.dummyData = {
     description:
       'Shows the price (x axis) and size (y axis) of the bids that have been placed, both expressed in the bid token',
@@ -90,10 +86,9 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   const askSeries = chart.series.push(new am4charts.LineSeries())
   askSeries.dataFields.valueX = 'priceNumber'
   askSeries.dataFields.valueY = 'askValueY'
-  askSeries.strokeWidth = 1
+  askSeries.strokeWidth = 2
   askSeries.stroke = am4core.color(colors.red)
-  askSeries.fill = askSeries.stroke
-  askSeries.fillOpacity = 0.1
+  askSeries.name = 'Sell supply'
   askSeries.dummyData = {
     description:
       'Shows sell supply of the auction based on the price and nominated in the bidding token',
@@ -103,10 +98,9 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   const inputSeries = chart.series.push(new am4charts.LineSeries())
   inputSeries.dataFields.valueX = 'priceNumber'
   inputSeries.dataFields.valueY = 'newOrderValueY'
-  inputSeries.strokeWidth = 1
-  inputSeries.stroke = am4core.color(colors.orange)
-  inputSeries.fill = inputSeries.stroke
-  inputSeries.fillOpacity = 0.1
+  inputSeries.strokeWidth = 2
+  inputSeries.stroke = am4core.color(colors.cyan)
+  inputSeries.name = 'New order'
   inputSeries.dummyData = {
     description:
       'Shows the new order that would be placed based on the current amount and price input',
@@ -119,9 +113,8 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   priceSeries.dataFields.valueY = 'clearingPriceValueY'
   priceSeries.strokeWidth = 2
   priceSeries.strokeDasharray = '3,3'
-  priceSeries.stroke = am4core.color(colors.white)
-  priceSeries.fill = inputSeries.stroke
-  priceSeries.fillOpacity = 0.1
+  priceSeries.stroke = am4core.color('#9F9F9F')
+  priceSeries.name = 'Current price'
   priceSeries.dummyData = {
     description:
       'Shows the current price. This price would be the closing price of the auction if no more bids are submitted or cancelled',
@@ -130,12 +123,12 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   // Add cursor
   chart.cursor = new am4charts.XYCursor()
   chart.cursor.snapToSeries = [bidSeries, askSeries]
-  chart.cursor.lineX.stroke = am4core.color(colors.white)
+  chart.cursor.lineX.stroke = am4core.color('#9F9F9F')
   chart.cursor.lineX.strokeWidth = 1
   chart.cursor.lineX.strokeOpacity = 0.6
   chart.cursor.lineX.strokeDasharray = '4'
 
-  chart.cursor.lineY.stroke = am4core.color(colors.white)
+  chart.cursor.lineY.stroke = am4core.color('#9F9F9F')
   chart.cursor.lineY.strokeWidth = 1
   chart.cursor.lineY.strokeOpacity = 0.6
   chart.cursor.lineY.strokeDasharray = '4'
@@ -143,18 +136,22 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   // Button configuration
   chart.zoomOutButton.background.cornerRadius(5, 5, 5, 5)
   chart.zoomOutButton.background.fill = am4core.color(colors.grey)
-  chart.zoomOutButton.icon.stroke = am4core.color(colors.white)
+  chart.zoomOutButton.icon.stroke = am4core.color('#9F9F9F')
   chart.zoomOutButton.icon.strokeWidth = 2
   chart.zoomOutButton.tooltip.text = 'Zoom out'
 
   // Legend
   chart.legend = new am4charts.Legend()
-  chart.legend.labels.template.fill = am4core.color(colors.white)
+  chart.legend.labels.template.fill = am4core.color('#9F9F9F')
+  chart.legend.markers.template.strokeWidth = 44
+  chart.legend.markers.template.height = 5
+  chart.legend.markers.template.width = 14
+  chart.legend.itemContainers.template.tooltipHTML =
+    '<div style="white-space: normal!important;max-width: 300px;padding:0 5px 5px;">{dataContext.dummyData.description}</div>'
+
   chart.tooltip.getFillFromObject = false
   chart.tooltip.background.fill = am4core.color(colors.tooltipBg)
   chart.tooltip.background.stroke = am4core.color(colors.tooltipBorder)
-  chart.legend.itemContainers.template.tooltipHTML =
-    '<div style="white-space: normal!important;max-width: 300px;padding:0 5px 5px;">{dataContext.dummyData.description}</div>'
 
   return chart
 }
@@ -187,7 +184,8 @@ export const drawInformation = (props: DrawInformation) => {
   const [yAxis] = chart.yAxes
 
   xAxis.title.text = priceTitle
-  yAxis.title.text = volumeTitle
+  xAxis.title.align = 'left'
+  // yAxis.title.text = volumeTitle
 
   const {
     values: [askPricesSeries, bidPricesSeries],
