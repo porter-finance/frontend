@@ -232,7 +232,11 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({
                   {round(row.price, 6)} {auctioningTokenDisplay}
                 </TableCell>
                 <TableCell>
-                  {calculateInterestRate(row.price, derivedAuctionInfo?.auctionEndDate)}
+                  {calculateInterestRate(
+                    row.price,
+                    derivedAuctionInfo?.auctionStartDate,
+                    derivedAuctionInfo?.auctionEndDate,
+                  )}
                 </TableCell>
                 <TableCell>
                   {round(row.volume, 6)} {auctioningTokenDisplay}
