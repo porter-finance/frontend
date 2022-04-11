@@ -46,6 +46,7 @@ export const OrderBook: React.FC<OrderbookProps> = (props) => {
 
   const {
     auctionEndDate,
+    auctionStartDate,
     auctioningToken: baseToken,
     biddingToken: quoteToken,
   } = derivedAuctionInfo
@@ -83,6 +84,7 @@ export const OrderBook: React.FC<OrderbookProps> = (props) => {
       ) : (
         <OrderBookChart
           auctionEndDate={auctionEndDate}
+          auctionStartDate={auctionStartDate}
           baseToken={baseToken}
           chainId={chainId}
           data={processedOrderbook}
