@@ -66,8 +66,9 @@ export const UnregisteredToken: React.FC<Props> = (props) => {
         border
         borderColor={'#174172'}
         className="customTooltip"
-        delayHide={50}
-        delayShow={250}
+        delayHide={500}
+        delayShow={50}
+        delayUpdate={500}
         effect="solid"
         id={tooltipId}
         textColor="#fff"

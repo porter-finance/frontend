@@ -36,8 +36,9 @@ const App: React.FC = () => {
           <Popups />
           <ReactTooltip
             className="customTooltip"
-            delayHide={250}
+            delayHide={500}
             delayShow={50}
+            delayUpdate={500}
             effect="solid"
             textColor="#fff"
           />
