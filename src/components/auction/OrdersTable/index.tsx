@@ -164,11 +164,6 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
             </TableCell>
             <TableCell>
               <Wrap>
-                <Wrap margin={'0 10px 0 0'}>Time</Wrap>
-              </Wrap>
-            </TableCell>
-            <TableCell>
-              <Wrap>
                 <Wrap margin={'0 10px 0 0'}>Actions</Wrap>
               </Wrap>
             </TableCell>
@@ -202,7 +197,19 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
             {ordersSortered.map((order) => (
               <StyledRow key={order.id}>
                 <TableCell>
-                  <span>{abbreviation(order.sellAmount)}</span>
+                  <div className="pointer-events-none space-x-2 inline-flex items-center px-1.5 border border-transparent rounded-full shadow-sm bg-[#5BCD88] hover:none focus:outline-none focus:none">
+                    <svg
+                      fill="none"
+                      height="7"
+                      viewBox="0 0 7 7"
+                      width="7"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <circle cx="3.5" cy="3.5" fill="#1E1E1E" opacity="0.5" r="3" />
+                    </svg>
+
+                    <span className="text-xs uppercase font-normal !text-[#1E1E1E]">Active</span>
+                  </div>
                 </TableCell>
                 <TableCell>
                   <span>
@@ -226,22 +233,19 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
                 </TableCell>
                 {!hideCancelButton && (
                   <TableCell>
-                    <ButtonCell>
-                      <ButtonWrapper>
-                        <ActionButton
-                          disabled={
-                            isOrderCancellationExpired ||
-                            order.status === OrderStatus.PENDING_CANCELLATION
-                          }
-                          onClick={() => {
-                            setOrderId(order.id)
-                            setShowConfirm(true)
-                          }}
-                        >
-                          Cancel
-                        </ActionButton>
-                      </ButtonWrapper>
-                    </ButtonCell>
+                    <button
+                      className="btn btn-outline btn-error normal-case btn-sm font-normal"
+                      disabled={
+                        isOrderCancellationExpired ||
+                        order.status === OrderStatus.PENDING_CANCELLATION
+                      }
+                      onClick={() => {
+                        setOrderId(order.id)
+                        setShowConfirm(true)
+                      }}
+                    >
+                      Cancel
+                    </button>
                   </TableCell>
                 )}
               </StyledRow>
