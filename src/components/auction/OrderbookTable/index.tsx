@@ -41,14 +41,14 @@ export const TableDesign = ({ columns, data }) => {
     {
       columns,
       data,
-      initialState: { pageIndex: 0 },
+      initialState: { pageIndex: 0, pageSize: 5 },
     },
     usePagination,
   )
 
   return (
-    <>
-      <table className="table w-full" {...getTableProps()}>
+    <div className="min-h-[385px]">
+      <table className="table w-full h-full" {...getTableProps()}>
         <thead>
           {headerGroups.map((headerGroup, i) => (
             <tr
@@ -130,7 +130,7 @@ export const TableDesign = ({ columns, data }) => {
           </button>
         </div>
       )}
-    </>
+    </div>
   )
 }
 
