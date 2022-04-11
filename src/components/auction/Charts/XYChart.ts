@@ -188,7 +188,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   chart.tooltip.background.fill = am4core.color('#2C2C2C')
   chart.tooltip.background.stroke = am4core.color('#2C2C2C')
   chart.legend.itemContainers.template.tooltipHTML =
-    '<div class="text-xs rounded-md text-[#D2D2D2] drop-shadow-lg bg-[#2C2C2C] border-none flex-wrap max-w-xs whitespace-normal">{dataContext.dummyData.description}</div>'
+    '<div class="text-xs rounded-md text-[#D2D2D2] bg-[#2C2C2C] border-none flex-wrap max-w-xs whitespace-normal">{dataContext.dummyData.description}</div>'
 
   return chart
 }
