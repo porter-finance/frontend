@@ -154,7 +154,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
 
   // Add cursor
   chart.cursor = new am4charts.XYCursor()
-  chart.cursor.snapToSeries = [bidSeries, askSeries]
+  // chart.cursor.snapToSeries = [bidSeries, askSeries]
   chart.cursor.lineX.stroke = am4core.color(colors.grey)
   chart.cursor.lineX.strokeWidth = 1
   chart.cursor.lineX.strokeOpacity = 0.6
