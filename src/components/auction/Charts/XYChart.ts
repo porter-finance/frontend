@@ -167,8 +167,9 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
 
   // Button configuration
   chart.zoomOutButton.background.cornerRadius(5, 5, 5, 5)
-  chart.zoomOutButton.background.fill = am4core.color(colors.grey)
-  chart.zoomOutButton.icon.stroke = am4core.color(colors.grey)
+  chart.zoomOutButton.background.fill = am4core.color('#3f3f3f')
+  chart.zoomOutButton.background.states.getKey('hover').properties.fill = am4core.color('#606271')
+  chart.zoomOutButton.icon.stroke = am4core.color('#ffffff')
   chart.zoomOutButton.icon.strokeWidth = 2
   chart.zoomOutButton.tooltip.text = 'Zoom out'
 
