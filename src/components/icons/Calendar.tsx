@@ -5,10 +5,6 @@ const Wrapper = styled.svg`
   display: block;
   max-height: 100%;
   max-width: 100%;
-
-  .fill {
-    fill: ${({ theme }) => theme.text1};
-  }
 `
 
 export const Calendar: React.FC<{ className?: string }> = (props) => (
