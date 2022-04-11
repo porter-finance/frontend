@@ -2,7 +2,7 @@ import * as am4charts from '@amcharts/amcharts4/charts'
 import * as am4core from '@amcharts/amcharts4/core'
 import am4themesSpiritedaway from '@amcharts/amcharts4/themes/spiritedaway'
 import { Token } from '@josojo/honeyswap-sdk'
-import { Decimal } from 'decimal.js'
+import round from 'lodash.round'
 
 import { ChainId, getTokenDisplay } from '../../../utils'
 
@@ -74,6 +74,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   bidSeries.dataFields.valueX = 'priceNumber'
   bidSeries.dataFields.valueY = 'bidValueY'
   bidSeries.strokeWidth = 2
+  bidSeries.fill = bidSeries.stroke
   bidSeries.stroke = am4core.color(colors.blue)
   bidSeries.startLocation = 0.5
   bidSeries.name = 'Bids'
@@ -88,6 +89,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   askSeries.dataFields.valueY = 'askValueY'
   askSeries.strokeWidth = 2
   askSeries.stroke = am4core.color(colors.red)
+  askSeries.fill = askSeries.stroke
   askSeries.name = 'Sell supply'
   askSeries.dummyData = {
     description:
@@ -100,6 +102,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   inputSeries.dataFields.valueY = 'newOrderValueY'
   inputSeries.strokeWidth = 2
   inputSeries.stroke = am4core.color(colors.cyan)
+  inputSeries.fill = inputSeries.stroke
   inputSeries.name = 'New order'
   inputSeries.dummyData = {
     description:
@@ -112,6 +115,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   priceSeries.dataFields.valueX = 'priceNumber'
   priceSeries.dataFields.valueY = 'clearingPriceValueY'
   priceSeries.strokeWidth = 2
+  priceSeries.fill = inputSeries.stroke
   priceSeries.strokeDasharray = '3,3'
   priceSeries.stroke = am4core.color('#9F9F9F')
   priceSeries.name = 'Current price'
@@ -163,14 +167,6 @@ interface DrawInformation {
   chainId: ChainId
 }
 
-const formatNumberForChartTooltip = (n: number) => {
-  const d = new Decimal(n)
-  const nd = d.toSignificantDigits(6)
-  const digits = nd.decimalPlaces()
-  const decimalFormatPart = `.${'0'.repeat(digits)}`
-  return numberFormatter.format(nd.toNumber(), `###${digits > 0 ? decimalFormatPart : ''} a`)
-}
-
 export const drawInformation = (props: DrawInformation) => {
   const { baseToken, chainId, chart, quoteToken } = props
   const baseTokenLabel = baseToken.symbol
@@ -185,6 +181,9 @@ export const drawInformation = (props: DrawInformation) => {
 
   xAxis.title.text = priceTitle
   xAxis.title.align = 'left'
+
+  // this was moved to into the react component since i couldn't
+  // move it to the top of the graph to match design mocks
   // yAxis.title.text = volumeTitle
 
   const {
@@ -195,8 +194,8 @@ export const drawInformation = (props: DrawInformation) => {
     const valueX = target?.tooltipDataItem?.values?.valueX?.value ?? 0
     const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
 
-    const askPrice = formatNumberForChartTooltip(valueX)
-    const volume = formatNumberForChartTooltip(valueY)
+    const askPrice = round(valueX, 4)
+    const volume = round(valueY, 4)
 
     return `[bold]${market}[/]\nAsk Price: [bold] ${askPrice} [/] ${quoteTokenLabel}\nVolume: [bold] ${volume} [/] ${quoteTokenLabel}`
   })
@@ -205,8 +204,8 @@ export const drawInformation = (props: DrawInformation) => {
     const valueX = target?.tooltipDataItem?.values?.valueX?.value ?? 0
     const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
 
-    const bidPrice = formatNumberForChartTooltip(valueX)
-    const volume = formatNumberForChartTooltip(valueY)
+    const bidPrice = round(valueX, 4)
+    const volume = round(valueY, 4)
 
     return `[bold]${market}[/]\nBid Price: [bold] ${bidPrice} [/] ${quoteTokenLabel}\nVolume: [bold] ${volume} [/] ${quoteTokenLabel}`
   })
