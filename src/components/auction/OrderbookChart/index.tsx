@@ -43,6 +43,7 @@ export interface Props {
   quoteToken: Token
   chainId: ChainId
   auctionEndDate: number
+  auctionStartDate: number
 }
 
 const Wrapper = styled.div`
@@ -111,7 +112,7 @@ const VolumeLabel = styled.div`
 `
 
 const OrderBookChart: React.FC<Props> = (props) => {
-  const { auctionEndDate, baseToken, chainId, data, quoteToken } = props
+  const { auctionEndDate, auctionStartDate, baseToken, chainId, data, quoteToken } = props
   const quoteTokenLabel = getTokenDisplay(quoteToken, chainId)
   const volumeTitle = ` Volume (${quoteTokenLabel})`
 
@@ -122,6 +123,7 @@ const OrderBookChart: React.FC<Props> = (props) => {
     quoteToken,
     chainId,
     auctionEndDate,
+    auctionStartDate,
   })
 
   return (
