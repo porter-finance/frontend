@@ -234,7 +234,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
                 {!hideCancelButton && (
                   <TableCell>
                     <button
-                      className="btn btn-outline btn-error normal-case btn-sm font-normal"
+                      className="btn btn-outline btn-error normal-case btn-sm font-normal opacity-70"
                       disabled={
                         isOrderCancellationExpired ||
                         order.status === OrderStatus.PENDING_CANCELLATION
