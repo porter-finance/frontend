@@ -27,6 +27,7 @@ export interface PricePointDetails {
 
   // Data for representation
   askValueY: Maybe<number>
+  minFundY: Maybe<number>
   bidValueY: Maybe<number>
   clearingPriceValueY: Maybe<number>
   newOrderValueY: Maybe<number>
