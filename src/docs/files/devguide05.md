@@ -49,7 +49,7 @@ But, let's go into details about what each section of the UI means.
 
 > 3. This parameter shows a countdown of the duration of the auction. This parameter marks when the auction will end.
 
-> 4. This parameter shows the closing price of the auction if no more bids are submitted or canceled. As a bidder, you simply need to bid above this price for higher possibility to place a successful bid.
+> 4. This parameter shows the closing price of the auction if no more bids are submitted or cancelled. As a bidder, you simply need to bid above this price for higher possibility to place a successful bid.
 
 > 5. This parameter is the starting price of token auctioned. The auctioneer has decided its value and it establishes the fact that bidders can’t bid under this price.
 
@@ -57,7 +57,7 @@ But, let's go into details about what each section of the UI means.
 
 > 7. The price per bid-token/auction token parameter is the max bid price you are willing to offer per token auctioned.
 
-> 8.  The white line indicates the current price, which will be the auction's closing price if no more bids are submitted or canceled. The dotted line will dynamically move with new bids.
+> 8.  The white line indicates the current price, which will be the auction's closing price if no more bids are submitted or cancelled. The dotted line will dynamically move with new bids.
 
 > 9. The green line shows the price and size of the bids that have been placed, only the part of the right side of the white line marks the bids that will be successful at the end of the sale.
 

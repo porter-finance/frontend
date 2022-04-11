@@ -14,16 +14,15 @@ export interface FieldRowInfoProps {
 }
 
 export const FieldRowWrapper = styled.div<{ error?: boolean }>`
-  border-radius: 6px;
   border-style: solid;
   border-width: 1px;
-  border-color: ${(props) =>
-    props.error ? ({ theme }) => theme.error : ({ theme }) => theme.border};
+  border-color: ${({ theme }) => theme.border};
   display: flex;
   flex-direction: column;
   min-height: 62px;
   padding: 6px 10px;
   transition: border-color 0.15s linear;
+  border-radius: 6px;
 `
 
 export const FieldRowTop = styled.div`
@@ -49,10 +48,6 @@ export const FieldRowLabel = styled.label`
 `
 
 export const FieldRowToken = styled.div`
-  align-items: center;
-  display: flex;
-  margin-right: 12px;
-
   .tokenLogo {
     border-width: 1px;
     margin-right: 6px;
@@ -62,13 +57,9 @@ export const FieldRowToken = styled.div`
 export const FieldRowTokenSymbol = styled.div`
   font-weight: 400;
   font-size: 10px;
-  display: flex;
   color: #9f9f9f;
-  align-items: flex-end;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  margin-bottom: -3px;
-  text-align: left;
   white-space: nowrap;
 `
 
@@ -91,9 +82,7 @@ export const FieldRowInput = styled(NumericalInput)<{ hasError?: boolean }>`
   width: auto;
 
   &::placeholder {
-    color: ${(props) => (props.hasError ? ({ theme }) => theme.error : ({ theme }) => 'white')};
-    font-style: italic;
-    opacity: 0.5;
+    color: ${(props) => (props.hasError ? ({ theme }) => theme.error : ({ theme }) => '#9F9F9F')};
   }
 
   &[disabled] {
@@ -208,13 +197,6 @@ const InfoTypeOKCSS = css`
 
 export const FieldRowInfo = styled.div<{ infoType: InfoType }>`
   display: inline-flex;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 1.2;
-  letter-spacing: 0.03em;
-  margin-bottom: 16px;
-  padding-top: 5px;
-  text-align: left;
 
   > svg {
     margin: 1px 4px 0 0;

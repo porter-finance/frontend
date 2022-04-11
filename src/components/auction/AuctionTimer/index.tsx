@@ -1,57 +1,23 @@
 import React from 'react'
 import styled, { keyframes } from 'styled-components'
 
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import utc from 'dayjs/plugin/utc'
+
 import { AuctionState, DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
-import {
-  calculateTimeLeft,
-  calculateTimeProgress,
-  getDays,
-  getHours,
-  getMinutes,
-  getSeconds,
-} from '../../../utils/tools'
+import { calculateTimeLeft, calculateTimeProgress } from '../../../utils/tools'
+import { Tooltip } from '../../common/Tooltip'
 
-export const TIMER_SIZE = '162px'
-const INNER_CIRCLE_SIZE = '138px'
+dayjs.extend(utc)
+dayjs.extend(relativeTime)
 
-const ProgressChart = styled.div<{ progress?: string }>`
-  align-items: center;
-  background: conic-gradient(
-    ${({ theme }) => theme.primary1} calc(${(props) => props.progress}),
-    rgba(255, 255, 255, 0) 0%
-  );
-  display: flex;
-  justify-content: center;
-  width: calc(${TIMER_SIZE} - 5px);
-`
-
-ProgressChart.defaultProps = {
-  progress: '0%',
-}
-
-const InnerCircle = styled.div`
-  align-items: center;
-  background: ${({ theme }) => theme.primary3};
-  display: flex;
-  justify-content: center;
-  width: ${INNER_CIRCLE_SIZE};
-`
-
-const CenterCircle = styled.div`
-  align-items: center;
-  background-color: ${({ theme }) => theme.mainBackground};
-  box-shadow: 0 0 10px 0px ${({ theme }) => theme.mainBackground};
-  display: flex;
-  flex-flow: column;
-  justify-content: center;
-  width: calc(${INNER_CIRCLE_SIZE} - 4px);
-`
-
-const DateTitle = styled.span`
+const DateTitle = styled.div`
   font-weight: 400;
+  font-style: normal;
   font-size: 12px;
   line-height: 14px;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.06em;
   color: #696969;
 `
 const DateValue = styled.span`
@@ -72,25 +38,10 @@ const Time = styled.div`
   min-width: 0;
   text-align: center;
   white-space: nowrap;
-`
 
-const Text = styled.div`
-  color: ${({ theme }) => theme.primary1};
-  font-size: 15px;
-  font-weight: 700;
-  line-height: 1.1;
-  opacity: 0.8;
-  text-align: center;
-  text-transform: uppercase;
-`
-
-const TextBig = styled.div`
-  color: ${({ theme }) => theme.primary1};
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 1.2;
-  text-align: center;
-  text-transform: uppercase;
+  &:first-letter {
+    text-transform: capitalize;
+  }
 `
 
 const Blinker = keyframes`
@@ -120,33 +71,6 @@ const Blink = styled.span`
   }
 `
 
-const formatSeconds = (seconds: number): React.ReactNode => {
-  const days = getDays(seconds)
-  const hours = getHours(seconds)
-  const minutes = getMinutes(seconds)
-  const remainderSeconds = getSeconds(seconds)
-
-  return (
-    <>
-      {days > 0 && `${days} days `}
-      {hours >= 0 && hours < 10 && `0`}
-      {hours}
-      <>
-        <Blink />
-        {minutes >= 0 && minutes < 10 && `0`}
-        {minutes}
-      </>
-      {days === 0 && (
-        <>
-          <Blink />
-          {remainderSeconds >= 0 && remainderSeconds < 10 && `0`}
-          {remainderSeconds}
-        </>
-      )}
-    </>
-  )
-}
-
 interface AuctionTimerProps {
   derivedAuctionInfo: DerivedAuctionInfo
   loading?: boolean
@@ -171,82 +95,85 @@ export const AuctionTimer = (props: AuctionTimerProps) => {
     }
   }, [derivedAuctionInfo?.auctionEndDate])
 
-  const auctionStateTitle = React.useMemo(() => {
-    if (auctionState === AuctionState.PRICE_SUBMISSION) {
-      return <TextBig>Waiting settlement</TextBig>
-    } else if (
-      auctionState !== AuctionState.NOT_YET_STARTED &&
-      auctionState !== AuctionState.ORDER_PLACING_AND_CANCELING &&
-      auctionState !== AuctionState.ORDER_PLACING &&
-      auctionState !== AuctionState.CLAIMING &&
-      auctionState !== null &&
-      auctionState !== undefined
-    ) {
-      return <TextBig>Auction Settled</TextBig>
-    } else {
-      return null
-    }
-  }, [auctionState])
-
   const progress = React.useMemo(() => {
     const progress = calculateTimeProgress(
       derivedAuctionInfo?.auctionStartDate,
       derivedAuctionInfo?.auctionEndDate,
     )
-    // we do this so that the graph is in the same direction as a clock
-    return 100 - progress
+    return progress === 100 ? progress : 100 - progress
   }, [derivedAuctionInfo])
 
   return (
     <div className="" {...restProps}>
-      <div>
-        {!auctionState && <TextBig>Loading...</TextBig>}
-        {auctionState === AuctionState.NOT_YET_STARTED && <TextBig>Auction not started</TextBig>}
-        {auctionState === AuctionState.CLAIMING && <TextBig>Auction claiming</TextBig>}
-        {auctionStateTitle && auctionStateTitle}
-      </div>
-
       {(auctionState === AuctionState.ORDER_PLACING_AND_CANCELING ||
         auctionState === AuctionState.ORDER_PLACING) && (
-        <>
-          <div className="flex flex-col place-items-end mb-5">
-            <div className="flex mb-3">
-              <DateTitle>Time left</DateTitle>
-            </div>
+        <div className="flex flex-col place-items-start space-y-1 mb-7">
+          <Time>
+            {timeLeft && timeLeft > -1 ? (
+              dayjs(derivedAuctionInfo?.auctionEndDate * 1000).toNow(true)
+            ) : (
+              <>
+                --
+                <Blink />
+                --
+                <Blink />
+                --
+              </>
+            )}
+          </Time>
 
-            <Time className="flex">
-              {timeLeft && timeLeft > -1 ? (
-                formatSeconds(timeLeft)
-              ) : (
-                <>
-                  --
-                  <Blink />
-                  --
-                  <Blink />
-                  --
-                </>
-              )}
-            </Time>
-          </div>
-        </>
+          <DateTitle>Time until end</DateTitle>
+        </div>
       )}
 
       <div className="flex justify-between mb-3">
-        <DateTitle>Start Date</DateTitle>
-        <DateTitle>End Date</DateTitle>
-      </div>
-      <div className="flex justify-between mb-1">
-        <DateValue>
+        <DateValue className="uppercase">
           {derivedAuctionInfo &&
-            new Date(derivedAuctionInfo?.auctionStartDate * 1000).toLocaleString()}
+            dayjs(derivedAuctionInfo?.auctionStartDate * 1000)
+              .utc()
+              .format('DD MMM YYYY HH:mm UTC')}
         </DateValue>
-        <DateValue>
+        <DateValue className="uppercase">
           {derivedAuctionInfo &&
-            new Date(derivedAuctionInfo?.auctionEndDate * 1000).toLocaleString()}
+            dayjs(derivedAuctionInfo?.auctionEndDate * 1000)
+              .utc()
+              .format('DD MMM YYYY HH:mm UTC')}
         </DateValue>
       </div>
-      <div className="flex w-full">
-        <progress className="progress progress-primary w-full" max="100" value={progress} />
+      <div className="flex justify-between mb-3">
+        <DateTitle className="flex flex-row items-center space-x-2">
+          <span>Start date</span>
+          <Tooltip text="Tooltip text" />
+        </DateTitle>
+        <DateTitle className="flex flex-row items-center space-x-2">
+          <span>End date</span>
+          <Tooltip text="Tooltip text" />
+        </DateTitle>
+      </div>
+      <div className="flex w-full flex-col space-y-3">
+        <progress className="progress progress-primary" max="100" value={progress} />
+        <svg
+          fill="none"
+          height="13"
+          viewBox="0 0 885 13"
+          width="100%"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path d="M127 0V6" stroke="#454545" />
+          <path d="M205 0V6" stroke="#454545" />
+          <path d="M283 0V6" stroke="#454545" />
+          <path d="M361 0V6" stroke="#454545" />
+          <path d="M439 0V6" stroke="#454545" />
+          <path d="M517 0V6" stroke="#454545" />
+          <path d="M595 0V6" stroke="#454545" />
+          <path d="M673 0V6" stroke="#454545" />
+          <path d="M751 0V6" stroke="#454545" />
+          <path d="M829 0V6" stroke="#454545" />
+          <path
+            d="M1 0V8C1 10.2091 2.79086 12 5 12H880C882.209 12 884 10.2091 884 8V0"
+            stroke="#454545"
+          />
+        </svg>
       </div>
     </div>
   )

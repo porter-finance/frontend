@@ -9,7 +9,7 @@ export const EmptyContentWrapper = styled(BaseCard)`
   flex-grow: 0;
   font-size: 15px;
   justify-content: center;
-  min-height: 250px;
+  min-height: 352px;
   width: 100%;
 `
 
