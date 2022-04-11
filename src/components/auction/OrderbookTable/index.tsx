@@ -133,8 +133,6 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({
 }) => {
   const { bids, chainId, error } = useOrderbookState()
 
-  console.log(bids, chainId, error)
-
   const biddingTokenDisplay = useMemo(
     () => getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId),
     [derivedAuctionInfo?.biddingToken, chainId],
