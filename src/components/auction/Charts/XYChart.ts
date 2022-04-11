@@ -5,6 +5,7 @@ import { Token } from '@josojo/honeyswap-sdk'
 import round from 'lodash.round'
 
 import { ChainId, getTokenDisplay } from '../../../utils'
+import { calculateInterestRate } from '../../form/InterestRateInputPanel'
 
 // Recalculates very big and very small numbers by reducing their length according to rules and applying suffix/prefix.
 const numberFormatter = new am4core.NumberFormatter()
@@ -167,10 +168,11 @@ interface DrawInformation {
   baseToken: Token
   quoteToken: Token
   chainId: ChainId
+  auctionEndDate?: number
 }
 
 export const drawInformation = (props: DrawInformation) => {
-  const { baseToken, chainId, chart, quoteToken } = props
+  const { auctionEndDate, baseToken, chainId, chart, quoteToken } = props
   const baseTokenLabel = baseToken.symbol
   const quoteTokenLabel = getTokenDisplay(quoteToken, chainId)
   const market = quoteTokenLabel + '-' + baseTokenLabel
@@ -198,8 +200,13 @@ export const drawInformation = (props: DrawInformation) => {
 
     const askPrice = round(valueX, 4)
     const volume = round(valueY, 4)
+    const interest = auctionEndDate && calculateInterestRate(valueX, auctionEndDate)
 
-    return `[bold]${market}[/]\nAsk Price: [bold] ${askPrice} [/] ${quoteTokenLabel}\nVolume: [bold] ${volume} [/] ${quoteTokenLabel}`
+    return `[bold]${market}[/]
+Ask Price: [bold] ${askPrice} [/] ${quoteTokenLabel}
+Volume: [bold] ${volume} [/] ${quoteTokenLabel}
+Interest: [bold] ${interest} [/]
+`
   })
 
   bidPricesSeries.adapter.add('tooltipText', (text, target) => {
