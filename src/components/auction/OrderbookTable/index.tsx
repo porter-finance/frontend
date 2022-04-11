@@ -171,12 +171,7 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({
           </TableCell>
           <TableCell>
             <Wrap>
-              <Wrap margin={'0 10px 0 0'}>Time</Wrap>
-            </Wrap>
-          </TableCell>
-          <TableCell>
-            <Wrap>
-              <Wrap margin={'0 10px 0 0'}>Actions</Wrap>
+              <Wrap margin={'0 10px 0 0'}>Transactions</Wrap>
             </Wrap>
           </TableCell>
         </StyledRow>
@@ -209,22 +204,17 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({
             bids.map((row, i) => (
               <StyledRow key={i}>
                 <TableCell>
-                  <div className="pointer-events-none space-x-2 inline-flex items-center px-3 py-1.5 border border-transparent rounded-full shadow-sm bg-[#5BCD88] hover:none focus:outline-none focus:none">
+                  <div className="pointer-events-none space-x-2 inline-flex items-center px-1.5 border border-transparent rounded-full shadow-sm bg-[#5BCD88] hover:none focus:outline-none focus:none">
                     <svg
                       fill="none"
-                      height="9"
-                      viewBox="0 0 11 9"
-                      width="11"
+                      height="7"
+                      viewBox="0 0 7 7"
+                      width="7"
                       xmlns="http://www.w3.org/2000/svg"
                     >
-                      <path
-                        clipRule="evenodd"
-                        d="M6.03059 0.283422C5.92179 0.108161 5.7193 0 5.5 0C5.2807 0 5.07821 0.108161 4.96941 0.283422L0.0805181 8.15842C-0.0275623 8.33252 -0.0267863 8.54641 0.0825549 8.71983C0.191896 8.89326 0.393268 9 0.611111 9H10.3889C10.6067 9 10.8081 8.89326 10.9174 8.71983C11.0268 8.54641 11.0276 8.33252 10.9195 8.15842L6.03059 0.283422ZM6.08929 3C6.08929 2.68934 5.82545 2.4375 5.5 2.4375C5.17455 2.4375 4.91071 2.68934 4.91071 3V4.875C4.91071 5.18566 5.17455 5.4375 5.5 5.4375C5.82545 5.4375 6.08929 5.18566 6.08929 4.875V3ZM6.08929 6.75C6.08929 7.06066 5.82545 7.3125 5.5 7.3125C5.17455 7.3125 4.91071 7.06066 4.91071 6.75C4.91071 6.43934 5.17455 6.1875 5.5 6.1875C5.82545 6.1875 6.08929 6.43934 6.08929 6.75Z"
-                        fill="#181A1C"
-                        fillOpacity="0.5"
-                        fillRule="evenodd"
-                      />
+                      <circle cx="3.5" cy="3.5" fill="#1E1E1E" opacity="0.5" r="3" />
                     </svg>
+
                     <span className="text-xs uppercase font-normal !text-[#1E1E1E]">Active</span>
                   </div>
                 </TableCell>
@@ -241,7 +231,6 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({
                 <TableCell>
                   {round(row.volume, 6)} {auctioningTokenDisplay}
                 </TableCell>
-                <TableCell>Unknown</TableCell>
                 <TableCell>
                   <svg
                     fill="none"
