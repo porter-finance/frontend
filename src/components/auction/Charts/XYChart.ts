@@ -85,30 +85,10 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   bidSeries.fill = bidSeries.stroke
   bidSeries.fillOpacity = 0.25
   bidSeries.startLocation = 0.5
-  bidSeries.name = 'Bids'
+  bidSeries.name = 'DEMAND'
   bidSeries.dummyData = {
     description:
       'Shows the price (x axis) and size (y axis) of the bids that have been placed, both expressed in the bid token',
-  }
-  const gradient = new am4core.LinearGradient()
-  gradient.addColor(am4core.color(colors.blue), 1)
-  gradient.addColor(am4core.color(colors.blue), 0.7)
-  gradient.addColor(am4core.color(colors.blue), 0.24)
-  gradient.addColor(am4core.color(colors.blue), 0)
-  gradient.rotation = 90
-  bidSeries.fill = gradient
-
-  // Create series, shows the minimum sell price (x axis) the auctioneer is willing to accept
-  const askSeries = chart.series.push(new am4charts.LineSeries())
-  askSeries.dataFields.valueX = 'priceNumber'
-  askSeries.dataFields.valueY = 'askValueY'
-  askSeries.strokeWidth = 2
-  askSeries.stroke = am4core.color(colors.supply)
-  askSeries.fill = askSeries.stroke
-  askSeries.name = 'Sell supply'
-  askSeries.dummyData = {
-    description:
-      'Shows sell supply of the auction based on the price and nominated in the bidding token',
   }
 
   // Create series, shows the minimum sell price (x axis) the auctioneer is willing to accept
@@ -118,9 +98,45 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   minFunding.strokeWidth = 2
   minFunding.stroke = am4core.color(colors.red)
   minFunding.fill = minFunding.stroke
-  minFunding.name = 'Min. funding threshold'
+  minFunding.name = 'MIN. FUNDING THRESHOLD'
   minFunding.dummyData = {
     description: 'Auction will not be executed, unless this minimum funding threshold is met',
+  }
+
+  const gradient = new am4core.LinearGradient()
+  gradient.addColor(am4core.color(colors.blue), 1)
+  gradient.addColor(am4core.color(colors.blue), 0.7)
+  gradient.addColor(am4core.color(colors.blue), 0.24)
+  gradient.addColor(am4core.color(colors.blue), 0)
+  gradient.rotation = 90
+  bidSeries.fill = gradient
+
+  // Dotted white line -> shows the Current price, which is the closing price of the auction if
+  // no more bids are submitted or cancelled and the auction ends
+  const priceSeries = chart.series.push(new am4charts.LineSeries())
+  priceSeries.dataFields.valueX = 'priceNumber'
+  priceSeries.dataFields.valueY = 'clearingPriceValueY'
+  priceSeries.strokeWidth = 2
+  priceSeries.strokeDasharray = '3,3'
+  priceSeries.stroke = am4core.color(colors.grey)
+  priceSeries.fill = priceSeries.stroke
+  priceSeries.name = 'CURRENT PRICE'
+  priceSeries.dummyData = {
+    description:
+      'Shows the current price. This price would be the closing price of the auction if no more bids are submitted or cancelled',
+  }
+
+  // Create series, shows the minimum sell price (x axis) the auctioneer is willing to accept
+  const askSeries = chart.series.push(new am4charts.LineSeries())
+  askSeries.dataFields.valueX = 'priceNumber'
+  askSeries.dataFields.valueY = 'askValueY'
+  askSeries.strokeWidth = 2
+  askSeries.stroke = am4core.color(colors.supply)
+  askSeries.fill = askSeries.stroke
+  askSeries.name = 'SUPPLY'
+  askSeries.dummyData = {
+    description:
+      'Shows sell supply of the auction based on the price and nominated in the bidding token',
   }
 
   // New order to be placed
@@ -130,25 +146,10 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   inputSeries.strokeWidth = 2
   inputSeries.stroke = am4core.color(colors.newOrder)
   inputSeries.fill = inputSeries.stroke
-  inputSeries.name = 'New order'
+  inputSeries.name = 'NEW ORDER'
   inputSeries.dummyData = {
     description:
       'Shows the new order that would be placed based on the current amount and price input',
-  }
-
-  // Dotted white line -> shows the Current price, which is the closing price of the auction if
-  // no more bids are submitted or cancelled and the auction ends
-  const priceSeries = chart.series.push(new am4charts.LineSeries())
-  priceSeries.dataFields.valueX = 'priceNumber'
-  priceSeries.dataFields.valueY = 'clearingPriceValueY'
-  priceSeries.strokeWidth = 2
-  priceSeries.fill = inputSeries.stroke
-  priceSeries.strokeDasharray = '3,3'
-  priceSeries.stroke = am4core.color(colors.grey)
-  priceSeries.name = 'Current price'
-  priceSeries.dummyData = {
-    description:
-      'Shows the current price. This price would be the closing price of the auction if no more bids are submitted or cancelled',
   }
 
   // Add cursor
@@ -172,11 +173,16 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   chart.zoomOutButton.tooltip.text = 'Zoom out'
 
   // Legend
+  // const legendContainer = am4core.create('legenddiv', am4core.Container)
+  // legendContainer.width = am4core.percent(100)
+  // legendContainer.height = am4core.percent(100)
+
   chart.legend = new am4charts.Legend()
   chart.legend.labels.template.fill = am4core.color(colors.grey)
   chart.legend.markers.template.strokeWidth = 44
   chart.legend.markers.template.height = 5
   chart.legend.markers.template.width = 14
+  // chart.legend.parent = legendContainer
   chart.tooltip.getFillFromObject = false
   chart.tooltip.background.fill = am4core.color('#2C2C2C')
   chart.tooltip.background.stroke = am4core.color('#2C2C2C')
