@@ -162,6 +162,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const maxAmountInput: TokenAmount = biddingTokenBalance ? biddingTokenBalance : undefined
 
   useEffect(() => {
+    onUserPriceInput(price)
     if (price == '-' && derivedAuctionInfo?.clearingPrice) {
       showPriceInverted
         ? onUserPriceInput(
@@ -278,8 +279,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const balanceString = React.useMemo(() => {
     return biddingTokenBalance?.toSignificant(6)
   }, [biddingTokenBalance])
-
-  const showBottomWarning = orderPlacingOnly || cancelDate
 
   const amountInfo = React.useMemo(
     () =>
