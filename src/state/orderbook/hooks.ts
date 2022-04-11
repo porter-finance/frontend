@@ -14,6 +14,7 @@ import {
   pullOrderbookData,
   removeBid,
   resetOrderbookData,
+  resetUserInterestRate,
   resetUserPrice,
   resetUserVolume,
 } from './actions'
@@ -34,6 +35,7 @@ export function useOrderbookActionHandlers(): {
   onRemoveBid: (order: PricePoint) => void
   onPullOrderbookData: () => void
   onResetUserPrice: (price: number) => void
+  onResetUserInterestRate: (interestRate: number) => void
   onResetUserVolume: (volume: number) => void
   onResetOrderbookData: (
     auctionId: number,
@@ -67,6 +69,13 @@ export function useOrderbookActionHandlers(): {
     },
     [dispatch],
   )
+
+  const onResetUserInterestRate = useCallback(
+    (interestRate: number) => {
+      dispatch(resetUserInterestRate({ interestRate }))
+    },
+    [dispatch],
+  )
   const onResetUserVolume = useCallback(
     (volume: number) => {
       dispatch(resetUserVolume({ volume }))
@@ -92,6 +101,7 @@ export function useOrderbookActionHandlers(): {
     onNewBid,
     onRemoveBid,
     onResetUserPrice,
+    onResetUserInterestRate,
     onResetUserVolume,
   }
 }

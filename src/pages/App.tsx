@@ -15,13 +15,12 @@ import { MainWrapper } from '../components/pureStyledComponents/MainWrapper'
 import Web3ReactManager from '../components/web3/Web3ReactManager'
 import useShowCookies from '../hooks/useShowCookies'
 import useShowTopWarning from '../hooks/useShowTopWarning'
-import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
 
 const Inner = styled(InnerContainer)`
-  margin-top: -112px;
+  margin-top: -100px;
 
   @media (max-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    margin-top: -152px;
+    margin-top: -130px;
   }
 `
 
@@ -36,10 +35,6 @@ const App: React.FC = () => {
           <Header />
           <Popups />
           <ReactTooltip
-            arrowColor="#001429"
-            backgroundColor="#001429"
-            border
-            borderColor="#174172"
             className="customTooltip"
             delayHide={250}
             delayShow={50}
@@ -47,9 +42,7 @@ const App: React.FC = () => {
             textColor="#fff"
           />
           {showTopWarning && <TopDisclaimer />}
-          <span id="topAnchor" />
-          <Inner>
-            <DarkModeQueryParamReader />
+          <Inner className="fullPage">
             <Web3ReactManager>
               <Routes />
             </Web3ReactManager>

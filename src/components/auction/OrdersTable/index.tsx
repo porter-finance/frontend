@@ -1,8 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 
-import * as CSS from 'csstype'
-
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../constants/config'
 import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
 import {
@@ -18,64 +16,17 @@ import { abbreviation } from '../../../utils/numeral'
 import { getInverse } from '../../../utils/prices'
 import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
-import { Tooltip } from '../../common/Tooltip'
-import { InfoIcon } from '../../icons/InfoIcon'
 import { OrderPending } from '../../icons/OrderPending'
 import { OrderPlaced } from '../../icons/OrderPlaced'
 import ConfirmationModal from '../../modals/ConfirmationModal'
 import WarningModal from '../../modals/WarningModal'
 import CancelModalFooter from '../../modals/common/CancelModalFooter'
-import { BaseCard } from '../../pureStyledComponents/BaseCard'
-import { Cell, CellRow, getColumns } from '../../pureStyledComponents/Cell'
-import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponents/EmptyContent'
-import { PageTitle } from '../../pureStyledComponents/PageTitle'
-
-const TableWrapper = styled(BaseCard)`
-  padding: 4px 0;
-`
-
-const Title = styled(PageTitle)`
-  margin-bottom: 16px;
-  margin-top: 0;
-`
+import { Cell } from '../../pureStyledComponents/Cell'
+import { OverflowWrap, StyledRow, Table, TableBody, TableCell, Wrap } from '../OrderbookTable'
 
 interface RowProps {
   hiddenMd?: boolean
 }
-
-const Row = styled(CellRow)<Partial<CSS.Properties & RowProps>>`
-  grid-template-columns: 1fr 1fr;
-  row-gap: 15px;
-  color: ${({ theme }) => theme.dropdown.item.color};
-  ${(props) => props.hiddenMd && 'display : none'};
-  align-items: center;
-  font-size: 16px;
-  p {
-    display: flex;
-    margin: 0;
-    align-items: center;
-  }
-  p + span {
-    display: flex;
-    svg {
-      margin-left: 6px;
-    }
-  }
-  .tooltipComponent {
-    margin-left: 6px;
-  }
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    grid-template-columns: ${(props) => getColumns(props.columns)};
-    ${(props) => props.hiddenMd && 'display : grid'};
-    > span {
-      line-height: 1;
-    }
-    p {
-      display: none;
-    }
-  }
-`
 
 const ButtonCell = styled(Cell)`
   grid-column-end: -1;
@@ -88,14 +39,12 @@ const ButtonCell = styled(Cell)`
 `
 
 const ButtonWrapper = styled.div`
-  align-items: center;
   display: flex;
   height: 100%;
-  justify-content: flex-end;
 `
 
 const ActionButton = styled(Button)`
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
   height: 28px;
@@ -103,16 +52,6 @@ const ActionButton = styled(Button)`
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     width: auto;
-  }
-`
-
-const StyledCell = styled.div`
-  display: flex;
-  align-items: center;
-  color: ${({ theme }) => theme.dropdown.item.color};
-  font-size: 14px;
-  > *:first-child {
-    padding-right: 6px;
   }
 `
 
@@ -200,111 +139,140 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
 
   return (
     <>
-      {ordersEmpty && (
-        <EmptyContentWrapper>
-          <InfoIcon />
-          <EmptyContentText>You have no orders for this auction.</EmptyContentText>
-        </EmptyContentWrapper>
-      )}
-      {!ordersEmpty && (
-        <TableWrapper>
-          <Row columns={hideCancelButton ? 4 : 5} hiddenMd>
-            <StyledCell>
-              <div>Amount</div>
-              <Tooltip text={'The amount of bidding token committed to the order.'} />
-            </StyledCell>
-            <StyledCell>
-              <div>Limit Price</div>
-              <Tooltip text={priceExplainer} />
-            </StyledCell>
-            <StyledCell>
-              <div>Status</div>
-            </StyledCell>
-            <StyledCell>
-              <div>Network</div>
-            </StyledCell>
-          </Row>
-          {ordersSortered.map((order) => (
-            <Row columns={hideCancelButton ? 4 : 5} key={order.id}>
-              <Cell>
-                <p>
-                  <span>Amount</span>
-                  <Tooltip text={'The amount of bidding token committed to the order.'} />
-                </p>
-                <span>{abbreviation(order.sellAmount)}</span>
-              </Cell>
-              <Cell>
-                <p>
-                  <span>Limit Price</span>
-                  <Tooltip text={priceExplainer} />
-                </p>
-                <span>
-                  {abbreviation(
-                    showPriceInverted
-                      ? getInverse(order.price, NUMBER_OF_DIGITS_FOR_INVERSION)
-                      : order.price,
-                  )}
-                </span>
-              </Cell>
-              <Cell>
-                <p>Status</p>
-                <span>
-                  <span>{orderStatusText[order.status]}</span>
-                  {order.status === OrderStatus.PLACED ? <OrderPlaced /> : <OrderPending />}
-                </span>
-              </Cell>
-              <Cell>
-                <p>Network</p>
-                <span>{getChainName(order.chainId)}</span>
-              </Cell>
-              {!hideCancelButton && (
-                <ButtonCell>
-                  <ButtonWrapper>
-                    <ActionButton
-                      disabled={
-                        isOrderCancellationExpired ||
-                        order.status === OrderStatus.PENDING_CANCELLATION
-                      }
-                      onClick={() => {
-                        setOrderId(order.id)
-                        setShowConfirm(true)
-                      }}
-                    >
-                      Cancel
-                    </ActionButton>
-                  </ButtonWrapper>
-                </ButtonCell>
-              )}
-            </Row>
-          ))}
-          <ConfirmationModal
-            attemptingTxn={attemptingTxn}
-            content={
-              <CancelModalFooter confirmText={'Cancel Order'} onCancelOrder={onCancelOrder} />
-            }
-            hash={txHash}
-            isOpen={showConfirm}
-            onDismiss={() => {
-              resetModal()
-              setShowConfirm(false)
-            }}
-            pendingConfirmation={pendingConfirmation}
-            pendingText={pendingText}
-            title="Warning!"
-            width={394}
-          />
-          <WarningModal
-            content={orderError}
-            isOpen={showWarning}
-            onDismiss={() => {
-              resetModal()
-              setOrderError(null)
-              setShowWarning(false)
-            }}
-            title="Warning!"
-          />
-        </TableWrapper>
-      )}
+      <OverflowWrap>
+        <Table>
+          <StyledRow className="pb-2" cols={'1fr 1fr 1fr 1fr 1fr 1fr'}>
+            <TableCell>
+              <Wrap>
+                <Wrap margin={'0 10px 0 0'}>Status</Wrap>
+              </Wrap>
+            </TableCell>
+            <TableCell>
+              <Wrap>
+                <Wrap margin={'0 10px 0 0'}>Price</Wrap>
+              </Wrap>
+            </TableCell>
+            <TableCell>
+              <Wrap>
+                <Wrap margin={'0 10px 0 0'}>Interest rate</Wrap>
+              </Wrap>
+            </TableCell>
+            <TableCell>
+              <Wrap>
+                <Wrap margin={'0 10px 0 0'}>Amount</Wrap>
+              </Wrap>
+            </TableCell>
+            <TableCell>
+              <Wrap>
+                <Wrap margin={'0 10px 0 0'}>Time</Wrap>
+              </Wrap>
+            </TableCell>
+            <TableCell>
+              <Wrap>
+                <Wrap margin={'0 10px 0 0'}>Actions</Wrap>
+              </Wrap>
+            </TableCell>
+          </StyledRow>
+          <TableBody>
+            {ordersEmpty && (
+              <div className="flex flex-col items-center mx-auto pt-[100px] text-[#696969] space-y-4">
+                <div>
+                  <svg
+                    fill="none"
+                    height="40"
+                    viewBox="0 0 32 40"
+                    width="32"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M27.202 4.35355L27.2113 4.36285L27.2211 4.37165L31.5 8.22268V39.5H0.5V0.5H23.3484L27.202 4.35355Z"
+                      stroke="white"
+                      strokeOpacity="0.6"
+                    />
+                    <path d="M7 14H25" stroke="white" strokeOpacity="0.6" />
+                    <path d="M7 19H25" stroke="white" strokeOpacity="0.6" />
+                    <path d="M7 24H25" stroke="white" strokeOpacity="0.6" />
+                    <path d="M7 29H25" stroke="white" strokeOpacity="0.6" />
+                  </svg>
+                </div>
+                <div className="text-base">You didn&apos;t place any orders yet</div>
+              </div>
+            )}
+
+            {ordersSortered.map((order) => (
+              <StyledRow key={order.id}>
+                <TableCell>
+                  <span>{abbreviation(order.sellAmount)}</span>
+                </TableCell>
+                <TableCell>
+                  <span>
+                    {abbreviation(
+                      showPriceInverted
+                        ? getInverse(order.price, NUMBER_OF_DIGITS_FOR_INVERSION)
+                        : order.price,
+                    )}
+                  </span>
+                </TableCell>
+                <TableCell>
+                  <div className="flex flex-row items-center space-x-2">
+                    <span>{orderStatusText[order.status]}</span>
+                    <span>
+                      {order.status === OrderStatus.PLACED ? <OrderPlaced /> : <OrderPending />}
+                    </span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <span>{getChainName(order.chainId)}</span>
+                </TableCell>
+                {!hideCancelButton && (
+                  <TableCell>
+                    <ButtonCell>
+                      <ButtonWrapper>
+                        <ActionButton
+                          disabled={
+                            isOrderCancellationExpired ||
+                            order.status === OrderStatus.PENDING_CANCELLATION
+                          }
+                          onClick={() => {
+                            setOrderId(order.id)
+                            setShowConfirm(true)
+                          }}
+                        >
+                          Cancel
+                        </ActionButton>
+                      </ButtonWrapper>
+                    </ButtonCell>
+                  </TableCell>
+                )}
+              </StyledRow>
+            ))}
+          </TableBody>
+        </Table>
+      </OverflowWrap>
+      <ConfirmationModal
+        attemptingTxn={attemptingTxn}
+        content={<CancelModalFooter confirmText={'Cancel Order'} onCancelOrder={onCancelOrder} />}
+        hash={txHash}
+        isOpen={showConfirm}
+        onDismiss={() => {
+          resetModal()
+          setShowConfirm(false)
+        }}
+        pendingConfirmation={pendingConfirmation}
+        pendingText={pendingText}
+        title="Warning!"
+        width={394}
+      />
+      <WarningModal
+        content={orderError}
+        isOpen={showWarning}
+        onDismiss={() => {
+          resetModal()
+          setOrderError(null)
+          setShowWarning(false)
+        }}
+        title="Warning!"
+      />
     </>
   )
 }
