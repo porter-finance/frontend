@@ -12,7 +12,11 @@ import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../constants/config'
 import { useActiveWeb3React } from '../../hooks'
 import { Order, decodeOrder } from '../../hooks/Order'
 import { useTokenByAddressAndAutomaticallyAdd } from '../../hooks/Tokens'
-import { AuctionInfoDetail, useAuctionDetails } from '../../hooks/useAuctionDetails'
+import {
+  AuctionGraphDetail,
+  AuctionInfoDetail,
+  useAuctionDetails,
+} from '../../hooks/useAuctionDetails'
 import { ClaimState } from '../../hooks/useClaimOrderCallback'
 import { useContract } from '../../hooks/useContract'
 import { useClearingPriceInfo } from '../../hooks/useCurrentClearingOrderAndVolumeCallback'
@@ -22,11 +26,12 @@ import { convertPriceIntoBuyAndSellAmount, getInverse } from '../../utils/prices
 import { calculateTimeLeft } from '../../utils/tools'
 import { AppDispatch, AppState } from '../index'
 import { useSingleCallResult } from '../multicall/hooks'
-import { resetUserPrice, resetUserVolume } from '../orderbook/actions'
+import { resetUserInterestRate, resetUserPrice, resetUserVolume } from '../orderbook/actions'
 import { useOrderActionHandlers } from '../orders/hooks'
 import { OrderDisplay, OrderStatus } from '../orders/reducer'
 import { useTokenBalancesTreatWETHAsETH } from '../wallet/hooks'
 import {
+  interestRateInput,
   invertPrice,
   priceInput,
   sellAmountInput,
@@ -128,7 +133,8 @@ export function useOrderPlacementState(): AppState['orderPlacement'] {
 
 export function useSwapActionHandlers(): {
   onUserSellAmountInput: (sellAmount: string) => void
-  onUserPriceInput: (price: string, isInvertedPrice: boolean) => void
+  onUserPriceInput: (price: string) => void
+  onUserInterestRateInput: (interestRate: string) => void
   onInvertPrices: () => void
 } {
   const dispatch = useDispatch<AppDispatch>()
@@ -145,13 +151,11 @@ export function useSwapActionHandlers(): {
   }, [dispatch])
 
   const onUserPriceInput = useCallback(
-    (price: string, isInvertedPrice: boolean) => {
+    (price: string) => {
       if (isNumeric(price)) {
         dispatch(
           resetUserPrice({
-            price: isInvertedPrice
-              ? parseFloat(getInverse(price, NUMBER_OF_DIGITS_FOR_INVERSION))
-              : parseFloat(price),
+            price: parseFloat(price),
           }),
         )
       }
@@ -160,7 +164,21 @@ export function useSwapActionHandlers(): {
     [dispatch],
   )
 
-  return { onUserPriceInput, onUserSellAmountInput, onInvertPrices }
+  const onUserInterestRateInput = useCallback(
+    (interestRate: string) => {
+      if (isNumeric(interestRate)) {
+        dispatch(
+          resetUserInterestRate({
+            interestRate: parseFloat(interestRate),
+          }),
+        )
+      }
+      dispatch(interestRateInput({ interestRate }))
+    },
+    [dispatch],
+  )
+
+  return { onUserPriceInput, onUserSellAmountInput, onInvertPrices, onUserInterestRateInput }
 }
 
 function isNumeric(str: string) {
@@ -187,6 +205,7 @@ export function tryParseAmount(value?: string, token?: Token): TokenAmount | und
 interface Errors {
   errorAmount: string | undefined
   errorPrice: string | undefined
+  errorInterestRate: string | undefined
 }
 interface AuctionInfoDefined
   extends Omit<DerivedAuctionInfo, 'minBiddingAmountPerOrder' | 'biddingToken'> {
@@ -241,7 +260,7 @@ export const useGetOrderPlacementError = (
     balanceIn &&
     amountIn &&
     balanceIn.lessThan(amountIn) &&
-    `Insufficient ${getFullTokenDisplay(amountIn.token, chainId)}` + ' balance.'
+    `You do not have enough ${getFullTokenDisplay(amountIn.token, chainId)} on this account`
 
   const messageHigherInitialPrice = `Price must be higher than ${derivedAuctionInfo?.initialPrice?.toSignificant(
     5,
@@ -304,9 +323,13 @@ export const useGetOrderPlacementError = (
     invalidSellAmount ||
     undefined
 
+  // TODO: add error checking to interest rate input
+  const errorInterestRate = undefined
+
   return {
     errorAmount,
     errorPrice,
+    errorInterestRate,
   }
 }
 
@@ -363,13 +386,14 @@ export interface DerivedAuctionInfo {
   minBiddingAmountPerOrder: string | undefined
   orderCancellationEndDate: number | undefined
   auctionState: AuctionState | null | undefined
+  graphInfo: Maybe<AuctionGraphDetail>
 }
 
 export function useDerivedAuctionInfo(
   auctionIdentifier: AuctionIdentifier,
 ): Maybe<DerivedAuctionInfo> | undefined {
   const { chainId } = auctionIdentifier
-  const { auctionDetails, auctionInfoLoading } = useAuctionDetails(auctionIdentifier)
+  const { auctionDetails, auctionInfoLoading, graphInfo } = useAuctionDetails(auctionIdentifier)
   const { clearingPriceInfo, loadingClearingPrice } = useClearingPriceInfo(auctionIdentifier)
   const auctionState = useDeriveAuctionState(auctionDetails)
 
@@ -456,6 +480,7 @@ export function useDerivedAuctionInfo(
   }
 
   return {
+    graphInfo,
     auctioningToken,
     biddingToken,
     clearingPriceSellOrder,

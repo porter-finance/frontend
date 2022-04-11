@@ -9,7 +9,7 @@ import { unwrapMessage } from '../../../constants'
 import { useActiveWeb3React } from '../../../hooks'
 import { ApprovalState } from '../../../hooks/useApproveCallback'
 import { ChainId, getTokenDisplay } from '../../../utils'
-import { MiniInfoIcon } from '../../icons/MiniInfoIcon'
+import { Tooltip } from '../../common/Tooltip'
 import { MiniLock } from '../../icons/MiniLock'
 import { MiniSpinner } from '../../icons/MiniSpinner'
 import {
@@ -17,8 +17,6 @@ import {
   FieldRowInfo,
   FieldRowInfoProps,
   FieldRowInput,
-  FieldRowLabel,
-  FieldRowLineButton,
   FieldRowPrimaryButton,
   FieldRowPrimaryButtonText,
   FieldRowToken,
@@ -28,6 +26,7 @@ import {
   InfoType,
 } from '../../pureStyledComponents/FieldRow'
 import TokenLogo from '../../token/TokenLogo'
+import { FieldRowLabelStyled } from '../PriceInputPanel'
 
 const rotate = keyframes`
   from {
@@ -70,7 +69,7 @@ const SpinningLaVidaLoca = styled.span`
   margin-right: 2px;
 `
 
-const Balance = styled.div<{ disabled?: boolean }>`
+export const Balance = styled.div<{ disabled?: boolean }>`
   color: ${({ theme }) => theme.text1};
   font-size: 14px;
   font-weight: 400;
@@ -138,7 +137,15 @@ const AmountInputPanel: React.FC<Props> = (props) => {
 
   return (
     <>
-      <FieldRowWrapper error={error} {...restProps}>
+      <FieldRowWrapper
+        error={error}
+        style={{
+          borderBottomLeftRadius: 0,
+          borderBottomRightRadius: 0,
+          borderBottomWidth: 0.5,
+        }}
+        {...restProps}
+      >
         <FieldRowTop>
           <FieldRowInput
             disabled={!account}
@@ -146,12 +153,12 @@ const AmountInputPanel: React.FC<Props> = (props) => {
             onBlur={() => setReadonly(true)}
             onFocus={() => setReadonly(false)}
             onUserSellAmountInput={onUserSellAmountInput}
-            readOnly={readonly}
-            value={value}
+            readOnly={!account || readonly}
+            value={!account ? 0 : value}
           />
           <Wrap>
             {token && (
-              <FieldRowToken>
+              <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#2C2C2C] rounded-full p-1 px-2">
                 {token.address && (
                   <TokenLogo
                     size={'16px'}
@@ -211,23 +218,18 @@ const AmountInputPanel: React.FC<Props> = (props) => {
           </Wrap>
         </FieldRowTop>
         <FieldRowBottom>
-          <FieldRowLabel>Amount</FieldRowLabel>
-          <Balance disabled={!account}>
-            {balanceString ? balanceString : 'Balance'}:{' '}
-            {balance === '0' || !account ? '0.00' : balance}
-          </Balance>
-          <FieldRowLineButton disabled={!onMax || !account} onClick={onMax}>
-            Max
-          </FieldRowLineButton>
+          {info ? (
+            <FieldRowLabelStyled className="space-x-1">
+              <FieldRowInfo infoType={info?.type}>{info.text}</FieldRowInfo>
+            </FieldRowLabelStyled>
+          ) : (
+            <FieldRowLabelStyled className="space-x-1">
+              <span>Amount</span>
+              <Tooltip text="Amount tooltip" />
+            </FieldRowLabelStyled>
+          )}
         </FieldRowBottom>
       </FieldRowWrapper>
-      <FieldRowInfo infoType={info?.type}>
-        {info && (
-          <>
-            <MiniInfoIcon /> {info.text}
-          </>
-        )}
-      </FieldRowInfo>
     </>
   )
 }

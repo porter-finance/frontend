@@ -16,18 +16,23 @@ const Wrapper = styled(Dropdown)`
   display: flex;
 `
 
-const DropdownButton = styled.button`
+export const DropdownButton = styled.button`
   background-color: white;
   border-radius: 100px;
+  color: #1e1e1e;
+  font-size: 14px;
+  height: 29px;
+  font-weight: 600;
+  align-items: center;
+  text-align: center;
+  display: flex;
 
   .fill {
     fill: #1e1e1e;
   }
 
   &:hover {
-    .addressText {
-      color: #ffffff;
-    }
+    color: #ffffff;
 
     .chevronDown {
       .fill {
@@ -37,17 +42,9 @@ const DropdownButton = styled.button`
   }
 `
 
-const Address = styled.div`
-  align-items: center;
-  text-align: center;
-  display: flex;
-`
+const Address = styled.div``
 
-const AddressText = styled.div`
-  color: #1e1e1e;
-  font-size: 14px;
-  font-weight: 600;
-`
+const AddressText = styled.div``
 
 const Connection = styled.div`
   align-items: center;

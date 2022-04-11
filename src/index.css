@@ -2,8 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-.card {
-    @apply rounded-md;
+html {
+    background-color: #131415;
+}
+
+.fullPage {
+    @apply max-w-3xl mx-auto px-4 sm:px-6 lg:max-w-7xl lg:px-8 xl:max-w-8xl xl:px-12;
+}
+
+.btn-sm {
+    @apply text-base;
 }
 
 .btn-group {
@@ -20,27 +28,8 @@
     @apply btn-sm;
     @apply text-xs;
     @apply rounded-full;
-}
 
-.card-title {
-    @apply text-gray-100;
-    @apply font-normal;
-    @apply text-xl;
-}
-
-.bg-neutral {
-    background-color: #181A1C;
-}
-
-.card {
-    @apply bg-neutral;
-    @apply text-neutral-content;
-    @apply h-min;
-    @apply mt-8;
-}
-
-.card-title {
-    @apply mb-4;
+    height: 28px;
 }
 
 .btn-group > .btn:not(:first-of-type) {
@@ -53,6 +42,44 @@
     border-bottom-right-radius: inherit;
 }
 
+.bg-neutral {
+    background-color: #181A1C;
+}
+
+.btn-warning {
+    background-color: #EDA651;
+    border-color: #EDA651;
+    color: #2C2C2C;
+}
+
+.card {
+    @apply rounded-md;
+    @apply bg-neutral;
+    @apply text-neutral-content;
+    @apply h-min;
+    @apply mt-8;
+    box-shadow: 0px 0px 1px rgba(30, 30, 30, 0.32), 0px 8px 16px rgba(0, 0, 0, 0.16);
+}
+
+.card.place-order-color {
+    border-image: conic-gradient(black, black, black, black, black, black, black) 1;
+    border-image-source: linear-gradient(131.96deg, #404EED 0%, rgba(64, 78, 237, 0) 100%);
+}
+
+.card.bond-card-color {
+    border-image: conic-gradient(black, black, black, black, black, black, black) 1;
+    border-image-source: linear-gradient(131.96deg, #532DBE 0%, rgba(83, 45, 190, 0.15) 100%);
+}
+
+.card-title {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 22px;
+    letter-spacing: 0.01em;
+    color: #EEEFEB;
+    @apply mb-4;
+}
+
 .progress-primary::-webkit-progress-value {
     background: linear-gradient(270deg, #404EED -0.07%, #2B3BF4 100%);
     border-radius: 4px;
@@ -62,4 +89,18 @@
     height: 12px;
     border-radius: 4px;
     background: rgba(213, 213, 213, 0.1);
+}
+
+
+
+/* Charts */
+
+svg text tspan  {
+    @apply normal-case;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 10px;
+    line-height: 11px;
+    letter-spacing: 0.06em;
+    color: #9F9F9F;
 }

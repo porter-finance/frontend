@@ -171,7 +171,7 @@ const SwapModalFooter: React.FC<Props> = (props) => {
       )}
       {cancelDate && (
         <WarnMessageStyled>
-          Remember: After <strong>{cancelDate}</strong> orders cannot be canceled.
+          Remember: After <strong>{cancelDate}</strong> orders cannot be cancelled.
         </WarnMessageStyled>
       )}
       {hasRiskNotCoveringClearingPrice && (
