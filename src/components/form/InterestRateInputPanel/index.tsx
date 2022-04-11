@@ -47,11 +47,12 @@ interface Props {
   onUserInterestRateInput: (val: string) => void
   price: string
   auctionEndDate: number
+  auctionStartDate: number
 }
 
 // Interest rate = (1-Price) / Price / (years to maturity)
-export const calculateInterestRate = (price, auctionEndDate) => {
-  const years = Math.abs(dayjs().diff(auctionEndDate * 1000, 'year', true))
+export const calculateInterestRate = (price, auctionStartDate, auctionEndDate) => {
+  const years = Math.abs(dayjs(auctionStartDate || '').diff(auctionEndDate * 1000, 'year', true))
   const interestRate = (1 - price) / price / years
   return !Number(price) ? '-' : `${round(interestRate * 100, 2)}%`
 }
@@ -60,6 +61,7 @@ const InterestRateInputPanel = (props: Props) => {
   const {
     account,
     auctionEndDate,
+    auctionStartDate,
     chainId,
     disabled,
     info,
@@ -78,7 +80,7 @@ const InterestRateInputPanel = (props: Props) => {
             hasError={error}
             onUserSellAmountInput={onUserInterestRateInput}
             readOnly
-            value={!account ? '-' : calculateInterestRate(price, auctionEndDate)}
+            value={!account ? '-' : calculateInterestRate(price, auctionStartDate, auctionEndDate)}
           />
           <FieldRowLabelStyled className="space-x-1">
             {info ? (
