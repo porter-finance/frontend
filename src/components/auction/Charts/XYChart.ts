@@ -46,6 +46,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   const colors = {
     blue: '#404EED',
     red: '#D25453',
+    supply: '#1BBFE3',
     white: '#FFFFFF',
     grey: '#9F9F9F',
     cyan: '#1BBFE3',
@@ -92,7 +93,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   askSeries.dataFields.valueX = 'priceNumber'
   askSeries.dataFields.valueY = 'askValueY'
   askSeries.strokeWidth = 2
-  askSeries.stroke = am4core.color(colors.red)
+  askSeries.stroke = am4core.color(colors.supply)
   askSeries.fill = askSeries.stroke
   askSeries.name = 'Sell supply'
   askSeries.dummyData = {
@@ -194,6 +195,12 @@ export const drawInformation = (props: DrawInformation) => {
     values: [askPricesSeries, bidPricesSeries],
   } = chart.series
 
+  askPricesSeries.tooltip.getFillFromObject = false
+  askPricesSeries.tooltip.background.fill = am4core.color('#2C2C2C')
+  askPricesSeries.tooltip.background.stroke = am4core.color('#2C2C2C')
+  askPricesSeries.tooltipHTML =
+    '<div class="text-xs rounded-md text-[#D2D2D2] drop-shadow-lg bg-[#2C2C2C] border-none flex-wrap max-w-xs whitespace-normal">{text}</div>'
+
   askPricesSeries.adapter.add('tooltipText', (text, target) => {
     const valueX = target?.tooltipDataItem?.values?.valueX?.value ?? 0
     const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
@@ -202,20 +209,30 @@ export const drawInformation = (props: DrawInformation) => {
     const volume = round(valueY, 4)
     const interest = auctionEndDate && calculateInterestRate(valueX, auctionEndDate)
 
-    return `[bold]${market}[/]
-Ask Price: [bold] ${askPrice} [/] ${quoteTokenLabel}
-Volume: [bold] ${volume} [/] ${quoteTokenLabel}
-Interest: [bold] ${interest} [/]
+    return `${market}<br/>
+Ask Price:  ${askPrice} ${quoteTokenLabel}<br/>
+Volume:  ${volume} ${quoteTokenLabel}<br/>
+Interest:  ${interest} 
 `
   })
 
+  bidPricesSeries.tooltip.getFillFromObject = false
+  bidPricesSeries.tooltip.background.fill = am4core.color('#2C2C2C')
+  bidPricesSeries.tooltip.background.stroke = am4core.color('#2C2C2C')
+  bidPricesSeries.tooltipHTML =
+    '<div class="text-xs rounded-md text-[#D2D2D2] drop-shadow-lg bg-[#2C2C2C] border-none flex-wrap max-w-xs whitespace-normal">{text}</div>'
   bidPricesSeries.adapter.add('tooltipText', (text, target) => {
     const valueX = target?.tooltipDataItem?.values?.valueX?.value ?? 0
     const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
 
     const bidPrice = round(valueX, 4)
     const volume = round(valueY, 4)
+    const interest = auctionEndDate && calculateInterestRate(valueX, auctionEndDate)
 
-    return `[bold]${market}[/]\nBid Price: [bold] ${bidPrice} [/] ${quoteTokenLabel}\nVolume: [bold] ${volume} [/] ${quoteTokenLabel}`
+    return `${market}<br/>
+Bid Price:  ${bidPrice} ${quoteTokenLabel}<br/>
+Volume:  ${volume} ${quoteTokenLabel}<br/>
+Interest:  ${interest} 
+`
   })
 }
