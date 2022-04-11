@@ -8,6 +8,8 @@ import { ChainId, getTokenDisplay } from '../../../utils'
 
 // Recalculates very big and very small numbers by reducing their length according to rules and applying suffix/prefix.
 const numberFormatter = new am4core.NumberFormatter()
+am4core.addLicense('ch-custom-attribution')
+
 numberFormatter.numberFormat = '###.00 a'
 numberFormatter.smallNumberThreshold = 0
 numberFormatter.bigNumberPrefixes = [
