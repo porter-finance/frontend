@@ -153,12 +153,11 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   chart.legend.markers.template.strokeWidth = 44
   chart.legend.markers.template.height = 5
   chart.legend.markers.template.width = 14
-  chart.legend.itemContainers.template.tooltipHTML =
-    '<div style="white-space: normal!important;max-width: 300px;padding:0 5px 5px;">{dataContext.dummyData.description}</div>'
-
   chart.tooltip.getFillFromObject = false
-  chart.tooltip.background.fill = am4core.color(colors.tooltipBg)
-  chart.tooltip.background.stroke = am4core.color(colors.tooltipBorder)
+  chart.tooltip.background.fill = am4core.color('#2C2C2C')
+  chart.tooltip.background.stroke = am4core.color('#2C2C2C')
+  chart.legend.itemContainers.template.tooltipHTML =
+    '<div class="text-xs rounded-md text-[#D2D2D2] drop-shadow-lg bg-[#2C2C2C] border-none flex-wrap max-w-xs whitespace-normal">{dataContext.dummyData.description}</div>'
 
   return chart
 }
