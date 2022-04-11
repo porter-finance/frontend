@@ -130,7 +130,11 @@ const OrderBookChart: React.FC<Props> = (props) => {
     <>
       {(!mountPoint || loading) && <InlineLoading size={SpinnerSize.small} />}
       <VolumeLabel>{volumeTitle}</VolumeLabel>
-      {mountPoint && !loading && <Wrapper ref={mountPoint} />}
+      {mountPoint && !loading && (
+        <>
+          <Wrapper ref={mountPoint} />
+        </>
+      )}
     </>
   )
 }
