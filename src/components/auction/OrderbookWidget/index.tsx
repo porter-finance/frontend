@@ -90,13 +90,13 @@ const processData = (
 
     pricePoints.push({
       price: (highestValue * 104) / 100,
-      volume: 0,
+      volume: null,
     })
 
     pricePoints.sort((lhs, rhs) => -1 * (lhs.price - rhs.price))
     pricePoints.push({
       price: (lowestValue * 96) / 100,
-      volume: 0,
+      volume: null,
     })
   } else {
     if (showChartsInverted) {
@@ -105,18 +105,18 @@ const processData = (
         pricePoints.push({
           price:
             (highestValue * 104) / 100 - (i * (highestValue - lowestValue)) / interpolationSteps,
-          volume: 0,
+          volume: null,
         })
       }
     } else {
       pricePoints.push({
         price: (highestValue * 104) / 100,
-        volume: 0,
+        volume: null,
       })
     }
     pricePoints.push({
       price: (pricePoints[0].price * 96) / 100,
-      volume: 0,
+      volume: null,
     })
     pricePoints.sort((lhs, rhs) => lhs.price - rhs.price)
   }
@@ -144,7 +144,7 @@ const processData = (
         askValueY = null
         bidValueY = totalVolume
       } else {
-        askValueY = totalVolume * price
+        askValueY = totalVolume > 0 ? totalVolume * price : null
         bidValueY = null
       }
       // Add the new point
@@ -170,6 +170,7 @@ const processData = (
         //      ------------
         //      |
         //  ----|<-here
+        const totalVolVol = acc.totalVolume + volume
         const pricePointDetails: PricePointDetails = {
           type,
           volume,
@@ -180,8 +181,8 @@ const processData = (
           priceNumber: price,
           totalVolumeNumber: acc.totalVolume + volume,
           priceFormatted: price.toFixed(MAX_DECIMALS_PRICE_FORMAT),
-          totalVolumeFormatted: (acc.totalVolume + volume).toFixed(MAX_DECIMALS_PRICE_FORMAT),
-          askValueY: (acc.totalVolume + volume) * price,
+          totalVolumeFormatted: totalVolVol.toFixed(MAX_DECIMALS_PRICE_FORMAT),
+          askValueY: totalVolVol * price || null,
           bidValueY,
           newOrderValueY: null,
           clearingPriceValueY: null,
@@ -355,6 +356,7 @@ export const processOrderbookData = ({
       Offer.Ask,
       showChartsInverted(baseToken),
     )
+
     // Filter for price-points close to clearing price
     const asksFiltered = asks.filter((pp) => Math.abs(pp.price - clearingPrice) / clearingPrice < 2)
     let bidsFiltered = bids.filter((pp) => Math.abs(pp.price - clearingPrice) / clearingPrice < 2)
