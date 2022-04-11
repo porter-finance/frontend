@@ -2,7 +2,10 @@ import React from 'react'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 
+import { TokenAmount } from '@josojo/honeyswap-sdk'
+
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../constants/config'
+import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
 import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { parseURL } from '../../../state/orderPlacement/reducer'
 import { useOrderbookState } from '../../../state/orderbook/hooks'
@@ -37,7 +40,9 @@ export const OrderBook: React.FC<OrderbookProps> = (props) => {
     userOrderVolume,
   } = useOrderbookState()
 
-  const { auctionId, chainId } = parseURL(useParams())
+  const auctionIdentifier = parseURL(useParams())
+  const { auctionDetails } = useAuctionDetails(auctionIdentifier)
+  const { auctionId, chainId } = auctionIdentifier
 
   const {
     auctionEndDate,
@@ -47,6 +52,9 @@ export const OrderBook: React.FC<OrderbookProps> = (props) => {
 
   const processedOrderbook = React.useMemo(() => {
     const data = { bids, asks }
+    const minFundingThresholdAmount =
+      auctionDetails && new TokenAmount(quoteToken, auctionDetails?.minFundingThreshold)
+
     return processOrderbookData({
       data,
       userOrder: {
@@ -55,8 +63,9 @@ export const OrderBook: React.FC<OrderbookProps> = (props) => {
       },
       baseToken,
       quoteToken,
+      minFundingThreshold: minFundingThresholdAmount,
     })
-  }, [asks, baseToken, bids, quoteToken, userOrderPrice, userOrderVolume])
+  }, [asks, baseToken, bids, quoteToken, userOrderPrice, userOrderVolume, auctionDetails])
 
   if (showChartsInverted(baseToken)) {
     for (const p of processedOrderbook) {

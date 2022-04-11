@@ -1,4 +1,4 @@
-import { Fraction, Token } from '@josojo/honeyswap-sdk'
+import { Fraction, Token, TokenAmount } from '@josojo/honeyswap-sdk'
 
 import { OrderBookData, PricePoint } from '../../../api/AdditionalServicesApi'
 import {
@@ -33,6 +33,7 @@ const addClearingPriceInfo = (
     priceFormatted: price.toString(),
     totalVolumeFormatted: '0',
     askValueY: null,
+    minFundY: null,
     bidValueY: null,
     newOrderValueY: null,
     clearingPriceValueY: 0,
@@ -51,6 +52,7 @@ const addClearingPriceInfo = (
     priceFormatted: price.toString(),
     totalVolumeFormatted: '0',
     askValueY: null,
+    minFundY: null,
     bidValueY: null,
     newOrderValueY: null,
     clearingPriceValueY: maxValueYofBid,
@@ -68,6 +70,7 @@ const processData = (
   lowestValue: number,
   type: Offer,
   showChartsInverted: boolean,
+  minFundThreshold: number,
 ): PricePointDetails[] => {
   const isBid = type == Offer.Bid
 
@@ -160,6 +163,7 @@ const processData = (
         priceFormatted: price.toFixed(MAX_DECIMALS_PRICE_FORMAT),
         totalVolumeFormatted: totalVolume.toFixed(MAX_DECIMALS_PRICE_FORMAT),
         askValueY,
+        minFundY: null,
         bidValueY,
         newOrderValueY: null,
         clearingPriceValueY: null,
@@ -183,6 +187,7 @@ const processData = (
           priceFormatted: price.toFixed(MAX_DECIMALS_PRICE_FORMAT),
           totalVolumeFormatted: totalVolVol.toFixed(MAX_DECIMALS_PRICE_FORMAT),
           askValueY: totalVolVol * price || null,
+          minFundY: minFundThreshold,
           bidValueY,
           newOrderValueY: null,
           clearingPriceValueY: null,
@@ -205,6 +210,7 @@ const processData = (
           priceFormatted: price.toString(),
           totalVolumeFormatted: totalVolume.toString(),
           askValueY: null,
+          minFundY: null,
           bidValueY: null,
           newOrderValueY: bidValueY + volume,
           clearingPriceValueY: null,
@@ -222,6 +228,7 @@ const processData = (
           priceFormatted: price.toString(),
           totalVolumeFormatted: totalVolume.toString(),
           askValueY: null,
+          minFundY: null,
           bidValueY: null,
           newOrderValueY: bidValueY,
           clearingPriceValueY: null,
@@ -250,6 +257,7 @@ const processData = (
           priceFormatted: price.toString(),
           totalVolumeFormatted: totalVolume.toString(),
           askValueY: null,
+          minFundY: null,
           bidValueY: null,
           newOrderValueY: bidValueY,
           clearingPriceValueY: null,
@@ -288,6 +296,7 @@ interface ProcessRawDataParams {
   userOrder: PricePoint
   baseToken: Token
   quoteToken: Token
+  minFundingThreshold: TokenAmount
 }
 
 export function findClearingPrice(
@@ -327,6 +336,7 @@ export function findClearingPrice(
 export const processOrderbookData = ({
   baseToken,
   data,
+  minFundingThreshold,
   quoteToken,
   userOrder,
 }: ProcessRawDataParams): PricePointDetails[] => {
@@ -337,6 +347,7 @@ export const processOrderbookData = ({
     const clearingPrice = findClearingPrice(data.bids, userOrder, data.asks[0])
     const min_value = Math.min(clearingPrice * 2, data.asks[0]?.price ?? 0)
     let max_value = Math.max(clearingPrice * 2, Math.max(...data.asks.map((i) => i.price)) ?? 0)
+    const minFundThreshold = minFundingThreshold.toSignificant(2)
 
     const bids = processData(
       data.bids,
@@ -345,6 +356,7 @@ export const processOrderbookData = ({
       min_value,
       Offer.Bid,
       showChartsInverted(baseToken),
+      minFundThreshold,
     )
     bids.sort((lhs, rhs) => -(lhs.price - rhs.price))
     max_value = Math.min(clearingPrice * 2, bids[0].price ?? 0)
@@ -355,6 +367,7 @@ export const processOrderbookData = ({
       min_value,
       Offer.Ask,
       showChartsInverted(baseToken),
+      minFundThreshold,
     )
 
     // Filter for price-points close to clearing price
@@ -387,6 +400,8 @@ export const processOrderbookData = ({
         ? lhs.totalVolume - rhs.totalVolume
         : -(lhs.totalVolume - rhs.totalVolume),
     )
+
+    pricePoints.push({ price: 0, volume: 640 })
 
     const debug = false
     if (debug) _printOrderBook(pricePoints, baseToken.symbol, quoteToken.symbol)
