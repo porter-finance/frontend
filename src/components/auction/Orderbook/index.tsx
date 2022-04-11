@@ -39,7 +39,11 @@ export const OrderBook: React.FC<OrderbookProps> = (props) => {
 
   const { auctionId, chainId } = parseURL(useParams())
 
-  const { auctioningToken: baseToken, biddingToken: quoteToken } = derivedAuctionInfo
+  const {
+    auctionEndDate,
+    auctioningToken: baseToken,
+    biddingToken: quoteToken,
+  } = derivedAuctionInfo
 
   const processedOrderbook = React.useMemo(() => {
     const data = { bids, asks }
@@ -69,6 +73,7 @@ export const OrderBook: React.FC<OrderbookProps> = (props) => {
         <OrderBookError error={error} />
       ) : (
         <OrderBookChart
+          auctionEndDate={auctionEndDate}
           baseToken={baseToken}
           chainId={chainId}
           data={processedOrderbook}
