@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components'
 import * as CSS from 'csstype'
 import { useFilters, useGlobalFilter, usePagination, useTable } from 'react-table'
 
+import { AuctionButtonOutline, OTCButtonOutline } from '../../../pages/Auction'
 import { ButtonSelect } from '../../buttons/ButtonSelect'
 import { Dropdown, DropdownDirection, DropdownItem, DropdownPosition } from '../../common/Dropdown'
 import { ChevronRight } from '../../icons/ChevronRight'
@@ -15,9 +16,10 @@ import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { Cell, CellRowCSS, CellRowProps, getColumns } from '../../pureStyledComponents/Cell'
 import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponents/EmptyContent'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
-import { TexfieldPartsCSS, TextfieldCSS } from '../../pureStyledComponents/Textfield'
 
-const Wrapper = styled.div``
+const Wrapper = styled.div`
+  margin-top: -45px;
+`
 
 const Table = styled(BaseCard)`
   padding: 0;
@@ -25,8 +27,10 @@ const Table = styled(BaseCard)`
 `
 
 const SectionTitle = styled(PageTitle)`
-  font-size: 22px;
-  margin-bottom: 14px;
+  font-weight: 400;
+  font-size: 68px;
+  color: #ffffff;
+  margin: 0;
 `
 const rowCss = css<CellRowProps>`
   ${CellRowCSS}
@@ -117,49 +121,40 @@ const TableCell = styled(Cell)<Partial<CSS.Properties & CellProps>>`
 `
 
 const TableControls = styled.div`
-  margin-bottom: 28px;
-
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     align-items: center;
     display: flex;
     justify-content: space-between;
-    margin-bottom: 16px;
   }
 `
 
 const SearchWrapper = styled.div`
-  ${TextfieldCSS};
   align-items: center;
   display: flex;
-  margin-bottom: 12px;
   max-width: 100%;
   padding-left: 9px;
   padding-right: 0;
-  width: 565px;
-
-  &:focus-within {
-    background-color: ${({ theme }) => theme.textField.backgroundColorActive};
-    border-color: ${({ theme }) =>
-      (props) =>
-        props.error ? theme.textField.errorColor : theme.textField.borderColorActive};
-  }
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    margin-bottom: 0;
-  }
+  width: 237px;
+  border-radius: 100px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.5);
 `
 
 const SearchInput = styled.input`
-  ${TexfieldPartsCSS};
-  background: none;
   border: none;
-  color: ${({ theme }) =>
-    (props) =>
-      props.error ? theme.textField.errorColor : theme.text1};
+  background: none;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: white;
+  ::placeholder {
+    text-transform: uppercase;
+    color: white;
+    opacity: 0.8;
+  }
   flex-grow: 1;
-  font-size: ${({ theme }) => theme.textField.fontSize};
-  font-weight: ${({ theme }) => theme.textField.fontWeight};
-  height: ${({ theme }) => theme.textField.height};
+  height: 32px;
   margin: 0 0 0 10px;
   outline: none;
   overflow: hidden;
@@ -467,7 +462,7 @@ const AllAuctions = (props: Props) => {
       data,
       filterTypes,
       globalFilter,
-      initialState: { pageIndex: 0, pageSize: 5 },
+      initialState: { pageIndex: 0, pageSize: 10 },
     },
     useGlobalFilter,
     useFilters,
@@ -486,7 +481,7 @@ const AllAuctions = (props: Props) => {
   const filterOptions = [
     {
       onClick: updateFilter,
-      title: 'All Auctions',
+      title: 'All',
     },
     {
       column: 'participation',
@@ -543,50 +538,73 @@ const AllAuctions = (props: Props) => {
 
   return (
     <Wrapper ref={sectionHead} {...restProps}>
-      <SectionTitle style={{ display: 'block' }}>Auctions</SectionTitle>
-      <TableControls>
-        <SearchWrapper>
-          <Magnifier />
-          <SearchInput
-            onChange={(e) => {
-              setGlobalFilter(e.target.value)
-            }}
-            placeholder={`Search by auction Id, selling token, buying token, date…`}
-            value={state.globalFilter || ''}
-          />
-          <DeleteSearchTerm
-            disabled={!state.globalFilter}
-            onClick={() => {
-              setGlobalFilter(undefined)
-            }}
-          >
-            <Delete />
-          </DeleteSearchTerm>
-        </SearchWrapper>
-        <Dropdown
-          dropdownButtonContent={
-            <ButtonSelect
-              content={
-                <span>
-                  {!currentDropdownFilter ? filterOptions[0].title : currentDropdownFilter}
-                </span>
+      <div className="py-2 flex content-center justify-center md:justify-between flex-wrap items-end">
+        <div className="flex flex-col">
+          <SectionTitle>Offerings</SectionTitle>
+
+          <div className="flex flex-row space-x-4 items-center">
+            <Dropdown
+              dropdownButtonContent={
+                <ButtonSelect
+                  content={
+                    <span>
+                      {!currentDropdownFilter ? filterOptions[0].title : currentDropdownFilter}
+                    </span>
+                  }
+                />
               }
+              items={filterOptions.map((item, index) => (
+                <DropdownItem
+                  key={index}
+                  onClick={() => {
+                    item.onClick(item.column, item.value)
+                    setCurrentDropdownFilter(item.title)
+                  }}
+                >
+                  {item.title}
+                </DropdownItem>
+              ))}
             />
-          }
-          dropdownPosition={DropdownPosition.right}
-          items={filterOptions.map((item, index) => (
-            <DropdownItem
-              key={index}
-              onClick={() => {
-                item.onClick(item.column, item.value)
-                setCurrentDropdownFilter(item.title)
-              }}
+
+            <svg
+              fill="none"
+              height="16"
+              viewBox="0 0 2 16"
+              width="2"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              {item.title}
-            </DropdownItem>
-          ))}
-        />
-      </TableControls>
+              <path d="M1 0V16" opacity="0.5" stroke="white" />
+            </svg>
+
+            <AuctionButtonOutline plural />
+            <OTCButtonOutline />
+          </div>
+        </div>
+
+        <div>
+          <TableControls>
+            <SearchWrapper>
+              <Magnifier />
+              <SearchInput
+                onChange={(e) => {
+                  setGlobalFilter(e.target.value)
+                }}
+                placeholder="Search"
+                value={state.globalFilter || ''}
+              />
+              <DeleteSearchTerm
+                disabled={!state.globalFilter}
+                onClick={() => {
+                  setGlobalFilter(undefined)
+                }}
+              >
+                <Delete />
+              </DeleteSearchTerm>
+            </SearchWrapper>
+          </TableControls>
+        </div>
+      </div>
+
       {noData ? (
         <EmptyContentWrapper>
           <InfoIcon />
