@@ -44,8 +44,8 @@ export interface BidInfo {
 }
 
 const bidsQuery = gql`
-  query BidList($account: String!, $auctionId: Int!) {
-    bids(first: 100, where: { account: { id: $account }, auction: $auctionId }) {
+  query ParticipatingAuctionBids($account: String!, $auctionId: Int!) {
+    bids(first: 100, where: { account: $account, auction: $auctionId }) {
       id
       timestamp
     }
@@ -60,7 +60,10 @@ export const useParticipatingAuctionBids = (): Maybe<{
   const { account } = useActiveWeb3React()
 
   const { data, error } = useQuery(bidsQuery, {
-    variables: { auctionId, account: (account && account?.toLowerCase()) || '0x00' },
+    variables: {
+      auctionId,
+      account: (account && account?.toLowerCase()) || '0x00',
+    },
   })
 
   if (error) {
