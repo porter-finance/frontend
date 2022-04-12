@@ -58,7 +58,7 @@ export interface AuctionGraphDetail {
 }
 
 const auctionsQuery = gql`
-  query Auction($auctionID: String!) {
+  query Auction($auctionID: ID!) {
     auction(id: $auctionID) {
       id
       isSellingPorterBond

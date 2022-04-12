@@ -51,6 +51,7 @@ interface Props {
 
 // Interest rate = (1-Price) / Price / (years to maturity)
 export const calculateInterestRate = (price, auctionEndDate) => {
+  if (!auctionEndDate) return '-'
   const years = Math.abs(dayjs().diff(auctionEndDate * 1000, 'year', true))
   const interestRate = (1 - price) / price / years
   return !Number(interestRate) ? '-' : `${round(interestRate * 100, 2)}%`
