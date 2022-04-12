@@ -32,6 +32,19 @@ interface TokenLogoProps {
   square?: boolean
 }
 
+const SquareHolder = ({ children, size }) => {
+  const defaultSize = size === '24px'
+  return (
+    <div className="avatar placeholder">
+      <div
+        className={`w-${defaultSize ? '14' : '10'} bg-white rounded-${defaultSize ? 'xl' : 'md'}`}
+      >
+        {children}
+      </div>
+    </div>
+  )
+}
+
 const TokenLogo: React.FC<TokenLogoProps> = (props) => {
   const { size = '24px', square, token, ...restProps } = props
   const { address, symbol } = token
@@ -40,21 +53,21 @@ const TokenLogo: React.FC<TokenLogoProps> = (props) => {
   const imageURL = validToken && tokens[address.toLowerCase()]
 
   const UnTok = !imageURL && (
-    <UnregisteredToken size={square ? '30px' : size} symbol={symbol} {...restProps} />
+    <UnregisteredToken
+      size={square && size === '24px' ? '30px' : size}
+      symbol={symbol}
+      {...restProps}
+    />
   )
 
   const ImageToken = imageURL && (
-    <Wrapper className="tokenLogo" size={square ? '30px' : size} {...restProps}>
+    <Wrapper className="tokenLogo" size={square && size === '24px' ? '30px' : size} {...restProps}>
       <Image src={imageURL} />
     </Wrapper>
   )
 
   if (square && imageURL) {
-    return (
-      <div className="avatar placeholder">
-        <div className="w-14 bg-white rounded-xl">{ImageToken}</div>
-      </div>
-    )
+    return <SquareHolder size={size}>{ImageToken}</SquareHolder>
   }
 
   if (imageURL) {
@@ -62,11 +75,7 @@ const TokenLogo: React.FC<TokenLogoProps> = (props) => {
   }
 
   if (square) {
-    return (
-      <div className="avatar placeholder">
-        <div className="w-14 bg-white rounded-xl">{UnTok}</div>
-      </div>
-    )
+    return <SquareHolder size={size}>{UnTok}</SquareHolder>
   }
 
   return UnTok
