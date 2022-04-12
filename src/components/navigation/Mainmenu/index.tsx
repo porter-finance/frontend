@@ -37,8 +37,6 @@ const Item = styled(NavLink)`
   &.active {
     color: #ffffff;
     opacity: 1;
-    cursor: default;
-    pointer-events: none;
 
     .fill {
       fill: #eeefeb;
