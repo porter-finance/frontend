@@ -44,6 +44,33 @@ const NetworkName = styled.span`
   margin-right: 2px;
   text-transform: capitalize;
 `
+export const AuctionButtonOutline = ({ plural = false }) => (
+  <span className="space-x-2 inline-flex items-center px-5 py-1.5 rounded-full bg-transparent text-white border-blue-100 border uppercase border-opacity-50 pointer-events-none">
+    <svg fill="none" height="14" viewBox="0 0 14 14" width="14" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M6.70952 7.00007C6.70952 10.0191 4.30434 12.5204 1.21429 12.766V1.23413C4.30434 1.4797 6.70952 3.98105 6.70952 7.00007Z"
+        stroke="white"
+      />
+      <path
+        d="M7.29048 6.99993C7.29048 3.98091 9.69566 1.47956 12.7857 1.23399L12.7857 12.7659C9.69566 12.5203 7.29048 10.0189 7.29048 6.99993Z"
+        stroke="white"
+      />
+    </svg>
+    <span className="text-xs">Auction{plural && 's'}</span>
+  </span>
+)
+
+export const OTCButtonOutline = () => (
+  <span className="space-x-2 inline-flex items-center px-5 py-1.5 rounded-full bg-transparent text-white border-blue-100 border uppercase border-opacity-50 pointer-events-none">
+    <svg fill="none" height="14" viewBox="0 0 14 14" width="14" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M12.7858 12.7856L1.21434 12.7856L1.21434 6.33194L7.00005 1.37275L12.7858 6.33194L12.7858 12.7856Z"
+        stroke="white"
+      />
+    </svg>
+    <span className="text-xs">OTC</span>
+  </span>
+)
 
 // Strangely couldn't use tailwind h-[9px] or min-h- , had to specify style = manually
 export const LoadingBox = ({ height }) => (
@@ -193,25 +220,7 @@ const Auction: React.FC = () => {
           </div>
         </div>
         <div className="flex justify-center md:mt-0 mt-5 space-x-3">
-          <span className="space-x-2 inline-flex items-center px-5 py-1.5 rounded-full bg-transparent text-white border-blue-100 border uppercase border-opacity-50 pointer-events-none">
-            <svg
-              fill="none"
-              height="14"
-              viewBox="0 0 14 14"
-              width="14"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M6.70952 7.00007C6.70952 10.0191 4.30434 12.5204 1.21429 12.766V1.23413C4.30434 1.4797 6.70952 3.98105 6.70952 7.00007Z"
-                stroke="white"
-              />
-              <path
-                d="M7.29048 6.99993C7.29048 3.98091 9.69566 1.47956 12.7857 1.23399L12.7857 12.7659C9.69566 12.5203 7.29048 10.0189 7.29048 6.99993Z"
-                stroke="white"
-              />
-            </svg>
-            <span className="text-xs">Auction</span>
-          </span>
+          <AuctionButtonOutline />
           <span className="inline-flex items-center px-2 space-x-1 py-1.5 rounded-full bg-white border-blue-100 border uppercase border-opacity-50 pointer-events-none text-[#404EED] font-medium">
             <svg className="h-2 w-2" fill="#404EED" opacity="0.5" viewBox="0 0 8 8">
               <circle cx={4} cy={4} r={3} />
