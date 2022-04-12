@@ -44,12 +44,7 @@ export const OrderBook: React.FC<OrderbookProps> = (props) => {
   const { auctionDetails } = useAuctionDetails(auctionIdentifier)
   const { auctionId, chainId } = auctionIdentifier
 
-  const {
-    auctionEndDate,
-    auctionStartDate,
-    auctioningToken: baseToken,
-    biddingToken: quoteToken,
-  } = derivedAuctionInfo
+  const { auctioningToken: baseToken, biddingToken: quoteToken } = derivedAuctionInfo
 
   const processedOrderbook = React.useMemo(() => {
     const data = { bids, asks }
@@ -83,8 +78,6 @@ export const OrderBook: React.FC<OrderbookProps> = (props) => {
         <OrderBookError error={error} />
       ) : (
         <OrderBookChart
-          auctionEndDate={auctionEndDate}
-          auctionStartDate={auctionStartDate}
           baseToken={baseToken}
           chainId={chainId}
           data={processedOrderbook}
