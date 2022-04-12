@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react'
 
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../constants/config'
+import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
 import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
 import {
   AuctionState,
@@ -30,6 +31,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
     derivedAuctionInfo,
     derivedAuctionInfo: { auctionState },
   } = props
+  const maturityDate = useBondMaturityForAuction()
   const orders: OrderState | undefined = useOrderState()
   const cancelOrderCallback = useCancelOrderCallback(
     auctionIdentifier,
@@ -142,11 +144,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
         showPriceInverted ? getInverse(order.price, NUMBER_OF_DIGITS_FOR_INVERSION) : order.price,
       )}`
 
-      const interest = `${calculateInterestRate(
-        order.price,
-        derivedAuctionInfo?.auctionStartDate,
-        derivedAuctionInfo?.auctionEndDate,
-      )}`
+      const interest = `${calculateInterestRate(order.price, maturityDate)}`
       const amount = order.sellAmount
 
       const actions = !hideCancelButton && (

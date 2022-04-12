@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import round from 'lodash.round'
 import { usePagination, useTable } from 'react-table'
 
+import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
 import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { useOrderbookState } from '../../../state/orderbook/hooks'
 import { getTokenDisplay } from '../../../utils'
@@ -143,6 +144,8 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({
   derivedAuctionInfo,
   granularity,
 }) => {
+  const maturityDate = useBondMaturityForAuction()
+
   const columns = React.useMemo(
     () => [
       {
@@ -204,11 +207,7 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({
 
       const price = `${round(row.price, 6)} ${auctioningTokenDisplay}`
 
-      const interest = `${calculateInterestRate(
-        row.price,
-        derivedAuctionInfo?.auctionStartDate,
-        derivedAuctionInfo?.auctionEndDate,
-      )}`
+      const interest = `${calculateInterestRate(row.price, maturityDate)}`
       const amount = `${round(row.volume, 6)} ${auctioningTokenDisplay}`
       const transactions = (
         <svg
