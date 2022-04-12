@@ -198,12 +198,11 @@ interface DrawInformation {
   baseToken: Token
   quoteToken: Token
   chainId: ChainId
-  auctionEndDate?: number
-  auctionStartDate?: number
+  maturityDate: Maybe<number>
 }
 
 export const drawInformation = (props: DrawInformation) => {
-  const { auctionEndDate, auctionStartDate, baseToken, chainId, chart, quoteToken } = props
+  const { baseToken, chainId, chart, maturityDate, quoteToken } = props
   const baseTokenLabel = baseToken.symbol
   const quoteTokenLabel = getTokenDisplay(quoteToken, chainId)
   const market = quoteTokenLabel + '-' + baseTokenLabel
@@ -237,10 +236,7 @@ export const drawInformation = (props: DrawInformation) => {
 
     const askPrice = round(valueX, 4)
     const volume = round(valueY, 4)
-    const interest =
-      auctionEndDate &&
-      auctionStartDate &&
-      calculateInterestRate(valueX, auctionStartDate, auctionEndDate)
+    const interest = maturityDate && calculateInterestRate(valueX, maturityDate)
 
     return `${market}<br/>
 Ask Price:  ${askPrice} ${quoteTokenLabel}<br/>
@@ -260,10 +256,7 @@ Interest:  ${interest}
 
     const bidPrice = round(valueX, 4)
     const volume = round(valueY, 4)
-    const interest =
-      auctionEndDate &&
-      auctionStartDate &&
-      calculateInterestRate(valueX, auctionStartDate, auctionEndDate)
+    const interest = maturityDate && calculateInterestRate(valueX, maturityDate)
 
     return `${market}<br/>
 Bid Price:  ${bidPrice} ${quoteTokenLabel}<br/>
