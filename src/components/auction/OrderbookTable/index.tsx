@@ -140,6 +140,16 @@ interface OrderBookTableProps {
   granularity: string
 }
 
+export const ActiveStatusPill = () => (
+  <div className="pointer-events-none space-x-2 inline-flex items-center px-2 border py-1 border-transparent rounded-full shadow-sm bg-[#5BCD88] hover:none focus:outline-none focus:none">
+    <svg fill="none" height="7" viewBox="0 0 7 7" width="7" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="3.5" cy="3.5" fill="#1E1E1E" opacity="0.5" r="3" />
+    </svg>
+
+    <span className="text-xs uppercase font-normal !text-[#1E1E1E]">Active</span>
+  </div>
+)
+
 export const OrderBookTable: React.FC<OrderBookTableProps> = ({
   derivedAuctionInfo,
   granularity,
@@ -189,21 +199,7 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({
 
   !noBids &&
     bids.forEach((row, i) => {
-      const status = (
-        <div className="pointer-events-none space-x-2 inline-flex items-center px-2 border py-1 border-transparent rounded-full shadow-sm bg-[#5BCD88] hover:none focus:outline-none focus:none">
-          <svg
-            fill="none"
-            height="7"
-            viewBox="0 0 7 7"
-            width="7"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <circle cx="3.5" cy="3.5" fill="#1E1E1E" opacity="0.5" r="3" />
-          </svg>
-
-          <span className="text-xs uppercase font-normal !text-[#1E1E1E]">Active</span>
-        </div>
-      )
+      const status = <ActiveStatusPill />
 
       const price = `${round(row.price, 6)} ${auctioningTokenDisplay}`
 
