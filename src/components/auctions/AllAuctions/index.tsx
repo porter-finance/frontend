@@ -5,9 +5,9 @@ import styled, { css } from 'styled-components'
 import * as CSS from 'csstype'
 import { useFilters, useGlobalFilter, usePagination, useTable } from 'react-table'
 
-import { AuctionButtonOutline, OTCButtonOutline } from '../../../pages/Auction'
+import { AuctionButtonOutline, LoadingBox, OTCButtonOutline } from '../../../pages/Auction'
 import { ButtonSelect } from '../../buttons/ButtonSelect'
-import { Dropdown, DropdownDirection, DropdownItem, DropdownPosition } from '../../common/Dropdown'
+import { Dropdown, DropdownItem } from '../../common/Dropdown'
 import { ChevronRight } from '../../icons/ChevronRight'
 import { Delete } from '../../icons/Delete'
 import { InfoIcon } from '../../icons/InfoIcon'
@@ -18,7 +18,7 @@ import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponent
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
 
 const Wrapper = styled.div`
-  margin-top: -45px;
+  margin-top: -65px;
 `
 
 const Table = styled(BaseCard)`
@@ -309,94 +309,85 @@ const TBody = styled.div`
 
 interface Props {
   tableData: any[]
+  loading: boolean
 }
 
-const AllAuctions = (props: Props) => {
-  const { tableData, ...restProps } = props
-  const columns = useMemo(
-    () => [
-      {
-        Header: '',
-        accessor: 'symbol',
-        align: 'flex-start',
-        show: true,
-        style: { height: '100%', justifyContent: 'center' },
-      },
-      {
-        Header: 'Auction Id',
-        accessor: 'auctionId',
-        align: 'flex-start',
-        show: true,
-        style: {},
-      },
-      {
-        Header: 'Selling',
-        accessor: 'selling',
-        align: 'flex-start',
-        show: true,
-        style: {},
-      },
-      {
-        Header: 'Buying',
-        accessor: 'buying',
-        align: 'flex-start',
-        show: true,
-        style: {},
-      },
-      {
-        Header: 'Status',
-        accessor: 'status',
-        align: 'flex-start',
-        show: true,
-        style: {},
-      },
-      {
-        Header: 'Type',
-        accessor: 'type',
-        align: 'flex-start',
-        show: true,
-        style: {},
-        filter: 'searchInTags',
-      },
-      {
-        Header: 'Participation',
-        accessor: 'participation',
-        align: 'flex-start',
-        show: true,
-        style: {},
-        filter: 'searchInTags',
-      },
-      {
-        Header: 'Network',
-        accessor: 'chainId',
-        align: 'flex-start',
-        show: true,
-        style: {},
-      },
-      {
-        Header: 'End date',
-        accessor: 'date',
-        align: 'flex-start',
-        show: true,
-        style: {},
-      },
-      {
-        Header: '',
-        accessor: 'chevron',
-        align: 'flex-end',
-        show: true,
-        style: { height: '100%', justifyContent: 'center' },
-      },
-      {
-        Header: '',
-        accessor: 'url',
-        align: '',
-        show: false,
-        style: {},
-      },
-    ],
-    [],
-  )
+const columns = [
+  {
+    Header: 'Issuer',
+    accessor: 'issuer',
+    align: 'flex-start',
+    show: true,
+    style: { height: '100%', justifyContent: 'center' },
+  },
+  {
+    Header: 'Auction Id',
+    accessor: 'auctionId',
+    align: 'flex-start',
+    show: false,
+    style: {},
+  },
+  {
+    Header: 'Selling',
+    accessor: 'selling',
+    align: 'flex-start',
+    show: false,
+    style: {},
+  },
+  {
+    Header: 'Buying',
+    accessor: 'buying',
+    align: 'flex-start',
+    show: false,
+    style: {},
+  },
+  {
+    Header: 'Status',
+    accessor: 'status',
+    align: 'flex-start',
+    show: true,
+    style: {},
+  },
+  {
+    Header: 'Type',
+    accessor: 'type',
+    align: 'flex-start',
+    show: false,
+    style: {},
+    filter: 'searchInTags',
+  },
+  {
+    Header: 'Participation',
+    accessor: 'participation',
+    align: 'flex-start',
+    show: false,
+    style: {},
+    filter: 'searchInTags',
+  },
+  {
+    Header: 'Network',
+    accessor: 'chainId',
+    align: 'flex-start',
+    show: false,
+    style: {},
+  },
+  {
+    Header: 'End date',
+    accessor: 'date',
+    align: 'flex-start',
+    show: false,
+    style: {},
+  },
+  {
+    Header: '',
+    accessor: 'url',
+    align: '',
+    show: false,
+    style: {},
+  },
+]
+
+const AllAuctions = ({ loading, tableData, ...restProps }: Props) => {
   const data = useMemo(() => Object.values(tableData), [tableData])
   const [currentDropdownFilter, setCurrentDropdownFilter] = useState<string | undefined>()
 
@@ -446,6 +437,9 @@ const AllAuctions = (props: Props) => {
   const {
     canNextPage,
     canPreviousPage,
+    getTableBodyProps,
+    getTableProps,
+    headerGroups,
     nextPage,
     page,
     prepareRow,
@@ -538,8 +532,8 @@ const AllAuctions = (props: Props) => {
 
   return (
     <Wrapper ref={sectionHead} {...restProps}>
-      <div className="py-2 flex content-center justify-center md:justify-between flex-wrap items-end">
-        <div className="flex flex-col">
+      <div className="py-2 flex content-center justify-center md:justify-between flex-wrap items-end mb-10">
+        <div className="flex flex-col space-y-4">
           <SectionTitle>Offerings</SectionTitle>
 
           <div className="flex flex-row space-x-4 items-center">
@@ -605,7 +599,9 @@ const AllAuctions = (props: Props) => {
         </div>
       </div>
 
-      {noData ? (
+      {loading && <LoadingBox height={600} />}
+
+      {!loading && noData && (
         <EmptyContentWrapper>
           <InfoIcon />
           <EmptyContentText>
@@ -613,87 +609,122 @@ const AllAuctions = (props: Props) => {
             {noAuctionsFound && 'No auctions found.'}
           </EmptyContentText>
         </EmptyContentWrapper>
-      ) : (
-        <>
-          <Table>
-            <RowHead columns={'85px 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 40px'}>
-              {prepareRow(page[0])}
-              {page[0].cells.map(
-                (cell, i) =>
-                  cell.render('show') && (
-                    <TableCell fs="14px" key={i}>
-                      {cell.render('Header')}
-                    </TableCell>
-                  ),
+      )}
+
+      {!loading && !noData && (
+        <div className="min-h-[385px]">
+          <table className="table w-full h-full" {...getTableProps()}>
+            <thead>
+              {headerGroups.map((headerGroup, i) => (
+                <tr
+                  className="border-b border-b-[#D5D5D519]"
+                  key={i}
+                  {...headerGroup.getHeaderGroupProps()}
+                >
+                  {headerGroup.headers.map(
+                    (column, i) =>
+                      column.render('show') && (
+                        <th
+                          className="bg-transparent text-[#696969] text-[10px] font-normal"
+                          key={i}
+                          {...column.getHeaderProps()}
+                        >
+                          {column.render('Header')}
+                        </th>
+                      ),
+                  )}
+                </tr>
+              ))}
+            </thead>
+            <tbody {...getTableBodyProps()}>
+              {!page.length && (
+                <tr className="bg-transparent text-[#D2D2D2] text-sm">
+                  <td
+                    className="bg-transparent text-center py-[100px] text-[#696969] space-y-4"
+                    colSpan={5}
+                  >
+                    <svg
+                      className="m-auto"
+                      fill="none"
+                      height="40"
+                      viewBox="0 0 32 40"
+                      width="32"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M27.202 4.35355L27.2113 4.36285L27.2211 4.37165L31.5 8.22268V39.5H0.5V0.5H23.3484L27.202 4.35355Z"
+                        stroke="white"
+                        strokeOpacity="0.6"
+                      />
+                      <path d="M7 14H25" stroke="white" strokeOpacity="0.6" />
+                      <path d="M7 19H25" stroke="white" strokeOpacity="0.6" />
+                      <path d="M7 24H25" stroke="white" strokeOpacity="0.6" />
+                      <path d="M7 29H25" stroke="white" strokeOpacity="0.6" />
+                    </svg>
+                    <div className="text-base">No orders placed yet</div>
+                  </td>
+                </tr>
               )}
-            </RowHead>
-            <TBody>
               {page.map((row, i) => {
                 prepareRow(row)
                 return (
-                  <RowLink
-                    columns={'85px 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 40px'}
+                  <tr
+                    className="bg-transparent text-[#D2D2D2] text-sm"
                     key={i}
-                    to={row.original['url'] ? row.original['url'] : '#'}
+                    {...row.getRowProps()}
                   >
-                    {row.cells.map((cell, j) => {
+                    {row.cells.map((cell, i) => {
                       return (
                         cell.render('show') && (
-                          <TableCell key={j}>
-                            <span>
-                              {cell.column.Header === 'Selling' || cell.column.Header === 'Buying'
-                                ? cell.value.slice(0, 7)
-                                : cell.value}
-                            </span>
-                            <span>{cell.render('Header')}</span>
-                          </TableCell>
+                          <td className="bg-transparent" key={i} {...cell.getCellProps()}>
+                            {cell.render('Cell')}
+                          </td>
                         )
                       )
                     })}
-                  </RowLink>
+                  </tr>
                 )
               })}
-            </TBody>
-            <Pagination>
-              <PaginationBlock>
-                <PaginationText>Items per page</PaginationText>{' '}
-                <DropdownPagination
-                  dropdownButtonContent={
-                    <PaginationDropdownButton>{pageSize} ▼</PaginationDropdownButton>
-                  }
-                  dropdownDirection={DropdownDirection.upwards}
-                  dropdownPosition={DropdownPosition.right}
-                  items={[5, 10, 20, 30].map((pageSize) => (
-                    <PaginationItem
-                      key={pageSize}
-                      onClick={() => {
-                        setPageSize(Number(pageSize))
-                      }}
-                    >
-                      {pageSize}
-                    </PaginationItem>
-                  ))}
-                />
-              </PaginationBlock>
-              <PaginationBreak>|</PaginationBreak>
-              <PaginationBlock>
-                <PaginationText>
-                  {pageIndex + 1 === 1 ? 1 : pageIndex * pageSize + 1} -{' '}
-                  {rows.length < (pageIndex + 1) * pageSize
-                    ? rows.length
-                    : (pageIndex + 1) * pageSize}{' '}
-                  of {rows.length} auctions
-                </PaginationText>{' '}
-                <PaginationButton disabled={!canPreviousPage} onClick={() => handlePrevPage()}>
-                  <ChevronLeft />
-                </PaginationButton>
-                <PaginationButton disabled={!canNextPage} onClick={() => handleNextPage()}>
-                  <ChevronRight />
-                </PaginationButton>
-              </PaginationBlock>
-            </Pagination>
-          </Table>
-        </>
+            </tbody>
+          </table>
+
+          <Pagination>
+            <PaginationBlock>
+              <PaginationText>Items per page</PaginationText>{' '}
+              <DropdownPagination
+                dropdownButtonContent={
+                  <PaginationDropdownButton>{pageSize} ▼</PaginationDropdownButton>
+                }
+                items={[5, 10, 20, 30].map((pageSize) => (
+                  <PaginationItem
+                    key={pageSize}
+                    onClick={() => {
+                      setPageSize(Number(pageSize))
+                    }}
+                  >
+                    {pageSize}
+                  </PaginationItem>
+                ))}
+              />
+            </PaginationBlock>
+            <PaginationBreak>|</PaginationBreak>
+            <PaginationBlock>
+              <PaginationText>
+                {pageIndex + 1 === 1 ? 1 : pageIndex * pageSize + 1} -{' '}
+                {rows.length < (pageIndex + 1) * pageSize
+                  ? rows.length
+                  : (pageIndex + 1) * pageSize}{' '}
+                of {rows.length} auctions
+              </PaginationText>{' '}
+              <PaginationButton disabled={!canPreviousPage} onClick={() => handlePrevPage()}>
+                <ChevronLeft />
+              </PaginationButton>
+              <PaginationButton disabled={!canNextPage} onClick={() => handleNextPage()}>
+                <ChevronRight />
+              </PaginationButton>
+            </PaginationBlock>
+          </Pagination>
+        </div>
       )}
     </Wrapper>
   )
