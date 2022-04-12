@@ -3,7 +3,7 @@ import { css } from 'styled-components'
 export const reactTooltipCSS = css`
   .__react_component_tooltip.show.customTooltip {
     border-radius: 6px;
-    box-shadow: 0 0 24px 0 rgba(0, 0, 0, 0.7);
+    filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
     font-size: 12px;
     letter-spacing: 0.1em;
     font-weight: normal;
@@ -17,6 +17,7 @@ export const reactTooltipCSS = css`
     text-transform: none;
     white-space: normal;
     word-wrap: break-word;
+    color: #d2d2d2;
 
     p {
       margin: 0 0 10px;
@@ -27,12 +28,12 @@ export const reactTooltipCSS = css`
     }
 
     > a {
-      color: #fff;
+      color: #d2d2d2;
       text-decoration: underline;
     }
 
     > a:hover {
-      color: #fff;
+      color: #d2d2d2;
     }
 
     .multi-line {
