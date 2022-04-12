@@ -1,13 +1,13 @@
 import React from 'react'
 import styled from 'styled-components'
 
+import { ActiveStatusPill } from '../../components/auction/OrderbookTable'
 import AllAuctions from '../../components/auctions/AllAuctions'
-import { InlineLoading } from '../../components/common/InlineLoading'
 import { Tooltip } from '../../components/common/Tooltip'
 import { ChevronRightBig } from '../../components/icons/ChevronRightBig'
 import { Private } from '../../components/icons/Private'
 import { YesIcon } from '../../components/icons/YesIcon'
-import DoubleLogo from '../../components/token/DoubleLogo'
+import TokenLogo from '../../components/token/TokenLogo'
 import { useActiveWeb3React } from '../../hooks'
 import {
   AuctionInfo,
@@ -28,7 +28,7 @@ const CheckIcon = styled(YesIcon)`
 `
 
 const PrivateIcon = styled(Private)`
-  zoom: unset;
+  display: inline;
 `
 
 const Overview = () => {
@@ -83,19 +83,27 @@ const OverviewCommon = ({ allAuctions }: OverviewProps) => {
       ),
       selling:
         item.symbolAuctioningToken == 'WXDAI' ? 'XDAI' : item.symbolAuctioningToken.slice(0, 7),
-      status: new Date(item.endTimeTimestamp * 1000) > new Date() ? 'Ongoing' : 'Ended',
-      symbol: (
-        <DoubleLogo
-          auctioningToken={{
-            address: item.addressAuctioningToken,
-            symbol: item.symbolAuctioningToken,
-          }}
-          biddingToken={{
-            address: item.addressBiddingToken,
-            symbol: item.symbolBiddingToken,
-          }}
-          size="26px"
-        />
+      status: new Date(item.endTimeTimestamp * 1000) > new Date() ? <ActiveStatusPill /> : 'Ended',
+      issuer: (
+        <div className="flex flex-row items-center space-x-4">
+          <div className="flex">
+            <TokenLogo
+              size="30px"
+              square
+              token={{
+                address: item.addressBiddingToken,
+                symbol: item.symbolBiddingToken,
+              }}
+            />
+          </div>
+          <div className="flex flex-col">
+            <p className="text-[#EEEFEB] text-lg items-center inline-flex space-x-3">
+              <span>{item.symbolAuctioningToken} Auction</span>
+              {item.isPrivateAuction && <PrivateIcon />}
+            </p>
+            <p className="text-[#9F9F9F] text-sm uppercase">Uniswap convert 24 aug 2022 usdc</p>
+          </div>
+        </div>
       ),
       type: item.isPrivateAuction ? (
         <>
@@ -114,12 +122,7 @@ const OverviewCommon = ({ allAuctions }: OverviewProps) => {
     [allAuctions],
   )
 
-  return (
-    <>
-      {isLoading && <InlineLoading />}
-      {!isLoading && <AllAuctions tableData={tableData} />}
-    </>
-  )
+  return <AllAuctions loading={isLoading} tableData={tableData} />
 }
 
 export default Overview
