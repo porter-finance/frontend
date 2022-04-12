@@ -8,7 +8,7 @@ import { getLogger } from '../utils/logger'
 const logger = getLogger('useBondMaturityForAuction')
 
 const bondsQuery = gql`
-  query MaturityDateForAuction($auctionId: String!) {
+  query MaturityDateForAuction($auctionId: ID!) {
     auction(id: $auctionId) {
       bond {
         maturityDate
