@@ -2,7 +2,6 @@ import React from 'react'
 import styled from 'styled-components'
 
 import AllAuctions from '../../components/auctions/AllAuctions'
-import { FeaturedAuctions } from '../../components/auctions/FeaturedAuctions'
 import { InlineLoading } from '../../components/common/InlineLoading'
 import { Tooltip } from '../../components/common/Tooltip'
 import { ChevronRightBig } from '../../components/icons/ChevronRightBig'
@@ -15,7 +14,6 @@ import {
   useAllAuctionInfo,
   useAllAuctionInfoWithParticipation,
 } from '../../hooks/useAllAuctionInfos'
-import { useInterestingAuctionInfo } from '../../hooks/useInterestingAuctionDetails'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import { getChainName } from '../../utils/tools'
 
@@ -54,8 +52,6 @@ interface OverviewProps {
 
 const OverviewCommon = ({ allAuctions }: OverviewProps) => {
   const tableData = []
-
-  const featuredAuctions = useInterestingAuctionInfo()
 
   const allAuctionsSorted = allAuctions?.sort((a, b) => {
     const aStatus = new Date(a.endTimeTimestamp * 1000) > new Date() ? 'Ongoing' : 'Ended'
@@ -114,23 +110,14 @@ const OverviewCommon = ({ allAuctions }: OverviewProps) => {
   })
 
   const isLoading = React.useMemo(
-    () =>
-      featuredAuctions === undefined ||
-      featuredAuctions === null ||
-      allAuctions === undefined ||
-      allAuctions === null,
-    [allAuctions, featuredAuctions],
+    () => allAuctions === undefined || allAuctions === null,
+    [allAuctions],
   )
 
   return (
     <>
       {isLoading && <InlineLoading />}
-      {!isLoading && (
-        <>
-          <FeaturedAuctions featuredAuctions={featuredAuctions} />
-          <AllAuctions tableData={tableData} />
-        </>
-      )}
+      {!isLoading && <AllAuctions tableData={tableData} />}
     </>
   )
 }
