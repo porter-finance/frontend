@@ -188,7 +188,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   chart.tooltip.background.fill = am4core.color('#2C2C2C')
   chart.tooltip.background.stroke = am4core.color('#2C2C2C')
   chart.legend.itemContainers.template.tooltipHTML =
-    '<div class="text-xs rounded-md text-[#D2D2D2] bg-[#2C2C2C] border-none flex-wrap max-w-xs whitespace-normal">{dataContext.dummyData.description}</div>'
+    '<div class="text-[12px] tracking-[.1em] rounded-md text-[#D2D2D2] bg-[#2C2C2C] border-none flex-wrap max-w-[200px] whitespace-normal">{dataContext.dummyData.description}</div>'
 
   return chart
 }
@@ -229,7 +229,7 @@ export const drawInformation = (props: DrawInformation) => {
   askPricesSeries.tooltip.background.fill = am4core.color('#2C2C2C')
   askPricesSeries.tooltip.background.stroke = am4core.color('#2C2C2C')
   askPricesSeries.tooltipHTML =
-    '<div class="text-xs rounded-md text-[#D2D2D2] drop-shadow-lg bg-[#2C2C2C] border-none flex-wrap max-w-xs whitespace-normal">{text}</div>'
+    '<div class="text-[12px] tracking-[.1em] rounded-md text-[#D2D2D2] drop-shadow-lg bg-[#2C2C2C] border-none flex-wrap max-w-[200px] whitespace-normal">{text}</div>'
 
   askPricesSeries.adapter.add('tooltipText', (text, target) => {
     const valueX = target?.tooltipDataItem?.values?.valueX?.value ?? 0
@@ -253,7 +253,7 @@ Interest:  ${interest}
   bidPricesSeries.tooltip.background.fill = am4core.color('#2C2C2C')
   bidPricesSeries.tooltip.background.stroke = am4core.color('#2C2C2C')
   bidPricesSeries.tooltipHTML =
-    '<div class="text-xs rounded-md text-[#D2D2D2] drop-shadow-lg bg-[#2C2C2C] border-none flex-wrap max-w-xs whitespace-normal">{text}</div>'
+    '<div class="text-[12px] tracking-[.1em] rounded-md text-[#D2D2D2] drop-shadow-lg bg-[#2C2C2C] border-none flex-wrap max-w-[200px] whitespace-normal">{text}</div>'
   bidPricesSeries.adapter.add('tooltipText', (text, target) => {
     const valueX = target?.tooltipDataItem?.values?.valueX?.value ?? 0
     const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0

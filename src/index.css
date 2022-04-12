@@ -104,3 +104,7 @@ svg text tspan  {
     letter-spacing: 0.06em;
     color: #9F9F9F;
 }
+
+g[role="tooltip"] {
+    @apply ease-in-out duration-300;
+}
