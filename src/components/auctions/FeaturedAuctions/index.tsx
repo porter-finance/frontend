@@ -2,8 +2,6 @@ import React, { HTMLAttributes } from 'react'
 import styled from 'styled-components'
 
 import { AuctionInfo } from '../../../hooks/useAllAuctionInfos'
-import { InfoIcon } from '../../icons/InfoIcon'
-import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponents/EmptyContent'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
 import AuctionInfoCard from '../AuctionInfoCard'
 
@@ -47,14 +45,8 @@ export const FeaturedAuctions: React.FC<Props> = (props) => {
   return (
     <Wrapper {...restProps}>
       <PageTitle as="h2" className="featuredAuctionsTitle">
-        Featured Auctions
+        Offerings
       </PageTitle>
-      {featuredAuctions && featuredAuctions.length === 0 && (
-        <EmptyContentWrapper>
-          <InfoIcon />
-          <EmptyContentText>No featured auctions.</EmptyContentText>
-        </EmptyContentWrapper>
-      )}
       {auctions && auctions.length > 0 && (
         <Row className="mt-5">
           {auctions.map((auction, index) => (
