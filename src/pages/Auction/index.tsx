@@ -53,28 +53,40 @@ export const LoadingBox = ({ height }) => (
   />
 )
 
-const LoadingAuctionPage = () => (
-  <main className="pb-8 px-0 mt-20">
+export const TwoGridPage = ({ hasHeader = true, leftChildren, rightChildren }) => (
+  <main className={`pb-8 px-0 ${!hasHeader && 'mt-20'}`}>
     {/* Main 3 column grid */}
     <div className="grid grid-cols-1 gap-4 items-start lg:grid-cols-3 lg:gap-8 pt-6 pb-32">
       {/* Left column */}
       <div className="grid grid-cols-1 gap-4 lg:col-span-2">
-        <section aria-labelledby="section-1-title">
-          <LoadingBox height={489} />
-          <LoadingBox height={579} />
-          <LoadingBox height={521} />
-        </section>
+        <section aria-labelledby="section-1-title">{leftChildren}</section>
       </div>
 
       {/* Right column */}
       <div className="grid grid-cols-1 gap-4">
-        <section aria-labelledby="section-2-title">
-          <LoadingBox height={404} />
-          <LoadingBox height={223} />
-        </section>
+        <section aria-labelledby="section-2-title">{rightChildren}</section>
       </div>
     </div>
   </main>
+)
+
+const LoadingAuctionPage = () => (
+  <TwoGridPage
+    hasHeader={false}
+    leftChildren={
+      <>
+        <LoadingBox height={489} />
+        <LoadingBox height={579} />
+        <LoadingBox height={521} />
+      </>
+    }
+    rightChildren={
+      <>
+        <LoadingBox height={404} />
+        <LoadingBox height={223} />
+      </>
+    }
+  />
 )
 
 const Auction: React.FC = () => {

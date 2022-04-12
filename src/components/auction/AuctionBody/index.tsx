@@ -2,6 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
+import { TwoGridPage } from '../../../pages/Auction'
 import { AuctionState, DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import TokenLogo from '../../token/TokenLogo'
@@ -126,50 +127,44 @@ const AuctionBody = (props: AuctionBodyProps) => {
   return (
     <>
       {auctionStarted && (
-        <main className="pb-8 px-0">
-          {/* Main 3 column grid */}
-          <div className="grid grid-cols-1 gap-4 items-start lg:grid-cols-3 lg:gap-8 pt-6 pb-32">
-            {/* Left column */}
-            <div className="grid grid-cols-1 gap-4 lg:col-span-2">
-              <section aria-labelledby="section-1-title">
-                <AuctionDetails
+        <TwoGridPage
+          leftChildren={
+            <>
+              <AuctionDetails
+                auctionIdentifier={auctionIdentifier}
+                derivedAuctionInfo={derivedAuctionInfo}
+              />
+
+              {graphInfo?.isSellingPorterBond && <BondCard graphInfo={graphInfo} />}
+
+              <OrderBookContainer
+                auctionIdentifier={auctionIdentifier}
+                auctionStarted={auctionStarted}
+                auctionState={auctionState}
+                derivedAuctionInfo={derivedAuctionInfo}
+              />
+            </>
+          }
+          rightChildren={
+            <>
+              {(auctionState === AuctionState.ORDER_PLACING ||
+                auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && (
+                <OrderPlacement
                   auctionIdentifier={auctionIdentifier}
                   derivedAuctionInfo={derivedAuctionInfo}
                 />
-
-                {graphInfo?.isSellingPorterBond && <BondCard graphInfo={graphInfo} />}
-
-                <OrderBookContainer
+              )}
+              {(auctionState === AuctionState.CLAIMING ||
+                auctionState === AuctionState.PRICE_SUBMISSION) && (
+                <Claimer
                   auctionIdentifier={auctionIdentifier}
-                  auctionStarted={auctionStarted}
-                  auctionState={auctionState}
                   derivedAuctionInfo={derivedAuctionInfo}
                 />
-              </section>
-            </div>
-
-            {/* Right column */}
-            <div className="grid grid-cols-1 gap-4">
-              <section aria-labelledby="section-2-title">
-                {(auctionState === AuctionState.ORDER_PLACING ||
-                  auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && (
-                  <OrderPlacement
-                    auctionIdentifier={auctionIdentifier}
-                    derivedAuctionInfo={derivedAuctionInfo}
-                  />
-                )}
-                {(auctionState === AuctionState.CLAIMING ||
-                  auctionState === AuctionState.PRICE_SUBMISSION) && (
-                  <Claimer
-                    auctionIdentifier={auctionIdentifier}
-                    derivedAuctionInfo={derivedAuctionInfo}
-                  />
-                )}
-                <WarningCard />
-              </section>
-            </div>
-          </div>
-        </main>
+              )}
+              <WarningCard />
+            </>
+          }
+        />
       )}
       {auctionState === AuctionState.NOT_YET_STARTED && <AuctionNotStarted />}
     </>
