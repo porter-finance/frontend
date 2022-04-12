@@ -8,12 +8,11 @@ import {
   useGetAuctionProceeds,
 } from '../../../hooks/useClaimOrderCallback'
 import { useParticipatingAuctionBids } from '../../../hooks/useParticipatingAuctionBids'
+import { LoadingBox } from '../../../pages/Auction'
 import { useWalletModalToggle } from '../../../state/application/hooks'
 import { DerivedAuctionInfo, useDerivedClaimInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { getFullTokenDisplay, getTokenDisplay } from '../../../utils'
-import { InlineLoading } from '../../common/InlineLoading'
-import { SpinnerSize } from '../../common/Spinner'
 import { Tooltip } from '../../common/Tooltip'
 import { FieldRowLabelStyled } from '../../form/PriceInputPanel'
 import ClaimConfirmationModal from '../../modals/ClaimConfirmationModal'
@@ -154,94 +153,93 @@ const Claimer: React.FC<Props> = (props) => {
     return <ClaimDisabled />
   }
 
+  if (isLoading) {
+    return <LoadingBox height={342} />
+  }
+
   return (
     <div className="card card-bordered border-[#404EEDA4]">
       <div className="card-body">
         <h2 className="card-title">Claim bid funds and bonds</h2>
         <Wrapper>
-          {isLoading && <InlineLoading size={SpinnerSize.small} />}
-          {!isLoading && (
-            <>
-              <div className="mb-7">
-                <TokenItem>
-                  <Text className="text-base text-white">
-                    {claimableBidFunds ? `${claimableBidFunds.toSignificant(6)}` : `0.00`}
-                  </Text>
-                  <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#2C2C2C] rounded-full p-1 px-2">
-                    {biddingToken.address && (
-                      <TokenLogo
-                        size={'16px'}
-                        token={{ address: biddingToken.address, symbol: biddingToken.symbol }}
-                      />
-                    )}
-                    {biddingToken && biddingToken.symbol && (
-                      <FieldRowTokenSymbol>
-                        {getTokenDisplay(biddingToken, chainId)}
-                      </FieldRowTokenSymbol>
-                    )}
-                  </FieldRowToken>
-                </TokenItem>
+          <div className="mb-7">
+            <TokenItem>
+              <Text className="text-base text-white">
+                {claimableBidFunds ? `${claimableBidFunds.toSignificant(6)}` : `0.00`}
+              </Text>
+              <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#2C2C2C] rounded-full p-1 px-2">
+                {biddingToken.address && (
+                  <TokenLogo
+                    size={'16px'}
+                    token={{ address: biddingToken.address, symbol: biddingToken.symbol }}
+                  />
+                )}
+                {biddingToken && biddingToken.symbol && (
+                  <FieldRowTokenSymbol>
+                    {getTokenDisplay(biddingToken, chainId)}
+                  </FieldRowTokenSymbol>
+                )}
+              </FieldRowToken>
+            </TokenItem>
 
-                <FieldRowLabelStyled className="space-x-1">
-                  <span>Unfilled bid funds</span>
-                  <Tooltip text="Unfilled bid funds tooltip" />
-                </FieldRowLabelStyled>
+            <FieldRowLabelStyled className="space-x-1">
+              <span>Unfilled bid funds</span>
+              <Tooltip text="Unfilled bid funds tooltip" />
+            </FieldRowLabelStyled>
 
-                <div className="divider" />
+            <div className="divider" />
 
-                <TokenItem>
-                  <Text className="text-base text-white">
-                    {claimableBonds ? `${claimableBonds.toSignificant(6)}` : `0.00`}
-                  </Text>
-                  <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#2C2C2C] rounded-full p-1 px-2">
-                    {auctioningToken.address && (
-                      <TokenLogo
-                        size={'16px'}
-                        token={{ address: auctioningToken.address, symbol: auctioningToken.symbol }}
-                      />
-                    )}
-                    {auctioningToken && auctioningToken.symbol && (
-                      <FieldRowTokenSymbol>
-                        {getTokenDisplay(auctioningToken, chainId)}
-                      </FieldRowTokenSymbol>
-                    )}
-                  </FieldRowToken>
-                </TokenItem>
+            <TokenItem>
+              <Text className="text-base text-white">
+                {claimableBonds ? `${claimableBonds.toSignificant(6)}` : `0.00`}
+              </Text>
+              <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#2C2C2C] rounded-full p-1 px-2">
+                {auctioningToken.address && (
+                  <TokenLogo
+                    size={'16px'}
+                    token={{ address: auctioningToken.address, symbol: auctioningToken.symbol }}
+                  />
+                )}
+                {auctioningToken && auctioningToken.symbol && (
+                  <FieldRowTokenSymbol>
+                    {getTokenDisplay(auctioningToken, chainId)}
+                  </FieldRowTokenSymbol>
+                )}
+              </FieldRowToken>
+            </TokenItem>
 
-                <FieldRowLabelStyled className="space-x-1">
-                  <span>Bonds purchased</span>
-                  <Tooltip text="Bonds purchased tooltip" />
-                </FieldRowLabelStyled>
-              </div>
-              {!account ? (
-                <ActionButton onClick={toggleWalletModal}>Connect wallet</ActionButton>
-              ) : (
-                <ActionButton
-                  disabled={isClaimButtonDisabled}
-                  onClick={() => {
-                    setShowConfirm(true)
-                    onClaimOrder()
-                  }}
-                >
-                  Claim funds
-                </ActionButton>
-              )}
-
-              {claimStatusString && (
-                <div className="mt-4 text-xs text-[#9F9F9F]">{claimStatusString}</div>
-              )}
-              <ClaimConfirmationModal
-                hash={txHash}
-                isOpen={showConfirm}
-                onDismiss={() => {
-                  resetModal()
-                  setShowConfirm(false)
-                }}
-                pendingConfirmation={pendingConfirmation}
-                pendingText={pendingText}
-              />
-            </>
+            <FieldRowLabelStyled className="space-x-1">
+              <span>Bonds purchased</span>
+              <Tooltip text="Bonds purchased tooltip" />
+            </FieldRowLabelStyled>
+          </div>
+          {!account ? (
+            <ActionButton onClick={toggleWalletModal}>Connect wallet</ActionButton>
+          ) : (
+            <ActionButton
+              disabled={isClaimButtonDisabled}
+              onClick={() => {
+                setShowConfirm(true)
+                onClaimOrder()
+              }}
+            >
+              Claim funds
+            </ActionButton>
           )}
+
+          {claimStatusString && (
+            <div className="mt-4 text-xs text-[#9F9F9F]">{claimStatusString}</div>
+          )}
+          <ClaimConfirmationModal
+            hash={txHash}
+            isOpen={showConfirm}
+            onDismiss={() => {
+              resetModal()
+              setShowConfirm(false)
+            }}
+            pendingConfirmation={pendingConfirmation}
+            pendingText={pendingText}
+          />
         </Wrapper>
       </div>
     </div>
