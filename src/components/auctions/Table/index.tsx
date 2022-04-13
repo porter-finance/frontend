@@ -202,6 +202,7 @@ interface Props {
   loading: boolean
   title: string
   columns: any[]
+  emptyActionClass?: string
   emptyActionText: string
   emptyDescription: string
   emptyActionClick?: () => void
@@ -212,6 +213,7 @@ interface Props {
 const Table = ({
   columns,
   data,
+  emptyActionClass,
   emptyActionClick,
   emptyActionText,
   emptyDescription,
@@ -344,7 +346,10 @@ const Table = ({
                 >
                   <div className="flex justify-center space-x-4 opacity-60">{emptyLogo}</div>
                   <div className="text-base text-[#696969]">{emptyDescription}</div>
-                  <ActionButton className="w-[236px] h-[41px]" onClick={emptyActionClick}>
+                  <ActionButton
+                    className={`!w-[236px] !h-[41px] ${emptyActionClass}`}
+                    onClick={emptyActionClick}
+                  >
                     {emptyActionText}
                   </ActionButton>
                 </td>
