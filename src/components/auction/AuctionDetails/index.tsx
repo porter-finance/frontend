@@ -17,8 +17,6 @@ import { showChartsInverted } from '../../../utils/prices'
 import { AuctionTimer } from '../AuctionTimer'
 import { ExtraDetailsItem, Props as ExtraDetailsItemProps } from '../ExtraDetailsItem'
 
-const Timer = styled(AuctionTimer)``
-
 const TokenValue = styled.span`
   line-height: 1.2;
   display: flex;
@@ -195,7 +193,14 @@ const AuctionDetails = (props: Props) => {
     <div className="card">
       <div className="card-body">
         <h2 className="card-title">Auction information</h2>
-        <Timer derivedAuctionInfo={derivedAuctionInfo} />
+        <AuctionTimer
+          auctionState={derivedAuctionInfo?.auctionState}
+          endDate={derivedAuctionInfo?.auctionEndDate}
+          endText="End date"
+          startDate={derivedAuctionInfo?.auctionStartDate}
+          startText="Start date"
+          text={'Time until end'}
+        />
 
         <div className="grid gap-x-12 gap-y-8 grid-cols-1 pt-12 md:grid-cols-3">
           {extraDetails.map((item, index) => (
