@@ -65,7 +65,7 @@ const LinearBorder = () => (
 
 export interface Props {
   progress?: string
-  showEmptyProgressColumn?: boolean
+  show?: boolean
   title: string
   tooltip?: string
   bordered?: boolean
@@ -76,27 +76,28 @@ export interface Props {
 export const ExtraDetailsItem: React.FC<Props> = ({
   bordered,
   progress,
-  showEmptyProgressColumn,
+  show = true,
   title,
   tooltip,
   url,
   value,
   ...restProps
-}) => (
-  <div className="col-span-1" {...restProps}>
-    <div className="space-y-2 overflow-hidden">
-      <Value>
-        <ValueText className="overflow-hidden overflow-ellipsis">{value || 'Unknown'}</ValueText>
-        {url && <Link href={url} />}
-      </Value>
-      <Title>
-        <TitleText className="text">{title}</TitleText>
-        {tooltip && <Tooltip text={tooltip} />}
-      </Title>
-    </div>
+}) =>
+  show && (
+    <div className="col-span-1" {...restProps}>
+      <div className="space-y-2 overflow-hidden">
+        <Value>
+          <ValueText className="overflow-hidden overflow-ellipsis">{value || 'Unknown'}</ValueText>
+          {url && <Link href={url} />}
+        </Value>
+        <Title>
+          <TitleText className="text">{title}</TitleText>
+          {tooltip && <Tooltip text={tooltip} />}
+        </Title>
+      </div>
 
-    <div className={`mt-5 ${!bordered && 'border border-[#222222]'}`}>
-      {bordered && <LinearBorder />}
+      <div className={`mt-5 ${!bordered && 'border border-[#222222]'}`}>
+        {bordered && <LinearBorder />}
+      </div>
     </div>
-  </div>
-)
+  )
