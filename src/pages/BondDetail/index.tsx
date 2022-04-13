@@ -44,11 +44,13 @@ const Bond: React.FC = () => {
         title: 'Collateral tokens',
         value: `${data?.collateralToken}`,
         tooltip: 'Tooltip',
+        show: data?.type === 'convert',
       },
       {
         title: 'Convertible tokens',
         value: `${data?.paymentToken}`,
         tooltip: 'Tooltip',
+        show: data?.type === 'convert',
       },
       {
         title: 'Estimated Value | APY',
@@ -65,6 +67,7 @@ const Bond: React.FC = () => {
         value: '25 USDC/UNI',
         tooltip: 'Tooltip',
         bordered: true,
+        show: data?.type === 'convert',
       },
     ],
     [data],
