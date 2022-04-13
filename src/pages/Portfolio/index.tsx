@@ -6,14 +6,13 @@ import dayjs from 'dayjs'
 import { ReactComponent as AuctionsIcon } from '../../assets/svg/auctions.svg'
 import { ReactComponent as ConvertIcon } from '../../assets/svg/convert.svg'
 import { ReactComponent as DividerIcon } from '../../assets/svg/divider.svg'
-import { ReactComponent as SimpleIcon } from '../../assets/svg/simple.svg'
 import { ReactComponent as WalletIcon } from '../../assets/svg/wallet.svg'
 import { ActiveStatusPill } from '../../components/auction/OrderbookTable'
 import Table from '../../components/auctions/Table'
 import TokenLogo from '../../components/token/TokenLogo'
 import { useBondsPortfolio } from '../../hooks/useBondsPortfolio'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
-import { GhostButton } from '../Auction'
+import { ConvertButtonOutline, SimpleButtonOutline } from '../Auction'
 
 const GlobalStyle = createGlobalStyle`
   .siteHeader {
@@ -143,12 +142,8 @@ const Portfolio = () => {
               All
             </div>
             <DividerIcon />
-            <GhostButton>
-              <ConvertIcon height={12.57} width={12.57} /> <span className="text-xs">Convert</span>
-            </GhostButton>
-            <GhostButton>
-              <SimpleIcon height={12.57} width={12.57} /> <span className="text-xs">Simple</span>
-            </GhostButton>
+            <ConvertButtonOutline />
+            <SimpleButtonOutline />
           </>
         }
         loading={isLoading}
