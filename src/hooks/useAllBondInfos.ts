@@ -15,6 +15,7 @@ export interface BondInfo {
   collateralToken: string
   collateralRatio: number
   convertibleRatio: number
+  maxSupply: number
 }
 
 const bondsQuery = gql`
@@ -30,6 +31,7 @@ const bondsQuery = gql`
       collateralToken
       collateralRatio
       convertibleRatio
+      maxSupply
     }
   }
 `
