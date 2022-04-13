@@ -71,7 +71,7 @@ export const TwoGridPage = ({ hasHeader = true, leftChildren, rightChildren }) =
   </main>
 )
 
-const LoadingAuctionPage = () => (
+export const LoadingTwoGrid = () => (
   <TwoGridPage
     hasHeader={false}
     leftChildren={
@@ -142,7 +142,7 @@ const Auction: React.FC = () => {
     new Date(derivedAuctionInfo?.auctionEndDate * 1000) > new Date() ? 'Ongoing' : 'Ended'
 
   if (isLoading) {
-    return <LoadingAuctionPage />
+    return <LoadingTwoGrid />
   }
 
   if (invalidAuction) {
