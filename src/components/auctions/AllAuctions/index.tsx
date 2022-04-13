@@ -1,17 +1,15 @@
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
-import { useFilters, useGlobalFilter, usePagination, useTable } from 'react-table'
+import { useGlobalFilter, usePagination, useTable } from 'react-table'
 
 import { AuctionButtonOutline, LoadingBox, OTCButtonOutline } from '../../../pages/Auction'
-import { ButtonSelect } from '../../buttons/ButtonSelect'
-import { Dropdown, DropdownItem } from '../../common/Dropdown'
+import { Dropdown } from '../../common/Dropdown'
 import { ChevronRight } from '../../icons/ChevronRight'
 import { Delete } from '../../icons/Delete'
-import { InfoIcon } from '../../icons/InfoIcon'
 import { Magnifier } from '../../icons/Magnifier'
 import { Cell } from '../../pureStyledComponents/Cell'
-import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponents/EmptyContent'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
 
 const Wrapper = styled.div`
@@ -224,6 +222,7 @@ const columns = [
     align: 'flex-start',
     show: true,
     style: { height: '100%', justifyContent: 'center' },
+    filter: 'searchInTags',
   },
   {
     Header: 'Offering',
@@ -263,6 +262,7 @@ const columns = [
     align: 'flex-start',
     show: true,
     style: {},
+    filter: 'searchInTags',
   },
   {
     Header: '',
@@ -274,9 +274,7 @@ const columns = [
 ]
 
 const AllAuctions = ({ loading, tableData, ...restProps }: Props) => {
-  const data = useMemo(() => Object.values(tableData), [tableData])
-  const [currentDropdownFilter, setCurrentDropdownFilter] = useState<string | undefined>()
-
+  const navigate = useNavigate()
   const searchValue = React.useCallback((element: any, filterValue: string) => {
     const isReactElement = element && element.props && element.props.children
     const isString = !isReactElement && typeof element === 'string'
@@ -300,18 +298,11 @@ const AllAuctions = ({ loading, tableData, ...restProps }: Props) => {
       : String(value).toLowerCase().includes(String(filterValue).toLowerCase())
   }, [])
 
-  const filterTypes = React.useMemo(
-    () => ({
-      searchInTags: (rows, id, filterValue) =>
-        rows.filter((row) => searchValue(row.values[id], filterValue)),
-    }),
-    [searchValue],
-  )
-
   const globalFilter = React.useMemo(
     () => (rows, columns, filterValue) =>
       rows.filter((row) => {
         let searchResult = false
+        console.log(row)
         for (const column of columns) {
           searchResult = searchResult || searchValue(row.values[column], filterValue)
         }
@@ -331,75 +322,21 @@ const AllAuctions = ({ loading, tableData, ...restProps }: Props) => {
     prepareRow,
     previousPage,
     rows,
-    setAllFilters,
-    setFilter,
     setGlobalFilter,
     setPageSize,
     state,
   } = useTable(
     {
       columns,
-      data,
-      filterTypes,
+      data: tableData,
       globalFilter,
       initialState: { pageIndex: 0, pageSize: 10 },
     },
     useGlobalFilter,
-    useFilters,
     usePagination,
   )
 
   const sectionHead = useRef(null)
-
-  const updateFilter = (column?: string | undefined, value?: string | undefined) => {
-    setAllFilters([])
-    if (column && value) {
-      setFilter(column, value)
-    }
-  }
-
-  const filterOptions = [
-    {
-      onClick: updateFilter,
-      title: 'All',
-    },
-    {
-      column: 'participation',
-      onClick: updateFilter,
-      title: 'Participation "Yes"',
-      value: 'yes',
-    },
-    {
-      column: 'participation',
-      onClick: updateFilter,
-      title: 'Participation "No"',
-      value: 'no',
-    },
-    {
-      column: 'status',
-      onClick: updateFilter,
-      title: 'Ongoing',
-      value: 'ongoing',
-    },
-    {
-      column: 'status',
-      onClick: updateFilter,
-      title: 'Ended',
-      value: 'ended',
-    },
-    {
-      column: 'type',
-      onClick: updateFilter,
-      title: 'Private',
-      value: 'private',
-    },
-    {
-      column: 'type',
-      onClick: updateFilter,
-      title: 'Public',
-      value: 'public',
-    },
-  ]
 
   const { pageIndex, pageSize } = state
   const noAuctions = tableData.length === 0
@@ -423,29 +360,7 @@ const AllAuctions = ({ loading, tableData, ...restProps }: Props) => {
           <SectionTitle>Offerings</SectionTitle>
 
           <div className="flex flex-row space-x-4 items-center">
-            <Dropdown
-              dropdownButtonContent={
-                <ButtonSelect
-                  content={
-                    <span>
-                      {!currentDropdownFilter ? filterOptions[0].title : currentDropdownFilter}
-                    </span>
-                  }
-                />
-              }
-              items={filterOptions.map((item, index) => (
-                <DropdownItem
-                  key={index}
-                  onClick={() => {
-                    item.onClick(item.column, item.value)
-                    setCurrentDropdownFilter(item.title)
-                  }}
-                >
-                  {item.title}
-                </DropdownItem>
-              ))}
-            />
-
+            <div className="rounded-full bg-black px-4 py-2 text-white text-xs uppercase">All</div>
             <svg
               fill="none"
               height="16"
@@ -455,7 +370,6 @@ const AllAuctions = ({ loading, tableData, ...restProps }: Props) => {
             >
               <path d="M1 0V16" opacity="0.5" stroke="white" />
             </svg>
-
             <AuctionButtonOutline plural />
             <OTCButtonOutline />
           </div>
@@ -487,17 +401,7 @@ const AllAuctions = ({ loading, tableData, ...restProps }: Props) => {
 
       {loading && <LoadingBox height={600} />}
 
-      {!loading && noData && (
-        <EmptyContentWrapper>
-          <InfoIcon />
-          <EmptyContentText>
-            {noAuctions && 'No auctions.'}
-            {noAuctionsFound && 'No auctions found.'}
-          </EmptyContentText>
-        </EmptyContentWrapper>
-      )}
-
-      {!loading && !noData && (
+      {!loading && (
         <div className="min-h-[385px]">
           <table className="table w-full h-full" {...getTableProps()}>
             <thead>
@@ -527,7 +431,7 @@ const AllAuctions = ({ loading, tableData, ...restProps }: Props) => {
                 <tr className="bg-transparent text-[#D2D2D2] text-sm">
                   <td
                     className="bg-transparent text-center py-[100px] text-[#696969] space-y-4"
-                    colSpan={5}
+                    colSpan={6}
                   >
                     <svg
                       className="m-auto"
@@ -547,7 +451,7 @@ const AllAuctions = ({ loading, tableData, ...restProps }: Props) => {
                       <path d="M7 24H25" stroke="white" strokeOpacity="0.6" />
                       <path d="M7 29H25" stroke="white" strokeOpacity="0.6" />
                     </svg>
-                    <div className="text-base">No orders placed yet</div>
+                    <div className="text-base">No auctions found</div>
                   </td>
                 </tr>
               )}
@@ -555,8 +459,9 @@ const AllAuctions = ({ loading, tableData, ...restProps }: Props) => {
                 prepareRow(row)
                 return (
                   <tr
-                    className="bg-transparent text-[#D2D2D2] text-sm"
+                    className="bg-transparent text-[#D2D2D2] text-sm cursor-pointer hover"
                     key={i}
+                    onClick={() => navigate(row.original.url)}
                     {...row.getRowProps()}
                   >
                     {row.cells.map((cell, i) => {
