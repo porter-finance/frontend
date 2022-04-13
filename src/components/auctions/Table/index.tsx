@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 
 import { useGlobalFilter, usePagination, useTable } from 'react-table'
 
-import { AuctionButtonOutline, LoadingBox, OTCButtonOutline } from '../../../pages/Auction'
+import { LoadingBox } from '../../../pages/Auction'
 import { ActionButton } from '../../auction/Claimer'
 import { Dropdown } from '../../common/Dropdown'
 import { ChevronRight } from '../../icons/ChevronRight'
@@ -207,6 +207,7 @@ interface Props {
   emptyDescription: string
   emptyActionClick?: () => void
   emptyLogo: ReactElement
+  legendIcons: ReactElement
 }
 
 const Table = ({
@@ -216,6 +217,7 @@ const Table = ({
   emptyActionText,
   emptyDescription,
   emptyLogo,
+  legendIcons,
   loading,
   title,
   ...restProps
@@ -272,20 +274,7 @@ const Table = ({
         <div className="flex flex-col space-y-4">
           <SectionTitle>{title}</SectionTitle>
 
-          <div className="flex flex-row space-x-4 items-center">
-            <div className="rounded-full bg-black px-4 py-2 text-white text-xs uppercase">All</div>
-            <svg
-              fill="none"
-              height="16"
-              viewBox="0 0 2 16"
-              width="2"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M1 0V16" opacity="0.5" stroke="white" />
-            </svg>
-            <AuctionButtonOutline plural />
-            <OTCButtonOutline />
-          </div>
+          <div className="flex flex-row space-x-4 items-center">{legendIcons}</div>
         </div>
 
         <div>
