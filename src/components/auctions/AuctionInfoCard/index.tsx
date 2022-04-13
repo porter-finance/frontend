@@ -211,7 +211,7 @@ const AuctionInfoCard: React.FC<Props> = (props) => {
   const auctionSymbolBiddingToken = auctionInfo.bond.symbol.slice(0, 7)
   const auctionSymbolAuctioningToken = auctionInfo.bond.collateralToken.slice(0, 7)
   return (
-    <Wrapper to={`/auctions/${auctionInfo.id}`} {...restProps}>
+    <Wrapper to={`/offerings/${auctionInfo.id}`} {...restProps}>
       <Top>
         <Tokens>
           {auctionSymbolAuctioningToken} / {auctionSymbolBiddingToken}

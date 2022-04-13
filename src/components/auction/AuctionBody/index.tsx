@@ -102,7 +102,7 @@ const BondCard = ({ graphInfo }) => {
           <button
             className="rounded-md !text-xs font-normal btn btn-sm btn-primary bg-[#532DBE]"
             onClick={() => {
-              navigate(`/bonds/${graphInfo?.bond?.id}`)
+              navigate(`/products/${graphInfo?.bond?.id}`)
             }}
           >
             More Details
