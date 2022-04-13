@@ -12,6 +12,7 @@ const bondsQuery = gql`
       id
       name
       symbol
+      type
       owner
       maturityDate
       paymentToken
