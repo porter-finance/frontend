@@ -38,6 +38,28 @@ const ActionPanel = styled.div`
   max-width: 300px;
 `
 
+const TokenInfo = ({ chainId, token, value }) => (
+  <div className="text-base text-white flex justify-between">
+    <div>{value}</div>
+    {token && (
+      <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#2C2C2C] rounded-full p-1 px-2">
+        {token.address && (
+          <TokenLogo
+            size={'16px'}
+            token={{
+              address: token.address,
+              symbol: token.symbol,
+            }}
+          />
+        )}
+        {token.symbol && (
+          <FieldRowTokenSymbol>{getTokenDisplay(token, chainId)}</FieldRowTokenSymbol>
+        )}
+      </FieldRowToken>
+    )}
+  </div>
+)
+
 const BondAction = ({
   actionType,
   overwriteBondId,
@@ -361,35 +383,22 @@ const BondAction = ({
 
         <div className="text-xs text-[12px] text-[#696969] space-y-6">
           {actionType === BondActions.Redeem && (
-            <>
-              <p>Redeemable for: {previewRedeemVal[0]} payment tokens</p>
-              <p>Redeemable for: {previewRedeemVal[1]} collateral tokens</p>
-            </>
+            <div className="space-y-4">
+              <TokenInfo chainId={chainId} token={paymentTokenInfo} value={previewRedeemVal[0]} />
+              <TokenInfo
+                chainId={chainId}
+                token={collateralTokenInfo}
+                value={previewRedeemVal[1]}
+              />
+
+              <p>Amount of assets to receive</p>
+            </div>
           )}
 
           {actionType === BondActions.Convert && (
-            <div className="space-y-2">
-              <div className="text-base text-white flex justify-between">
-                <div>{previewConvertVal}</div>
-                {collateralTokenInfo && (
-                  <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#2C2C2C] rounded-full p-1 px-2">
-                    {collateralTokenInfo.address && (
-                      <TokenLogo
-                        size={'16px'}
-                        token={{
-                          address: collateralTokenInfo.address,
-                          symbol: collateralTokenInfo.symbol,
-                        }}
-                      />
-                    )}
-                    {collateralTokenInfo.symbol && (
-                      <FieldRowTokenSymbol>
-                        {getTokenDisplay(collateralTokenInfo, chainId)}
-                      </FieldRowTokenSymbol>
-                    )}
-                  </FieldRowToken>
-                )}
-              </div>
+            <div className="space-y-4">
+              <TokenInfo chainId={chainId} token={collateralTokenInfo} value={previewConvertVal} />
+
               <p>Amount of assets to receive</p>
             </div>
           )}
