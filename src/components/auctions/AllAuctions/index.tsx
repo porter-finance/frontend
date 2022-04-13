@@ -13,7 +13,7 @@ import { Cell } from '../../pureStyledComponents/Cell'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
 
 const Wrapper = styled.div`
-  margin-top: -25px;
+  margin-top: -30px;
 `
 
 const SectionTitle = styled(PageTitle)`

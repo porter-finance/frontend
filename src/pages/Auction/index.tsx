@@ -80,9 +80,9 @@ export const LoadingBox = ({ height }) => (
 )
 
 export const TwoGridPage = ({ hasHeader = true, leftChildren, rightChildren }) => (
-  <main className={`pb-8 px-0 ${!hasHeader && 'mt-20'}`}>
+  <main className={`pb-8 px-0 ${!hasHeader ? 'mt-20' : ''}`}>
     {/* Main 3 column grid */}
-    <div className="grid grid-cols-1 gap-4 items-start lg:grid-cols-3 lg:gap-8 pt-6 pb-32">
+    <div className="grid grid-cols-1 gap-4 items-start lg:grid-cols-3 lg:gap-8 pb-32">
       {/* Left column */}
       <div className="grid grid-cols-1 gap-4 lg:col-span-2">
         <section aria-labelledby="section-1-title">{leftChildren}</section>
