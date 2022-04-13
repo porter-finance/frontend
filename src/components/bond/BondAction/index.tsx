@@ -19,11 +19,12 @@ import { useTokenPrice } from '../../../hooks/useTokenPrice'
 import { BondActions } from '../../../pages/BondDetail'
 import { useActivePopups } from '../../../state/application/hooks'
 import { useFetchTokenByAddress } from '../../../state/user/hooks'
-import { ChainId, EASY_AUCTION_NETWORKS } from '../../../utils'
+import { ChainId, EASY_AUCTION_NETWORKS, getTokenDisplay } from '../../../utils'
 import { Button } from '../../buttons/Button'
 import AmountInputPanel from '../../form/AmountInputPanel'
 import ConfirmationModal from '../../modals/ConfirmationModal'
-import { InfoType } from '../../pureStyledComponents/FieldRow'
+import { FieldRowToken, FieldRowTokenSymbol, InfoType } from '../../pureStyledComponents/FieldRow'
+import TokenLogo from '../../token/TokenLogo'
 
 const ActionButton = styled(Button)`
   flex-shrink: 0;
@@ -333,7 +334,7 @@ const BondAction = ({
 
   return (
     <ActionPanel>
-      <div className="space-y-4">
+      <div className="space-y-6">
         <AmountInputPanel
           balance={totalBalance}
           balanceString={actionType === BondActions.Mint && 'Available'}
@@ -357,12 +358,8 @@ const BondAction = ({
           value={bondsToRedeem}
           wrap={{ isWrappable: false, onClick: null }}
         />
-        <ActionButton disabled={isActionDisabled} onClick={doTheAction}>
-          {actionType === BondActions.Redeem && 'Redeem'}
-          {actionType === BondActions.Convert && 'Convert'}
-          {actionType === BondActions.Mint && 'Mint'}
-        </ActionButton>
-        <div>
+
+        <div className="text-xs text-[12px] text-[#696969] space-y-6">
           {actionType === BondActions.Redeem && (
             <>
               <p>Redeemable for: {previewRedeemVal[0]} payment tokens</p>
@@ -371,14 +368,43 @@ const BondAction = ({
           )}
 
           {actionType === BondActions.Convert && (
-            <p>Redeemable for: {previewConvertVal} collateral tokens </p>
+            <div className="space-y-2">
+              <div className="text-base text-white flex justify-between">
+                <div>{previewConvertVal}</div>
+                {collateralTokenInfo && (
+                  <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#2C2C2C] rounded-full p-1 px-2">
+                    {collateralTokenInfo.address && (
+                      <TokenLogo
+                        size={'16px'}
+                        token={{
+                          address: collateralTokenInfo.address,
+                          symbol: collateralTokenInfo.symbol,
+                        }}
+                      />
+                    )}
+                    {collateralTokenInfo.symbol && (
+                      <FieldRowTokenSymbol>
+                        {getTokenDisplay(collateralTokenInfo, chainId)}
+                      </FieldRowTokenSymbol>
+                    )}
+                  </FieldRowToken>
+                )}
+              </div>
+              <p>Amount of assets to receive</p>
+            </div>
           )}
+
+          <ActionButton disabled={isActionDisabled} onClick={doTheAction}>
+            {actionType === BondActions.Redeem && 'Redeem'}
+            {actionType === BondActions.Convert && 'Convert'}
+            {actionType === BondActions.Mint && 'Mint'}
+          </ActionButton>
 
           {actionType === BondActions.Mint && (
             <p>Minting for: {previewMintVal} collateral tokens </p>
           )}
 
-          <p>Collateral Token Price: ${price} </p>
+          <p className="mt-10">Collateral Token Price: ${price} </p>
         </div>
       </div>
 
