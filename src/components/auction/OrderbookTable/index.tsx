@@ -11,10 +11,6 @@ import { getTokenDisplay } from '../../../utils'
 import { calculateInterestRate } from '../../form/InterestRateInputPanel'
 import { Cell } from '../../pureStyledComponents/Cell'
 
-export interface Props {
-  tableData?: any[]
-}
-
 export const OverflowWrap = styled.div`
   max-width: 100%;
   flex-grow: 1;

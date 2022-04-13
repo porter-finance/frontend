@@ -6,10 +6,12 @@ import { ActiveStatusPill } from '../../components/auction/OrderbookTable'
 import AllAuctions from '../../components/auctions/AllAuctions'
 import { calculateInterestRate } from '../../components/form/InterestRateInputPanel'
 import TokenLogo from '../../components/token/TokenLogo'
+import { useActiveWeb3React } from '../../hooks'
 import { useAllAuctionInfo } from '../../hooks/useAllAuctionInfos'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 
 const OverviewCommon = () => {
+  const { chainId } = useActiveWeb3React()
   const allAuctions = useAllAuctionInfo()
   const tableData = []
 
@@ -17,6 +19,8 @@ const OverviewCommon = () => {
 
   allAuctions?.forEach((item) => {
     tableData.push({
+      id: item.id,
+      search: JSON.stringify(item),
       auctionId: `#${item.id}`,
       size: item.size,
       offering:
@@ -45,7 +49,7 @@ const OverviewCommon = () => {
           </div>
         </div>
       ),
-      url: `/auctions/${item.id}`,
+      url: `/auctions/${item.id}/${chainId}`,
     })
   })
 

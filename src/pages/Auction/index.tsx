@@ -12,7 +12,6 @@ import { useDerivedAuctionInfo } from '../../state/orderPlacement/hooks'
 import { RouteAuctionIdentifier, parseURL } from '../../state/orderPlacement/reducer'
 import { useTokenListState } from '../../state/tokenList/hooks'
 import { isAddress } from '../../utils'
-import { getChainName } from '../../utils/tools'
 
 const AuctionId = styled.span`
   align-items: center;
@@ -123,7 +122,6 @@ const Auction: React.FC = () => {
   const auctionIdentifier = parseURL(useParams<RouteAuctionIdentifier>())
   const derivedAuctionInfo = useDerivedAuctionInfo(auctionIdentifier)
   const { tokens } = useTokenListState()
-  const url = window.location.href
 
   const biddingTokenAddress = derivedAuctionInfo?.biddingToken?.address
   const auctioningTokenAddress = derivedAuctionInfo?.auctioningToken?.address
@@ -206,16 +204,7 @@ const Auction: React.FC = () => {
           <div>
             <h1 className="text-3xl text-white">{auctionSymbolAuctioningToken} Auction</h1>
             <p className="text-blue-100 text-sm font-medium">
-              {!derivedAuctionInfo?.graphInfo?.isSellingPorterBond ? (
-                <Network>
-                  <NetworkIconStyled />
-                  <NetworkName>Selling on {getChainName(auctionIdentifier.chainId)} -</NetworkName>
-                  <AuctionId>Auction Id #{auctionIdentifier.auctionId}</AuctionId>
-                  <CopyButton copyValue={url} title="Copy URL" />
-                </Network>
-              ) : (
-                derivedAuctionInfo?.graphInfo?.bond?.symbol
-              )}
+              {derivedAuctionInfo?.graphInfo?.bond?.symbol}
             </p>
           </div>
         </div>
