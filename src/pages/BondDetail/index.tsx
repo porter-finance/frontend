@@ -100,8 +100,9 @@ const Bond: React.FC = () => {
       <GlobalStyle />
       <div className="py-2 flex content-center justify-center md:justify-between flex-wrap items-end">
         <div className="flex flex-wrap items-center space-x-6">
-          <div className="hidden md:block">
+          <div className="hidden md:flex">
             <TokenLogo
+              size="60px"
               square
               token={{
                 address: data?.collateralToken,
@@ -150,13 +151,13 @@ const Bond: React.FC = () => {
         }
         rightChildren={
           <>
-            <div className="card">
+            <div className="card place-order-color">
               <div className="card-body">
                 <h2 className="card-title">Convert</h2>
                 <BondAction actionType={BondActions.Convert} />
               </div>
             </div>
-            <div className="card">
+            <div className="card place-order-color">
               <div className="card-body">
                 <h2 className="card-title">Redeem</h2>
                 <BondAction actionType={BondActions.Redeem} />
