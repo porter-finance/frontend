@@ -1,10 +1,9 @@
 import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import styled, { css } from 'styled-components'
 
+import { ReactComponent as AuctionsIcon } from '../../assets/svg/auctions.svg'
+import { ReactComponent as OTCIcon } from '../../assets/svg/otc.svg'
 import AuctionBody from '../../components/auction/AuctionBody'
-import { ButtonCopy } from '../../components/buttons/ButtonCopy'
-import { NetworkIcon } from '../../components/icons/NetworkIcon'
 import WarningModal from '../../components/modals/WarningModal'
 import TokenLogo from '../../components/token/TokenLogo'
 import useShowTopWarning from '../../hooks/useShowTopWarning'
@@ -13,62 +12,24 @@ import { RouteAuctionIdentifier, parseURL } from '../../state/orderPlacement/red
 import { useTokenListState } from '../../state/tokenList/hooks'
 import { isAddress } from '../../utils'
 
-const AuctionId = styled.span`
-  align-items: center;
-  display: flex;
-`
-
-const IconCSS = css`
-  height: 14px;
-  width: 14px;
-`
-
-const CopyButton = styled(ButtonCopy)`
-  ${IconCSS}
-  margin-left: 5px;
-`
-
-const Network = styled.span`
-  align-items: center;
-  display: flex;
-  margin-right: 5px;
-`
-
-const NetworkIconStyled = styled(NetworkIcon)`
-  ${IconCSS}
-`
-
-const NetworkName = styled.span`
-  margin-left: 8px;
-  margin-right: 2px;
-  text-transform: capitalize;
-`
-export const AuctionButtonOutline = ({ plural = false }) => (
+export const GhostButton = ({ children }) => (
   <span className="space-x-2 inline-flex items-center px-5 py-1.5 rounded-full bg-transparent text-white border-blue-100 border uppercase border-opacity-50 pointer-events-none">
-    <svg fill="none" height="14" viewBox="0 0 14 14" width="14" xmlns="http://www.w3.org/2000/svg">
-      <path
-        d="M6.70952 7.00007C6.70952 10.0191 4.30434 12.5204 1.21429 12.766V1.23413C4.30434 1.4797 6.70952 3.98105 6.70952 7.00007Z"
-        stroke="white"
-      />
-      <path
-        d="M7.29048 6.99993C7.29048 3.98091 9.69566 1.47956 12.7857 1.23399L12.7857 12.7659C9.69566 12.5203 7.29048 10.0189 7.29048 6.99993Z"
-        stroke="white"
-      />
-    </svg>
-    <span className="text-xs">Auction{plural && 's'}</span>
+    {children}
   </span>
 )
 
+export const AuctionButtonOutline = ({ plural = false }) => (
+  <GhostButton>
+    <AuctionsIcon height={12.57} width={12.57} />
+    <span className="text-xs">Auction{plural && 's'}</span>
+  </GhostButton>
+)
+
 export const OTCButtonOutline = () => (
-  <span className="space-x-2 inline-flex items-center px-5 py-1.5 rounded-full bg-transparent text-white border-blue-100 border uppercase border-opacity-50 pointer-events-none">
-    <svg fill="none" height="14" viewBox="0 0 14 14" width="14" xmlns="http://www.w3.org/2000/svg">
-      <path
-        d="M12.7858 12.7856L1.21434 12.7856L1.21434 6.33194L7.00005 1.37275L12.7858 6.33194L12.7858 12.7856Z"
-        stroke="white"
-      />
-    </svg>
+  <GhostButton>
+    <OTCIcon height={12.57} width={12.57} />
     <span className="text-xs">OTC</span>
-  </span>
+  </GhostButton>
 )
 
 // Strangely couldn't use tailwind h-[9px] or min-h- , had to specify style = manually
