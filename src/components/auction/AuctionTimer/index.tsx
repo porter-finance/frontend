@@ -5,7 +5,7 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import utc from 'dayjs/plugin/utc'
 
-import { AuctionState, DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
+import { AuctionState } from '../../../state/orderPlacement/hooks'
 import { calculateTimeLeft, calculateTimeProgress } from '../../../utils/tools'
 import { Tooltip } from '../../common/Tooltip'
 
@@ -72,36 +72,39 @@ const Blink = styled.span`
 `
 
 interface AuctionTimerProps {
-  derivedAuctionInfo: DerivedAuctionInfo
+  startDate: number
+  endDate: number
+  auctionState?: AuctionState
   loading?: boolean
+  text: string
+  startText: string
+  endText: string
 }
 
-export const AuctionTimer = (props: AuctionTimerProps) => {
-  const {
-    derivedAuctionInfo: { auctionState },
-    derivedAuctionInfo,
-    ...restProps
-  } = props
-  const [timeLeft, setTimeLeft] = React.useState(
-    calculateTimeLeft(derivedAuctionInfo?.auctionEndDate),
-  )
+export const AuctionTimer = ({
+  auctionState,
+  endDate,
+  endText,
+  startDate,
+  startText,
+  text,
+  ...restProps
+}: AuctionTimerProps) => {
+  const [timeLeft, setTimeLeft] = React.useState(calculateTimeLeft(endDate))
 
   React.useEffect(() => {
     const id = setInterval(() => {
-      setTimeLeft(calculateTimeLeft(derivedAuctionInfo?.auctionEndDate))
+      setTimeLeft(calculateTimeLeft(endDate))
     }, 1000)
     return () => {
       clearInterval(id)
     }
-  }, [derivedAuctionInfo?.auctionEndDate])
+  }, [endDate])
 
   const progress = React.useMemo(() => {
-    const progress = calculateTimeProgress(
-      derivedAuctionInfo?.auctionStartDate,
-      derivedAuctionInfo?.auctionEndDate,
-    )
+    const progress = calculateTimeProgress(startDate, endDate)
     return progress === 100 ? progress : 100 - progress
-  }, [derivedAuctionInfo])
+  }, [startDate, endDate])
 
   return (
     <div className="" {...restProps}>
@@ -110,7 +113,7 @@ export const AuctionTimer = (props: AuctionTimerProps) => {
         <div className="flex flex-col place-items-start space-y-1 mb-7">
           <Time>
             {timeLeft && timeLeft > -1 ? (
-              dayjs(derivedAuctionInfo?.auctionEndDate * 1000).toNow(true)
+              dayjs(endDate * 1000).toNow(true)
             ) : (
               <>
                 --
@@ -122,31 +125,31 @@ export const AuctionTimer = (props: AuctionTimerProps) => {
             )}
           </Time>
 
-          <DateTitle>Time until end</DateTitle>
+          <DateTitle>{text}</DateTitle>
         </div>
       )}
 
       <div className="flex justify-between mb-3">
         <DateValue className="uppercase">
-          {derivedAuctionInfo &&
-            dayjs(derivedAuctionInfo?.auctionStartDate * 1000)
+          {startDate &&
+            dayjs(startDate * 1000)
               .utc()
               .format('DD MMM YYYY HH:mm UTC')}
         </DateValue>
         <DateValue className="uppercase">
-          {derivedAuctionInfo &&
-            dayjs(derivedAuctionInfo?.auctionEndDate * 1000)
+          {endDate &&
+            dayjs(endDate * 1000)
               .utc()
               .format('DD MMM YYYY HH:mm UTC')}
         </DateValue>
       </div>
       <div className="flex justify-between mb-3">
         <DateTitle className="flex flex-row items-center space-x-2">
-          <span>Start date</span>
+          <span>{startText}</span>
           <Tooltip text="Tooltip text" />
         </DateTitle>
         <DateTitle className="flex flex-row items-center space-x-2">
-          <span>End date</span>
+          <span>{endText}</span>
           <Tooltip text="Tooltip text" />
         </DateTitle>
       </div>
