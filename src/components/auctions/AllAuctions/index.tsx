@@ -278,39 +278,11 @@ const columns = [
 
 const AllAuctions = ({ loading, tableData, ...restProps }: Props) => {
   const navigate = useNavigate()
-  const searchValue = React.useCallback((element: any, filterValue: string) => {
-    const isReactElement = element && element.props && element.props.children
-    const isString = !isReactElement && typeof element === 'string'
-    /**
-     * this will work only for strings, and react elements like
-     * <>
-     *   <span>some text</span>
-     *   <Icon />
-     * </>
-     *
-     * maybe make it better in the future?
-     */
-    const value = isReactElement
-      ? element.props.children[0].props.children
-      : isString
-      ? element
-      : ''
-
-    return filterValue.length === 0
-      ? true
-      : String(value).toLowerCase().includes(String(filterValue).toLowerCase())
-  }, [])
 
   const globalFilter = React.useMemo(
     () => (rows, columns, filterValue) =>
-      rows.filter((row) => {
-        let searchResult = false
-        for (const column of columns) {
-          searchResult = searchResult || searchValue(row.values[column], filterValue)
-        }
-        return searchResult
-      }),
-    [searchValue],
+      rows.filter((row) => row?.original?.search.toLowerCase().includes(filterValue.toLowerCase())),
+    [],
   )
 
   const {
