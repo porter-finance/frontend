@@ -110,7 +110,7 @@ const Offerings = () => {
           </div>
         </div>
       ),
-      url: `/auctions/${item.id}/${chainId}`,
+      url: `/offerings/${item.id}/${chainId}`,
     })
   })
 
