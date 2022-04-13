@@ -77,7 +77,7 @@ const Bond: React.FC = () => {
           </div>
         </div>
         <div className="flex justify-center md:mt-0 mt-5 space-x-3">
-          {data.type === 'convert' ? <ConvertButtonOutline /> : <SimpleButtonOutline />}
+          {data?.type === 'convert' ? <ConvertButtonOutline /> : <SimpleButtonOutline />}
 
           <span className="inline-flex items-center px-2 space-x-1 py-1.5 rounded-full bg-white border-blue-100 border uppercase border-opacity-50 pointer-events-none text-[#404EED] font-medium">
             <svg className="h-2 w-2" fill="#404EED" opacity="0.5" viewBox="0 0 8 8">
