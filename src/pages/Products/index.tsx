@@ -12,7 +12,7 @@ import Table from '../../components/auctions/Table'
 import TokenLogo from '../../components/token/TokenLogo'
 import { useAllBondInfo } from '../../hooks/useAllBondInfos'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
-import { GhostButton } from '../Auction'
+import { ConvertButtonOutline, SimpleButtonOutline } from '../Auction'
 
 const GlobalStyle = createGlobalStyle`
   .siteHeader {
@@ -143,12 +143,8 @@ const Products = () => {
               All
             </div>
             <DividerIcon />
-            <GhostButton>
-              <ConvertIcon height={12.57} width={12.57} /> <span className="text-xs">Convert</span>
-            </GhostButton>
-            <GhostButton>
-              <SimpleIcon height={12.57} width={12.57} /> <span className="text-xs">Simple</span>
-            </GhostButton>
+            <ConvertButtonOutline />
+            <SimpleButtonOutline />
           </>
         }
         loading={isLoading}

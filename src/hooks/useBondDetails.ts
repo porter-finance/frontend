@@ -6,11 +6,12 @@ import { BondInfo } from './useAllBondInfos'
 const logger = getLogger('useBondDetails')
 
 const bondsQuery = gql`
-  query Bond($bondID: String!) {
+  query Bond($bondID: ID!) {
     bond(id: $bondID) {
       id
       name
       symbol
+      type
       owner
       maturityDate
       paymentToken
