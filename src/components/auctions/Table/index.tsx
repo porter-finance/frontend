@@ -301,110 +301,113 @@ const Table = ({
         </div>
       </div>
 
-      {loading && <LoadingBox height={600} />}
-
-      {!loading && (
-        <div className="min-h-[385px]">
-          <table className="table w-full h-full" {...getTableProps()}>
-            <thead>
-              {headerGroups.map((headerGroup, i) => (
-                <tr
-                  className="border-b border-b-[#D5D5D519]"
-                  key={i}
-                  {...headerGroup.getHeaderGroupProps()}
-                >
-                  {headerGroup.headers.map(
-                    (column, i) =>
-                      column.render('show') && (
-                        <th
-                          className="bg-transparent text-[#696969] text-[10px] font-normal"
-                          key={i}
-                          {...column.getHeaderProps()}
-                        >
-                          {column.render('Header')}
-                        </th>
-                      ),
-                  )}
-                </tr>
-              ))}
-            </thead>
-            <tbody {...getTableBodyProps()}>
-              {!page.length && (
-                <tr className="bg-transparent text-[#D2D2D2] text-sm">
-                  <td
-                    className="bg-transparent text-center py-[100px] text-[#696969] space-y-7"
-                    colSpan={6}
-                  >
-                    <div className="flex justify-center space-x-4 opacity-60">{emptyLogo}</div>
-                    <div className="text-base text-[#696969]">{emptyDescription}</div>
-                    <ActionButton className="w-[236px] h-[41px]" onClick={emptyActionClick}>
-                      {emptyActionText}
-                    </ActionButton>
+      <div className="min-h-[385px]">
+        <table className="table w-full h-full" {...getTableProps()}>
+          <thead>
+            {headerGroups.map((headerGroup, i) => (
+              <tr
+                className="border-b border-b-[#D5D5D519]"
+                key={i}
+                {...headerGroup.getHeaderGroupProps()}
+              >
+                {headerGroup.headers.map(
+                  (column, i) =>
+                    column.render('show') && (
+                      <th
+                        className="bg-transparent text-[#696969] text-[10px] font-normal"
+                        key={i}
+                        {...column.getHeaderProps()}
+                      >
+                        {column.render('Header')}
+                      </th>
+                    ),
+                )}
+              </tr>
+            ))}
+          </thead>
+          <tbody {...getTableBodyProps()}>
+            {loading &&
+              [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
+                <tr className="bg-transparent text-[#D2D2D2] text-sm" key={i}>
+                  <td className="bg-transparent text-center text-[#696969]" colSpan={6}>
+                    <LoadingBox height={96} />
                   </td>
                 </tr>
-              )}
-              {page.map((row, i) => {
-                prepareRow(row)
-                return (
-                  <tr
-                    className="bg-transparent text-[#D2D2D2] text-sm cursor-pointer hover"
-                    key={i}
-                    onClick={() => navigate(row.original.url)}
-                    {...row.getRowProps()}
-                  >
-                    {row.cells.map((cell, i) => {
-                      return (
-                        cell.render('show') && (
-                          <td className="bg-transparent" key={i} {...cell.getCellProps()}>
-                            {cell.render('Cell')}
-                          </td>
-                        )
-                      )
-                    })}
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
+              ))}
 
-          <Pagination>
-            <PaginationBlock>
-              <PaginationText>Items per page</PaginationText>{' '}
-              <DropdownPagination
-                dropdownButtonContent={
-                  <PaginationDropdownButton>{pageSize} ▼</PaginationDropdownButton>
-                }
-                items={[5, 10, 20, 30].map((pageSize) => (
-                  <PaginationItem
-                    key={pageSize}
-                    onClick={() => {
-                      setPageSize(Number(pageSize))
-                    }}
-                  >
-                    {pageSize}
-                  </PaginationItem>
-                ))}
-              />
-            </PaginationBlock>
-            <PaginationBreak>|</PaginationBreak>
-            <PaginationBlock>
-              <PaginationText>
-                {pageIndex + 1 === 1 ? 1 : pageIndex * pageSize + 1} -{' '}
-                {rows.length < (pageIndex + 1) * pageSize
-                  ? rows.length
-                  : (pageIndex + 1) * pageSize}{' '}
-                of {rows.length} auctions
-              </PaginationText>{' '}
-              <PaginationButton disabled={!canPreviousPage} onClick={() => handlePrevPage()}>
-                <ChevronLeft />
-              </PaginationButton>
-              <PaginationButton disabled={!canNextPage} onClick={() => handleNextPage()}>
-                <ChevronRight />
-              </PaginationButton>
-            </PaginationBlock>
-          </Pagination>
-        </div>
-      )}
+            {!loading && !page.length && (
+              <tr className="bg-transparent text-[#D2D2D2] text-sm">
+                <td
+                  className="bg-transparent text-center py-[100px] text-[#696969] space-y-7"
+                  colSpan={6}
+                >
+                  <div className="flex justify-center space-x-4 opacity-60">{emptyLogo}</div>
+                  <div className="text-base text-[#696969]">{emptyDescription}</div>
+                  <ActionButton className="w-[236px] h-[41px]" onClick={emptyActionClick}>
+                    {emptyActionText}
+                  </ActionButton>
+                </td>
+              </tr>
+            )}
+            {page.map((row, i) => {
+              prepareRow(row)
+              return (
+                <tr
+                  className="bg-transparent text-[#D2D2D2] text-sm cursor-pointer hover"
+                  key={i}
+                  onClick={() => navigate(row.original.url)}
+                  {...row.getRowProps()}
+                >
+                  {row.cells.map((cell, i) => {
+                    return (
+                      cell.render('show') && (
+                        <td className="bg-transparent" key={i} {...cell.getCellProps()}>
+                          {cell.render('Cell')}
+                        </td>
+                      )
+                    )
+                  })}
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+
+        <Pagination>
+          <PaginationBlock>
+            <PaginationText>Items per page</PaginationText>{' '}
+            <DropdownPagination
+              dropdownButtonContent={
+                <PaginationDropdownButton>{pageSize} ▼</PaginationDropdownButton>
+              }
+              items={[5, 10, 20, 30].map((pageSize) => (
+                <PaginationItem
+                  key={pageSize}
+                  onClick={() => {
+                    setPageSize(Number(pageSize))
+                  }}
+                >
+                  {pageSize}
+                </PaginationItem>
+              ))}
+            />
+          </PaginationBlock>
+          <PaginationBreak>|</PaginationBreak>
+          <PaginationBlock>
+            <PaginationText>
+              {pageIndex + 1 === 1 ? 1 : pageIndex * pageSize + 1} -{' '}
+              {rows.length < (pageIndex + 1) * pageSize ? rows.length : (pageIndex + 1) * pageSize}{' '}
+              of {rows.length} auctions
+            </PaginationText>{' '}
+            <PaginationButton disabled={!canPreviousPage} onClick={() => handlePrevPage()}>
+              <ChevronLeft />
+            </PaginationButton>
+            <PaginationButton disabled={!canNextPage} onClick={() => handleNextPage()}>
+              <ChevronRight />
+            </PaginationButton>
+          </PaginationBlock>
+        </Pagination>
+      </div>
     </Wrapper>
   )
 }
