@@ -3,7 +3,10 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { createGlobalStyle } from 'styled-components'
 
 import { AuctionTimer } from '../../components/auction/AuctionTimer'
-import { ExtraDetailsItem } from '../../components/auction/ExtraDetailsItem'
+import {
+  ExtraDetailsItem,
+  Props as ExtraDetailsItemProps,
+} from '../../components/auction/ExtraDetailsItem'
 import BondAction from '../../components/bond/BondAction'
 import WarningModal from '../../components/modals/WarningModal'
 import TokenLogo from '../../components/token/TokenLogo'
@@ -30,38 +33,42 @@ const Bond: React.FC = () => {
   const invalidBond = React.useMemo(() => !bondIdentifier || !data, [bondIdentifier, data])
   const statusLabel = new Date() > new Date(data?.maturityDate * 1000) ? 'Matured' : 'Active'
 
-  const extraDetails = [
-    {
-      title: 'Face value',
-      value: '1 USDC',
-      tooltip: 'Tooltip',
-    },
-    {
-      title: 'Collateral tokens',
-      value: '0.05 UNI',
-      tooltip: 'Tooltip',
-    },
-    {
-      title: 'Convertible tokens',
-      value: '0.04 UNI',
-      tooltip: 'Tooltip',
-    },
-    {
-      title: 'Estimated Value | APY',
-      value: '0.89 USDC | 20%',
-      tooltip: 'Tooltip',
-    },
-    {
-      title: 'Collateralization Ratio',
-      value: '500%',
-      tooltip: 'Tooltip',
-    },
-    {
-      title: 'Call strike price',
-      value: '25 USDC/UNI',
-      tooltip: 'Tooltip',
-    },
-  ]
+  const extraDetails: Array<ExtraDetailsItemProps> = React.useMemo(
+    () => [
+      {
+        title: 'Face value',
+        value: '1 USDC',
+        tooltip: 'Tooltip',
+      },
+      {
+        title: 'Collateral tokens',
+        value: `${data?.collateralToken}`,
+        tooltip: 'Tooltip',
+      },
+      {
+        title: 'Convertible tokens',
+        value: `${data?.paymentToken}`,
+        tooltip: 'Tooltip',
+      },
+      {
+        title: 'Estimated Value | APY',
+        value: '0.89 USDC | 20%',
+        tooltip: 'Tooltip',
+      },
+      {
+        title: 'Collateralization Ratio',
+        value: `${data?.collateralRatio}`,
+        tooltip: 'Tooltip',
+      },
+      {
+        title: 'Call strike price',
+        value: '25 USDC/UNI',
+        tooltip: 'Tooltip',
+        bordered: true,
+      },
+    ],
+    [data],
+  )
 
   if (isLoading) {
     return (
