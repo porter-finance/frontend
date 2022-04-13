@@ -4,7 +4,6 @@ import styled, { css } from 'styled-components'
 
 import { useGlobalFilter, usePagination, useTable } from 'react-table'
 
-import { LoadingBox } from '../../../pages/Auction'
 import { ActionButton } from '../../auction/Claimer'
 import { Dropdown } from '../../common/Dropdown'
 import { ChevronRight } from '../../icons/ChevronRight'
@@ -327,11 +326,13 @@ const Table = ({
           </thead>
           <tbody {...getTableBodyProps()}>
             {loading &&
-              [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
-                <tr className="bg-transparent text-[#D2D2D2] text-sm" key={i}>
-                  <td className="bg-transparent text-center text-[#696969]" colSpan={6}>
-                    <LoadingBox height={96} />
-                  </td>
+              [...Array(10).keys()].map((z) => (
+                <tr className="bg-transparent text-[#D2D2D2] text-sm" key={z}>
+                  {[...Array(columns.length - 1).keys()].map((i) => (
+                    <td className="bg-transparent text-center text-[#696969]" key={i}>
+                      <div className="my-4 max-w-sm w-full animate-pulse h-4 bg-gradient-to-r to-[#181A1C] from-[#1F2123] rounded"></div>
+                    </td>
+                  ))}
                 </tr>
               ))}
 
@@ -339,7 +340,7 @@ const Table = ({
               <tr className="bg-transparent text-[#D2D2D2] text-sm">
                 <td
                   className="bg-transparent text-center py-[100px] text-[#696969] space-y-7"
-                  colSpan={6}
+                  colSpan={columns.length - 1}
                 >
                   <div className="flex justify-center space-x-4 opacity-60">{emptyLogo}</div>
                   <div className="text-base text-[#696969]">{emptyDescription}</div>
@@ -349,27 +350,28 @@ const Table = ({
                 </td>
               </tr>
             )}
-            {page.map((row, i) => {
-              prepareRow(row)
-              return (
-                <tr
-                  className="bg-transparent text-[#D2D2D2] text-sm cursor-pointer hover"
-                  key={i}
-                  onClick={() => navigate(row.original.url)}
-                  {...row.getRowProps()}
-                >
-                  {row.cells.map((cell, i) => {
-                    return (
-                      cell.render('show') && (
-                        <td className="bg-transparent" key={i} {...cell.getCellProps()}>
-                          {cell.render('Cell')}
-                        </td>
+            {!loading &&
+              page.map((row, i) => {
+                prepareRow(row)
+                return (
+                  <tr
+                    className="bg-transparent text-[#D2D2D2] text-sm cursor-pointer hover"
+                    key={i}
+                    onClick={() => navigate(row.original.url)}
+                    {...row.getRowProps()}
+                  >
+                    {row.cells.map((cell, i) => {
+                      return (
+                        cell.render('show') && (
+                          <td className="bg-transparent" key={i} {...cell.getCellProps()}>
+                            {cell.render('Cell')}
+                          </td>
+                        )
                       )
-                    )
-                  })}
-                </tr>
-              )
-            })}
+                    })}
+                  </tr>
+                )
+              })}
           </tbody>
         </table>
 
