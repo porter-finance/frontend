@@ -27,9 +27,9 @@ import { InfoType } from '../../pureStyledComponents/FieldRow'
 
 const ActionButton = styled(Button)`
   flex-shrink: 0;
-  height: 42px;
-  margin-top: auto;
-  margin-bottom: 20px;
+  width: 100%;
+  background-color: #532dbe !important;
+  height: 41px;
 `
 
 const ActionPanel = styled.div`
@@ -333,52 +333,54 @@ const BondAction = ({
 
   return (
     <ActionPanel>
-      <AmountInputPanel
-        balance={totalBalance}
-        balanceString={actionType === BondActions.Mint && 'Available'}
-        chainId={bondTokenInfo?.chainId}
-        info={
-          !isOwner && {
-            text: 'You do not own this bond',
-            type: InfoType.error,
+      <div className="space-y-4">
+        <AmountInputPanel
+          balance={totalBalance}
+          balanceString={actionType === BondActions.Mint && 'Available'}
+          chainId={bondTokenInfo?.chainId}
+          info={
+            !isOwner && {
+              text: 'You do not own this bond',
+              type: InfoType.error,
+            }
           }
-        }
-        onMax={() => {
-          setBondsToRedeem(totalBalance)
-        }}
-        onUserSellAmountInput={onUserSellAmountInput}
-        token={tokenToAction}
-        unlock={{
-          isLocked: isOwner && !isApproved,
-          onUnlock: approveCallback,
-          unlockState: approval,
-        }}
-        value={bondsToRedeem}
-        wrap={{ isWrappable: false, onClick: null }}
-      />
-      <div>
+          onMax={() => {
+            setBondsToRedeem(totalBalance)
+          }}
+          onUserSellAmountInput={onUserSellAmountInput}
+          token={tokenToAction}
+          unlock={{
+            isLocked: isOwner && !isApproved,
+            onUnlock: approveCallback,
+            unlockState: approval,
+          }}
+          value={bondsToRedeem}
+          wrap={{ isWrappable: false, onClick: null }}
+        />
         <ActionButton disabled={isActionDisabled} onClick={doTheAction}>
           {actionType === BondActions.Redeem && 'Redeem'}
           {actionType === BondActions.Convert && 'Convert'}
           {actionType === BondActions.Mint && 'Mint'}
         </ActionButton>
+        <div>
+          {actionType === BondActions.Redeem && (
+            <>
+              <p>Redeemable for: {previewRedeemVal[0]} payment tokens</p>
+              <p>Redeemable for: {previewRedeemVal[1]} collateral tokens</p>
+            </>
+          )}
+
+          {actionType === BondActions.Convert && (
+            <p>Redeemable for: {previewConvertVal} collateral tokens </p>
+          )}
+
+          {actionType === BondActions.Mint && (
+            <p>Minting for: {previewMintVal} collateral tokens </p>
+          )}
+
+          <p>Collateral Token Price: ${price} </p>
+        </div>
       </div>
-      {actionType === BondActions.Redeem && (
-        <>
-          <div>Redeemable for: {previewRedeemVal[0]} payment tokens</div>
-          <div>Redeemable for: {previewRedeemVal[1]} collateral tokens</div>
-        </>
-      )}
-
-      {actionType === BondActions.Convert && (
-        <div>Redeemable for: {previewConvertVal} collateral tokens </div>
-      )}
-
-      {actionType === BondActions.Mint && (
-        <div>Minting for: {previewMintVal} collateral tokens </div>
-      )}
-
-      <div>Collateral Token Price: ${price} </div>
 
       <ConfirmationModal
         attemptingTxn={attemptingTxn}
