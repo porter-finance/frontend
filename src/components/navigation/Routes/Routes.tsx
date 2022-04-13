@@ -7,7 +7,7 @@ import BondsOverview from '../../../pages/Bonds'
 import CreateBond from '../../../pages/CreateBond'
 import { Landing } from '../../../pages/Landing'
 import { Licenses } from '../../../pages/Licenses'
-import Overview from '../../../pages/Overview'
+import Offerings from '../../../pages/Offerings'
 import Portfolio from '../../../pages/Portfolio'
 import { Terms } from '../../../pages/Terms'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
@@ -16,7 +16,7 @@ const AppRoutes: React.FC = () => {
   return (
     <Routes>
       <Route element={<Auction />} path="/auctions/:auctionId/:chainId" />
-      <Route element={<Overview />} path="/auctions" />
+      <Route element={<Offerings />} path="/auctions" />
       <Route element={<BondsOverview />} path="/bonds" />
       <Route element={<CreateBond />} path="/bonds/create" />
       <Route element={<BondDetail />} path="/bonds/:bondId" />
