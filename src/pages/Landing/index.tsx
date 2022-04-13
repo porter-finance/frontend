@@ -3,15 +3,12 @@ import styled from 'styled-components'
 
 import { HashLink } from 'react-router-hash-link'
 
-import { FeaturedAuctions } from '../../components/auctions/FeaturedAuctions'
-import HighestVolumeAuctions from '../../components/auctions/HighestVolumeAuctions'
 import { ButtonCSS } from '../../components/buttons/buttonStylingTypes'
 import { Send } from '../../components/icons/Send'
 import { ShapeIcon1 } from '../../components/icons/ShapeIcon1'
 import { ShapeIcon2 } from '../../components/icons/ShapeIcon2'
 import { ShapeIcon3 } from '../../components/icons/ShapeIcon3'
 import { useAllAuctionInfo } from '../../hooks/useAllAuctionInfos'
-import { useInterestingAuctionInfo } from '../../hooks/useInterestingAuctionDetails'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import AuctionsIcon from './img/eth.svg'
 
@@ -93,16 +90,6 @@ const AuctionsText = styled.p`
   line-height: 1.2;
   margin: 0 0 25px;
   text-align: center;
-`
-
-const Featured = styled(FeaturedAuctions)`
-  &.featuredAuctions {
-    margin-bottom: 50px;
-
-    @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-      margin-bottom: 80px;
-    }
-  }
 `
 
 const BlockGrid = styled.div`
@@ -190,8 +177,6 @@ const TextGradient = styled.span`
 
 export const Landing: React.FC = () => {
   const allAuctions = useAllAuctionInfo()
-  const featuredAuctions = useInterestingAuctionInfo()
-  const highestVolumeAuctions = useInterestingAuctionInfo({ closedAuctions: true })
 
   useSetNoDefaultNetworkId()
 
@@ -213,11 +198,7 @@ export const Landing: React.FC = () => {
           <AuctionsImage alt="" src={AuctionsIcon} />
           {allAuctions && allAuctions.length > 0 && (
             <AuctionsText>
-              {
-                allAuctions.filter(
-                  (auction) => new Date(auction.endTimeTimestamp * 1000) > new Date(),
-                ).length
-              }{' '}
+              {allAuctions.filter((auction) => new Date(auction.end * 1000) > new Date()).length}{' '}
               active auctions
             </AuctionsText>
           )}
@@ -231,10 +212,7 @@ export const Landing: React.FC = () => {
           </AuctionsButton>
         </AuctionsBlock>
       </Welcome>
-      {featuredAuctions && (
-        <Featured className="featuredAuctions" featuredAuctions={featuredAuctions} />
-      )}
-      <HighestVolumeAuctions highestVolumeAuctions={highestVolumeAuctions} />
+
       <BlockGrid>
         <TextBlock>
           <SubTitle>Best Price Discovery</SubTitle>
