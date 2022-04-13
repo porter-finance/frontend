@@ -132,7 +132,7 @@ const Offerings = () => {
       }
       legendIcons={
         <>
-          <div className="rounded-full bg-black px-4 py-2 text-white text-xs uppercase">All</div>
+          <div className="rounded-full bg-black px-5 py-1.5 text-white text-xs uppercase">All</div>
           <DividerIcon />
           <AuctionButtonOutline plural />
           <OTCButtonOutline />
