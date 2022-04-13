@@ -3,12 +3,12 @@ import { Route, Routes } from 'react-router-dom'
 
 import Auction from '../../../pages/Auction'
 import BondDetail from '../../../pages/BondDetail'
-import BondsOverview from '../../../pages/Bonds'
 import CreateBond from '../../../pages/CreateBond'
 import { Landing } from '../../../pages/Landing'
 import { Licenses } from '../../../pages/Licenses'
 import Offerings from '../../../pages/Offerings'
 import Portfolio from '../../../pages/Portfolio'
+import BondsOverview from '../../../pages/Products'
 import { Terms } from '../../../pages/Terms'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 

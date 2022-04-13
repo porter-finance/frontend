@@ -7,17 +7,16 @@ import { ReactComponent as AuctionsIcon } from '../../assets/svg/auctions.svg'
 import { ReactComponent as ConvertIcon } from '../../assets/svg/convert.svg'
 import { ReactComponent as DividerIcon } from '../../assets/svg/divider.svg'
 import { ReactComponent as SimpleIcon } from '../../assets/svg/simple.svg'
-import { ReactComponent as WalletIcon } from '../../assets/svg/wallet.svg'
 import { ActiveStatusPill } from '../../components/auction/OrderbookTable'
 import Table from '../../components/auctions/Table'
 import TokenLogo from '../../components/token/TokenLogo'
-import { useBondsPortfolio } from '../../hooks/useBondsPortfolio'
+import { useAllBondInfo } from '../../hooks/useAllBondInfos'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import { GhostButton } from '../Auction'
 
 const GlobalStyle = createGlobalStyle`
   .siteHeader {
-    background: #262728;
+    background: #532DBE;
   }
 `
 
@@ -39,8 +38,8 @@ const columns = [
     filter: 'searchInTags',
   },
   {
-    Header: 'Amount',
-    accessor: 'amount',
+    Header: 'Supply',
+    accessor: 'supply',
     align: 'flex-start',
     show: true,
     style: {},
@@ -71,8 +70,8 @@ const columns = [
   },
 ]
 
-const Portfolio = () => {
-  const data = useBondsPortfolio()
+const Products = () => {
+  const data = useAllBondInfo()
   const tableData = []
 
   useSetNoDefaultNetworkId()
@@ -101,12 +100,8 @@ const Portfolio = () => {
           </div>
         </div>
       ),
-      // @TODO: not sure if size === amount === maxSupply
-      // This shuold return how many this user owns tho
-      // Do i have to do a new query against Bid to get their bidded size for an auction?
-      amount: item.maxSupply,
       type: item?.type === 'convert' ? <ConvertIcon width={15} /> : <AuctionsIcon width={15} />,
-      price: 'Unknown',
+      supply: item.maxSupply,
       // no price yet
       status:
         new Date() > new Date(item.maturityDate * 1000) ? (
@@ -134,9 +129,14 @@ const Portfolio = () => {
       <Table
         columns={columns}
         data={tableData}
-        emptyActionText="Go to offerings"
-        emptyDescription="Your portfolio is empty"
-        emptyLogo={<WalletIcon height={49.5} width={51} />}
+        emptyActionClass="!bg-[#532DBE]"
+        emptyActionText="Get notify"
+        emptyDescription="There are no products at the moment"
+        emptyLogo={
+          <>
+            <ConvertIcon height={36} width={36} /> <SimpleIcon height={36} width={36} />
+          </>
+        }
         legendIcons={
           <>
             <div className="rounded-full bg-white px-5 py-1.5 text-black text-xs uppercase">
@@ -152,10 +152,10 @@ const Portfolio = () => {
           </>
         }
         loading={isLoading}
-        title="Portfolio"
+        title="Products"
       />
     </>
   )
 }
 
-export default Portfolio
+export default Products
