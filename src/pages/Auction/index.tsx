@@ -160,8 +160,9 @@ const Auction: React.FC = () => {
     <>
       <div className="py-2 flex content-center justify-center md:justify-between flex-wrap items-end">
         <div className="flex flex-wrap items-center space-x-6">
-          <div className="hidden md:block">
+          <div className="hidden md:flex">
             <TokenLogo
+              size="60px"
               square
               token={
                 derivedAuctionInfo?.graphInfo?.isSellingPorterBond
