@@ -117,7 +117,7 @@ const Products = () => {
         </span>
       ),
 
-      url: `/bonds/${item.id}`,
+      url: `/products/${item.id}`,
     })
   })
 
