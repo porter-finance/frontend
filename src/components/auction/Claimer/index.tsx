@@ -26,12 +26,12 @@ const Wrapper = styled(BaseCard)`
   padding: 0;
 `
 
-const ActionButton = ({ children, ...props }) => (
+export const ActionButton = ({ children, ...props }) => (
   <button
+    {...props}
     className={`btn btn-sm normal-case w-full hover:bg-blue-500 ${
       props.disabled ? '!bg-[#2C2C2C] !text-[#696969]' : 'bg-[#404EED] text-white'
-    } font-normal`}
-    {...props}
+    } font-normal ${props.className}`}
   >
     {children}
   </button>
