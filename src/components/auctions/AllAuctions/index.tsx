@@ -1,8 +1,6 @@
 import React, { useMemo, useRef, useState } from 'react'
-import { NavLink } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
-import * as CSS from 'csstype'
 import { useFilters, useGlobalFilter, usePagination, useTable } from 'react-table'
 
 import { AuctionButtonOutline, LoadingBox, OTCButtonOutline } from '../../../pages/Auction'
@@ -12,112 +10,19 @@ import { ChevronRight } from '../../icons/ChevronRight'
 import { Delete } from '../../icons/Delete'
 import { InfoIcon } from '../../icons/InfoIcon'
 import { Magnifier } from '../../icons/Magnifier'
-import { BaseCard } from '../../pureStyledComponents/BaseCard'
-import { Cell, CellRowCSS, CellRowProps, getColumns } from '../../pureStyledComponents/Cell'
+import { Cell } from '../../pureStyledComponents/Cell'
 import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponents/EmptyContent'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
 
 const Wrapper = styled.div`
-  margin-top: -65px;
-`
-
-const Table = styled(BaseCard)`
-  padding: 0;
-  z-index: 51;
+  margin-top: -25px;
 `
 
 const SectionTitle = styled(PageTitle)`
   font-weight: 400;
-  font-size: 68px;
+  font-size: 42px;
   color: #ffffff;
   margin: 0;
-`
-const rowCss = css<CellRowProps>`
-  ${CellRowCSS}
-  column-gap: 6px;
-  cursor: pointer;
-  grid-template-columns: 1fr 1fr;
-  padding-left: 10px;
-  padding-right: 10px;
-  row-gap: 15px;
-
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.05);
-  }
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    column-gap: 10px;
-    grid-template-columns: 1fr 80px 1fr 1fr 1fr 1fr 100px 1fr 100px 20px;
-    padding-left: 15px;
-    padding-right: 15px;
-  }
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.xl}) {
-    grid-template-columns: ${(props) => getColumns(props.columns)};
-  }
-`
-
-const RowLink = styled(NavLink)<CellRowProps>`
-  ${rowCss}
-`
-
-const RowHead = styled.div<CellRowProps>`
-  ${rowCss}
-  pointer-events: none;
-  font-size: 14px;
-  display: none;
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    display: grid;
-    grid-template-columns: 1fr 80px 1fr 1fr 1fr 1fr 100px 1fr 100px 20px;
-  }
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.xl}) {
-    grid-template-columns: ${(props) => getColumns(props.columns)};
-  }
-`
-
-interface CellProps {
-  fs?: string
-}
-
-const TableCell = styled(Cell)<Partial<CSS.Properties & CellProps>>`
-  color: ${({ theme }) => theme.text1};
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  font-size: ${(props) => props.fs || '16px'};
-
-  &:last-child {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-
-  > span {
-    display: flex;
-    align-items: center;
-
-    > *:not(:last-child) {
-      margin-right: 6px;
-    }
-
-    &:last-child {
-      font-size: 16px;
-      font-weight: bold;
-      @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-        display: none;
-      }
-    }
-  }
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.xl}) {
-    &:last-child {
-      position: unset;
-      right: auto;
-      top: auto;
-      transform: none;
-    }
-  }
 `
 
 const TableControls = styled.div`
@@ -321,61 +226,42 @@ const columns = [
     style: { height: '100%', justifyContent: 'center' },
   },
   {
-    Header: 'Auction Id',
-    accessor: 'auctionId',
+    Header: 'Offering',
+    accessor: 'offering',
     align: 'flex-start',
-    show: false,
+    show: true,
     style: {},
+    filter: 'searchInTags',
   },
   {
-    Header: 'Selling',
-    accessor: 'selling',
+    Header: 'Size',
+    accessor: 'size',
     align: 'flex-start',
-    show: false,
+    show: true,
     style: {},
+    filter: 'searchInTags',
   },
   {
-    Header: 'Buying',
-    accessor: 'buying',
+    Header: 'Interest Rate',
+    accessor: 'interestRate',
     align: 'flex-start',
-    show: false,
+    show: true,
     style: {},
+    filter: 'searchInTags',
+  },
+  {
+    Header: 'Price',
+    accessor: 'price',
+    align: 'flex-start',
+    show: true,
+    style: {},
+    filter: 'searchInTags',
   },
   {
     Header: 'Status',
     accessor: 'status',
     align: 'flex-start',
     show: true,
-    style: {},
-  },
-  {
-    Header: 'Type',
-    accessor: 'type',
-    align: 'flex-start',
-    show: false,
-    style: {},
-    filter: 'searchInTags',
-  },
-  {
-    Header: 'Participation',
-    accessor: 'participation',
-    align: 'flex-start',
-    show: false,
-    style: {},
-    filter: 'searchInTags',
-  },
-  {
-    Header: 'Network',
-    accessor: 'chainId',
-    align: 'flex-start',
-    show: false,
-    style: {},
-  },
-  {
-    Header: 'End date',
-    accessor: 'date',
-    align: 'flex-start',
-    show: false,
     style: {},
   },
   {
