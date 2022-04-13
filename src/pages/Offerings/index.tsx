@@ -1,16 +1,75 @@
 import React from 'react'
 
-import { ReactComponent as AuctionsLogo } from '../../assets/svg/auctions.svg'
-import { ReactComponent as ConvertLogo } from '../../assets/svg/convert.svg'
+import { ReactComponent as AuctionsIcon } from '../../assets/svg/auctions.svg'
+import { ReactComponent as ConvertIcon } from '../../assets/svg/convert.svg'
+import { ReactComponent as OTCIcon } from '../../assets/svg/otc.svg'
 import { ActiveStatusPill } from '../../components/auction/OrderbookTable'
-import AllAuctions from '../../components/auctions/AllAuctions'
+import Table from '../../components/auctions/Table'
 import { calculateInterestRate } from '../../components/form/InterestRateInputPanel'
 import TokenLogo from '../../components/token/TokenLogo'
 import { useActiveWeb3React } from '../../hooks'
 import { useAllAuctionInfo } from '../../hooks/useAllAuctionInfos'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 
-const OverviewCommon = () => {
+const columns = [
+  {
+    Header: 'Issuer',
+    accessor: 'issuer',
+    align: 'flex-start',
+    show: true,
+    style: { height: '100%', justifyContent: 'center' },
+    filter: 'searchInTags',
+  },
+  {
+    Header: 'Offering',
+    accessor: 'offering',
+    align: 'flex-start',
+    show: true,
+    style: {},
+    filter: 'searchInTags',
+  },
+  {
+    Header: 'Size',
+    accessor: 'size',
+    align: 'flex-start',
+    show: true,
+    style: {},
+    filter: 'searchInTags',
+  },
+  {
+    Header: 'Interest Rate',
+    accessor: 'interestRate',
+    align: 'flex-start',
+    show: true,
+    style: {},
+    filter: 'searchInTags',
+  },
+  {
+    Header: 'Price',
+    accessor: 'price',
+    align: 'flex-start',
+    show: true,
+    style: {},
+    filter: 'searchInTags',
+  },
+  {
+    Header: 'Status',
+    accessor: 'status',
+    align: 'flex-start',
+    show: true,
+    style: {},
+    filter: 'searchInTags',
+  },
+  {
+    Header: '',
+    accessor: 'url',
+    align: '',
+    show: false,
+    style: {},
+  },
+]
+
+const Offerings = () => {
   const { chainId } = useActiveWeb3React()
   const allAuctions = useAllAuctionInfo()
   const tableData = []
@@ -24,7 +83,7 @@ const OverviewCommon = () => {
       auctionId: `#${item.id}`,
       size: item.size,
       offering:
-        item?.bond?.type === 'convert' ? <ConvertLogo width={15} /> : <AuctionsLogo width={15} />,
+        item?.bond?.type === 'convert' ? <ConvertIcon width={15} /> : <AuctionsIcon width={15} />,
       price: 'Unknown',
       // no price yet
       interestRate: calculateInterestRate(null, item.end),
@@ -58,7 +117,21 @@ const OverviewCommon = () => {
     [allAuctions],
   )
 
-  return <AllAuctions loading={isLoading} tableData={tableData} />
+  return (
+    <Table
+      columns={columns}
+      data={tableData}
+      emptyActionText="Get notify"
+      emptyDescription="There are no offerings at the moment"
+      emptyLogo={
+        <>
+          <AuctionsIcon height={36} width={36} /> <OTCIcon height={36} width={36} />
+        </>
+      }
+      loading={isLoading}
+      title="Offerings"
+    />
+  )
 }
 
-export default OverviewCommon
+export default Offerings

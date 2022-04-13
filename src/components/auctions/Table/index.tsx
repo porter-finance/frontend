@@ -1,11 +1,9 @@
-import React, { useRef } from 'react'
+import React, { ReactElement, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
 import { useGlobalFilter, usePagination, useTable } from 'react-table'
 
-import { ReactComponent as AuctionsLogo } from '../../../assets/svg/auctions.svg'
-import { ReactComponent as OTCLogo } from '../../../assets/svg/otc.svg'
 import { AuctionButtonOutline, LoadingBox, OTCButtonOutline } from '../../../pages/Auction'
 import { ActionButton } from '../../auction/Claimer'
 import { Dropdown } from '../../common/Dropdown'
@@ -200,83 +198,28 @@ const PaginationItem = styled.div`
   }
 `
 
-const TBody = styled.div`
-  min-height: 266px;
-  @media (max-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    > div:first-child {
-      position: relative !important;
-    }
-
-    > div:not(:first-child) {
-      display: none !important;
-    }
-  }
-`
-
 interface Props {
-  tableData: any[]
+  data: any[]
   loading: boolean
+  title: string
+  columns: any[]
+  emptyActionText: string
+  emptyDescription: string
+  emptyActionClick?: () => void
+  emptyLogo: ReactElement
 }
 
-const columns = [
-  {
-    Header: 'Issuer',
-    accessor: 'issuer',
-    align: 'flex-start',
-    show: true,
-    style: { height: '100%', justifyContent: 'center' },
-    filter: 'searchInTags',
-  },
-  {
-    Header: 'Offering',
-    accessor: 'offering',
-    align: 'flex-start',
-    show: true,
-    style: {},
-    filter: 'searchInTags',
-  },
-  {
-    Header: 'Size',
-    accessor: 'size',
-    align: 'flex-start',
-    show: true,
-    style: {},
-    filter: 'searchInTags',
-  },
-  {
-    Header: 'Interest Rate',
-    accessor: 'interestRate',
-    align: 'flex-start',
-    show: true,
-    style: {},
-    filter: 'searchInTags',
-  },
-  {
-    Header: 'Price',
-    accessor: 'price',
-    align: 'flex-start',
-    show: true,
-    style: {},
-    filter: 'searchInTags',
-  },
-  {
-    Header: 'Status',
-    accessor: 'status',
-    align: 'flex-start',
-    show: true,
-    style: {},
-    filter: 'searchInTags',
-  },
-  {
-    Header: '',
-    accessor: 'url',
-    align: '',
-    show: false,
-    style: {},
-  },
-]
-
-const AllAuctions = ({ loading, tableData, ...restProps }: Props) => {
+const Table = ({
+  columns,
+  data,
+  emptyActionClick,
+  emptyActionText,
+  emptyDescription,
+  emptyLogo,
+  loading,
+  title,
+  ...restProps
+}: Props) => {
   const navigate = useNavigate()
 
   const globalFilter = React.useMemo(
@@ -302,7 +245,7 @@ const AllAuctions = ({ loading, tableData, ...restProps }: Props) => {
   } = useTable(
     {
       columns,
-      data: tableData,
+      data,
       globalFilter,
       initialState: { pageIndex: 0, pageSize: 10 },
     },
@@ -327,7 +270,7 @@ const AllAuctions = ({ loading, tableData, ...restProps }: Props) => {
     <Wrapper ref={sectionHead} {...restProps}>
       <div className="py-2 flex content-center justify-center md:justify-between flex-wrap items-end mb-10">
         <div className="flex flex-col space-y-4">
-          <SectionTitle>Offerings</SectionTitle>
+          <SectionTitle>{title}</SectionTitle>
 
           <div className="flex flex-row space-x-4 items-center">
             <div className="rounded-full bg-black px-4 py-2 text-white text-xs uppercase">All</div>
@@ -403,13 +346,11 @@ const AllAuctions = ({ loading, tableData, ...restProps }: Props) => {
                     className="bg-transparent text-center py-[100px] text-[#696969] space-y-7"
                     colSpan={6}
                   >
-                    <div className="flex justify-center space-x-4 opacity-60">
-                      <AuctionsLogo height={36} width={36} /> <OTCLogo height={36} width={36} />
-                    </div>
-                    <div className="text-base text-[#696969]">
-                      There are no offerings at the moment
-                    </div>
-                    <ActionButton className="w-[236px] h-[41px]">Get notify</ActionButton>
+                    <div className="flex justify-center space-x-4 opacity-60">{emptyLogo}</div>
+                    <div className="text-base text-[#696969]">{emptyDescription}</div>
+                    <ActionButton className="w-[236px] h-[41px]" onClick={emptyActionClick}>
+                      {emptyActionText}
+                    </ActionButton>
                   </td>
                 </tr>
               )}
@@ -479,4 +420,4 @@ const AllAuctions = ({ loading, tableData, ...restProps }: Props) => {
   )
 }
 
-export default AllAuctions
+export default Table
