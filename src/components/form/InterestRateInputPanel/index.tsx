@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import dayjs from 'dayjs'
 import round from 'lodash.round'
 
+import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
 import { Tooltip } from '../../common/Tooltip'
 import {
   FieldRowInfo,
@@ -46,27 +47,19 @@ interface Props {
   info?: FieldRowInfoProps
   onUserInterestRateInput: (val: string) => void
   price: string
-  auctionEndDate: number
 }
 
 // Interest rate = (1-Price) / Price / (years to maturity)
 export const calculateInterestRate = (price, auctionEndDate) => {
+  if (!auctionEndDate) return '-'
   const years = Math.abs(dayjs().diff(auctionEndDate * 1000, 'year', true))
   const interestRate = (1 - price) / price / years
-  return !Number(price) ? '-' : `${round(interestRate * 100, 2)}%`
+  return !Number(interestRate) ? '-' : `${round(interestRate * 100, 2)}%`
 }
 
 const InterestRateInputPanel = (props: Props) => {
-  const {
-    account,
-    auctionEndDate,
-    chainId,
-    disabled,
-    info,
-    onUserInterestRateInput,
-    price,
-    ...restProps
-  } = props
+  const { account, disabled, info, onUserInterestRateInput, price, ...restProps } = props
+  const maturityDate = useBondMaturityForAuction()
   const error = info?.type === InfoType.error
 
   return (
@@ -78,7 +71,7 @@ const InterestRateInputPanel = (props: Props) => {
             hasError={error}
             onUserSellAmountInput={onUserInterestRateInput}
             readOnly
-            value={!account ? '-' : calculateInterestRate(price, auctionEndDate)}
+            value={!account ? '-' : calculateInterestRate(price, maturityDate)}
           />
           <FieldRowLabelStyled className="space-x-1">
             {info ? (

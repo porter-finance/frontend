@@ -16,7 +16,7 @@ import Web3ReactManager from '../components/web3/Web3ReactManager'
 import useShowCookies from '../hooks/useShowCookies'
 import useShowTopWarning from '../hooks/useShowTopWarning'
 
-const Inner = styled(InnerContainer)`
+export const InnerApp = styled(InnerContainer)`
   margin-top: -100px;
 
   @media (max-width: ${({ theme }) => theme.themeBreakPoints.md}) {
@@ -36,17 +36,18 @@ const App: React.FC = () => {
           <Popups />
           <ReactTooltip
             className="customTooltip"
-            delayHide={250}
+            delayHide={500}
             delayShow={50}
+            delayUpdate={500}
             effect="solid"
             textColor="#fff"
           />
           {showTopWarning && <TopDisclaimer />}
-          <Inner className="fullPage">
+          <InnerApp className="fullPage">
             <Web3ReactManager>
               <Routes />
             </Web3ReactManager>
-          </Inner>
+          </InnerApp>
           <Footer />
         </MainScroll>
         <CookiesBanner

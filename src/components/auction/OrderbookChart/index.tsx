@@ -27,6 +27,7 @@ export interface PricePointDetails {
 
   // Data for representation
   askValueY: Maybe<number>
+  minFundY: Maybe<number>
   bidValueY: Maybe<number>
   clearingPriceValueY: Maybe<number>
   newOrderValueY: Maybe<number>
@@ -125,7 +126,11 @@ const OrderBookChart: React.FC<Props> = (props) => {
     <>
       {(!mountPoint || loading) && <InlineLoading size={SpinnerSize.small} />}
       <VolumeLabel>{volumeTitle}</VolumeLabel>
-      {mountPoint && !loading && <Wrapper ref={mountPoint} />}
+      {mountPoint && !loading && (
+        <>
+          <Wrapper ref={mountPoint} />
+        </>
+      )}
     </>
   )
 }

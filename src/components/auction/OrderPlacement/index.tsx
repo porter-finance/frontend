@@ -11,6 +11,7 @@ import { ApprovalState, useApproveCallback } from '../../../hooks/useApproveCall
 import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
 import { usePlaceOrderCallback } from '../../../hooks/usePlaceOrderCallback'
 import { useSignature } from '../../../hooks/useSignature'
+import { LoadingBox } from '../../../pages/Auction'
 import { useWalletModalToggle } from '../../../state/application/hooks'
 import {
   AuctionState,
@@ -35,8 +36,6 @@ import {
 import { convertPriceIntoBuyAndSellAmount, getInverse } from '../../../utils/prices'
 import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
-import { InlineLoading } from '../../common/InlineLoading'
-import { SpinnerSize } from '../../common/Spinner'
 import { Tooltip } from '../../common/Tooltip'
 import AmountInputPanel from '../../form/AmountInputPanel'
 import InterestRateInputPanel from '../../form/InterestRateInputPanel'
@@ -162,6 +161,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const maxAmountInput: TokenAmount = biddingTokenBalance ? biddingTokenBalance : undefined
 
   useEffect(() => {
+    onUserPriceInput(price)
     if (price == '-' && derivedAuctionInfo?.clearingPrice) {
       showPriceInverted
         ? onUserPriceInput(
@@ -279,8 +279,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     return biddingTokenBalance?.toSignificant(6)
   }, [biddingTokenBalance])
 
-  const showBottomWarning = orderPlacingOnly || cancelDate
-
   const amountInfo = React.useMemo(
     () =>
       approval !== ApprovalState.APPROVED && notApproved && approval !== ApprovalState.PENDING
@@ -343,7 +341,11 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const auctioningTokenAddress = auctioningToken && auctioningToken?.address
   const linkForKYC = auctioningTokenAddress ? kycLinks[auctioningTokenAddress] : null
 
-  if (!auctionInfoLoading && isPrivate && !signatureAvailable) {
+  if (auctionInfoLoading) {
+    return <LoadingBox height={404} />
+  }
+
+  if (isPrivate && !signatureAvailable) {
     return (
       <div className="card card-bordered">
         <div className="card-body">
@@ -387,9 +389,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
         )}
 
         <Wrapper>
-          {auctionInfoLoading && <InlineLoading size={SpinnerSize.small} />}
-
-          {!auctionInfoLoading && (!isPrivate || signatureAvailable) && (
+          {(!isPrivate || signatureAvailable) && (
             <>
               <AmountInputPanel
                 balance={balanceString}
@@ -428,7 +428,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
 
               <InterestRateInputPanel
                 account={account}
-                auctionEndDate={derivedAuctionInfo?.auctionEndDate}
                 chainId={chainId}
                 disabled={!account}
                 info={interestRateInfo}

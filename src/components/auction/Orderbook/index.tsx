@@ -2,13 +2,15 @@ import React from 'react'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 
+import { TokenAmount } from '@josojo/honeyswap-sdk'
+
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../constants/config'
+import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
+import { LoadingBox } from '../../../pages/Auction'
 import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { parseURL } from '../../../state/orderPlacement/reducer'
 import { useOrderbookState } from '../../../state/orderbook/hooks'
 import { getInverse, showChartsInverted } from '../../../utils/prices'
-import { InlineLoading } from '../../common/InlineLoading'
-import { SpinnerSize } from '../../common/Spinner'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import OrderBookChart, { OrderBookError } from '../OrderbookChart'
 import { processOrderbookData } from '../OrderbookWidget'
@@ -37,12 +39,17 @@ export const OrderBook: React.FC<OrderbookProps> = (props) => {
     userOrderVolume,
   } = useOrderbookState()
 
-  const { auctionId, chainId } = parseURL(useParams())
+  const auctionIdentifier = parseURL(useParams())
+  const { auctionDetails } = useAuctionDetails(auctionIdentifier)
+  const { auctionId, chainId } = auctionIdentifier
 
   const { auctioningToken: baseToken, biddingToken: quoteToken } = derivedAuctionInfo
 
   const processedOrderbook = React.useMemo(() => {
     const data = { bids, asks }
+    const minFundingThresholdAmount =
+      auctionDetails && new TokenAmount(quoteToken, auctionDetails?.minFundingThreshold)
+
     return processOrderbookData({
       data,
       userOrder: {
@@ -51,8 +58,9 @@ export const OrderBook: React.FC<OrderbookProps> = (props) => {
       },
       baseToken,
       quoteToken,
+      minFundingThreshold: minFundingThresholdAmount,
     })
-  }, [asks, baseToken, bids, quoteToken, userOrderPrice, userOrderVolume])
+  }, [asks, baseToken, bids, quoteToken, userOrderPrice, userOrderVolume, auctionDetails])
 
   if (showChartsInverted(baseToken)) {
     for (const p of processedOrderbook) {
@@ -61,20 +69,26 @@ export const OrderBook: React.FC<OrderbookProps> = (props) => {
     }
   }
 
+  const isLoading = orderbookAuctionId != auctionId || chainId != orderbookChainId
+  const hasError = error || !asks || asks.length === 0
+  if (isLoading) {
+    return <LoadingBox height={521} />
+  }
+
   return (
-    <>
-      {orderbookAuctionId != auctionId || chainId != orderbookChainId ? (
-        <InlineLoading size={SpinnerSize.small} />
-      ) : error || !asks || asks.length === 0 ? (
-        <OrderBookError error={error} />
-      ) : (
-        <OrderBookChart
-          baseToken={baseToken}
-          chainId={chainId}
-          data={processedOrderbook}
-          quoteToken={quoteToken}
-        />
-      )}
-    </>
+    <div className="card ">
+      <div className="card-body">
+        <h2 className="card-title ">Orderbook graph</h2>
+        {hasError && <OrderBookError error={error} />}
+        {!hasError && (
+          <OrderBookChart
+            baseToken={baseToken}
+            chainId={chainId}
+            data={processedOrderbook}
+            quoteToken={quoteToken}
+          />
+        )}
+      </div>
+    </div>
   )
 }

@@ -71,12 +71,7 @@ export const OrderBookContainer = (props) => {
 
   return (
     <>
-      <div className="card ">
-        <div className="card-body">
-          <h2 className="card-title ">Orderbook graph</h2>
-          <OrderBook derivedAuctionInfo={derivedAuctionInfo} />
-        </div>
-      </div>
+      <OrderBook derivedAuctionInfo={derivedAuctionInfo} />
 
       <div className="card ">
         <div className="card-body">

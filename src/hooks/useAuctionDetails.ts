@@ -48,7 +48,6 @@ export interface AuctionGraphDetail {
     maxSupply: number
     type: 'simple' | 'convert'
   }
-  bidding: string
   minimum: string
   size: string
   start: string
@@ -59,7 +58,7 @@ export interface AuctionGraphDetail {
 }
 
 const auctionsQuery = gql`
-  query Auction($auctionID: String!) {
+  query Auction($auctionID: ID!) {
     auction(id: $auctionID) {
       id
       isSellingPorterBond
@@ -76,7 +75,6 @@ const auctionsQuery = gql`
         maxSupply
         type
       }
-      bidding
       minimum
       size
       start
