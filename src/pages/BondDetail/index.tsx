@@ -1,21 +1,26 @@
 import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { createGlobalStyle } from 'styled-components'
 
 import { AuctionTimer } from '../../components/auction/AuctionTimer'
 import { ExtraDetailsItem } from '../../components/auction/ExtraDetailsItem'
 import BondAction from '../../components/bond/BondAction'
-import BondHeader from '../../components/bond/BondHeader'
-import { InlineLoading } from '../../components/common/InlineLoading'
 import WarningModal from '../../components/modals/WarningModal'
 import TokenLogo from '../../components/token/TokenLogo'
 import { useBondDetails } from '../../hooks/useBondDetails'
-import { ConvertButtonOutline, SimpleButtonOutline, TwoGridPage } from '../Auction'
+import { ConvertButtonOutline, LoadingTwoGrid, SimpleButtonOutline, TwoGridPage } from '../Auction'
 
 export enum BondActions {
   Redeem,
   Convert,
   Mint,
 }
+
+const GlobalStyle = createGlobalStyle`
+  .siteHeader {
+    background: #532DBE;
+  }
+`
 
 const Bond: React.FC = () => {
   const navigate = useNavigate()
@@ -58,8 +63,31 @@ const Bond: React.FC = () => {
     },
   ]
 
+  if (isLoading) {
+    return (
+      <>
+        <GlobalStyle />
+        <LoadingTwoGrid />
+      </>
+    )
+  }
+
+  if (invalidBond)
+    return (
+      <>
+        <GlobalStyle />
+        <WarningModal
+          content={`This bond doesn't exist or it hasn't been created yet.`}
+          isOpen
+          onDismiss={() => navigate('/auctions')}
+          title="Warning!"
+        />
+      </>
+    )
+
   return (
     <>
+      <GlobalStyle />
       <div className="py-2 flex content-center justify-center md:justify-between flex-wrap items-end">
         <div className="flex flex-wrap items-center space-x-6">
           <div className="hidden md:block">
@@ -87,7 +115,6 @@ const Bond: React.FC = () => {
           </span>
         </div>
       </div>
-      <BondHeader bondId={bondIdentifier?.bondId} />
       <TwoGridPage
         leftChildren={
           <>
@@ -113,20 +140,21 @@ const Bond: React.FC = () => {
         }
         rightChildren={
           <>
-            <BondAction actionType={BondActions.Convert} />
-            <BondAction actionType={BondActions.Redeem} />
+            <div className="card">
+              <div className="card-body">
+                <h2 className="card-title">Convert</h2>
+                <BondAction actionType={BondActions.Convert} />
+              </div>
+            </div>
+            <div className="card">
+              <div className="card-body">
+                <h2 className="card-title">Redeem</h2>
+                <BondAction actionType={BondActions.Redeem} />
+              </div>
+            </div>
           </>
         }
       />
-      {isLoading && <InlineLoading />}
-      {!isLoading && invalidBond && (
-        <WarningModal
-          content={`This bond doesn't exist or it hasn't been created yet.`}
-          isOpen
-          onDismiss={() => navigate('/auctions')}
-          title="Warning!"
-        />
-      )}
     </>
   )
 }
