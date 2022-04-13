@@ -2,6 +2,7 @@ import React from 'react'
 
 import { ReactComponent as AuctionsIcon } from '../../assets/svg/auctions.svg'
 import { ReactComponent as ConvertIcon } from '../../assets/svg/convert.svg'
+import { ReactComponent as DividerIcon } from '../../assets/svg/divider.svg'
 import { ReactComponent as OTCIcon } from '../../assets/svg/otc.svg'
 import { ActiveStatusPill } from '../../components/auction/OrderbookTable'
 import Table from '../../components/auctions/Table'
@@ -10,6 +11,7 @@ import TokenLogo from '../../components/token/TokenLogo'
 import { useActiveWeb3React } from '../../hooks'
 import { useAllAuctionInfo } from '../../hooks/useAllAuctionInfos'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
+import { AuctionButtonOutline, OTCButtonOutline } from '../Auction'
 
 const columns = [
   {
@@ -126,6 +128,14 @@ const Offerings = () => {
       emptyLogo={
         <>
           <AuctionsIcon height={36} width={36} /> <OTCIcon height={36} width={36} />
+        </>
+      }
+      legendIcons={
+        <>
+          <div className="rounded-full bg-black px-4 py-2 text-white text-xs uppercase">All</div>
+          <DividerIcon />
+          <AuctionButtonOutline plural />
+          <OTCButtonOutline />
         </>
       }
       loading={isLoading}
