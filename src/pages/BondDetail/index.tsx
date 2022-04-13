@@ -1,6 +1,8 @@
 import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
+import { AuctionTimer } from '../../components/auction/AuctionTimer'
+import { ExtraDetailsItem } from '../../components/auction/ExtraDetailsItem'
 import BondAction from '../../components/bond/BondAction'
 import BondHeader from '../../components/bond/BondHeader'
 import { InlineLoading } from '../../components/common/InlineLoading'
@@ -21,8 +23,41 @@ const Bond: React.FC = () => {
 
   const { data, loading: isLoading } = useBondDetails(bondIdentifier?.bondId)
   const invalidBond = React.useMemo(() => !bondIdentifier || !data, [bondIdentifier, data])
-
   const statusLabel = new Date() > new Date(data?.maturityDate * 1000) ? 'Matured' : 'Active'
+
+  const extraDetails = [
+    {
+      title: 'Face value',
+      value: '1 USDC',
+      tooltip: 'Tooltip',
+    },
+    {
+      title: 'Collateral tokens',
+      value: '0.05 UNI',
+      tooltip: 'Tooltip',
+    },
+    {
+      title: 'Convertible tokens',
+      value: '0.04 UNI',
+      tooltip: 'Tooltip',
+    },
+    {
+      title: 'Estimated Value | APY',
+      value: '0.89 USDC | 20%',
+      tooltip: 'Tooltip',
+    },
+    {
+      title: 'Collateralization Ratio',
+      value: '500%',
+      tooltip: 'Tooltip',
+    },
+    {
+      title: 'Call strike price',
+      value: '25 USDC/UNI',
+      tooltip: 'Tooltip',
+    },
+  ]
+
   return (
     <>
       <div className="py-2 flex content-center justify-center md:justify-between flex-wrap items-end">
@@ -54,8 +89,34 @@ const Bond: React.FC = () => {
       </div>
       <BondHeader bondId={bondIdentifier?.bondId} />
       <TwoGridPage
-        leftChildren={<BondAction actionType={BondActions.Redeem} />}
-        rightChildren={<BondAction actionType={BondActions.Convert} />}
+        leftChildren={
+          <>
+            <div className="card">
+              <div className="card-body">
+                <h2 className="card-title">Bond information</h2>
+                <AuctionTimer
+                  endDate={data?.maturityDate}
+                  endText="Maturity date"
+                  startDate={Date.now() / 1000}
+                  startText="Issuance date"
+                  text="Time until maturity"
+                />
+
+                <div className="grid gap-x-12 gap-y-8 grid-cols-1 pt-12 md:grid-cols-3">
+                  {extraDetails.map((item, index) => (
+                    <ExtraDetailsItem key={index} {...item} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </>
+        }
+        rightChildren={
+          <>
+            <BondAction actionType={BondActions.Convert} />
+            <BondAction actionType={BondActions.Redeem} />
+          </>
+        }
       />
       {isLoading && <InlineLoading />}
       {!isLoading && invalidBond && (
