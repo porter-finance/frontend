@@ -4,7 +4,10 @@ import styled, { css } from 'styled-components'
 
 import { useGlobalFilter, usePagination, useTable } from 'react-table'
 
+import { ReactComponent as AuctionsLogo } from '../../../assets/svg/auctions.svg'
+import { ReactComponent as OTCLogo } from '../../../assets/svg/otc.svg'
 import { AuctionButtonOutline, LoadingBox, OTCButtonOutline } from '../../../pages/Auction'
+import { ActionButton } from '../../auction/Claimer'
 import { Dropdown } from '../../common/Dropdown'
 import { ChevronRight } from '../../icons/ChevronRight'
 import { Delete } from '../../icons/Delete'
@@ -302,7 +305,6 @@ const AllAuctions = ({ loading, tableData, ...restProps }: Props) => {
     () => (rows, columns, filterValue) =>
       rows.filter((row) => {
         let searchResult = false
-        console.log(row)
         for (const column of columns) {
           searchResult = searchResult || searchValue(row.values[column], filterValue)
         }
@@ -337,11 +339,7 @@ const AllAuctions = ({ loading, tableData, ...restProps }: Props) => {
   )
 
   const sectionHead = useRef(null)
-
   const { pageIndex, pageSize } = state
-  const noAuctions = tableData.length === 0
-  const noAuctionsFound = page.length === 0
-  const noData = noAuctions || noAuctionsFound
 
   function handleNextPage() {
     nextPage()
@@ -430,28 +428,16 @@ const AllAuctions = ({ loading, tableData, ...restProps }: Props) => {
               {!page.length && (
                 <tr className="bg-transparent text-[#D2D2D2] text-sm">
                   <td
-                    className="bg-transparent text-center py-[100px] text-[#696969] space-y-4"
+                    className="bg-transparent text-center py-[100px] text-[#696969] space-y-7"
                     colSpan={6}
                   >
-                    <svg
-                      className="m-auto"
-                      fill="none"
-                      height="40"
-                      viewBox="0 0 32 40"
-                      width="32"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M27.202 4.35355L27.2113 4.36285L27.2211 4.37165L31.5 8.22268V39.5H0.5V0.5H23.3484L27.202 4.35355Z"
-                        stroke="white"
-                        strokeOpacity="0.6"
-                      />
-                      <path d="M7 14H25" stroke="white" strokeOpacity="0.6" />
-                      <path d="M7 19H25" stroke="white" strokeOpacity="0.6" />
-                      <path d="M7 24H25" stroke="white" strokeOpacity="0.6" />
-                      <path d="M7 29H25" stroke="white" strokeOpacity="0.6" />
-                    </svg>
-                    <div className="text-base">No auctions found</div>
+                    <div className="flex justify-center space-x-4 opacity-60">
+                      <AuctionsLogo height={36} width={36} /> <OTCLogo height={36} width={36} />
+                    </div>
+                    <div className="text-base text-[#696969]">
+                      There are no offerings at the moment
+                    </div>
+                    <ActionButton className="w-[236px] h-[41px]">Get notify</ActionButton>
                   </td>
                 </tr>
               )}
