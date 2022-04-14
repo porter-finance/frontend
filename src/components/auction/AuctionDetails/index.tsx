@@ -147,13 +147,13 @@ const AuctionDetails = (props: Props) => {
         tooltip: 'Each order must at least bid this amount',
       },
       {
-        bordered: true,
+        bordered: 'blue',
         title: 'Current auction interest rate/price',
         tooltip: `This will be the auction's Closing Price if no more bids are submitted or cancelled, OR it will be the auction's Clearing Price if the auction concludes without additional bids.`,
         value: clearingPriceDisplay ? clearingPriceDisplay : '-',
       },
       {
-        bordered: true,
+        bordered: 'blue',
         title: 'Max interest rate/Min price',
         tooltip: 'Minimum bidding price the auctioneer defined for participation.',
         value: (
@@ -195,6 +195,7 @@ const AuctionDetails = (props: Props) => {
         <h2 className="card-title">Auction information</h2>
         <AuctionTimer
           auctionState={derivedAuctionInfo?.auctionState}
+          color="blue"
           endDate={derivedAuctionInfo?.auctionEndDate}
           endText="End date"
           startDate={derivedAuctionInfo?.auctionStartDate}
