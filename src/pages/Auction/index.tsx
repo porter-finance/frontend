@@ -1,10 +1,9 @@
 import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import styled, { css } from 'styled-components'
 
+import { ReactComponent as AuctionsIcon } from '../../assets/svg/auctions.svg'
+import { ReactComponent as OTCIcon } from '../../assets/svg/otc.svg'
 import AuctionBody from '../../components/auction/AuctionBody'
-import { ButtonCopy } from '../../components/buttons/ButtonCopy'
-import { NetworkIcon } from '../../components/icons/NetworkIcon'
 import WarningModal from '../../components/modals/WarningModal'
 import TokenLogo from '../../components/token/TokenLogo'
 import useShowTopWarning from '../../hooks/useShowTopWarning'
@@ -12,38 +11,26 @@ import { useDerivedAuctionInfo } from '../../state/orderPlacement/hooks'
 import { RouteAuctionIdentifier, parseURL } from '../../state/orderPlacement/reducer'
 import { useTokenListState } from '../../state/tokenList/hooks'
 import { isAddress } from '../../utils'
-import { getChainName } from '../../utils/tools'
 
-const AuctionId = styled.span`
-  align-items: center;
-  display: flex;
-`
+export const GhostButton = ({ children }) => (
+  <span className="space-x-2 inline-flex items-center px-5 py-1.5 rounded-full bg-transparent text-white border-blue-100 border uppercase border-opacity-50 pointer-events-none">
+    {children}
+  </span>
+)
 
-const IconCSS = css`
-  height: 14px;
-  width: 14px;
-`
+export const AuctionButtonOutline = ({ plural = false }) => (
+  <GhostButton>
+    <AuctionsIcon height={12.57} width={12.57} />
+    <span className="text-xs">Auction{plural && 's'}</span>
+  </GhostButton>
+)
 
-const CopyButton = styled(ButtonCopy)`
-  ${IconCSS}
-  margin-left: 5px;
-`
-
-const Network = styled.span`
-  align-items: center;
-  display: flex;
-  margin-right: 5px;
-`
-
-const NetworkIconStyled = styled(NetworkIcon)`
-  ${IconCSS}
-`
-
-const NetworkName = styled.span`
-  margin-left: 8px;
-  margin-right: 2px;
-  text-transform: capitalize;
-`
+export const OTCButtonOutline = () => (
+  <GhostButton>
+    <OTCIcon height={12.57} width={12.57} />
+    <span className="text-xs">OTC</span>
+  </GhostButton>
+)
 
 // Strangely couldn't use tailwind h-[9px] or min-h- , had to specify style = manually
 export const LoadingBox = ({ height }) => (
@@ -53,28 +40,40 @@ export const LoadingBox = ({ height }) => (
   />
 )
 
-const LoadingAuctionPage = () => (
-  <main className="pb-8 px-0 mt-20">
+export const TwoGridPage = ({ hasHeader = true, leftChildren, rightChildren }) => (
+  <main className={`pb-8 px-0 ${!hasHeader ? 'mt-20' : ''}`}>
     {/* Main 3 column grid */}
-    <div className="grid grid-cols-1 gap-4 items-start lg:grid-cols-3 lg:gap-8 pt-6 pb-32">
+    <div className="grid grid-cols-1 gap-4 items-start lg:grid-cols-3 lg:gap-8 pb-32">
       {/* Left column */}
       <div className="grid grid-cols-1 gap-4 lg:col-span-2">
-        <section aria-labelledby="section-1-title">
-          <LoadingBox height={489} />
-          <LoadingBox height={579} />
-          <LoadingBox height={521} />
-        </section>
+        <section aria-labelledby="section-1-title">{leftChildren}</section>
       </div>
 
       {/* Right column */}
       <div className="grid grid-cols-1 gap-4">
-        <section aria-labelledby="section-2-title">
-          <LoadingBox height={404} />
-          <LoadingBox height={223} />
-        </section>
+        <section aria-labelledby="section-2-title">{rightChildren}</section>
       </div>
     </div>
   </main>
+)
+
+const LoadingAuctionPage = () => (
+  <TwoGridPage
+    hasHeader={false}
+    leftChildren={
+      <>
+        <LoadingBox height={489} />
+        <LoadingBox height={579} />
+        <LoadingBox height={521} />
+      </>
+    }
+    rightChildren={
+      <>
+        <LoadingBox height={404} />
+        <LoadingBox height={223} />
+      </>
+    }
+  />
 )
 
 const Auction: React.FC = () => {
@@ -84,7 +83,6 @@ const Auction: React.FC = () => {
   const auctionIdentifier = parseURL(useParams<RouteAuctionIdentifier>())
   const derivedAuctionInfo = useDerivedAuctionInfo(auctionIdentifier)
   const { tokens } = useTokenListState()
-  const url = window.location.href
 
   const biddingTokenAddress = derivedAuctionInfo?.biddingToken?.address
   const auctioningTokenAddress = derivedAuctionInfo?.auctioningToken?.address
@@ -167,39 +165,12 @@ const Auction: React.FC = () => {
           <div>
             <h1 className="text-3xl text-white">{auctionSymbolAuctioningToken} Auction</h1>
             <p className="text-blue-100 text-sm font-medium">
-              {!derivedAuctionInfo?.graphInfo?.isSellingPorterBond ? (
-                <Network>
-                  <NetworkIconStyled />
-                  <NetworkName>Selling on {getChainName(auctionIdentifier.chainId)} -</NetworkName>
-                  <AuctionId>Auction Id #{auctionIdentifier.auctionId}</AuctionId>
-                  <CopyButton copyValue={url} title="Copy URL" />
-                </Network>
-              ) : (
-                derivedAuctionInfo?.graphInfo?.bond?.symbol
-              )}
+              {derivedAuctionInfo?.graphInfo?.bond?.symbol}
             </p>
           </div>
         </div>
         <div className="flex justify-center md:mt-0 mt-5 space-x-3">
-          <span className="space-x-2 inline-flex items-center px-5 py-1.5 rounded-full bg-transparent text-white border-blue-100 border uppercase border-opacity-50 pointer-events-none">
-            <svg
-              fill="none"
-              height="14"
-              viewBox="0 0 14 14"
-              width="14"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M6.70952 7.00007C6.70952 10.0191 4.30434 12.5204 1.21429 12.766V1.23413C4.30434 1.4797 6.70952 3.98105 6.70952 7.00007Z"
-                stroke="white"
-              />
-              <path
-                d="M7.29048 6.99993C7.29048 3.98091 9.69566 1.47956 12.7857 1.23399L12.7857 12.7659C9.69566 12.5203 7.29048 10.0189 7.29048 6.99993Z"
-                stroke="white"
-              />
-            </svg>
-            <span className="text-xs">Auction</span>
-          </span>
+          <AuctionButtonOutline />
           <span className="inline-flex items-center px-2 space-x-1 py-1.5 rounded-full bg-white border-blue-100 border uppercase border-opacity-50 pointer-events-none text-[#404EED] font-medium">
             <svg className="h-2 w-2" fill="#404EED" opacity="0.5" viewBox="0 0 8 8">
               <circle cx={4} cy={4} r={3} />
