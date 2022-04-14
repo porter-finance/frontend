@@ -59,6 +59,14 @@ const TokenInfo = ({ chainId, token, value }) => (
   </div>
 )
 
+const getActionText = (actionType) => {
+  if (actionType === BondActions.Redeem) return 'Redeem'
+  if (actionType === BondActions.Convert) return 'Convert'
+  if (actionType === BondActions.Mint) return 'Mint'
+
+  return 'Unknown'
+}
+
 const BondAction = ({
   actionType,
   overwriteBondId,
@@ -335,17 +343,10 @@ const BondAction = ({
     isOwner,
   ])
 
-  const pendingText = useMemo(() => {
-    if (actionType === BondActions.Redeem) {
-      return 'Placing redeem order'
-    }
-    if (actionType === BondActions.Mint) {
-      return 'Placing mint order'
-    }
-    if (actionType === BondActions.Convert) {
-      return 'Placing convert order'
-    }
-  }, [actionType])
+  const pendingText = useMemo(
+    () => `Placing ${getActionText(actionType).toLowerCase()} order`,
+    [actionType],
+  )
 
   const isActionDisabled = useMemo(() => {
     if (actionType === BondActions.Convert) return !isConvertable
@@ -353,83 +354,98 @@ const BondAction = ({
     if (actionType === BondActions.Mint) return !isMintable
   }, [actionType, isConvertable, isMintable, isRedeemable])
 
+  if (isMatured) {
+    return null
+  }
+
   return (
-    <ActionPanel>
-      <div className="space-y-6">
-        <AmountInputPanel
-          balance={totalBalance}
-          balanceString={actionType === BondActions.Mint && 'Available'}
-          chainId={bondTokenInfo?.chainId}
-          info={
-            !isOwner && {
-              text: 'You do not own this bond',
-              type: InfoType.error,
-            }
-          }
-          onMax={() => {
-            setBondsToRedeem(totalBalance)
-          }}
-          onUserSellAmountInput={onUserSellAmountInput}
-          token={tokenToAction}
-          unlock={{
-            isLocked: isOwner && !isApproved,
-            onUnlock: approveCallback,
-            unlockState: approval,
-          }}
-          value={bondsToRedeem}
-          wrap={{ isWrappable: false, onClick: null }}
-        />
+    <div className="card place-order-color">
+      <div className="card-body">
+        <h2 className="card-title">{getActionText(actionType)}</h2>
+        <ActionPanel>
+          <div className="space-y-6">
+            <AmountInputPanel
+              balance={totalBalance}
+              balanceString={actionType === BondActions.Mint && 'Available'}
+              chainId={bondTokenInfo?.chainId}
+              info={
+                !isOwner && {
+                  text: 'You do not own this bond',
+                  type: InfoType.error,
+                }
+              }
+              onMax={() => {
+                setBondsToRedeem(totalBalance)
+              }}
+              onUserSellAmountInput={onUserSellAmountInput}
+              token={tokenToAction}
+              unlock={{
+                isLocked: isOwner && !isApproved,
+                onUnlock: approveCallback,
+                unlockState: approval,
+              }}
+              value={bondsToRedeem}
+              wrap={{ isWrappable: false, onClick: null }}
+            />
 
-        <div className="text-xs text-[12px] text-[#696969] space-y-6">
-          {actionType === BondActions.Redeem && (
-            <div className="space-y-4">
-              <TokenInfo chainId={chainId} token={paymentTokenInfo} value={previewRedeemVal[0]} />
-              <TokenInfo
-                chainId={chainId}
-                token={collateralTokenInfo}
-                value={previewRedeemVal[1]}
-              />
+            <div className="text-xs text-[12px] text-[#696969] space-y-6">
+              {actionType === BondActions.Redeem && (
+                <div className="space-y-4">
+                  <TokenInfo
+                    chainId={chainId}
+                    token={paymentTokenInfo}
+                    value={previewRedeemVal[0]}
+                  />
+                  <TokenInfo
+                    chainId={chainId}
+                    token={collateralTokenInfo}
+                    value={previewRedeemVal[1]}
+                  />
 
-              <p>Amount of assets to receive</p>
+                  <p>Amount of assets to receive</p>
+                </div>
+              )}
+
+              {actionType === BondActions.Convert && (
+                <div className="space-y-4">
+                  <TokenInfo
+                    chainId={chainId}
+                    token={collateralTokenInfo}
+                    value={previewConvertVal}
+                  />
+
+                  <p>Amount of assets to receive</p>
+                </div>
+              )}
+
+              <ActionButton disabled={isActionDisabled} onClick={doTheAction}>
+                {getActionText(actionType)}
+              </ActionButton>
+
+              {actionType === BondActions.Mint && (
+                <p>Minting for: {previewMintVal} collateral tokens </p>
+              )}
+
+              <p className="mt-10">Collateral Token Price: ${price} </p>
             </div>
-          )}
+          </div>
 
-          {actionType === BondActions.Convert && (
-            <div className="space-y-4">
-              <TokenInfo chainId={chainId} token={collateralTokenInfo} value={previewConvertVal} />
-
-              <p>Amount of assets to receive</p>
-            </div>
-          )}
-
-          <ActionButton disabled={isActionDisabled} onClick={doTheAction}>
-            {actionType === BondActions.Redeem && 'Redeem'}
-            {actionType === BondActions.Convert && 'Convert'}
-            {actionType === BondActions.Mint && 'Mint'}
-          </ActionButton>
-
-          {actionType === BondActions.Mint && (
-            <p>Minting for: {previewMintVal} collateral tokens </p>
-          )}
-
-          <p className="mt-10">Collateral Token Price: ${price} </p>
-        </div>
+          <ConfirmationModal
+            attemptingTxn={attemptingTxn}
+            content={null}
+            hash={txHash}
+            isOpen={attemptingTxn}
+            onDismiss={() => {
+              resetModal()
+            }}
+            pendingConfirmation={pendingConfirmation}
+            pendingText={pendingText}
+            title="Confirm Order"
+            width={504}
+          />
+        </ActionPanel>
       </div>
-
-      <ConfirmationModal
-        attemptingTxn={attemptingTxn}
-        content={null}
-        hash={txHash}
-        isOpen={attemptingTxn}
-        onDismiss={() => {
-          resetModal()
-        }}
-        pendingConfirmation={pendingConfirmation}
-        pendingText={pendingText}
-        title="Confirm Order"
-        width={504}
-      />
-    </ActionPanel>
+    </div>
   )
 }
 
