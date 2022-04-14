@@ -78,11 +78,13 @@ interface AuctionTimerProps {
   loading?: boolean
   text: string
   startText: string
+  color: string
   endText: string
 }
 
 export const AuctionTimer = ({
   auctionState,
+  color,
   endDate,
   endText,
   startDate,
@@ -154,7 +156,11 @@ export const AuctionTimer = ({
         </DateTitle>
       </div>
       <div className="flex w-full flex-col space-y-3">
-        <progress className="progress progress-primary" max="100" value={progress} />
+        <progress
+          className={`progress progress-primary progress-${color}`}
+          max="100"
+          value={progress}
+        />
         <svg
           fill="none"
           height="13"

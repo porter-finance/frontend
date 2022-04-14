@@ -11,6 +11,7 @@ import BondAction from '../../components/bond/BondAction'
 import WarningModal from '../../components/modals/WarningModal'
 import TokenLogo from '../../components/token/TokenLogo'
 import { useBondDetails } from '../../hooks/useBondDetails'
+import { useIsBondFullyPaid } from '../../hooks/useIsBondFullyPaid'
 import { ConvertButtonOutline, LoadingTwoGrid, SimpleButtonOutline, TwoGridPage } from '../Auction'
 
 export enum BondActions {
@@ -51,6 +52,7 @@ const Bond: React.FC = () => {
   const invalidBond = React.useMemo(() => !bondIdentifier || !data, [bondIdentifier, data])
   const isMatured = new Date() > new Date(data?.maturityDate * 1000)
   const statusLabel = isMatured ? 'Matured' : 'Active'
+  const isFullyPaid = !!useIsBondFullyPaid(bondIdentifier?.bondId)
 
   const extraDetails: Array<ExtraDetailsItemProps> = React.useMemo(
     () => [
@@ -85,7 +87,7 @@ const Bond: React.FC = () => {
         title: 'Call strike price',
         value: '25 USDC/UNI',
         tooltip: 'Tooltip',
-        bordered: true,
+        bordered: 'purple',
         show: data?.type === 'convert',
       },
     ],
@@ -152,6 +154,7 @@ const Bond: React.FC = () => {
               <div className="card-body">
                 <h2 className="card-title">Bond information</h2>
                 <AuctionTimer
+                  color="purple"
                   endDate={data?.maturityDate}
                   endText="Maturity date"
                   startDate={Date.now() / 1000}
@@ -170,8 +173,9 @@ const Bond: React.FC = () => {
         }
         rightChildren={
           <>
-            {isMatured && <ConvertAfterMaturity />}
-            {!isMatured && (
+            {isMatured || isFullyPaid ? (
+              <ConvertAfterMaturity />
+            ) : (
               <>
                 <BondAction actionType={BondActions.Convert} />
                 <BondAction actionType={BondActions.Redeem} />
