@@ -6,7 +6,7 @@ import { DropdownButton } from '../../common/UserDropdown'
 
 const logger = getLogger('ButtonConnect')
 
-const Wrapper = styled.button`
+const Wrapper = styled.div`
   align-items: center;
   background: transparent;
   border: none;
@@ -37,23 +37,13 @@ const Wrapper = styled.button`
   }
 `
 
-const Text = styled.span`
-  margin-right: 10px;
-  font-family: 'Neue Haas Grotesk Display', sans-serif;
-`
-
-export const ButtonConnect: React.FC<ButtonHTMLAttributes<HTMLButtonElement>> = (props) => {
-  const { className, ...restProps } = props
-
-  return (
-    <Wrapper
-      className={`buttonConnect ${className}`}
-      onClick={() => {
-        logger.log('connect')
-      }}
-      {...restProps}
-    >
-      <DropdownButton className="btn btn-sm normal-case">Connect wallet</DropdownButton>
-    </Wrapper>
-  )
-}
+export const ButtonConnect: React.FC<ButtonHTMLAttributes<HTMLButtonElement>> = ({
+  className,
+  ...restProps
+}) => (
+  <Wrapper className={`buttonConnect ${className}`}>
+    <DropdownButton {...restProps} className="btn btn-sm normal-case">
+      Connect wallet
+    </DropdownButton>
+  </Wrapper>
+)
