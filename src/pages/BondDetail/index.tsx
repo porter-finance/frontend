@@ -7,6 +7,7 @@ import {
   ExtraDetailsItem,
   Props as ExtraDetailsItemProps,
 } from '../../components/auction/ExtraDetailsItem'
+import BondAction from '../../components/bond/BondAction'
 import WarningModal from '../../components/modals/WarningModal'
 import TokenLogo from '../../components/token/TokenLogo'
 import { useBondDetails } from '../../hooks/useBondDetails'
@@ -183,6 +184,7 @@ const BondDetail: React.FC = () => {
               <AfterMaturityError actionType={BondActions.Convert} />
             )}
             {!isConvertBond && isMatured && <AfterMaturityError actionType={BondActions.Redeem} />}
+            {<BondAction actionType={isConvertBond ? BondActions.Convert : BondActions.Redeem} />}
           </>
         }
       />
