@@ -44,7 +44,26 @@ const Link = styled(ExternalLink)`
   margin-top: -2px;
 `
 
-const LinearBorder = () => (
+const PurpleLinearBorder = () => (
+  <svg fill="none" height="2" viewBox="0 0 248 2" width="248" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 1L248 0.999978" stroke="url(#paint0_linear_9288_2226)" strokeWidth="2" />
+    <defs>
+      <linearGradient
+        gradientUnits="userSpaceOnUse"
+        id="paint0_linear_9288_2226"
+        x1="0"
+        x2="248"
+        y1="1"
+        y2="1"
+      >
+        <stop stopColor="#532DBE" />
+        <stop offset="1" stopColor="#532DBE" stopOpacity="0" />
+      </linearGradient>
+    </defs>
+  </svg>
+)
+
+const BlueLinearBorder = () => (
   <svg fill="none" height="2" width="100%" xmlns="http://www.w3.org/2000/svg">
     <path d="M0 1L248 0.999978" stroke="url(#paint0_linear_8725_2152)" strokeWidth="2" />
     <defs>
@@ -68,7 +87,7 @@ export interface Props {
   show?: boolean
   title: string
   tooltip?: string
-  bordered?: boolean
+  bordered?: string
   url?: string
   value: string | ReactElement | Element
 }
@@ -97,7 +116,8 @@ export const ExtraDetailsItem: React.FC<Props> = ({
       </div>
 
       <div className={`mt-5 ${!bordered && 'border border-[#222222]'}`}>
-        {bordered && <LinearBorder />}
+        {bordered === 'blue' && <BlueLinearBorder />}
+        {bordered === 'purple' && <PurpleLinearBorder />}
       </div>
     </div>
   )
