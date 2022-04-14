@@ -44,7 +44,7 @@ const ConvertAfterMaturity = () => (
   </div>
 )
 
-const Bond: React.FC = () => {
+const BondDetail: React.FC = () => {
   const navigate = useNavigate()
   const bondIdentifier = useParams()
 
@@ -116,6 +116,10 @@ const Bond: React.FC = () => {
       </>
     )
 
+  const today = new Date()
+  const days = 86400000 //number of milliseconds in a day
+  const issuanceDate = new Date(today.getTime() - 5 * days).getTime()
+
   return (
     <>
       <GlobalStyle />
@@ -157,7 +161,7 @@ const Bond: React.FC = () => {
                   color="purple"
                   endDate={data?.maturityDate}
                   endText="Maturity date"
-                  startDate={Date.now() / 1000}
+                  startDate={issuanceDate / 1000}
                   startText="Issuance date"
                   text="Time until maturity"
                 />
@@ -188,4 +192,4 @@ const Bond: React.FC = () => {
   )
 }
 
-export default Bond
+export default React.memo(BondDetail)

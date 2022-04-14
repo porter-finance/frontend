@@ -358,6 +358,8 @@ const BondAction = ({
     return null
   }
 
+  console.log(isRedeemable, isConvertable, 'isRedeemable, isConvertable')
+
   return (
     <div className="card bond-card-color">
       <div className="card-body">
