@@ -119,9 +119,8 @@ const BondDetail: React.FC = () => {
       </>
     )
 
-  const today = new Date()
-  const days = 86400000 //number of milliseconds in a day
-  const issuanceDate = new Date(today.getTime() - 5 * days).getTime()
+  const days = 86400000 // number of ms in a day
+  const issuanceDate = new Date(data?.maturityDate * 1000 - 5 * days).getTime()
 
   return (
     <>
