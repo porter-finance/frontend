@@ -14,23 +14,17 @@ const Wrapper = styled.svg`
 `
 
 export const Private: React.FC<{ className?: string }> = (props) => (
-  <Wrapper
-    className={`private ${props.className}`}
-    height="16"
-    viewBox="0 0 16 16"
-    width="16"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}
-  >
+  <svg fill="none" height="14" viewBox="0 0 10 14" width="10" xmlns="http://www.w3.org/2000/svg">
+    <rect fill="#9F9F9F" height="8" rx="0.5" stroke="#9F9F9F" width="9" x="0.5" y="5.5" />
+    <mask fill="white" id="path-2-inside-1_8692_758">
+      <path d="M2 1C2 0.447715 2.44772 0 3 0H7C7.55228 0 8 0.447715 8 1V7H2V1Z" />
+    </mask>
     <path
-      className="fill"
-      d="M13.333 13.331a.667.667 0 0 1-.667.667H6a.667.667 0 0 1-.667-.667V8.664A.667.667 0 0 1 6 8h6.667a.667.667 0 0 1 .667.667zm-4-10A2.67 2.67 0 0 1 12 6v.665H6.669V6a2.67 2.67 0 0 1 2.667-2.668zm4 3.455V6a4 4 0 1 0-8 0v.787A2 2 0 0 0 4 8.664v4.667a2 2 0 0 0 2 2h6.667a2 2 0 0 0 2-2V8.664a2 2 0 0 0-1.331-1.876z"
-      transform="translate(-1.333 -.666)"
+      d="M2 1C2 0.447715 2.44772 0 3 0H7C7.55228 0 8 0.447715 8 1V7H2V1Z"
+      mask="url(#path-2-inside-1_8692_758)"
+      stroke="#9F9F9F"
+      strokeWidth="3"
     />
-    <path
-      className="fill"
-      d="M12.5 13.994a1 1 0 0 0-2 0 .986.986 0 0 0 .335.74v.924a.669.669 0 0 0 1.338 0v-.928a1 1 0 0 0 .327-.736"
-      transform="translate(-3.5 -4.331)"
-    />
-  </Wrapper>
+    <rect fill="#131415" height="4" width="2" x="4" y="8" />
+  </svg>
 )
