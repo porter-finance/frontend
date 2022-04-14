@@ -354,11 +354,11 @@ const BondAction = ({
   const isActionDisabled = useMemo(() => {
     if (actionType === BondActions.Convert) {
       console.log(isConvertable)
-      return isConvertable === true
+      return isConvertable !== true
     }
     if (actionType === BondActions.Redeem) {
       console.log(isRedeemable)
-      return isRedeemable === true
+      return isRedeemable !== true
     }
 
     if (actionType === BondActions.Mint) return !isMintable
