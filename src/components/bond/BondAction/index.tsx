@@ -371,12 +371,14 @@ const BondAction = ({
         <h2 className="card-title">{getActionText(actionType)}</h2>
         <ActionPanel>
           <div className="space-y-6">
-            {!bondTokenBalance || bondTokenBalance.lte(0) ? (
+            {account && (!bondTokenBalance || bondTokenBalance.lte(0)) ? (
               <div className="flex justify-center text-[12px] text-[#696969] border border-[#2C2C2C] p-12 rounded-lg">
                 <span>No bonds to convert</span>
               </div>
             ) : (
               <AmountInputPanel
+                amountDescription="UNI CONVERT 07AUG2022 2P 25C USDC"
+                amountText="Amount of bonds to convert"
                 balance={totalBalance}
                 balanceString={actionType === BondActions.Mint && 'Available'}
                 chainId={bondTokenInfo?.chainId}
