@@ -26,6 +26,7 @@ const Wrapper = styled.header`
   width: 100%;
   min-height: 220px;
   background: #404eed;
+  transition: background 0.3s ease;
 `
 
 export const Inner = styled(InnerContainer)`

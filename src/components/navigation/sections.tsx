@@ -1,11 +1,11 @@
 export const navItems = [
   {
     title: 'Offerings',
-    url: '/auctions',
+    url: '/offerings',
   },
   {
     title: 'Products',
-    url: '/bonds',
+    url: '/products',
   },
   {
     title: 'Portfolio',
