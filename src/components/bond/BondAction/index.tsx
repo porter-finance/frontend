@@ -15,7 +15,6 @@ import { useIsBondFullyPaid } from '../../../hooks/useIsBondFullyPaid'
 import { useMintBond } from '../../../hooks/useMintBond'
 import { usePreviewBond } from '../../../hooks/usePreviewBond'
 import { useRedeemBond } from '../../../hooks/useRedeemBond'
-import { useTokenPrice } from '../../../hooks/useTokenPrice'
 import { BondActions } from '../../../pages/BondDetail'
 import { useActivePopups } from '../../../state/application/hooks'
 import { useFetchTokenByAddress } from '../../../state/user/hooks'
@@ -81,7 +80,6 @@ const BondAction = ({
 
   const bondId = overwriteBondId || params?.bondId
   const { data: derivedBondInfo, loading: isLoading } = useBondDetails(bondId)
-  const { data: price } = useTokenPrice(derivedBondInfo?.collateralToken)
   const [bondTokenInfo, setBondTokenInfo] = useState(null)
   const [collateralTokenInfo, setCollateralTokenInfo] = useState(null)
   const [paymentTokenInfo, setPaymentTokenInfo] = useState(null)
@@ -376,30 +374,35 @@ const BondAction = ({
         <h2 className="card-title">{getActionText(actionType)}</h2>
         <ActionPanel>
           <div className="space-y-6">
-            <AmountInputPanel
-              balance={totalBalance}
-              balanceString={actionType === BondActions.Mint && 'Available'}
-              chainId={bondTokenInfo?.chainId}
-              info={
-                !isOwner && {
-                  text: 'You do not own this bond',
-                  type: InfoType.error,
+            {Number(totalBalance) <= 0 ? (
+              <div className="flex justify-center text-[12px] text-[#696969] border border-[#2C2C2C] p-12 rounded-lg">
+                <span>No bonds to convert</span>
+              </div>
+            ) : (
+              <AmountInputPanel
+                balance={totalBalance}
+                balanceString={actionType === BondActions.Mint && 'Available'}
+                chainId={bondTokenInfo?.chainId}
+                info={
+                  !isOwner && {
+                    text: 'You do not own this bond',
+                    type: InfoType.error,
+                  }
                 }
-              }
-              onMax={() => {
-                setBondsToRedeem(totalBalance)
-              }}
-              onUserSellAmountInput={onUserSellAmountInput}
-              token={tokenToAction}
-              unlock={{
-                isLocked: isOwner && !isApproved,
-                onUnlock: approveCallback,
-                unlockState: approval,
-              }}
-              value={bondsToRedeem}
-              wrap={{ isWrappable: false, onClick: null }}
-            />
-
+                onMax={() => {
+                  setBondsToRedeem(totalBalance)
+                }}
+                onUserSellAmountInput={onUserSellAmountInput}
+                token={tokenToAction}
+                unlock={{
+                  isLocked: isOwner && !isApproved,
+                  onUnlock: approveCallback,
+                  unlockState: approval,
+                }}
+                value={bondsToRedeem}
+                wrap={{ isWrappable: false, onClick: null }}
+              />
+            )}
             <div className="text-xs text-[12px] text-[#696969] space-y-6">
               {actionType === BondActions.Redeem && (
                 <div className="space-y-4">
@@ -437,8 +440,6 @@ const BondAction = ({
               {actionType === BondActions.Mint && (
                 <p>Minting for: {previewMintVal} collateral tokens </p>
               )}
-
-              <p className="mt-10">Collateral Token Price: ${price} </p>
             </div>
           </div>
 
