@@ -111,12 +111,18 @@ interface Props {
   onUserSellAmountInput: (val: string) => void
   token: Maybe<Token>
   unlock: unlockProps
+  amountText?: string
+  amountTooltip?: string
   wrap: wrapProps
+  amountDescription?: string
   value: string
 }
 
 const AmountInputPanel: React.FC<Props> = (props) => {
   const {
+    amountDescription,
+    amountText = 'Amount',
+    amountTooltip = 'Amount tooltip',
     balance,
     balanceString,
     chainId,
@@ -218,15 +224,29 @@ const AmountInputPanel: React.FC<Props> = (props) => {
             )}
           </Wrap>
         </FieldRowTop>
-        <FieldRowBottom>
+        <FieldRowBottom className="flex mt-auto flex-col">
+          {amountDescription && (
+            <div>
+              <FieldRowLabelStyled className="space-x-1">
+                <FieldRowInfo
+                  className="!text-[#E0E0E0] mb-2 !text-[12px]"
+                  infoType={InfoType.info}
+                >
+                  {amountDescription}
+                </FieldRowInfo>
+              </FieldRowLabelStyled>
+            </div>
+          )}
           {info ? (
-            <FieldRowLabelStyled className="space-x-1">
-              <FieldRowInfo infoType={info?.type}>{info.text}</FieldRowInfo>
-            </FieldRowLabelStyled>
+            <div>
+              <FieldRowLabelStyled className="space-x-1">
+                <FieldRowInfo infoType={info?.type}>{info.text}</FieldRowInfo>
+              </FieldRowLabelStyled>
+            </div>
           ) : (
             <FieldRowLabelStyled className="space-x-1">
-              <span>Amount</span>
-              <Tooltip text="Amount tooltip" />
+              <span>{amountText}</span>
+              <Tooltip text={amountTooltip} />
             </FieldRowLabelStyled>
           )}
         </FieldRowBottom>
