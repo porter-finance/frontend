@@ -2,7 +2,7 @@ import React, { ButtonHTMLAttributes } from 'react'
 import styled from 'styled-components'
 
 import { getLogger } from '../../../utils/logger'
-import { ChevronRight } from '../../icons/ChevronRight'
+import { DropdownButton } from '../../common/UserDropdown'
 
 const logger = getLogger('ButtonConnect')
 
@@ -13,7 +13,6 @@ const Wrapper = styled.button`
   color: white;
   cursor: pointer;
   display: flex;
-  font-size: 16px;
   font-weight: 400;
   height: 100%;
   line-height: 1.2;
@@ -40,7 +39,7 @@ const Wrapper = styled.button`
 
 const Text = styled.span`
   margin-right: 10px;
-  font-family: 'Neue Haas Grotesk Display Pro', sans-serif;
+  font-family: 'Neue Haas Grotesk Display', sans-serif;
 `
 
 export const ButtonConnect: React.FC<ButtonHTMLAttributes<HTMLButtonElement>> = (props) => {
@@ -54,8 +53,7 @@ export const ButtonConnect: React.FC<ButtonHTMLAttributes<HTMLButtonElement>> = 
       }}
       {...restProps}
     >
-      <Text>Connect a Wallet</Text>
-      <ChevronRight />
+      <DropdownButton className="btn btn-sm normal-case">Connect wallet</DropdownButton>
     </Wrapper>
   )
 }

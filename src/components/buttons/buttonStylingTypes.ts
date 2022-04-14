@@ -86,13 +86,14 @@ const getButtonTypeStyles = (buttonType: ButtonType = ButtonType.primary): any =
 
 export const ButtonCSS = css<ButtonCommonProps>`
   align-items: center;
-  border-radius: 6px;
+  border-radius: 8px;
   border-style: solid;
   border-width: 1px;
   cursor: pointer;
   display: flex;
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.01em;
+  font-weight: 400;
   height: 44px;
   justify-content: center;
   line-height: 1;
@@ -103,7 +104,7 @@ export const ButtonCSS = css<ButtonCommonProps>`
   transition: all 0.15s ease-out;
   user-select: none;
   white-space: nowrap;
-  font-family: 'Neue Haas Grotesk Display Pro', sans-serif;
+  font-family: 'Neue Haas Grotesk Display', sans-serif;
 
   ${(props) => getButtonTypeStyles(props.buttonType)}
 `
