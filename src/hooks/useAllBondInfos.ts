@@ -9,11 +9,13 @@ export interface BondInfo {
   name: string
   symbol: string
   owner: string
+  type: string
   maturityDate: number
   paymentToken: string
   collateralToken: string
   collateralRatio: number
   convertibleRatio: number
+  maxSupply: number
 }
 
 const bondsQuery = gql`
@@ -22,12 +24,14 @@ const bondsQuery = gql`
       id
       name
       symbol
+      type
       owner
       maturityDate
       paymentToken
       collateralToken
       collateralRatio
       convertibleRatio
+      maxSupply
     }
   }
 `
