@@ -1,8 +1,9 @@
 import styled from 'styled-components'
 
 export const BaseCard = styled.div<{ noPadding?: boolean }>`
-  background-color: ${({ theme }) => theme.cards.backgroundColor};
-  border-radius: ${({ theme }) => theme.cards.borderRadius};
+  background: #181a1c;
+  border-radius: 8px;
+
   border: ${({ theme }) => theme.cards.border};
   display: flex;
   flex-direction: column;

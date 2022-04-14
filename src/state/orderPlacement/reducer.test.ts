@@ -11,6 +11,7 @@ describe('orderPlacement reducer', () => {
       price: '1',
       sellAmount: '',
       chainId: 1,
+      interestRate: '1',
       showPriceInverted: false,
     })
   })
@@ -42,6 +43,7 @@ describe('orderPlacement reducer', () => {
 
       expect(store.getState()).toEqual({
         price: '1',
+        interestRate: '1',
         chainId: 1,
         sellAmount: '2',
         showPriceInverted: false,

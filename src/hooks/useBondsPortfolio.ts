@@ -24,7 +24,9 @@ const bondsQuery = gql`
 
 export const useBondsPortfolio = (): Maybe<BondInfo[]> => {
   const { account } = useWeb3React()
-  const { data, error } = useQuery(bondsQuery, { variables: { account: account || '0x00' } })
+  const { data, error } = useQuery(bondsQuery, {
+    variables: { account: (account && account?.toLowerCase()) || '0x00' },
+  })
 
   if (error) {
     logger.error('Error getting useBondsPortfolio info', error)

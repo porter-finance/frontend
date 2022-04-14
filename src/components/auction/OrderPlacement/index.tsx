@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import { Fraction, TokenAmount } from '@josojo/honeyswap-sdk'
+import dayjs from 'dayjs'
 
 import kycLinks from '../../../assets/links/kycLinks.json'
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../constants/config'
@@ -10,6 +11,7 @@ import { ApprovalState, useApproveCallback } from '../../../hooks/useApproveCall
 import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
 import { usePlaceOrderCallback } from '../../../hooks/usePlaceOrderCallback'
 import { useSignature } from '../../../hooks/useSignature'
+import { LoadingBox } from '../../../pages/Auction'
 import { useWalletModalToggle } from '../../../state/application/hooks'
 import {
   AuctionState,
@@ -34,12 +36,10 @@ import {
 import { convertPriceIntoBuyAndSellAmount, getInverse } from '../../../utils/prices'
 import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
-import { InlineLoading } from '../../common/InlineLoading'
-import { SpinnerSize } from '../../common/Spinner'
+import { Tooltip } from '../../common/Tooltip'
 import AmountInputPanel from '../../form/AmountInputPanel'
+import InterestRateInputPanel from '../../form/InterestRateInputPanel'
 import PriceInputPanel from '../../form/PriceInputPanel'
-import { Calendar } from '../../icons/Calendar'
-import { LockBig } from '../../icons/LockBig'
 import ConfirmationModal from '../../modals/ConfirmationModal'
 import WarningModal from '../../modals/WarningModal'
 import SwapModalFooter from '../../modals/common/PlaceOrderModalFooter'
@@ -65,34 +65,13 @@ const ExternalLink = styled.a`
 
 const Wrapper = styled(BaseCard)`
   max-width: 100%;
-  min-height: 392px;
   min-width: 100%;
-  padding: 20px;
+  padding: 10px 0 0;
 `
 
 const ActionButton = styled(Button)`
   flex-shrink: 0;
-  height: 40px;
-  margin-top: auto;
-`
-
-const PrivateWrapper = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  height: 300px;
-  justify-content: center;
-`
-
-const TextBig = styled(EmptyContentText)`
-  font-size: 22px;
-  margin-bottom: 15px;
-  margin-top: 5px;
-`
-
-const EmptyContentTextNoMargin = styled(EmptyContentText)`
-  line-height: 1.2;
-  margin-top: 0;
+  height: 42px;
 `
 
 const EmptyContentTextSmall = styled(EmptyContentText)`
@@ -104,18 +83,24 @@ const EmptyContentTextSmall = styled(EmptyContentText)`
 const Warning = styled.div`
   align-items: center;
   display: flex;
-  margin-bottom: 16px;
+  margin-top: 16px;
+
+  .fill {
+    fill: #9f9f9f;
+  }
 `
 
 const WarningText = styled.div`
-  color: ${({ theme }) => theme.text1};
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 1.2;
+  color: #9f9f9f;
   margin-left: 8px;
-  position: relative;
-  top: 2px;
-  text-align: left;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14px;
+  /* identical to box height */
+
+  display: flex;
+  align-items: flex-end;
+  letter-spacing: 0.03em;
 `
 
 interface OrderPlacementProps {
@@ -133,16 +118,15 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const { account, chainId: chainIdFromWeb3 } = useActiveWeb3React()
   const orders: OrderState | undefined = useOrderState()
   const toggleWalletModal = useWalletModalToggle()
-  const { price, sellAmount, showPriceInverted } = useOrderPlacementState()
-  const { errorAmount, errorPrice } = useGetOrderPlacementError(
+  const { interestRate, price, sellAmount, showPriceInverted } = useOrderPlacementState()
+  const { errorAmount, errorInterestRate, errorPrice } = useGetOrderPlacementError(
     derivedAuctionInfo,
     auctionState,
     auctionIdentifier,
     showPriceInverted,
   )
-  const { onInvertPrices } = useSwapActionHandlers()
-  const { onUserSellAmountInput } = useSwapActionHandlers()
-  const { onUserPriceInput } = useSwapActionHandlers()
+  const { onUserInterestRateInput, onUserPriceInput, onUserSellAmountInput } =
+    useSwapActionHandlers()
   const { auctionDetails, auctionInfoLoading } = useAuctionDetails(auctionIdentifier)
   const { signature } = useSignature(auctionIdentifier, account)
 
@@ -177,6 +161,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const maxAmountInput: TokenAmount = biddingTokenBalance ? biddingTokenBalance : undefined
 
   useEffect(() => {
+    onUserPriceInput(price)
     if (price == '-' && derivedAuctionInfo?.clearingPrice) {
       showPriceInverted
         ? onUserPriceInput(
@@ -184,13 +169,11 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
               .invert()
               .multiply(new Fraction('999', '1000'))
               .toSignificant(4),
-            true,
           )
         : onUserPriceInput(
             derivedAuctionInfo?.clearingPrice
               .multiply(new Fraction('1001', '1000'))
               .toSignificant(4),
-            false,
           )
     }
   }, [onUserPriceInput, price, derivedAuctionInfo, showPriceInverted])
@@ -296,16 +279,9 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     return biddingTokenBalance?.toSignificant(6)
   }, [biddingTokenBalance])
 
-  const showTopWarning = orderPlacingOnly || cancelDate
-
   const amountInfo = React.useMemo(
     () =>
-      !account
-        ? {
-            text: 'Please connect your wallet.',
-            type: InfoType.info,
-          }
-        : approval !== ApprovalState.APPROVED && notApproved && approval !== ApprovalState.PENDING
+      approval !== ApprovalState.APPROVED && notApproved && approval !== ApprovalState.PENDING
         ? {
             text: `You need to unlock ${biddingTokenDisplay} to allow the smart contract to interact with it.`,
             type: InfoType.info,
@@ -316,7 +292,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
             type: InfoType.error,
           }
         : null,
-    [account, approval, errorAmount, notApproved, biddingTokenDisplay],
+    [approval, errorAmount, notApproved, biddingTokenDisplay],
   )
 
   const priceInfo = React.useMemo(
@@ -330,9 +306,21 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     [errorPrice],
   )
 
+  const interestRateInfo = React.useMemo(
+    () =>
+      errorInterestRate
+        ? {
+            text: errorInterestRate,
+            type: InfoType.error,
+          }
+        : null,
+    [errorInterestRate],
+  )
+
   const disablePlaceOrder =
     (errorAmount ||
       errorPrice ||
+      errorInterestRate ||
       notApproved ||
       showWarning ||
       showWarningWrongChainId ||
@@ -352,139 +340,180 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
 
   const auctioningTokenAddress = auctioningToken && auctioningToken?.address
   const linkForKYC = auctioningTokenAddress ? kycLinks[auctioningTokenAddress] : null
+
+  if (auctionInfoLoading) {
+    return <LoadingBox height={404} />
+  }
+
+  if (isPrivate && !signatureAvailable) {
+    return (
+      <div className="card card-bordered">
+        <div className="card-body">
+          <h2 className="card-title !text-[#696969]">Private auction</h2>
+
+          <div className="text-sm text-[#696969]">
+            This auction is only available for allow-listed wallets
+          </div>
+          {account && linkForKYC && (
+            <EmptyContentTextSmall>
+              <ExternalLink href={linkForKYC}>Get Allowed ↗</ExternalLink>
+            </EmptyContentTextSmall>
+          )}
+          {!account && (
+            <ActionButton className="mt-4" onClick={toggleWalletModal}>
+              Connect wallet
+            </ActionButton>
+          )}
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <>
-      <Wrapper>
-        {auctionInfoLoading && <InlineLoading size={SpinnerSize.small} />}
-        {!auctionInfoLoading && isPrivate && !signatureAvailable && (
-          <>
-            <PrivateWrapper>
-              <LockBig />
-              <TextBig>Private auction</TextBig>
-              {account !== null && (
-                <EmptyContentTextNoMargin>
-                  You need to get allowed to participate.
-                </EmptyContentTextNoMargin>
+    <div className="card card-bordered place-order-color">
+      <div className="card-body">
+        <h2 className="card-title">Place Order</h2>
+
+        {cancelDate && derivedAuctionInfo && (
+          <div className="space-y-1">
+            <div className="text-[#EEEFEB] text-sm">
+              {dayjs(derivedAuctionInfo.orderCancellationEndDate * 1000)
+                .utc()
+                .format('MMM DD, YYYY HH:mm UTC')}
+            </div>
+            <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
+              <span>Order cancellation cutoff date</span>
+              <Tooltip text="Order cutoff date tooltip" />
+            </div>
+          </div>
+        )}
+
+        <Wrapper>
+          {(!isPrivate || signatureAvailable) && (
+            <>
+              <AmountInputPanel
+                balance={balanceString}
+                chainId={chainId}
+                info={amountInfo}
+                onMax={onMaxInput}
+                onUserSellAmountInput={onUserSellAmountInput}
+                token={biddingToken}
+                unlock={{ isLocked: notApproved, onUnlock: approveCallback, unlockState: approval }}
+                value={sellAmount}
+                wrap={{
+                  isWrappable,
+                  onClick: () =>
+                    chainId == 100
+                      ? window.open(
+                          `https://app.honeyswap.org/#/swap?inputCurrency=${biddingToken.address}`,
+                        )
+                      : chainId == 137
+                      ? window.open(
+                          `https://quickswap.exchange/#/swap?inputCurrency=${biddingToken.address}`,
+                        )
+                      : window.open(
+                          `https://app.uniswap.org/#/swap?inputCurrency=${biddingToken.address}`,
+                        ),
+                }}
+              />
+              <PriceInputPanel
+                account={account}
+                chainId={chainId}
+                disabled={!account}
+                info={priceInfo}
+                onUserPriceInput={onUserPriceInput}
+                token={{ biddingToken: biddingToken }}
+                value={price}
+              />
+
+              <InterestRateInputPanel
+                account={account}
+                chainId={chainId}
+                disabled={!account}
+                info={interestRateInfo}
+                onUserInterestRateInput={onUserInterestRateInput}
+                price={price}
+              />
+
+              {!account ? (
+                <ActionButton onClick={toggleWalletModal}>Connect wallet</ActionButton>
+              ) : (
+                <>
+                  <ActionButton disabled={disablePlaceOrder} onClick={handleShowConfirm}>
+                    Place order
+                  </ActionButton>
+                  <div className="flex flex-row justify-between items-center text-xs text-[#9F9F9F] mt-4 mb-3">
+                    <div>{biddingTokenDisplay} Balance</div>
+                    <div>
+                      <button
+                        className="btn btn-xs btn-link text-[#9F9F9F] font-normal text-xs"
+                        disabled={!onMaxInput || !account}
+                        onClick={onMaxInput}
+                      >
+                        {!balanceString ||
+                        balanceString === '0' ||
+                        !Number(balanceString) ||
+                        !account
+                          ? '0.00'
+                          : balanceString}{' '}
+                        {biddingTokenDisplay}
+                      </button>
+                    </div>
+                  </div>
+                </>
               )}
-            </PrivateWrapper>
-            {account == null ? (
-              <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
-            ) : (
-              <EmptyContentTextSmall>
-                {linkForKYC ? (
-                  <ExternalLink href={linkForKYC}>Get Allowed ↗</ExternalLink>
-                ) : (
-                  <>Ask the auctioneer to get allow-listed.</>
-                )}{' '}
-              </EmptyContentTextSmall>
-            )}
-          </>
-        )}
-        {!auctionInfoLoading && (!isPrivate || signatureAvailable) && (
-          <>
-            {showTopWarning && (
-              <Warning>
-                <Calendar />
-                <WarningText>
-                  {orderPlacingOnly &&
-                    `Orders cannot be canceled once you confirm the transaction.`}
-                  {cancelDate &&
-                    !orderPlacingOnly &&
-                    `Orders cannot be canceled after ${cancelDate}`}
-                </WarningText>
-              </Warning>
-            )}
-            <AmountInputPanel
-              balance={balanceString}
+              {!account && <div className="mt-4 text-xs text-[#9F9F9F]">Wallet not connected</div>}
+            </>
+          )}
+        </Wrapper>
+        <WarningModal
+          content={`Pick a different price, you already have an order for ${price} ${biddingTokenDisplay} per ${auctioningTokenDisplay}`}
+          isOpen={showWarning}
+          onDismiss={() => {
+            setShowWarning(false)
+          }}
+          title="Warning!"
+        />
+        <WarningModal
+          content={`In order to place this order, please connect to the ${getChainName(
+            chainId,
+          )} network`}
+          isOpen={showWarningWrongChainId}
+          onDismiss={() => {
+            setShowWarningWrongChainId(false)
+          }}
+          title="Warning!"
+        />
+        <ConfirmationModal
+          attemptingTxn={attemptingTxn}
+          content={
+            <SwapModalFooter
+              auctioningToken={auctioningToken}
+              biddingToken={biddingToken}
+              cancelDate={cancelDate}
               chainId={chainId}
-              info={amountInfo}
-              onMax={onMaxInput}
-              onUserSellAmountInput={onUserSellAmountInput}
-              token={biddingToken}
-              unlock={{ isLocked: notApproved, onUnlock: approveCallback, unlockState: approval }}
-              value={sellAmount}
-              wrap={{
-                isWrappable,
-                onClick: () =>
-                  chainId == 100
-                    ? window.open(
-                        `https://app.honeyswap.org/#/swap?inputCurrency=${biddingToken.address}`,
-                      )
-                    : chainId == 137
-                    ? window.open(
-                        `https://quickswap.exchange/#/swap?inputCurrency=${biddingToken.address}`,
-                      )
-                    : window.open(
-                        `https://app.uniswap.org/#/swap?inputCurrency=${biddingToken.address}`,
-                      ),
-              }}
+              confirmText={'Confirm'}
+              hasRiskNotCoveringClearingPrice={hasRiskNotCoveringClearingPrice}
+              isPriceInverted={showPriceInverted}
+              onPlaceOrder={onPlaceOrder}
+              orderPlacingOnly={orderPlacingOnly}
+              price={price}
+              sellAmount={sellAmount}
             />
-            <PriceInputPanel
-              chainId={chainId}
-              info={priceInfo}
-              invertPrices={showPriceInverted}
-              onInvertPrices={onInvertPrices}
-              onUserPriceInput={onUserPriceInput}
-              tokens={{ auctioningToken: auctioningToken, biddingToken: biddingToken }}
-              value={price}
-            />
-            {!account ? (
-              <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
-            ) : (
-              <ActionButton disabled={disablePlaceOrder} onClick={handleShowConfirm}>
-                Place Order
-              </ActionButton>
-            )}
-          </>
-        )}
-      </Wrapper>
-      <WarningModal
-        content={`Pick a different price, you already have an order for ${price} ${biddingTokenDisplay} per ${auctioningTokenDisplay}`}
-        isOpen={showWarning}
-        onDismiss={() => {
-          setShowWarning(false)
-        }}
-        title="Warning!"
-      />
-      <WarningModal
-        content={`In order to place this order, please connect to the ${getChainName(
-          chainId,
-        )} network`}
-        isOpen={showWarningWrongChainId}
-        onDismiss={() => {
-          setShowWarningWrongChainId(false)
-        }}
-        title="Warning!"
-      />
-      <ConfirmationModal
-        attemptingTxn={attemptingTxn}
-        content={
-          <SwapModalFooter
-            auctioningToken={auctioningToken}
-            biddingToken={biddingToken}
-            cancelDate={cancelDate}
-            chainId={chainId}
-            confirmText={'Confirm'}
-            hasRiskNotCoveringClearingPrice={hasRiskNotCoveringClearingPrice}
-            isPriceInverted={showPriceInverted}
-            onPlaceOrder={onPlaceOrder}
-            orderPlacingOnly={orderPlacingOnly}
-            price={price}
-            sellAmount={sellAmount}
-          />
-        }
-        hash={txHash}
-        isOpen={showConfirm}
-        onDismiss={() => {
-          resetModal()
-          setShowConfirm(false)
-        }}
-        pendingConfirmation={pendingConfirmation}
-        pendingText={pendingText}
-        title="Confirm Order"
-        width={504}
-      />
-    </>
+          }
+          hash={txHash}
+          isOpen={showConfirm}
+          onDismiss={() => {
+            resetModal()
+            setShowConfirm(false)
+          }}
+          pendingConfirmation={pendingConfirmation}
+          pendingText={pendingText}
+          title="Confirm Order"
+          width={504}
+        />
+      </div>
+    </div>
   )
 }
 

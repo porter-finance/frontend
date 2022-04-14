@@ -6,6 +6,7 @@ import { Token } from '@josojo/honeyswap-sdk'
 import { XYChartProps, drawInformation } from '../components/auction/Charts/XYChart'
 import { PricePointDetails } from '../components/auction/OrderbookChart'
 import { ChainId } from '../utils'
+import { useBondMaturityForAuction } from './useBondMaturityForAuction'
 
 interface Props {
   createChart: (props: XYChartProps) => am4charts.XYChart
@@ -17,6 +18,7 @@ interface Props {
 
 const useChart = (props: Props) => {
   const { baseToken, chainId, createChart, data, quoteToken } = props
+  const maturityDate = useBondMaturityForAuction()
 
   const [loading, setLoading] = useState(false)
 
@@ -54,10 +56,11 @@ const useChart = (props: Props) => {
       baseToken,
       quoteToken,
       chainId,
+      maturityDate,
     })
 
     chartRef.current.data = data
-  }, [baseToken, quoteToken, data, chainId])
+  }, [baseToken, quoteToken, data, chainId, maturityDate])
 
   return { chartRef, mountPoint, loading }
 }

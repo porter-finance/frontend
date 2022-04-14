@@ -1,4 +1,4 @@
-import { Fraction, Token } from '@josojo/honeyswap-sdk'
+import { Fraction, Token, TokenAmount } from '@josojo/honeyswap-sdk'
 
 import { OrderBookData, PricePoint } from '../../../api/AdditionalServicesApi'
 import {
@@ -33,6 +33,7 @@ const addClearingPriceInfo = (
     priceFormatted: price.toString(),
     totalVolumeFormatted: '0',
     askValueY: null,
+    minFundY: null,
     bidValueY: null,
     newOrderValueY: null,
     clearingPriceValueY: 0,
@@ -51,6 +52,7 @@ const addClearingPriceInfo = (
     priceFormatted: price.toString(),
     totalVolumeFormatted: '0',
     askValueY: null,
+    minFundY: null,
     bidValueY: null,
     newOrderValueY: null,
     clearingPriceValueY: maxValueYofBid,
@@ -68,6 +70,7 @@ const processData = (
   lowestValue: number,
   type: Offer,
   showChartsInverted: boolean,
+  minFundThreshold: number,
 ): PricePointDetails[] => {
   const isBid = type == Offer.Bid
 
@@ -90,13 +93,13 @@ const processData = (
 
     pricePoints.push({
       price: (highestValue * 104) / 100,
-      volume: 0,
+      volume: null,
     })
 
     pricePoints.sort((lhs, rhs) => -1 * (lhs.price - rhs.price))
     pricePoints.push({
       price: (lowestValue * 96) / 100,
-      volume: 0,
+      volume: null,
     })
   } else {
     if (showChartsInverted) {
@@ -105,18 +108,18 @@ const processData = (
         pricePoints.push({
           price:
             (highestValue * 104) / 100 - (i * (highestValue - lowestValue)) / interpolationSteps,
-          volume: 0,
+          volume: null,
         })
       }
     } else {
       pricePoints.push({
         price: (highestValue * 104) / 100,
-        volume: 0,
+        volume: null,
       })
     }
     pricePoints.push({
       price: (pricePoints[0].price * 96) / 100,
-      volume: 0,
+      volume: null,
     })
     pricePoints.sort((lhs, rhs) => lhs.price - rhs.price)
   }
@@ -144,7 +147,7 @@ const processData = (
         askValueY = null
         bidValueY = totalVolume
       } else {
-        askValueY = totalVolume * price
+        askValueY = totalVolume > 0 ? totalVolume * price : null
         bidValueY = null
       }
       // Add the new point
@@ -160,6 +163,7 @@ const processData = (
         priceFormatted: price.toFixed(MAX_DECIMALS_PRICE_FORMAT),
         totalVolumeFormatted: totalVolume.toFixed(MAX_DECIMALS_PRICE_FORMAT),
         askValueY,
+        minFundY: null,
         bidValueY,
         newOrderValueY: null,
         clearingPriceValueY: null,
@@ -170,6 +174,7 @@ const processData = (
         //      ------------
         //      |
         //  ----|<-here
+        const totalVolVol = acc.totalVolume + volume
         const pricePointDetails: PricePointDetails = {
           type,
           volume,
@@ -180,8 +185,9 @@ const processData = (
           priceNumber: price,
           totalVolumeNumber: acc.totalVolume + volume,
           priceFormatted: price.toFixed(MAX_DECIMALS_PRICE_FORMAT),
-          totalVolumeFormatted: (acc.totalVolume + volume).toFixed(MAX_DECIMALS_PRICE_FORMAT),
-          askValueY: (acc.totalVolume + volume) * price,
+          totalVolumeFormatted: totalVolVol.toFixed(MAX_DECIMALS_PRICE_FORMAT),
+          askValueY: totalVolVol * price || null,
+          minFundY: minFundThreshold,
           bidValueY,
           newOrderValueY: null,
           clearingPriceValueY: null,
@@ -204,6 +210,7 @@ const processData = (
           priceFormatted: price.toString(),
           totalVolumeFormatted: totalVolume.toString(),
           askValueY: null,
+          minFundY: null,
           bidValueY: null,
           newOrderValueY: bidValueY + volume,
           clearingPriceValueY: null,
@@ -221,6 +228,7 @@ const processData = (
           priceFormatted: price.toString(),
           totalVolumeFormatted: totalVolume.toString(),
           askValueY: null,
+          minFundY: null,
           bidValueY: null,
           newOrderValueY: bidValueY,
           clearingPriceValueY: null,
@@ -249,6 +257,7 @@ const processData = (
           priceFormatted: price.toString(),
           totalVolumeFormatted: totalVolume.toString(),
           askValueY: null,
+          minFundY: null,
           bidValueY: null,
           newOrderValueY: bidValueY,
           clearingPriceValueY: null,
@@ -287,6 +296,7 @@ interface ProcessRawDataParams {
   userOrder: PricePoint
   baseToken: Token
   quoteToken: Token
+  minFundingThreshold: TokenAmount
 }
 
 export function findClearingPrice(
@@ -326,6 +336,7 @@ export function findClearingPrice(
 export const processOrderbookData = ({
   baseToken,
   data,
+  minFundingThreshold,
   quoteToken,
   userOrder,
 }: ProcessRawDataParams): PricePointDetails[] => {
@@ -336,6 +347,7 @@ export const processOrderbookData = ({
     const clearingPrice = findClearingPrice(data.bids, userOrder, data.asks[0])
     const min_value = Math.min(clearingPrice * 2, data.asks[0]?.price ?? 0)
     let max_value = Math.max(clearingPrice * 2, Math.max(...data.asks.map((i) => i.price)) ?? 0)
+    const minFundThreshold = minFundingThreshold && Number(minFundingThreshold.toSignificant(2))
 
     const bids = processData(
       data.bids,
@@ -344,6 +356,7 @@ export const processOrderbookData = ({
       min_value,
       Offer.Bid,
       showChartsInverted(baseToken),
+      minFundThreshold,
     )
     bids.sort((lhs, rhs) => -(lhs.price - rhs.price))
     max_value = Math.min(clearingPrice * 2, bids[0].price ?? 0)
@@ -354,7 +367,9 @@ export const processOrderbookData = ({
       min_value,
       Offer.Ask,
       showChartsInverted(baseToken),
+      minFundThreshold,
     )
+
     // Filter for price-points close to clearing price
     const asksFiltered = asks.filter((pp) => Math.abs(pp.price - clearingPrice) / clearingPrice < 2)
     let bidsFiltered = bids.filter((pp) => Math.abs(pp.price - clearingPrice) / clearingPrice < 2)
