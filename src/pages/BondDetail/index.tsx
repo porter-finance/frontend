@@ -7,7 +7,6 @@ import {
   ExtraDetailsItem,
   Props as ExtraDetailsItemProps,
 } from '../../components/auction/ExtraDetailsItem'
-import BondAction from '../../components/bond/BondAction'
 import WarningModal from '../../components/modals/WarningModal'
 import TokenLogo from '../../components/token/TokenLogo'
 import { useBondDetails } from '../../hooks/useBondDetails'
@@ -26,11 +25,13 @@ const GlobalStyle = createGlobalStyle`
   }
 `
 
-const ConvertAfterMaturity = () => (
+const AfterMaturityError = ({ actionType }: { actionType: BondActions }) => (
   <div className="card card-bordered">
     <div className="card-body">
       <div className="flex justify-between">
-        <h2 className="card-title !text-[#696969]">Convert</h2>
+        <h2 className="card-title !text-[#696969]">
+          {actionType === BondActions.Convert ? 'Convert' : 'Redeem'}
+        </h2>
         <div className="flex items-center rounded-full bg-base-300 text-[#1E1E1E] text-sm bg-[#696969] px-4 h-9">
           After maturity
         </div>
@@ -53,6 +54,7 @@ const BondDetail: React.FC = () => {
   const isMatured = new Date() > new Date(data?.maturityDate * 1000)
   const statusLabel = isMatured ? 'Matured' : 'Active'
   const isFullyPaid = !!useIsBondFullyPaid(bondIdentifier?.bondId)
+  const isConvertBond = data?.type === 'convert'
 
   const extraDetails: Array<ExtraDetailsItemProps> = React.useMemo(
     () => [
@@ -177,14 +179,10 @@ const BondDetail: React.FC = () => {
         }
         rightChildren={
           <>
-            {isMatured || isFullyPaid ? (
-              <ConvertAfterMaturity />
-            ) : (
-              <>
-                <BondAction actionType={BondActions.Convert} />
-                <BondAction actionType={BondActions.Redeem} />
-              </>
+            {isConvertBond && !isMatured && !isFullyPaid && (
+              <AfterMaturityError actionType={BondActions.Convert} />
             )}
+            {!isConvertBond && isMatured && <AfterMaturityError actionType={BondActions.Redeem} />}
           </>
         }
       />
