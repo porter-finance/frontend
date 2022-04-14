@@ -47,7 +47,7 @@ export const UnregisteredToken: React.FC<Props> = (props) => {
   const { size, symbol, ...restProps } = props
   const timestamp = React.useMemo(() => Date.now(), [])
   const tooltipId = `tooltip_${symbol}_${size}_${timestamp}`
-  const cuttedSymbol = symbol.slice(0, 7)
+  const cuttedSymbol = symbol?.slice(0, 7)
 
   return (
     <Wrapper
@@ -66,8 +66,9 @@ export const UnregisteredToken: React.FC<Props> = (props) => {
         border
         borderColor={'#174172'}
         className="customTooltip"
-        delayHide={50}
-        delayShow={250}
+        delayHide={500}
+        delayShow={50}
+        delayUpdate={500}
         effect="solid"
         id={tooltipId}
         textColor="#fff"

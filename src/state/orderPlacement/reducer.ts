@@ -3,6 +3,7 @@ import { createReducer } from '@reduxjs/toolkit'
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../constants/config'
 import { getInverse } from '../../utils/prices'
 import {
+  interestRateInput,
   invertPrice,
   priceInput,
   sellAmountInput,
@@ -13,6 +14,7 @@ import {
 export interface OrderPlacementState {
   readonly chainId: number | undefined
   readonly price: string
+  readonly interestRate: string
   readonly sellAmount: string
   readonly showPriceInverted: boolean
 }
@@ -20,6 +22,7 @@ export interface OrderPlacementState {
 const initialState: OrderPlacementState = {
   chainId: undefined,
   price: '-',
+  interestRate: '-',
   sellAmount: '',
   showPriceInverted: false,
 }
@@ -59,6 +62,12 @@ export default createReducer<OrderPlacementState>(initialState, (builder) =>
       return {
         ...state,
         price,
+      }
+    })
+    .addCase(interestRateInput, (state, { payload: { interestRate } }) => {
+      return {
+        ...state,
+        interestRate,
       }
     }),
 )

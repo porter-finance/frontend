@@ -1,4 +1,3 @@
-import { rgba } from 'polished'
 import styled, { css } from 'styled-components'
 
 import { NumericalInput } from '../form/NumericalInput'
@@ -15,16 +14,15 @@ export interface FieldRowInfoProps {
 }
 
 export const FieldRowWrapper = styled.div<{ error?: boolean }>`
-  border-radius: 6px;
   border-style: solid;
   border-width: 1px;
-  border-color: ${(props) =>
-    props.error ? ({ theme }) => theme.error : ({ theme }) => theme.border};
+  border-color: ${({ theme }) => theme.border};
   display: flex;
   flex-direction: column;
   min-height: 62px;
   padding: 6px 10px;
   transition: border-color 0.15s linear;
+  border-radius: 6px;
 `
 
 export const FieldRowTop = styled.div`
@@ -41,19 +39,15 @@ export const FieldRowBottom = styled.div`
 `
 
 export const FieldRowLabel = styled.label`
-  color: ${({ theme }) => rgba(theme.text1, 0.8)};
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1.2;
+  font-weight: 400;
+  font-size: 12px;
+  color: #696969;
+  letter-spacing: 0.03em;
   margin-right: auto;
   text-align: left;
 `
 
 export const FieldRowToken = styled.div`
-  align-items: center;
-  display: flex;
-  margin-right: 12px;
-
   .tokenLogo {
     border-width: 1px;
     margin-right: 6px;
@@ -61,12 +55,11 @@ export const FieldRowToken = styled.div`
 `
 
 export const FieldRowTokenSymbol = styled.div`
-  color: ${({ theme }) => theme.text1};
-  font-size: 17px;
   font-weight: 400;
-  line-height: 1;
-  margin-bottom: -3px;
-  text-align: left;
+  font-size: 10px;
+  color: #9f9f9f;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   white-space: nowrap;
 `
 
@@ -76,30 +69,26 @@ export const FieldRowInput = styled(NumericalInput)<{ hasError?: boolean }>`
   color: ${(props) => (props.hasError ? ({ theme }) => theme.error : ({ theme }) => theme.text1)};
   flex-grow: 1;
   flex-shrink: 1;
-  font-family: 'Neue Haas Grotesk Display Pro', sans-serif;
-  font-size: 23px;
+  font-family: 'Neue Haas Grotesk Display', sans-serif;
   font-weight: 400;
+  font-size: 16px;
   height: 22px;
   line-height: 1;
-  margin: 0 0 0 20px;
+  letter-spacing: 0.06em;
   min-width: 0;
   outline: none;
   padding: 0;
-  text-align: right;
   transition: color 0.15s linear;
   width: auto;
 
   &::placeholder {
-    color: #bfdeff;
-    font-size: 23px;
-    font-style: italic;
-    font-weight: 400;
-    opacity: 1;
+    color: ${(props) => (props.hasError ? ({ theme }) => theme.error : ({ theme }) => '#9F9F9F')};
   }
 
   &[disabled] {
     opacity: 0.7;
   }
+
   &[readonly] {
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -208,12 +197,6 @@ const InfoTypeOKCSS = css`
 
 export const FieldRowInfo = styled.div<{ infoType: InfoType }>`
   display: inline-flex;
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 1.2;
-  margin-bottom: 16px;
-  padding-top: 5px;
-  text-align: left;
 
   > svg {
     margin: 1px 4px 0 0;

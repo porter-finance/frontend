@@ -22,8 +22,8 @@ export const queueStartElement =
 export const queueLastElement = '0xffffffffffffffffffffffffffffffffffffffff000000000000000000000001'
 
 export interface AuctionProceedings {
-  claimableBiddingToken: Maybe<TokenAmount>
-  claimableAuctioningToken: Maybe<TokenAmount>
+  claimableBidFunds: Maybe<TokenAmount>
+  claimableBonds: Maybe<TokenAmount>
 }
 
 export interface ClaimInformation {
@@ -116,8 +116,8 @@ export const getClaimableData = ({
   minFundingThresholdNotReached,
   ordersFromUser,
 }: getClaimableDataProps): Required<AuctionProceedings> => {
-  let claimableAuctioningToken = new TokenAmount(auctioningToken, '0')
-  let claimableBiddingToken = new TokenAmount(biddingToken, '0')
+  let claimableBonds = new TokenAmount(auctioningToken, '0')
+  let claimableBidFunds = new TokenAmount(biddingToken, '0')
 
   // For each order from user add to claimable amounts (bidding or auctioning).
   for (const order of ordersFromUser) {
@@ -125,18 +125,18 @@ export const getClaimableData = ({
     const { buyAmount, sellAmount } = decodedOrder
 
     if (minFundingThresholdNotReached) {
-      claimableBiddingToken = claimableBiddingToken.add(
+      claimableBidFunds = claimableBidFunds.add(
         new TokenAmount(biddingToken, sellAmount.toString()),
       )
       // Order from the same user, buyAmount and sellAmount
     } else {
       if (JSON.stringify(decodedOrder) === JSON.stringify(clearingPriceOrder)) {
         if (sellAmount.sub(clearingPriceVolume).gt(0)) {
-          claimableBiddingToken = claimableBiddingToken.add(
+          claimableBidFunds = claimableBidFunds.add(
             new TokenAmount(biddingToken, sellAmount.sub(clearingPriceVolume).toString()),
           )
         }
-        claimableAuctioningToken = claimableAuctioningToken.add(
+        claimableBonds = claimableBonds.add(
           new TokenAmount(
             auctioningToken,
             clearingPriceVolume
@@ -150,13 +150,13 @@ export const getClaimableData = ({
           .mul(sellAmount)
           .lt(buyAmount.mul(clearingPriceOrder.sellAmount))
       ) {
-        claimableBiddingToken = claimableBiddingToken.add(
+        claimableBidFunds = claimableBidFunds.add(
           new TokenAmount(biddingToken, sellAmount.toString()),
         )
       } else {
         // (orders[i].smallerThan(auction.clearingPriceOrder)
         if (clearingPriceOrder.sellAmount.gt(BigNumber.from('0'))) {
-          claimableAuctioningToken = claimableAuctioningToken.add(
+          claimableBonds = claimableBonds.add(
             new TokenAmount(
               auctioningToken,
               sellAmount
@@ -171,8 +171,8 @@ export const getClaimableData = ({
   }
 
   return {
-    claimableBiddingToken,
-    claimableAuctioningToken,
+    claimableBidFunds,
+    claimableBonds,
   }
 }
 
@@ -216,8 +216,8 @@ export function useGetAuctionProceeds(
       !auctionDetails
     ) {
       return {
-        claimableBiddingToken: null,
-        claimableAuctioningToken: null,
+        claimableBidFunds: null,
+        claimableBonds: null,
       }
     } else {
       return getClaimableData({

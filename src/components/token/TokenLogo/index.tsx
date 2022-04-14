@@ -29,22 +29,47 @@ const Image = styled.img`
 interface TokenLogoProps {
   token: { address: string; symbol?: string }
   size?: string
+  square?: boolean
 }
 
 const TokenLogo: React.FC<TokenLogoProps> = (props) => {
-  const { size = '24px', token, ...restProps } = props
+  const { size = '24px', square, token, ...restProps } = props
   const { address, symbol } = token
   const { tokens } = useTokenListState()
   const validToken = isAddress(address) && tokens
   const imageURL = validToken && tokens[address.toLowerCase()]
 
-  return imageURL ? (
-    <Wrapper className="tokenLogo" size={size} {...restProps}>
+  const UnTok = !imageURL && (
+    <UnregisteredToken size={square ? '30px' : size} symbol={symbol} {...restProps} />
+  )
+
+  const ImageToken = imageURL && (
+    <Wrapper className="tokenLogo" size={square ? '30px' : size} {...restProps}>
       <Image src={imageURL} />
     </Wrapper>
-  ) : (
-    <UnregisteredToken size={size} symbol={symbol} {...restProps} />
   )
+
+  if (square && imageURL) {
+    return (
+      <div className="avatar placeholder">
+        <div className="w-14 bg-white rounded-xl">{ImageToken}</div>
+      </div>
+    )
+  }
+
+  if (imageURL) {
+    return ImageToken
+  }
+
+  if (square) {
+    return (
+      <div className="avatar placeholder">
+        <div className="w-14 bg-white rounded-xl">{UnTok}</div>
+      </div>
+    )
+  }
+
+  return UnTok
 }
 
 export default TokenLogo

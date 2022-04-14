@@ -10,7 +10,6 @@ import { NetworkContextName } from '../../../constants'
 import { useActiveListener, useEagerConnect, useInactiveListener } from '../../../hooks'
 import { useTokenListActionHandlers } from '../../../state/tokenList/hooks'
 import { getLogger } from '../../../utils/logger'
-import { InlineLoading } from '../../common/InlineLoading'
 
 const logger = getLogger('Web3ReactManager')
 
@@ -85,7 +84,7 @@ export default function Web3ReactManager({ children }) {
   }
 
   if (showLoader || !networkActive) {
-    return <InlineLoading />
+    return null
   }
 
   // if the account context isn't active, and there's an error on the network context, it's an irrecoverable error

@@ -7,18 +7,17 @@ import { TooltipIcon } from '../../icons/TooltipIcon'
 
 const Wrapper = styled.span`
   cursor: pointer;
-  flex-shrink: 0;
 
   .tooltipIcon {
     .fill {
-      fill: ${({ theme }) => theme.text1};
+      fill: #696969;
       transition: fill 0.1s linear;
     }
   }
 
   &:hover {
     .fill {
-      fill: ${({ theme }) => theme.primary1};
+      fill: #c0c0c0;
     }
   }
 `

@@ -29,6 +29,10 @@ export const resetUserPrice = createAction<{
   price: number
 }>('ResetUserPrice')
 
+export const resetUserInterestRate = createAction<{
+  interestRate: number
+}>('ResetUserInterestRate')
+
 export const resetUserVolume = createAction<{
   volume: number
 }>('ResetUserVolume')
