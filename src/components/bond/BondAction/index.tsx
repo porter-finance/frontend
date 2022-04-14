@@ -359,7 +359,7 @@ const BondAction = ({
   }
 
   return (
-    <div className="card place-order-color">
+    <div className="card bond-card-color">
       <div className="card-body">
         <h2 className="card-title">{getActionText(actionType)}</h2>
         <ActionPanel>
