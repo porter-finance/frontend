@@ -16,7 +16,7 @@ Typography is a major part of the Porter brand. We've taken care to select a fam
 accessibility.
 
 We use [**
-Neue Haas Grotesk Display Pro** font family](https://www.fonts.com/font/intelligent-design/Neue Haas Grotesk Display
+Neue Haas Grotesk Display** font family](https://www.fonts.com/font/intelligent-design/Neue Haas Grotesk Display
 Pro?QueryFontType=Web&src=GoogleWebFonts)
 as a first choice. Otherwise we use [**Poppins**](https://fonts.google.com/specimen/Poppins?query=Poppins).
 

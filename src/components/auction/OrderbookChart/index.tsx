@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { Token } from '@josojo/honeyswap-sdk'
 
 import useChart from '../../../hooks/useChart'
-import { ChainId } from '../../../utils'
+import { ChainId, getTokenDisplay } from '../../../utils'
 import { InlineLoading } from '../../common/InlineLoading'
 import { SpinnerSize } from '../../common/Spinner'
 import { XYChart } from '../Charts/XYChart'
@@ -27,6 +27,7 @@ export interface PricePointDetails {
 
   // Data for representation
   askValueY: Maybe<number>
+  minFundY: Maybe<number>
   bidValueY: Maybe<number>
   clearingPriceValueY: Maybe<number>
   newOrderValueY: Maybe<number>
@@ -51,8 +52,8 @@ const Wrapper = styled.div`
   flex-grow: 1;
   flex-shrink: 0;
   justify-content: center;
-  height: 100%;
-  max-height: 340px;
+  height: 440px;
+  max-height: 440px;
   position: relative;
   width: 100%;
 
@@ -66,8 +67,8 @@ const Wrapper = styled.div`
 
     > svg {
       display: block;
-      height: 340px;
-      max-height: 340px;
+      height: 440px;
+      max-height: 440px;
       max-width: 100%;
     }
   }
@@ -100,8 +101,18 @@ const Wrapper = styled.div`
   }
 `
 
+const VolumeLabel = styled.div`
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: #9f9f9f;
+  margin-left: 8px;
+`
+
 const OrderBookChart: React.FC<Props> = (props) => {
   const { baseToken, chainId, data, quoteToken } = props
+  const quoteTokenLabel = getTokenDisplay(quoteToken, chainId)
+  const volumeTitle = ` Volume (${quoteTokenLabel})`
 
   const { loading, mountPoint } = useChart({
     createChart: XYChart,
@@ -114,7 +125,12 @@ const OrderBookChart: React.FC<Props> = (props) => {
   return (
     <>
       {(!mountPoint || loading) && <InlineLoading size={SpinnerSize.small} />}
-      {mountPoint && !loading && <Wrapper ref={mountPoint} />}
+      <VolumeLabel>{volumeTitle}</VolumeLabel>
+      {mountPoint && !loading && (
+        <>
+          <Wrapper ref={mountPoint} />
+        </>
+      )}
     </>
   )
 }
