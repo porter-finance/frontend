@@ -280,7 +280,7 @@ const BondAction = ({
     if (!validInput) return { error: 'Input must be > 0' }
 
     const notEnoughBalance = parseUnits(bondsToRedeem, collateralTokenInfo?.decimals).gt(
-      parseUnits(totalBalance, collateralTokenInfo?.decimals),
+      bondTokenBalance,
     )
     if (notEnoughBalance) return { error: 'Bonds to redeem exceeds balance' }
 
@@ -288,7 +288,7 @@ const BondAction = ({
   }, [
     actionType,
     account,
-    totalBalance,
+    bondTokenBalance,
     collateralTokenInfo?.decimals,
     bondsToRedeem,
     isApproved,
@@ -308,16 +308,14 @@ const BondAction = ({
     const validInput = parseUnits(bondsToRedeem, bondTokenInfo?.decimals).gt(0)
     if (!validInput) return { error: 'Input must be > 0' }
 
-    const notEnoughBalance = parseUnits(bondsToRedeem, bondTokenInfo?.decimals).gt(
-      parseUnits(totalBalance, bondTokenInfo?.decimals),
-    )
+    const notEnoughBalance = parseUnits(bondsToRedeem, bondTokenInfo?.decimals).gt(bondTokenBalance)
     if (notEnoughBalance) return { error: 'Bonds to redeem exceeds balance' }
 
     return true
   }, [
     actionType,
     account,
-    totalBalance,
+    bondTokenBalance,
     bondTokenInfo?.decimals,
     bondsToRedeem,
     isApproved,
@@ -334,15 +332,13 @@ const BondAction = ({
       isOwner &&
       isApproved &&
       parseUnits(bondsToRedeem, bondTokenInfo?.decimals).gt(0) &&
-      parseUnits(bondsToRedeem, bondTokenInfo?.decimals).lte(
-        parseUnits(totalBalance, bondTokenInfo?.decimals),
-      )
+      parseUnits(bondsToRedeem, bondTokenInfo?.decimals).lte(bondTokenBalance)
 
     return hasBonds && !isMatured
   }, [
     actionType,
     account,
-    totalBalance,
+    bondTokenBalance,
     bondTokenInfo?.decimals,
     bondsToRedeem,
     isApproved,
@@ -374,7 +370,7 @@ const BondAction = ({
         <h2 className="card-title">{getActionText(actionType)}</h2>
         <ActionPanel>
           <div className="space-y-6">
-            {Number(totalBalance) <= 0 ? (
+            {!bondTokenBalance || bondTokenBalance.lte(0) ? (
               <div className="flex justify-center text-[12px] text-[#696969] border border-[#2C2C2C] p-12 rounded-lg">
                 <span>No bonds to convert</span>
               </div>
