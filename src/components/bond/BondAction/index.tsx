@@ -35,7 +35,6 @@ const ActionButton = styled(Button)`
 
 const ActionPanel = styled.div`
   margin-bottom: 20px;
-  max-width: 300px;
 `
 
 const TokenInfo = ({ chainId, token, value }) => (
