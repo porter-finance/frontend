@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { Tooltip } from '../../common/Tooltip'
 import { ExternalLink } from '../../navigation/ExternalLink'
 
-const Value = styled.p`
+const Value = styled.div`
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
