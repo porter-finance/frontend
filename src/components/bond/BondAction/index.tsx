@@ -16,7 +16,7 @@ import { useMintBond } from '../../../hooks/useMintBond'
 import { usePreviewBond } from '../../../hooks/usePreviewBond'
 import { useRedeemBond } from '../../../hooks/useRedeemBond'
 import { BondActions } from '../../../pages/BondDetail'
-import { useActivePopups } from '../../../state/application/hooks'
+import { useActivePopups, useWalletModalToggle } from '../../../state/application/hooks'
 import { useFetchTokenByAddress } from '../../../state/user/hooks'
 import { ChainId, EASY_AUCTION_NETWORKS, getTokenDisplay } from '../../../utils'
 import { Button } from '../../buttons/Button'
@@ -38,7 +38,7 @@ const ActionPanel = styled.div`
 
 const TokenInfo = ({ chainId, token, value }) => (
   <div className="text-base text-white flex justify-between">
-    <div>{value}</div>
+    <div>{parseFloat(value).toFixed(2)}</div>
     {token && (
       <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#2C2C2C] rounded-full p-1 px-2">
         {token.address && (
@@ -128,6 +128,7 @@ const BondAction = ({
   const { convert } = useConvertBond(tokenAmount, bondId)
   const { mint } = useMintBond(tokenAmount, bondId)
   const { previewConvert, previewMint, previewRedeem } = usePreviewBond(bondId)
+  const toggleWalletModal = useWalletModalToggle()
 
   const [totalBalance, setTotalBalance] = useState('0')
   const isApproved = approval !== ApprovalState.NOT_APPROVED && approval !== ApprovalState.PENDING
@@ -429,10 +430,13 @@ const BondAction = ({
                 </div>
               )}
 
-              <ActionButton disabled={isActionDisabled} onClick={doTheAction}>
-                {getActionText(actionType)}
-              </ActionButton>
-
+              {!account ? (
+                <ActionButton onClick={toggleWalletModal}>Connect wallet</ActionButton>
+              ) : (
+                <ActionButton disabled={isActionDisabled} onClick={doTheAction}>
+                  {getActionText(actionType)}
+                </ActionButton>
+              )}
               {actionType === BondActions.Mint && (
                 <p>Minting for: {previewMintVal} collateral tokens </p>
               )}
