@@ -270,19 +270,23 @@ const BondAction = ({
   const isConvertable = useMemo(() => {
     if (actionType !== BondActions.Convert) return false
 
-    if (isMatured) return false
+    if (isMatured) {
+      return { error: 'Bond is matured' }
+    }
 
-    const hasBonds =
-      account &&
-      isOwner &&
-      isApproved &&
-      parseUnits(bondsToRedeem, collateralTokenInfo?.decimals).gt(0) &&
-      parseUnits(totalBalance, collateralTokenInfo?.decimals).gt(0) &&
-      parseUnits(bondsToRedeem, collateralTokenInfo?.decimals).lte(
-        parseUnits(totalBalance, collateralTokenInfo?.decimals),
-      )
+    if (!account) return { error: 'Not logged in' }
+    if (!isOwner) return { error: 'Not owner' }
+    if (!isApproved) return { error: 'Not approved' }
 
-    return hasBonds
+    const validInput = parseUnits(bondsToRedeem, collateralTokenInfo?.decimals).gt(0)
+    if (!validInput) return { error: 'Input must be > 0' }
+
+    const notEnoughBalance = parseUnits(bondsToRedeem, collateralTokenInfo?.decimals).gt(
+      parseUnits(totalBalance, collateralTokenInfo?.decimals),
+    )
+    if (notEnoughBalance) return { error: 'Bonds to redeem exceeds balance' }
+
+    return true
   }, [
     actionType,
     account,
@@ -296,17 +300,22 @@ const BondAction = ({
 
   const isRedeemable = useMemo(() => {
     if (actionType !== BondActions.Redeem) return false
-    const hasBonds =
-      account &&
-      isOwner &&
-      isApproved &&
-      parseUnits(bondsToRedeem, bondTokenInfo?.decimals).gt(0) &&
-      parseUnits(totalBalance, bondTokenInfo?.decimals).gt(0) &&
-      parseUnits(bondsToRedeem, bondTokenInfo?.decimals).lte(
-        parseUnits(totalBalance, bondTokenInfo?.decimals),
-      )
+    if (!account) return { error: 'Not logged in' }
+    if (!isOwner) return { error: 'Not owner' }
+    if (!isApproved) return { error: 'Not approved' }
+    if (!isFullyPaid && !isMatured) {
+      return { error: 'Must be fully paid or matured' }
+    }
 
-    return hasBonds && (isFullyPaid || isMatured)
+    const validInput = parseUnits(bondsToRedeem, bondTokenInfo?.decimals).gt(0)
+    if (!validInput) return { error: 'Input must be > 0' }
+
+    const notEnoughBalance = parseUnits(bondsToRedeem, bondTokenInfo?.decimals).gt(
+      parseUnits(totalBalance, bondTokenInfo?.decimals),
+    )
+    if (notEnoughBalance) return { error: 'Bonds to redeem exceeds balance' }
+
+    return true
   }, [
     actionType,
     account,
@@ -349,8 +358,15 @@ const BondAction = ({
   )
 
   const isActionDisabled = useMemo(() => {
-    if (actionType === BondActions.Convert) return !isConvertable
-    if (actionType === BondActions.Redeem) return !isRedeemable
+    if (actionType === BondActions.Convert) {
+      console.log(isConvertable)
+      return isConvertable === true
+    }
+    if (actionType === BondActions.Redeem) {
+      console.log(isRedeemable)
+      return isRedeemable === true
+    }
+
     if (actionType === BondActions.Mint) return !isMintable
   }, [actionType, isConvertable, isMintable, isRedeemable])
 
