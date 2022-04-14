@@ -2,12 +2,15 @@ import * as am4charts from '@amcharts/amcharts4/charts'
 import * as am4core from '@amcharts/amcharts4/core'
 import am4themesSpiritedaway from '@amcharts/amcharts4/themes/spiritedaway'
 import { Token } from '@josojo/honeyswap-sdk'
-import { Decimal } from 'decimal.js'
+import round from 'lodash.round'
 
 import { ChainId, getTokenDisplay } from '../../../utils'
+import { calculateInterestRate } from '../../form/InterestRateInputPanel'
 
 // Recalculates very big and very small numbers by reducing their length according to rules and applying suffix/prefix.
 const numberFormatter = new am4core.NumberFormatter()
+am4core.addLicense('ch-custom-attribution')
+
 numberFormatter.numberFormat = '###.00 a'
 numberFormatter.smallNumberThreshold = 0
 numberFormatter.bigNumberPrefixes = [
@@ -41,11 +44,13 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
 
   // Colors
   const colors = {
-    green: '#28a745',
-    red: '#dc3545',
+    blue: '#404EED',
+    red: '#D25453',
+    supply: '#1BBFE3',
     white: '#FFFFFF',
-    grey: '#565A69',
-    orange: '#FF6347',
+    grey: '#9F9F9F',
+    cyan: '#1BBFE3',
+    newOrder: '#D2D2D2',
     tooltipBg: '#001429',
     tooltipBorder: '#174172',
   }
@@ -53,17 +58,14 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   // Create axes
   const priceAxis = chart.xAxes.push(new am4charts.ValueAxis())
   const volumeAxis = chart.yAxes.push(new am4charts.ValueAxis())
-  volumeAxis.renderer.grid.template.stroke = am4core.color(colors.white)
-  volumeAxis.renderer.grid.template.strokeWidth = 0.5
-  volumeAxis.renderer.grid.template.strokeOpacity = 0.5
-  volumeAxis.title.fill = am4core.color(colors.white)
-  volumeAxis.renderer.labels.template.fill = am4core.color(colors.white)
+  volumeAxis.renderer.grid.template.stroke = am4core.color(colors.grey)
+  volumeAxis.renderer.grid.template.strokeOpacity = 0
+  volumeAxis.title.fill = am4core.color(colors.grey)
+  volumeAxis.renderer.labels.template.fill = am4core.color(colors.grey)
 
-  priceAxis.renderer.grid.template.stroke = am4core.color(colors.white)
-  priceAxis.renderer.grid.template.strokeWidth = 0.5
-  priceAxis.renderer.grid.template.strokeOpacity = 0.5
-  priceAxis.title.fill = am4core.color(colors.white)
-  priceAxis.renderer.labels.template.fill = am4core.color(colors.white)
+  priceAxis.renderer.grid.template.strokeOpacity = 0
+  priceAxis.title.fill = am4core.color(colors.grey)
+  priceAxis.renderer.labels.template.fill = am4core.color(colors.grey)
 
   volumeAxis.numberFormatter = numberFormatter
   //priceAxis.numberFormatter = numberFormatter
@@ -72,28 +74,66 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   priceAxis.extraMin = 0.02
   priceAxis.extraMax = 0.02
 
-  // Create serie, green line shows the price (x axis) and size (y axis) of the bids that have been placed, both expressed in the bid token
+  // background: linear-gradient(180deg, rgba(64, 78, 237, 0.24) 0%, rgba(64, 78, 237, 0) 100%);
+
+  // Create series, shows the price (x axis) and size (y axis) of the bids that have been placed, both expressed in the bid token
   const bidSeries = chart.series.push(new am4charts.StepLineSeries())
   bidSeries.dataFields.valueX = 'priceNumber'
   bidSeries.dataFields.valueY = 'bidValueY'
-  bidSeries.strokeWidth = 1
-  bidSeries.stroke = am4core.color(colors.green)
+  bidSeries.strokeWidth = 2
+  bidSeries.stroke = am4core.color(colors.blue)
   bidSeries.fill = bidSeries.stroke
+  bidSeries.fillOpacity = 0.25
   bidSeries.startLocation = 0.5
-  bidSeries.fillOpacity = 0.1
+  bidSeries.name = 'DEMAND'
   bidSeries.dummyData = {
     description:
       'Shows the price (x axis) and size (y axis) of the bids that have been placed, both expressed in the bid token',
   }
 
-  // Create serie, red line, shows the minimum sell price (x axis) the auctioneer is willing to accept
+  // Create series, shows the minimum sell price (x axis) the auctioneer is willing to accept
+  const minFunding = chart.series.push(new am4charts.LineSeries())
+  minFunding.dataFields.valueX = 'priceNumber'
+  minFunding.dataFields.valueY = 'minFundY'
+  minFunding.strokeWidth = 2
+  minFunding.stroke = am4core.color(colors.red)
+  minFunding.fill = minFunding.stroke
+  minFunding.name = 'MIN. FUNDING THRESHOLD'
+  minFunding.dummyData = {
+    description: 'Auction will not be executed, unless this minimum funding threshold is met',
+  }
+
+  const gradient = new am4core.LinearGradient()
+  gradient.addColor(am4core.color(colors.blue), 1)
+  gradient.addColor(am4core.color(colors.blue), 0.7)
+  gradient.addColor(am4core.color(colors.blue), 0.24)
+  gradient.addColor(am4core.color(colors.blue), 0)
+  gradient.rotation = 90
+  bidSeries.fill = gradient
+
+  // Dotted white line -> shows the Current price, which is the closing price of the auction if
+  // no more bids are submitted or cancelled and the auction ends
+  const priceSeries = chart.series.push(new am4charts.LineSeries())
+  priceSeries.dataFields.valueX = 'priceNumber'
+  priceSeries.dataFields.valueY = 'clearingPriceValueY'
+  priceSeries.strokeWidth = 2
+  priceSeries.strokeDasharray = '3,3'
+  priceSeries.stroke = am4core.color(colors.grey)
+  priceSeries.fill = priceSeries.stroke
+  priceSeries.name = 'CURRENT PRICE'
+  priceSeries.dummyData = {
+    description:
+      'Shows the current price. This price would be the closing price of the auction if no more bids are submitted or cancelled',
+  }
+
+  // Create series, shows the minimum sell price (x axis) the auctioneer is willing to accept
   const askSeries = chart.series.push(new am4charts.LineSeries())
   askSeries.dataFields.valueX = 'priceNumber'
   askSeries.dataFields.valueY = 'askValueY'
-  askSeries.strokeWidth = 1
-  askSeries.stroke = am4core.color(colors.red)
+  askSeries.strokeWidth = 2
+  askSeries.stroke = am4core.color(colors.supply)
   askSeries.fill = askSeries.stroke
-  askSeries.fillOpacity = 0.1
+  askSeries.name = 'SUPPLY'
   askSeries.dummyData = {
     description:
       'Shows sell supply of the auction based on the price and nominated in the bidding token',
@@ -103,58 +143,52 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   const inputSeries = chart.series.push(new am4charts.LineSeries())
   inputSeries.dataFields.valueX = 'priceNumber'
   inputSeries.dataFields.valueY = 'newOrderValueY'
-  inputSeries.strokeWidth = 1
-  inputSeries.stroke = am4core.color(colors.orange)
+  inputSeries.strokeWidth = 2
+  inputSeries.stroke = am4core.color(colors.newOrder)
   inputSeries.fill = inputSeries.stroke
-  inputSeries.fillOpacity = 0.1
+  inputSeries.name = 'NEW ORDER'
   inputSeries.dummyData = {
     description:
       'Shows the new order that would be placed based on the current amount and price input',
   }
 
-  // Dotted white line -> shows the Current price, which is the closing price of the auction if
-  // no more bids are submitted or cancelled and the auction ends
-  const priceSeries = chart.series.push(new am4charts.LineSeries())
-  priceSeries.dataFields.valueX = 'priceNumber'
-  priceSeries.dataFields.valueY = 'clearingPriceValueY'
-  priceSeries.strokeWidth = 2
-  priceSeries.strokeDasharray = '3,3'
-  priceSeries.stroke = am4core.color(colors.white)
-  priceSeries.fill = inputSeries.stroke
-  priceSeries.fillOpacity = 0.1
-  priceSeries.dummyData = {
-    description:
-      'Shows the current price. This price would be the closing price of the auction if no more bids are submitted or cancelled',
-  }
-
   // Add cursor
   chart.cursor = new am4charts.XYCursor()
-  chart.cursor.snapToSeries = [bidSeries, askSeries]
-  chart.cursor.lineX.stroke = am4core.color(colors.white)
+  // chart.cursor.snapToSeries = [bidSeries, askSeries]
+  chart.cursor.lineX.stroke = am4core.color(colors.grey)
   chart.cursor.lineX.strokeWidth = 1
   chart.cursor.lineX.strokeOpacity = 0.6
   chart.cursor.lineX.strokeDasharray = '4'
 
-  chart.cursor.lineY.stroke = am4core.color(colors.white)
+  chart.cursor.lineY.stroke = am4core.color(colors.grey)
   chart.cursor.lineY.strokeWidth = 1
   chart.cursor.lineY.strokeOpacity = 0.6
   chart.cursor.lineY.strokeDasharray = '4'
 
   // Button configuration
   chart.zoomOutButton.background.cornerRadius(5, 5, 5, 5)
-  chart.zoomOutButton.background.fill = am4core.color(colors.grey)
-  chart.zoomOutButton.icon.stroke = am4core.color(colors.white)
+  chart.zoomOutButton.background.fill = am4core.color('#3f3f3f')
+  chart.zoomOutButton.background.states.getKey('hover').properties.fill = am4core.color('#606271')
+  chart.zoomOutButton.icon.stroke = am4core.color('#ffffff')
   chart.zoomOutButton.icon.strokeWidth = 2
   chart.zoomOutButton.tooltip.text = 'Zoom out'
 
   // Legend
+  // const legendContainer = am4core.create('legenddiv', am4core.Container)
+  // legendContainer.width = am4core.percent(100)
+  // legendContainer.height = am4core.percent(100)
+
   chart.legend = new am4charts.Legend()
-  chart.legend.labels.template.fill = am4core.color(colors.white)
+  chart.legend.labels.template.fill = am4core.color(colors.grey)
+  chart.legend.markers.template.strokeWidth = 44
+  chart.legend.markers.template.height = 5
+  chart.legend.markers.template.width = 14
+  // chart.legend.parent = legendContainer
   chart.tooltip.getFillFromObject = false
-  chart.tooltip.background.fill = am4core.color(colors.tooltipBg)
-  chart.tooltip.background.stroke = am4core.color(colors.tooltipBorder)
+  chart.tooltip.background.fill = am4core.color('#2C2C2C')
+  chart.tooltip.background.stroke = am4core.color('#2C2C2C')
   chart.legend.itemContainers.template.tooltipHTML =
-    '<div style="white-space: normal!important;max-width: 300px;padding:0 5px 5px;">{dataContext.dummyData.description}</div>'
+    '<div class="text-[12px] tracking-[.1em] rounded-md text-[#D2D2D2] bg-[#2C2C2C] border-none flex-wrap max-w-[200px] whitespace-normal">{dataContext.dummyData.description}</div>'
 
   return chart
 }
@@ -164,18 +198,11 @@ interface DrawInformation {
   baseToken: Token
   quoteToken: Token
   chainId: ChainId
-}
-
-const formatNumberForChartTooltip = (n: number) => {
-  const d = new Decimal(n)
-  const nd = d.toSignificantDigits(6)
-  const digits = nd.decimalPlaces()
-  const decimalFormatPart = `.${'0'.repeat(digits)}`
-  return numberFormatter.format(nd.toNumber(), `###${digits > 0 ? decimalFormatPart : ''} a`)
+  maturityDate: Maybe<number>
 }
 
 export const drawInformation = (props: DrawInformation) => {
-  const { baseToken, chainId, chart, quoteToken } = props
+  const { baseToken, chainId, chart, maturityDate, quoteToken } = props
   const baseTokenLabel = baseToken.symbol
   const quoteTokenLabel = getTokenDisplay(quoteToken, chainId)
   const market = quoteTokenLabel + '-' + baseTokenLabel
@@ -187,29 +214,54 @@ export const drawInformation = (props: DrawInformation) => {
   const [yAxis] = chart.yAxes
 
   xAxis.title.text = priceTitle
-  yAxis.title.text = volumeTitle
+  xAxis.title.align = 'left'
+
+  // this was moved to into the react component since i couldn't
+  // move it to the top of the graph to match design mocks
+  // yAxis.title.text = volumeTitle
 
   const {
     values: [askPricesSeries, bidPricesSeries],
   } = chart.series
 
+  askPricesSeries.tooltip.getFillFromObject = false
+  askPricesSeries.tooltip.background.fill = am4core.color('#2C2C2C')
+  askPricesSeries.tooltip.background.stroke = am4core.color('#2C2C2C')
+  askPricesSeries.tooltipHTML =
+    '<div class="text-[12px] tracking-[.1em] rounded-md text-[#D2D2D2] drop-shadow-lg bg-[#2C2C2C] border-none flex-wrap max-w-[200px] whitespace-normal">{text}</div>'
+
   askPricesSeries.adapter.add('tooltipText', (text, target) => {
     const valueX = target?.tooltipDataItem?.values?.valueX?.value ?? 0
     const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
 
-    const askPrice = formatNumberForChartTooltip(valueX)
-    const volume = formatNumberForChartTooltip(valueY)
+    const askPrice = round(valueX, 4)
+    const volume = round(valueY, 4)
+    const interest = maturityDate && calculateInterestRate(valueX, maturityDate)
 
-    return `[bold]${market}[/]\nAsk Price: [bold] ${askPrice} [/] ${quoteTokenLabel}\nVolume: [bold] ${volume} [/] ${quoteTokenLabel}`
+    return `${market}<br/>
+Ask Price:  ${askPrice} ${quoteTokenLabel}<br/>
+Volume:  ${volume} ${quoteTokenLabel}<br/>
+Interest:  ${interest} 
+`
   })
 
+  bidPricesSeries.tooltip.getFillFromObject = false
+  bidPricesSeries.tooltip.background.fill = am4core.color('#2C2C2C')
+  bidPricesSeries.tooltip.background.stroke = am4core.color('#2C2C2C')
+  bidPricesSeries.tooltipHTML =
+    '<div class="text-[12px] tracking-[.1em] rounded-md text-[#D2D2D2] drop-shadow-lg bg-[#2C2C2C] border-none flex-wrap max-w-[200px] whitespace-normal">{text}</div>'
   bidPricesSeries.adapter.add('tooltipText', (text, target) => {
     const valueX = target?.tooltipDataItem?.values?.valueX?.value ?? 0
     const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
 
-    const bidPrice = formatNumberForChartTooltip(valueX)
-    const volume = formatNumberForChartTooltip(valueY)
+    const bidPrice = round(valueX, 4)
+    const volume = round(valueY, 4)
+    const interest = maturityDate && calculateInterestRate(valueX, maturityDate)
 
-    return `[bold]${market}[/]\nBid Price: [bold] ${bidPrice} [/] ${quoteTokenLabel}\nVolume: [bold] ${volume} [/] ${quoteTokenLabel}`
+    return `${market}<br/>
+Bid Price:  ${bidPrice} ${quoteTokenLabel}<br/>
+Volume:  ${volume} ${quoteTokenLabel}<br/>
+Interest:  ${interest} 
+`
   })
 }

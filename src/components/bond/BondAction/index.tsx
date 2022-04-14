@@ -27,7 +27,7 @@ import { InfoType } from '../../pureStyledComponents/FieldRow'
 
 const ActionButton = styled(Button)`
   flex-shrink: 0;
-  height: 40px;
+  height: 42px;
   margin-top: auto;
   margin-bottom: 20px;
 `

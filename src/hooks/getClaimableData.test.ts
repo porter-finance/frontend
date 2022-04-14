@@ -44,8 +44,8 @@ describe('getClaimableData when minFundingThreshold was not met', () => {
     })
 
     expect(claimed).toStrictEqual({
-      claimableAuctioningToken: new TokenAmount(usdc, '0'),
-      claimableBiddingToken: new TokenAmount(dai, parseUnits('100').toString()),
+      claimableBonds: new TokenAmount(usdc, '0'),
+      claimableBidFunds: new TokenAmount(dai, parseUnits('100').toString()),
     })
   })
 })
@@ -76,10 +76,10 @@ describe('getClaimableData when minFundingThreshold was met', () => {
       ordersFromUser,
     })
 
-    expect(claimed.claimableAuctioningToken?.toFixed()).toBe(
+    expect(claimed.claimableBonds?.toFixed()).toBe(
       new TokenAmount(dai, parseUnits('100').toString()).toFixed(),
     )
-    expect(claimed.claimableBiddingToken?.toFixed()).toBe(new TokenAmount(weth, '0').toFixed())
+    expect(claimed.claimableBidFunds?.toFixed()).toBe(new TokenAmount(weth, '0').toFixed())
   })
 
   it('checks that participant receives auctioning and bidding tokens', () => {
@@ -107,10 +107,10 @@ describe('getClaimableData when minFundingThreshold was met', () => {
       ordersFromUser,
     })
 
-    expect(claimed.claimableAuctioningToken?.toFixed()).toBe(
+    expect(claimed.claimableBonds?.toFixed()).toBe(
       new TokenAmount(dai, parseUnits('10').toString()).toFixed(),
     )
-    expect(claimed.claimableBiddingToken?.toFixed()).toBe(
+    expect(claimed.claimableBidFunds?.toFixed()).toBe(
       new TokenAmount(weth, parseUnits('0.09').toString()).toFixed(),
     )
   })
@@ -140,10 +140,10 @@ describe('getClaimableData when minFundingThreshold was met', () => {
       ordersFromUser,
     })
 
-    expect(claimed.claimableAuctioningToken?.toFixed()).toBe(
+    expect(claimed.claimableBonds?.toFixed()).toBe(
       new TokenAmount(dai, parseUnits('10').toString()).toFixed(),
     )
-    expect(claimed.claimableBiddingToken?.toFixed()).toBe(
+    expect(claimed.claimableBidFunds?.toFixed()).toBe(
       new TokenAmount(weth, parseUnits('0').toString()).toFixed(),
     )
   })
@@ -173,10 +173,10 @@ describe('getClaimableData when minFundingThreshold was met', () => {
       ordersFromUser,
     })
 
-    expect(claimed.claimableAuctioningToken?.toFixed()).toBe(
+    expect(claimed.claimableBonds?.toFixed()).toBe(
       new TokenAmount(dai, parseUnits('0').toString()).toFixed(),
     )
-    expect(claimed.claimableBiddingToken?.toFixed()).toBe(
+    expect(claimed.claimableBidFunds?.toFixed()).toBe(
       new TokenAmount(weth, parseUnits('0.01').toString()).toFixed(),
     )
   })
