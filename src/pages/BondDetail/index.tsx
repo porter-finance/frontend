@@ -25,13 +25,32 @@ const GlobalStyle = createGlobalStyle`
   }
 `
 
+const ConvertAfterMaturity = () => (
+  <div className="card card-bordered">
+    <div className="card-body">
+      <div className="flex justify-between">
+        <h2 className="card-title !text-[#696969]">Convert</h2>
+        <div className="flex items-center rounded-full bg-base-300 text-[#1E1E1E] text-sm bg-[#696969] px-4 h-9">
+          After maturity
+        </div>
+      </div>
+      <div className="space-y-6">
+        <div className="text-base text-[#696969]">
+          Panel will be active at maturity date or when bond is repaid fully. Whichever comes first.
+        </div>
+      </div>
+    </div>
+  </div>
+)
+
 const Bond: React.FC = () => {
   const navigate = useNavigate()
   const bondIdentifier = useParams()
 
   const { data, loading: isLoading } = useBondDetails(bondIdentifier?.bondId)
   const invalidBond = React.useMemo(() => !bondIdentifier || !data, [bondIdentifier, data])
-  const statusLabel = new Date() > new Date(data?.maturityDate * 1000) ? 'Matured' : 'Active'
+  const isMatured = new Date() > new Date(data?.maturityDate * 1000)
+  const statusLabel = isMatured ? 'Matured' : 'Active'
 
   const extraDetails: Array<ExtraDetailsItemProps> = React.useMemo(
     () => [
@@ -151,18 +170,13 @@ const Bond: React.FC = () => {
         }
         rightChildren={
           <>
-            <div className="card place-order-color">
-              <div className="card-body">
-                <h2 className="card-title">Convert</h2>
+            {isMatured && <ConvertAfterMaturity />}
+            {!isMatured && (
+              <>
                 <BondAction actionType={BondActions.Convert} />
-              </div>
-            </div>
-            <div className="card place-order-color">
-              <div className="card-body">
-                <h2 className="card-title">Redeem</h2>
                 <BondAction actionType={BondActions.Redeem} />
-              </div>
-            </div>
+              </>
+            )}
           </>
         }
       />

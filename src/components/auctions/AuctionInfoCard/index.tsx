@@ -8,7 +8,6 @@ import { AuctionInfo } from '../../../hooks/useAllAuctionInfos'
 import { abbreviation } from '../../../utils/numeral'
 import { calculateTimeLeft, getDays, getHours, getMinutes, getSeconds } from '../../../utils/tools'
 import { NetworkIcon } from '../../icons/NetworkIcon'
-import { Private } from '../../icons/Private'
 import DoubleLogo from '../../token/DoubleLogo'
 
 const Wrapper = styled(HashLink)`
@@ -139,14 +138,6 @@ const BottomCell = styled.span`
   }
 `
 
-const BottomCellText = styled.span`
-  color: ${({ theme }) => transparentize(0.1, theme.text1)};
-  font-size: 11px;
-  font-weight: 600;
-  line-height: 1.2;
-  text-align: left;
-`
-
 const IconCSS = css`
   height: 12px;
   width: 12px;
@@ -158,10 +149,6 @@ const IconCSS = css`
 `
 
 const BottomIconNetwork = styled(NetworkIcon)`
-  ${IconCSS}
-`
-
-const BottomIconPrivate = styled(Private)`
   ${IconCSS}
 `
 
