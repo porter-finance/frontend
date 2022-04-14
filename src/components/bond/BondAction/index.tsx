@@ -354,15 +354,6 @@ const BondAction = ({
     if (actionType === BondActions.Mint) return !isMintable
   }, [actionType, isConvertable, isMintable, isRedeemable])
 
-  if (
-    isMatured ||
-    // These two states should show the error AfterMaturityError
-    (!isRedeemable && actionType === BondActions.Redeem) ||
-    (!isConvertable && actionType === BondActions.Convert)
-  ) {
-    return null
-  }
-
   return (
     <div className="card bond-card-color">
       <div className="card-body">
