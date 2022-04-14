@@ -33,7 +33,6 @@ export const FieldRowTop = styled.div`
 `
 
 export const FieldRowBottom = styled.div`
-  align-items: center;
   display: flex;
   margin-top: auto;
 `
