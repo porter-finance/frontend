@@ -7,17 +7,19 @@ import { BondInfo } from './useAllBondInfos'
 const logger = getLogger('useBondsPortfolio')
 
 const bondsQuery = gql`
-  query BondList($account: String!) {
+  query BondList($account: Bytes!) {
     bonds(first: 100, where: { owner: $account }) {
       id
       name
       symbol
+      type
       owner
       maturityDate
       paymentToken
       collateralToken
       collateralRatio
       convertibleRatio
+      maxSupply
     }
   }
 `

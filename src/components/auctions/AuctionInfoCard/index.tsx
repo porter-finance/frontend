@@ -6,14 +6,7 @@ import { HashLink } from 'react-router-hash-link'
 
 import { AuctionInfo } from '../../../hooks/useAllAuctionInfos'
 import { abbreviation } from '../../../utils/numeral'
-import {
-  calculateTimeLeft,
-  getChainName,
-  getDays,
-  getHours,
-  getMinutes,
-  getSeconds,
-} from '../../../utils/tools'
+import { calculateTimeLeft, getDays, getHours, getMinutes, getSeconds } from '../../../utils/tools'
 import { NetworkIcon } from '../../icons/NetworkIcon'
 import { Private } from '../../icons/Private'
 import DoubleLogo from '../../token/DoubleLogo'
@@ -205,7 +198,7 @@ interface Props {
 
 const AuctionInfoCard: React.FC<Props> = (props) => {
   const { auctionInfo, ...restProps } = props
-  const { chainId, endTimeTimestamp } = auctionInfo
+  const { end: endTimeTimestamp } = auctionInfo
   const [timeLeft, setTimeLeft] = React.useState(calculateTimeLeft(endTimeTimestamp))
 
   React.useEffect(() => {
@@ -215,13 +208,10 @@ const AuctionInfoCard: React.FC<Props> = (props) => {
     return () => clearInterval(interval)
   }, [endTimeTimestamp])
 
-  const auctionSymbolBiddingToken = auctionInfo.symbolBiddingToken.slice(0, 7)
-  const auctionSymbolAuctioningToken = auctionInfo.symbolAuctioningToken.slice(0, 7)
+  const auctionSymbolBiddingToken = auctionInfo.bond.symbol.slice(0, 7)
+  const auctionSymbolAuctioningToken = auctionInfo.bond.collateralToken.slice(0, 7)
   return (
-    <Wrapper
-      to={`/auctions/${auctionInfo.auctionId}/${Number(auctionInfo.chainId)}`}
-      {...restProps}
-    >
+    <Wrapper to={`/offerings/${auctionInfo.id}`} {...restProps}>
       <Top>
         <Tokens>
           {auctionSymbolAuctioningToken} / {auctionSymbolBiddingToken}
@@ -231,42 +221,33 @@ const AuctionInfoCard: React.FC<Props> = (props) => {
       <Details>
         <TokenIcons
           auctioningToken={{
-            address: auctionInfo.addressAuctioningToken,
-            symbol: auctionInfo.symbolAuctioningToken,
+            address: auctionInfo.bond.collateralToken,
+            symbol: auctionInfo.bond.symbol,
           }}
           biddingToken={{
-            address: auctionInfo.addressBiddingToken,
-            symbol: auctionInfo.symbolBiddingToken,
+            address: auctionInfo.bidding.id,
+            symbol: auctionInfo.bidding.symbol,
           }}
           size="62px"
         />
         <Selling>
           Selling{' '}
-          <span title={auctionInfo.order.volume + ' ' + auctionInfo.symbolAuctioningToken}>
-            {abbreviation(auctionInfo.order.volume.toFixed(2)) + ` `}
+          <span title={auctionInfo.size + ' ' + auctionInfo.bond.collateralToken}>
+            {abbreviation(auctionInfo.size.toFixed(2)) + ` `}
           </span>
           {auctionSymbolAuctioningToken}
         </Selling>
         <CurrentPrice>
           Current price:{' '}
           {`${abbreviation(
-            auctionInfo.currentClearingPrice.toString(),
+            auctionInfo.clearing.toString(),
           )} ${auctionSymbolBiddingToken} per ${auctionSymbolAuctioningToken}`}
         </CurrentPrice>
       </Details>
       <Bottom>
         <BottomCell>
           <BottomIconNetwork />
-          <BottomCellText>{`Selling on ${getChainName(
-            parseInt(chainId.toString()),
-          )}`}</BottomCellText>
         </BottomCell>
-        {auctionInfo.isPrivateAuction && (
-          <BottomCell>
-            <BottomIconPrivate />
-            <BottomCellText>Private auction</BottomCellText>
-          </BottomCell>
-        )}
       </Bottom>
     </Wrapper>
   )
