@@ -5,16 +5,13 @@ import { ChevronDown } from '../../icons/ChevronDown'
 
 const Wrapper = styled.button`
   align-items: center;
-  background-color: ${({ theme }) => theme.textField.backgroundColor};
+  background-color: black;
   border-color: ${({ theme }) => theme.textField.borderColor};
-  border-radius: ${({ theme }) => theme.textField.borderRadius};
+  border-radius: 100px;
   border-style: ${({ theme }) => theme.textField.borderStyle};
   border-width: ${({ theme }) => theme.textField.borderWidth};
-  color: ${({ theme }) => theme.text1};
   display: flex;
-  font-size: ${({ theme }) => theme.textField.fontSize};
-  font-weight: ${({ theme }) => theme.textField.fontWeight};
-  height: ${({ theme }) => theme.textField.height};
+  height: 32px;
   justify-content: space-between;
   outline: none;
   padding: 0 14px;
@@ -25,6 +22,14 @@ const Wrapper = styled.button`
     background-color: ${({ theme }) => theme.textField.backgroundColorActive};
     border-color: ${({ theme }) => theme.textField.borderColorActive};
   }
+
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #eeefeb;
 `
 
 const Chevron = styled(ChevronDown)`
