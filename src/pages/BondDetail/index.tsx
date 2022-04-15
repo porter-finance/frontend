@@ -2,6 +2,8 @@ import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createGlobalStyle } from 'styled-components'
 
+import { useWeb3React } from '@web3-react/core'
+
 import { AuctionTimer } from '../../components/auction/AuctionTimer'
 import {
   ExtraDetailsItem,
@@ -26,13 +28,11 @@ const GlobalStyle = createGlobalStyle`
   }
 `
 
-const AfterMaturityError = ({ actionType }: { actionType: BondActions }) => (
+const RedeemError = () => (
   <div className="card card-bordered">
     <div className="card-body">
       <div className="flex justify-between">
-        <h2 className="card-title !text-[#696969]">
-          {actionType === BondActions.Convert ? 'Convert' : 'Redeem'}
-        </h2>
+        <h2 className="card-title !text-[#696969]">Redeem</h2>
         <div className="flex items-center rounded-full bg-base-300 text-[#1E1E1E] text-sm bg-[#696969] px-4 h-9">
           After maturity
         </div>
@@ -49,6 +49,7 @@ const AfterMaturityError = ({ actionType }: { actionType: BondActions }) => (
 const BondDetail: React.FC = () => {
   const navigate = useNavigate()
   const bondIdentifier = useParams()
+  const { account } = useWeb3React()
 
   const { data, loading: isLoading } = useBondDetails(bondIdentifier?.bondId)
   const invalidBond = React.useMemo(() => !bondIdentifier || !data, [bondIdentifier, data])
@@ -59,6 +60,12 @@ const BondDetail: React.FC = () => {
 
   const extraDetails: Array<ExtraDetailsItemProps> = React.useMemo(
     () => [
+      {
+        title: 'Balance',
+        value: '0,00',
+        tooltip: 'Tooltip',
+        bordered: 'purple',
+      },
       {
         title: 'Face value',
         value: '1 USDC',
@@ -77,20 +84,25 @@ const BondDetail: React.FC = () => {
         show: data?.type === 'convert',
       },
       {
-        title: 'Estimated Value | APY',
-        value: '0.89 USDC | 20%',
+        title: 'Estimated position value',
+        value: '0,00 USDC',
+        tooltip: 'Tooltip',
+        bordered: 'purple',
+      },
+      {
+        title: 'Estimated bond value',
+        value: '0.89 USDC',
         tooltip: 'Tooltip',
       },
       {
         title: 'Collateralization Ratio',
-        value: `${data?.collateralRatio}`,
+        value: `${data?.collateralRatio}%`,
         tooltip: 'Tooltip',
       },
       {
         title: 'Call strike price',
         value: '25 USDC/UNI',
         tooltip: 'Tooltip',
-        bordered: 'purple',
         show: data?.type === 'convert',
       },
     ],
@@ -168,7 +180,7 @@ const BondDetail: React.FC = () => {
                   text="Time until maturity"
                 />
 
-                <div className="grid gap-x-12 gap-y-8 grid-cols-1 pt-12 md:grid-cols-3">
+                <div className="grid gap-x-12 gap-y-8 grid-cols-1 pt-12 md:grid-cols-4">
                   {extraDetails.map((item, index) => (
                     <ExtraDetailsItem key={index} {...item} />
                   ))}
@@ -179,10 +191,7 @@ const BondDetail: React.FC = () => {
         }
         rightChildren={
           <>
-            {isConvertBond && !isMatured && !isFullyPaid && (
-              <AfterMaturityError actionType={BondActions.Convert} />
-            )}
-            {!isConvertBond && isMatured && <AfterMaturityError actionType={BondActions.Redeem} />}
+            {isConvertBond && !isMatured && !isFullyPaid && account && <RedeemError />}
             {<BondAction actionType={isConvertBond ? BondActions.Convert : BondActions.Redeem} />}
           </>
         }
