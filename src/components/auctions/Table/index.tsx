@@ -12,9 +12,7 @@ import { Magnifier } from '../../icons/Magnifier'
 import { Cell } from '../../pureStyledComponents/Cell'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
 
-const Wrapper = styled.div`
-  margin-top: -30px;
-`
+const Wrapper = styled.div``
 
 const SectionTitle = styled(PageTitle)`
   font-weight: 400;
