@@ -148,6 +148,7 @@ const BondDetail: React.FC = () => {
   const days = 86400000 // number of ms in a day
   const issuanceDate = new Date(data?.maturityDate * 1000 - 2000 * days).getTime()
   const isPartiallyPaid = true // TODO UNDO
+  const isDefaulted = true // TODO UNDO
 
   return (
     <>
