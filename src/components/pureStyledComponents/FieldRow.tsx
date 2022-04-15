@@ -81,7 +81,7 @@ export const FieldRowInput = styled(NumericalInput)<{ hasError?: boolean }>`
   width: auto;
 
   &::placeholder {
-    color: ${(props) => (props.hasError ? ({ theme }) => theme.error : ({ theme }) => '#9F9F9F')};
+    color: #696969;
   }
 
   &[disabled] {
@@ -92,6 +92,7 @@ export const FieldRowInput = styled(NumericalInput)<{ hasError?: boolean }>`
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+    color: #696969;
   }
 `
 

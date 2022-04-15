@@ -116,6 +116,7 @@ interface Props {
   wrap: wrapProps
   amountDescription?: string
   value: string
+  disabled?: boolean
 }
 
 const AmountInputPanel: React.FC<Props> = (props) => {
@@ -126,6 +127,7 @@ const AmountInputPanel: React.FC<Props> = (props) => {
     balance,
     balanceString,
     chainId,
+    disabled,
     info,
     onMax,
     onUserSellAmountInput,
@@ -140,6 +142,7 @@ const AmountInputPanel: React.FC<Props> = (props) => {
   const isUnlocking = unlock.unlockState === ApprovalState.PENDING
   const error = info?.type === InfoType.error
   const dataTip = unwrapMessage[chainId]
+  const isDisabled = disabled === true
 
   return (
     <>
@@ -154,13 +157,14 @@ const AmountInputPanel: React.FC<Props> = (props) => {
       >
         <FieldRowTop>
           <FieldRowInput
-            disabled={!account}
+            disabled={!account || isDisabled}
             hasError={error}
             onBlur={() => setReadonly(true)}
             onFocus={() => setReadonly(false)}
             onUserSellAmountInput={onUserSellAmountInput}
+            placeholder="0.00"
             readOnly={!account || readonly}
-            value={!account ? 0 : value}
+            value={value}
           />
           <Wrap>
             {token && (
