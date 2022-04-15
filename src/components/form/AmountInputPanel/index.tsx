@@ -8,7 +8,8 @@ import ReactTooltip from 'react-tooltip'
 import { unwrapMessage } from '../../../constants'
 import { useActiveWeb3React } from '../../../hooks'
 import { ApprovalState } from '../../../hooks/useApproveCallback'
-import { ChainId, getTokenDisplay } from '../../../utils'
+import { ChainId } from '../../../utils'
+import { TokenPill } from '../../bond/BondAction'
 import { Tooltip } from '../../common/Tooltip'
 import { MiniLock } from '../../icons/MiniLock'
 import { MiniSpinner } from '../../icons/MiniSpinner'
@@ -19,13 +20,10 @@ import {
   FieldRowInput,
   FieldRowPrimaryButton,
   FieldRowPrimaryButtonText,
-  FieldRowToken,
-  FieldRowTokenSymbol,
   FieldRowTop,
   FieldRowWrapper,
   InfoType,
 } from '../../pureStyledComponents/FieldRow'
-import TokenLogo from '../../token/TokenLogo'
 import { FieldRowLabelStyled } from '../PriceInputPanel'
 
 const rotate = keyframes`
@@ -114,6 +112,7 @@ interface Props {
   amountText?: string
   amountTooltip?: string
   wrap: wrapProps
+  maxTitle?: string
   amountDescription?: string
   value: string
   disabled?: boolean
@@ -129,6 +128,7 @@ const AmountInputPanel: React.FC<Props> = (props) => {
     chainId,
     disabled,
     info,
+    maxTitle = 'Max',
     onMax,
     onUserSellAmountInput,
     token = null,
@@ -167,19 +167,7 @@ const AmountInputPanel: React.FC<Props> = (props) => {
             value={value}
           />
           <Wrap>
-            {token && (
-              <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#2C2C2C] rounded-full p-1 px-2">
-                {token.address && (
-                  <TokenLogo
-                    size={'16px'}
-                    token={{ address: token.address, symbol: token.symbol }}
-                  />
-                )}
-                {token && token.symbol && (
-                  <FieldRowTokenSymbol>{getTokenDisplay(token, chainId)}</FieldRowTokenSymbol>
-                )}
-              </FieldRowToken>
-            )}
+            {token && <TokenPill chainId={chainId} token={token} />}
             {unlock.isLocked && (
               <UnlockButton
                 disabled={isUnlocking}
@@ -248,10 +236,19 @@ const AmountInputPanel: React.FC<Props> = (props) => {
               </FieldRowLabelStyled>
             </div>
           ) : (
-            <FieldRowLabelStyled className="space-x-1">
-              <span>{amountText}</span>
-              <Tooltip text={amountTooltip} />
-            </FieldRowLabelStyled>
+            <div className="flex justify-between">
+              <FieldRowLabelStyled className="space-x-1">
+                <span>{amountText}</span>
+                <Tooltip text={amountTooltip} />
+              </FieldRowLabelStyled>
+              <button
+                className="btn btn-xs normal-case !text-[#E0E0E0] font-normal !border-[#2A2B2C] px-3"
+                disabled={!onMax || !account}
+                onClick={onMax}
+              >
+                {maxTitle}
+              </button>
+            </div>
           )}
         </FieldRowBottom>
       </FieldRowWrapper>

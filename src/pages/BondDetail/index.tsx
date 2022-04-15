@@ -62,7 +62,7 @@ const BondDetail: React.FC = () => {
       },
       {
         title: 'Face value',
-        value: '1 USDC',
+        value: `1 ${data?.paymentToken}`,
         tooltip: 'Tooltip',
       },
       {
@@ -73,7 +73,7 @@ const BondDetail: React.FC = () => {
       },
       {
         title: 'Convertible tokens',
-        value: `${data?.paymentToken}`,
+        value: `${data?.collateralToken}`,
         tooltip: 'Tooltip',
         show: data?.type === 'convert',
       },

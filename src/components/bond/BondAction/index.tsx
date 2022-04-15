@@ -34,11 +34,10 @@ const ActionButton = styled(Button)`
   height: 41px;
 `
 
-const TokenInfo = ({ chainId, token, value }) => (
-  <div className="text-base text-white flex justify-between">
-    <div>{parseFloat(value).toFixed(2)}</div>
-    {token && (
-      <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#2C2C2C] rounded-full p-1 px-2">
+export const TokenPill = ({ chainId, token }) => {
+  return (
+    token && (
+      <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#2C2C2C] rounded-full p-1 px-2 pl-1">
         {token.address && (
           <TokenLogo
             size={'16px'}
@@ -52,7 +51,18 @@ const TokenInfo = ({ chainId, token, value }) => (
           <FieldRowTokenSymbol>{getTokenDisplay(token, chainId)}</FieldRowTokenSymbol>
         )}
       </FieldRowToken>
-    )}
+    )
+  )
+}
+
+const TokenInfo = ({ chainId, disabled = false, token, value }) => (
+  <div
+    className={`text-base text-white ${
+      disabled ? 'text-[#696969]' : 'text-white'
+    } flex justify-between`}
+  >
+    <div>{parseFloat(value).toFixed(2)}</div>
+    <TokenPill chainId={chainId} token={token} />
   </div>
 )
 
@@ -90,7 +100,7 @@ const BondAction = ({
   const isMatured = derivedBondInfo && new Date() > new Date(derivedBondInfo.maturityDate * 1000)
 
   const [isOwner, setIsOwner] = useState(false)
-  const [bondsToRedeem, setBondsToRedeem] = useState('0')
+  const [bondsToRedeem, setBondsToRedeem] = useState('0.00')
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false)
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true)
   const [txHash, setTxHash] = useState<string>('')
@@ -389,7 +399,6 @@ const BondAction = ({
               </div>
             ) : (
               <AmountInputPanel
-                amountDescription="UNI CONVERT 07AUG2022 2P 25C USDC"
                 amountText="Amount of bonds to convert"
                 balance={totalBalance}
                 balanceString={actionType === BondActions.Mint && 'Available'}
@@ -402,6 +411,7 @@ const BondAction = ({
                     type: InfoType.error,
                   }
                 }
+                maxTitle="Convert all"
                 onMax={() => {
                   setBondsToRedeem(totalBalance)
                 }}
@@ -430,7 +440,9 @@ const BondAction = ({
                     value={previewRedeemVal[1]}
                   />
 
-                  <p>Amount of assets to receive</p>
+                  <p>
+                    Amount of assets to receive <Tooltip text="Tooltip" />
+                  </p>
                 </div>
               )}
 
@@ -438,11 +450,14 @@ const BondAction = ({
                 <div className="space-y-2">
                   <TokenInfo
                     chainId={chainId}
+                    disabled={!account}
                     token={collateralTokenInfo}
                     value={previewConvertVal}
                   />
-
-                  <p>Amount of assets to receive</p>
+                  <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
+                    <span>Amount of assets to receive</span>
+                    <Tooltip text="Tooltip" />
+                  </div>
                 </div>
               )}
 
