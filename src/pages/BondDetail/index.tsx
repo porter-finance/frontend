@@ -44,6 +44,21 @@ const RedeemError = () => (
   </div>
 )
 
+const ConvertError = () => (
+  <div className="card card-bordered">
+    <div className="card-body">
+      <div className="flex justify-between">
+        <h2 className="card-title !text-[#696969]">Convert</h2>
+      </div>
+      <div className="space-y-6">
+        <div className="text-base text-[#696969]">
+          The maturity date has passed, therefore bonds can no longer be converted.
+        </div>
+      </div>
+    </div>
+  </div>
+)
+
 const BondDetail: React.FC = () => {
   const { account } = useWeb3React()
   const navigate = useNavigate()
@@ -187,10 +202,9 @@ const BondDetail: React.FC = () => {
         }
         rightChildren={
           <>
-            {isConvertBond && <BondAction actionType={BondActions.Convert} />}
-            {isConvertBond && !isMatured && isFullyPaid && (
-              <BondAction actionType={BondActions.Redeem} />
-            )}
+            {isConvertBond && isMatured && isFullyPaid && <ConvertError />}
+            {isConvertBond && !isFullyPaid && <BondAction actionType={BondActions.Convert} />}
+            {isConvertBond && isFullyPaid && <BondAction actionType={BondActions.Redeem} />}
             {isConvertBond && !isMatured && !isFullyPaid && <RedeemError />}
           </>
         }
