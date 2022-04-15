@@ -2,8 +2,6 @@ import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createGlobalStyle } from 'styled-components'
 
-import { useWeb3React } from '@web3-react/core'
-
 import { AuctionTimer } from '../../components/auction/AuctionTimer'
 import {
   ExtraDetailsItem,
@@ -47,12 +45,10 @@ const RedeemError = () => (
 const BondDetail: React.FC = () => {
   const navigate = useNavigate()
   const bondIdentifier = useParams()
-  const { account } = useWeb3React()
 
   const { data, loading: isLoading } = useBondDetails(bondIdentifier?.bondId)
   const invalidBond = React.useMemo(() => !bondIdentifier || !data, [bondIdentifier, data])
   const isMatured = new Date() > new Date(data?.maturityDate * 1000)
-  const statusLabel = isMatured ? 'Matured' : 'Active'
   const isFullyPaid = !!useIsBondFullyPaid(bondIdentifier?.bondId)
   const isConvertBond = data?.type === 'convert'
 
