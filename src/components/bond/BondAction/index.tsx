@@ -419,7 +419,7 @@ const BondAction = ({
                     type: InfoType.error,
                   }
                 }
-                maxTitle="Convert all"
+                maxTitle={isConvertType ? 'Convert all' : 'Redeem all'}
                 onMax={() => {
                   setBondsToRedeem(totalBalance)
                 }}
@@ -441,7 +441,7 @@ const BondAction = ({
                     chainId={chainId}
                     disabled={!account}
                     token={isConvertType ? collateralTokenInfo : paymentTokenInfo}
-                    value={isConvertType ? previewConvertVal : previewRedeemVal[0]}
+                    value={isConvertType ? previewConvertVal : previewRedeemVal[1]}
                   />
                   <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
                     <span>Amount of assets to receive</span>
