@@ -421,7 +421,7 @@ const BondAction = ({
               )}
 
               {actionType === BondActions.Convert && (
-                <div className="space-y-4">
+                <div className="space-y-2">
                   <TokenInfo
                     chainId={chainId}
                     token={collateralTokenInfo}
