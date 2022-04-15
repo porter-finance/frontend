@@ -12,7 +12,6 @@ const Value = styled.div`
   display: flex;
   align-items: flex-end;
   letter-spacing: 0.06em;
-  color: #ffffff;
   margin: 0 0 2px;
   white-space: nowrap;
 `
@@ -83,10 +82,10 @@ const BlueLinearBorder = () => (
 )
 
 export interface Props {
-  progress?: string
   show?: boolean
   title: string
   tooltip?: string
+  disabled?: boolean
   bordered?: string
   url?: string
   value: string | ReactElement | Element
@@ -94,7 +93,7 @@ export interface Props {
 
 export const ExtraDetailsItem: React.FC<Props> = ({
   bordered,
-  progress,
+  disabled = false,
   show = true,
   title,
   tooltip,
@@ -105,7 +104,7 @@ export const ExtraDetailsItem: React.FC<Props> = ({
   show && (
     <div className="col-span-1" {...restProps}>
       <div className="space-y-2 overflow-hidden">
-        <Value>
+        <Value className={`${disabled ? 'text-[#696969]' : 'text-white'}`}>
           <ValueText className="overflow-hidden overflow-ellipsis">{value || 'Unknown'}</ValueText>
           {url && <Link href={url} />}
         </Value>

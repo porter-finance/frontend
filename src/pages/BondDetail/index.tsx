@@ -2,6 +2,8 @@ import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createGlobalStyle } from 'styled-components'
 
+import { useWeb3React } from '@web3-react/core'
+
 import { AuctionTimer } from '../../components/auction/AuctionTimer'
 import {
   ExtraDetailsItem,
@@ -43,6 +45,7 @@ const RedeemError = () => (
 )
 
 const BondDetail: React.FC = () => {
+  const { account } = useWeb3React()
   const navigate = useNavigate()
   const bondIdentifier = useParams()
 
@@ -59,6 +62,7 @@ const BondDetail: React.FC = () => {
         value: '0,00',
         tooltip: 'Tooltip',
         bordered: 'purple',
+        disabled: !account,
       },
       {
         title: 'Face value',
@@ -82,6 +86,7 @@ const BondDetail: React.FC = () => {
         value: '0,00 USDC',
         tooltip: 'Tooltip',
         bordered: 'purple',
+        disabled: !account,
       },
       {
         title: 'Estimated bond value',
@@ -100,7 +105,7 @@ const BondDetail: React.FC = () => {
         show: data?.type === 'convert',
       },
     ],
-    [data],
+    [data, account],
   )
 
   if (isLoading) {
@@ -182,7 +187,10 @@ const BondDetail: React.FC = () => {
         }
         rightChildren={
           <>
-            {<BondAction actionType={isConvertBond ? BondActions.Convert : BondActions.Redeem} />}
+            {isConvertBond && <BondAction actionType={BondActions.Convert} />}
+            {isConvertBond && !isMatured && isFullyPaid && (
+              <BondAction actionType={BondActions.Redeem} />
+            )}
             {isConvertBond && !isMatured && !isFullyPaid && <RedeemError />}
           </>
         }
