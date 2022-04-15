@@ -411,7 +411,7 @@ const BondAction = ({
                 balance={totalBalance}
                 balanceString={actionType === BondActions.Mint && 'Available'}
                 chainId={bondTokenInfo?.chainId}
-                disabled
+                disabled={!account}
                 info={
                   account &&
                   !isOwner && {
@@ -440,8 +440,8 @@ const BondAction = ({
                   <TokenInfo
                     chainId={chainId}
                     disabled={!account}
-                    token={collateralTokenInfo}
-                    value={previewConvertVal}
+                    token={isConvertType ? collateralTokenInfo : paymentTokenInfo}
+                    value={isConvertType ? previewConvertVal : previewRedeemVal[0]}
                   />
                   <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
                     <span>Amount of assets to receive</span>

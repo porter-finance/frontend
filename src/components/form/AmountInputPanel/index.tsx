@@ -1,5 +1,5 @@
 import { rgba } from 'polished'
-import React, { useState } from 'react'
+import React from 'react'
 import styled, { keyframes } from 'styled-components'
 
 import { Token } from '@josojo/honeyswap-sdk'
@@ -137,7 +137,6 @@ const AmountInputPanel: React.FC<Props> = (props) => {
     wrap,
     ...restProps
   } = props
-  const [readonly, setReadonly] = useState(true)
   const { account } = useActiveWeb3React()
   const isUnlocking = unlock.unlockState === ApprovalState.PENDING
   const error = info?.type === InfoType.error
@@ -159,11 +158,9 @@ const AmountInputPanel: React.FC<Props> = (props) => {
           <FieldRowInput
             disabled={!account || isDisabled}
             hasError={error}
-            onBlur={() => setReadonly(true)}
-            onFocus={() => setReadonly(false)}
             onUserSellAmountInput={onUserSellAmountInput}
             placeholder="0.00"
-            readOnly={!account || readonly}
+            readOnly={!account}
             value={value}
           />
           <Wrap>
