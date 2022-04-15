@@ -16,6 +16,7 @@ const Icon = styled(IconUnregistered)`
   position: absolute;
   top: 0;
   z-index: 1;
+  padding: 5px;
 `
 
 const Badge = styled.div<{ size: string }>`
@@ -30,10 +31,9 @@ const Badge = styled.div<{ size: string }>`
   justify-content: center;
   line-height: 1.2;
   padding: 2px 3px;
+  right: 0;
   position: absolute;
-  right: -8%;
   text-align: center;
-  top: 6%;
   white-space: nowrap;
   z-index: 2;
 `
