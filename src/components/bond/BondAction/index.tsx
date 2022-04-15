@@ -110,6 +110,7 @@ const BondAction = ({
   const [previewMintVal, setPreviewMintVal] = useState<string>('0')
   const isConvertType = actionType === BondActions.Convert
   const isPartiallyPaid = true // TODO UNDO
+  const isDefaulted = true // TODO UNDO
 
   const tokenToAction = useMemo(() => {
     if (isConvertType) return bondTokenInfo
@@ -379,6 +380,9 @@ const BondAction = ({
   }, [isConvertType, actionType, isConvertable, isMintable, isRedeemable])
 
   const Status = () => {
+    if (isDefaulted && actionType === BondActions.Redeem) {
+      return <ActiveStatusPill className="!bg-[#DB3635]" dot={false} title="Defaulted" />
+    }
     if (isFullyPaid && actionType === BondActions.Redeem) {
       return <ActiveStatusPill dot={false} title="Repaid" />
     }
@@ -414,11 +418,11 @@ const BondAction = ({
           <div className="space-y-6">
             {account && (!bondTokenBalance || bondTokenBalance.lte(0)) ? (
               <div className="flex justify-center text-[12px] text-[#696969] border border-[#2C2C2C] p-12 rounded-lg">
-                <span>No bonds to convert</span>
+                <span>No bonds to {getActionText(actionType).toLowerCase()}</span>
               </div>
             ) : (
               <AmountInputPanel
-                amountText="Amount of bonds to convert"
+                amountText={`Amount of bonds to ${getActionText(actionType).toLowerCase()}`}
                 balance={totalBalance}
                 balanceString={actionType === BondActions.Mint && 'Available'}
                 chainId={bondTokenInfo?.chainId}
@@ -448,22 +452,35 @@ const BondAction = ({
             <div className="text-xs text-[12px] text-[#696969] space-y-6">
               {(isConvertType || actionType === BondActions.Redeem) && (
                 <div className="space-y-2">
-                  <TokenInfo
-                    chainId={chainId}
-                    disabled={!account}
-                    token={collateralTokenInfo}
-                    // array of redeem val is [paymentTokens, collateralTokens]
-                    value={isConvertType ? previewConvertVal : previewRedeemVal[1]}
-                  />
-                  {isPartiallyPaid && (
+                  {isDefaulted ? (
                     <TokenInfo
                       chainId={chainId}
                       disabled={!account}
-                      token={paymentTokenInfo}
+                      token={collateralTokenInfo}
                       // array of redeem val is [paymentTokens, collateralTokens]
-                      value={isConvertType ? previewConvertVal : previewRedeemVal[0]}
+                      value={isConvertType ? previewConvertVal : previewRedeemVal[1]}
                     />
+                  ) : (
+                    <>
+                      <TokenInfo
+                        chainId={chainId}
+                        disabled={!account}
+                        token={collateralTokenInfo}
+                        // array of redeem val is [paymentTokens, collateralTokens]
+                        value={isConvertType ? previewConvertVal : previewRedeemVal[1]}
+                      />
+                      {isPartiallyPaid && (
+                        <TokenInfo
+                          chainId={chainId}
+                          disabled={!account}
+                          token={paymentTokenInfo}
+                          // array of redeem val is [paymentTokens, collateralTokens]
+                          value={isConvertType ? previewConvertVal : previewRedeemVal[0]}
+                        />
+                      )}
+                    </>
                   )}
+
                   <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
                     <span>Amount of assets to receive</span>
                     <Tooltip text="Tooltip" />
