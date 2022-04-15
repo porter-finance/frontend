@@ -24,7 +24,6 @@ import { NetworkError, useNetworkCheck } from '../../web3/Web3Status'
 
 const Wrapper = styled.header`
   width: 100%;
-  min-height: 220px;
   background: #404eed;
   transition: background 0.3s ease;
 `
@@ -38,6 +37,8 @@ export const Inner = styled(InnerContainer)`
   justify-content: space-between;
   padding-left: ${({ theme }) => theme.layout.horizontalPadding};
   padding-right: ${({ theme }) => theme.layout.horizontalPadding};
+
+  min-height: 80px;
 `
 
 const LogoLink = styled(HashLink)`
