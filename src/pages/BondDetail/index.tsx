@@ -9,12 +9,13 @@ import {
   ExtraDetailsItem,
   Props as ExtraDetailsItemProps,
 } from '../../components/auction/ExtraDetailsItem'
+import { ActiveStatusPill } from '../../components/auction/OrderbookTable'
 import BondAction from '../../components/bond/BondAction'
 import WarningModal from '../../components/modals/WarningModal'
 import TokenLogo from '../../components/token/TokenLogo'
 import { useBondDetails } from '../../hooks/useBondDetails'
 import { useIsBondFullyPaid } from '../../hooks/useIsBondFullyPaid'
-import { ConvertButtonOutline, LoadingTwoGrid, SimpleButtonOutline, TwoGridPage } from '../Auction'
+import { LoadingTwoGrid, TwoGridPage } from '../Auction'
 
 export enum BondActions {
   Redeem,
@@ -137,40 +138,32 @@ const BondDetail: React.FC = () => {
   return (
     <>
       <GlobalStyle />
-      <div className="py-2 flex content-center justify-center md:justify-between flex-wrap items-end">
-        <div className="flex flex-wrap items-center space-x-6">
-          <div className="hidden md:flex">
-            <TokenLogo
-              size="60px"
-              square
-              token={{
-                address: data?.collateralToken,
-                symbol: data?.symbol,
-              }}
-            />
-          </div>
-          <div>
-            <h1 className="text-3xl text-white">{data?.name}</h1>
-            <p className="text-blue-100 text-sm font-medium">{data?.symbol}</p>
-          </div>
-        </div>
-        <div className="flex justify-center md:mt-0 mt-5 space-x-3">
-          {data?.type === 'convert' ? <ConvertButtonOutline /> : <SimpleButtonOutline />}
-
-          <span className="inline-flex items-center px-2 space-x-1 py-1.5 rounded-full bg-white border-blue-100 border uppercase border-opacity-50 pointer-events-none text-[#404EED] font-medium">
-            <svg className="h-2 w-2" fill="#404EED" opacity="0.5" viewBox="0 0 8 8">
-              <circle cx={4} cy={4} r={3} />
-            </svg>
-            <span className="text-xs">{statusLabel}</span>
-          </span>
-        </div>
-      </div>
       <TwoGridPage
         leftChildren={
           <>
             <div className="card">
               <div className="card-body">
                 <h2 className="card-title">Bond information</h2>
+                <div className="py-2 flex content-center justify-center md:justify-between flex-wrap items-start">
+                  <div className="flex flex-wrap items-center space-x-6">
+                    <div className="hidden md:flex">
+                      <TokenLogo
+                        size="60px"
+                        square
+                        token={{
+                          address: data?.collateralToken,
+                          symbol: data?.symbol,
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <h1 className="text-3xl text-white">{data?.name}</h1>
+                      <p className="text-blue-100 text-sm font-medium">{data?.symbol}</p>
+                    </div>
+                  </div>
+                  {!isMatured && <ActiveStatusPill />}
+                  {isMatured && <ActiveStatusPill disabled dot={false} title="Matured" />}
+                </div>
                 <AuctionTimer
                   color="purple"
                   endDate={data?.maturityDate}
@@ -185,6 +178,12 @@ const BondDetail: React.FC = () => {
                     <ExtraDetailsItem key={index} {...item} />
                   ))}
                 </div>
+              </div>
+            </div>
+
+            <div className="card">
+              <div className="card-body">
+                <h2 className="card-title">Graph goes here</h2>
               </div>
             </div>
           </>

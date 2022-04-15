@@ -136,10 +136,17 @@ interface OrderBookTableProps {
   granularity: string
 }
 
-export const ActiveStatusPill = ({ disabled = false, dot = true, title = 'Active' }) => (
+export const ActiveStatusPill = ({
+  className = '',
+  disabled = false,
+  dot = true,
+  title = 'Active',
+  ...rest
+}) => (
   <button
-    className="text-[11px] text-xs uppercase font-normal disabled:text-[#9F9F9F] text-[#1E1E1E] disabled:bg-[#2C2C2C] pointer-events-none space-x-2 inline-flex items-center px-3 border py-1 border-transparent rounded-full shadow-sm bg-[#5BCD88] hover:none focus:outline-none focus:none"
+    className={`text-[11px] text-xs uppercase font-normal disabled:text-[#9F9F9F] text-[#1E1E1E] disabled:bg-[#2C2C2C] pointer-events-none space-x-2 inline-flex items-center px-3 border py-1 border-transparent rounded-full shadow-sm bg-[#5BCD88] hover:none focus:outline-none focus:none ${className}`}
     disabled={disabled}
+    {...rest}
   >
     {dot && (
       <svg fill="none" height="7" viewBox="0 0 7 7" width="7" xmlns="http://www.w3.org/2000/svg">
@@ -147,7 +154,7 @@ export const ActiveStatusPill = ({ disabled = false, dot = true, title = 'Active
       </svg>
     )}
 
-    {title}
+    <span>{title}</span>
   </button>
 )
 
