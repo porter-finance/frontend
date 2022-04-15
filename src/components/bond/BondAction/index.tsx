@@ -20,6 +20,7 @@ import { BondActions } from '../../../pages/BondDetail'
 import { useActivePopups, useWalletModalToggle } from '../../../state/application/hooks'
 import { useFetchTokenByAddress } from '../../../state/user/hooks'
 import { ChainId, EASY_AUCTION_NETWORKS, getTokenDisplay } from '../../../utils'
+import { ActiveStatusPill } from '../../auction/OrderbookTable'
 import { Button } from '../../buttons/Button'
 import { Tooltip } from '../../common/Tooltip'
 import AmountInputPanel from '../../form/AmountInputPanel'
@@ -107,12 +108,13 @@ const BondAction = ({
   const [previewRedeemVal, setPreviewRedeemVal] = useState<string[]>(['0', '0'])
   const [previewConvertVal, setPreviewConvertVal] = useState<string>('0')
   const [previewMintVal, setPreviewMintVal] = useState<string>('0')
+  const isConvertType = actionType === BondActions.Convert
 
   const tokenToAction = useMemo(() => {
-    if (actionType === BondActions.Convert) return bondTokenInfo
+    if (isConvertType) return bondTokenInfo
     if (actionType === BondActions.Redeem) return bondTokenInfo
     if (actionType === BondActions.Mint) return collateralTokenInfo
-  }, [actionType, collateralTokenInfo, bondTokenInfo])
+  }, [actionType, collateralTokenInfo, bondTokenInfo, isConvertType])
 
   const tokenAmount = useMemo(() => {
     const tokenInfo = tokenToAction
@@ -159,7 +161,7 @@ const BondAction = ({
       })
     }
 
-    if (actionType === BondActions.Convert) {
+    if (isConvertType) {
       previewConvert(tokenAmount).then((r) => {
         setPreviewConvertVal(formatUnits(r, collateralTokenInfo?.decimals))
       })
@@ -171,6 +173,7 @@ const BondAction = ({
       })
     }
   }, [
+    isConvertType,
     actionType,
     paymentTokenInfo?.decimals,
     collateralTokenInfo?.decimals,
@@ -201,7 +204,7 @@ const BondAction = ({
 
     setAttemptingTxn(true)
 
-    if (actionType === BondActions.Convert) {
+    if (isConvertType) {
       hash = await convert().catch(() => {
         resetModal()
       })
@@ -362,7 +365,7 @@ const BondAction = ({
   )
 
   const isActionDisabled = useMemo(() => {
-    if (actionType === BondActions.Convert) {
+    if (isConvertType) {
       console.log(isConvertable)
       return isConvertable !== true
     }
@@ -372,13 +375,18 @@ const BondAction = ({
     }
 
     if (actionType === BondActions.Mint) return !isMintable
-  }, [actionType, isConvertable, isMintable, isRedeemable])
+  }, [isConvertType, actionType, isConvertable, isMintable, isRedeemable])
 
   return (
     <div className="card bond-card-color">
       <div className="card-body">
-        <h2 className="card-title">{getActionText(actionType)}</h2>
-        {!isMatured && derivedBondInfo && (
+        <div className="flex flex-row justify-between items-start">
+          <h2 className="card-title">{getActionText(actionType)}</h2>
+          {isFullyPaid && actionType === BondActions.Redeem && (
+            <ActiveStatusPill dot={false} title="Repaid" />
+          )}
+        </div>
+        {isConvertType && !isMatured && derivedBondInfo && (
           <div className="space-y-1 mb-1">
             <div className="text-[#EEEFEB] text-sm">
               {dayjs(derivedBondInfo.maturityDate * 1000)
@@ -427,26 +435,7 @@ const BondAction = ({
               />
             )}
             <div className="text-xs text-[12px] text-[#696969] space-y-6">
-              {actionType === BondActions.Redeem && (
-                <div className="space-y-4">
-                  <TokenInfo
-                    chainId={chainId}
-                    token={paymentTokenInfo}
-                    value={previewRedeemVal[0]}
-                  />
-                  <TokenInfo
-                    chainId={chainId}
-                    token={collateralTokenInfo}
-                    value={previewRedeemVal[1]}
-                  />
-
-                  <p>
-                    Amount of assets to receive <Tooltip text="Tooltip" />
-                  </p>
-                </div>
-              )}
-
-              {actionType === BondActions.Convert && (
+              {(isConvertType || actionType === BondActions.Redeem) && (
                 <div className="space-y-2">
                   <TokenInfo
                     chainId={chainId}
