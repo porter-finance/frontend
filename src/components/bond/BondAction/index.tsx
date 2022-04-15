@@ -6,6 +6,7 @@ import { formatUnits, parseUnits } from '@ethersproject/units'
 import { TokenAmount } from '@josojo/honeyswap-sdk'
 import { useTokenBalance } from '@usedapp/core'
 import { useWeb3React } from '@web3-react/core'
+import dayjs from 'dayjs'
 
 import { ApprovalState, useApproveCallback } from '../../../hooks/useApproveCallback'
 import { useBondDetails } from '../../../hooks/useBondDetails'
@@ -20,6 +21,7 @@ import { useActivePopups, useWalletModalToggle } from '../../../state/applicatio
 import { useFetchTokenByAddress } from '../../../state/user/hooks'
 import { ChainId, EASY_AUCTION_NETWORKS, getTokenDisplay } from '../../../utils'
 import { Button } from '../../buttons/Button'
+import { Tooltip } from '../../common/Tooltip'
 import AmountInputPanel from '../../form/AmountInputPanel'
 import ConfirmationModal from '../../modals/ConfirmationModal'
 import { FieldRowToken, FieldRowTokenSymbol, InfoType } from '../../pureStyledComponents/FieldRow'
@@ -30,10 +32,6 @@ const ActionButton = styled(Button)`
   width: 100%;
   background-color: #532dbe !important;
   height: 41px;
-`
-
-const ActionPanel = styled.div`
-  margin-bottom: 20px;
 `
 
 const TokenInfo = ({ chainId, token, value }) => (
@@ -249,10 +247,11 @@ const BondAction = ({
   }, [actionType, bondContract, bondTokenInfo])
 
   useEffect(() => {
-    if (!isLoading && !invalidBond && account && derivedBondInfo) {
-      setIsOwner(derivedBondInfo.owner.toLowerCase() === account.toLowerCase())
+    if (!isLoading && !invalidBond && derivedBondInfo) {
+      setIsOwner(derivedBondInfo?.owner.toLowerCase() === account?.toLowerCase())
 
       fetchTok(bondId).then((r) => {
+        console.log(bondId, bondId, r)
         setBondTokenInfo(r)
       })
       fetchTok(derivedBondInfo?.collateralToken).then((r) => {
@@ -369,7 +368,20 @@ const BondAction = ({
     <div className="card bond-card-color">
       <div className="card-body">
         <h2 className="card-title">{getActionText(actionType)}</h2>
-        <ActionPanel>
+        {!isMatured && derivedBondInfo && (
+          <div className="space-y-1 mb-1">
+            <div className="text-[#EEEFEB] text-sm">
+              {dayjs(derivedBondInfo.maturityDate * 1000)
+                .utc()
+                .format('MMM DD, YYYY HH:mm UTC')}
+            </div>
+            <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
+              <span>Active until</span>
+              <Tooltip text="Tooltip" />
+            </div>
+          </div>
+        )}
+        <div>
           <div className="space-y-6">
             {account && (!bondTokenBalance || bondTokenBalance.lte(0)) ? (
               <div className="flex justify-center text-[12px] text-[#696969] border border-[#2C2C2C] p-12 rounded-lg">
@@ -382,7 +394,9 @@ const BondAction = ({
                 balance={totalBalance}
                 balanceString={actionType === BondActions.Mint && 'Available'}
                 chainId={bondTokenInfo?.chainId}
+                disabled
                 info={
+                  account &&
                   !isOwner && {
                     text: 'You do not own this bond',
                     type: InfoType.error,
@@ -458,7 +472,7 @@ const BondAction = ({
             title="Confirm Order"
             width={504}
           />
-        </ActionPanel>
+        </div>
       </div>
     </div>
   )
