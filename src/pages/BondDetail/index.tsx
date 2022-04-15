@@ -147,6 +147,7 @@ const BondDetail: React.FC = () => {
 
   const days = 86400000 // number of ms in a day
   const issuanceDate = new Date(data?.maturityDate * 1000 - 2000 * days).getTime()
+  const isPartiallyPaid = true // TODO UNDO
 
   return (
     <>
@@ -202,9 +203,13 @@ const BondDetail: React.FC = () => {
         }
         rightChildren={
           <>
-            {isConvertBond && isMatured && isFullyPaid && <ConvertError />}
-            {isConvertBond && !isFullyPaid && <BondAction actionType={BondActions.Convert} />}
-            {isConvertBond && isFullyPaid && <BondAction actionType={BondActions.Redeem} />}
+            {isConvertBond && isMatured && <ConvertError />}
+            {isConvertBond && !isFullyPaid && !isMatured && (
+              <BondAction actionType={BondActions.Convert} />
+            )}
+            {isConvertBond && (isPartiallyPaid || isFullyPaid) && (
+              <BondAction actionType={BondActions.Redeem} />
+            )}
             {isConvertBond && !isMatured && !isFullyPaid && <RedeemError />}
           </>
         }
