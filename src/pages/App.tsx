@@ -16,13 +16,7 @@ import Web3ReactManager from '../components/web3/Web3ReactManager'
 import useShowCookies from '../hooks/useShowCookies'
 import useShowTopWarning from '../hooks/useShowTopWarning'
 
-export const InnerApp = styled(InnerContainer)`
-  margin-top: -100px;
-
-  @media (max-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    margin-top: -130px;
-  }
-`
+export const InnerApp = styled(InnerContainer)``
 
 const App: React.FC = () => {
   const { setShowCookiesBanner, showCookiesBanner } = useShowCookies()
