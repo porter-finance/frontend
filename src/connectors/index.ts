@@ -22,8 +22,8 @@ chainIds.forEach((chainId: ChainId) => {
   }
 })
 
-// TODO Throw error if no defaultChainId is found
-const defaultChainId = urls.findIndex((chainId) => !!chainId)
+const isDev = process.env.NODE_ENV === 'development'
+const defaultChainId = isDev ? 4 : 1
 
 export const network = new NetworkConnector({ urls, defaultChainId })
 
