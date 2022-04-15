@@ -34,9 +34,6 @@ const RedeemError = () => (
     <div className="card-body">
       <div className="flex justify-between">
         <h2 className="card-title !text-[#696969]">Redeem</h2>
-        <div className="flex items-center rounded-full bg-base-300 text-[#1E1E1E] text-sm bg-[#696969] px-4 h-9">
-          After maturity
-        </div>
       </div>
       <div className="space-y-6">
         <div className="text-base text-[#696969]">
@@ -143,7 +140,6 @@ const BondDetail: React.FC = () => {
           <>
             <div className="card">
               <div className="card-body">
-                <h2 className="card-title">Bond information</h2>
                 <div className="py-2 flex content-center justify-center md:justify-between flex-wrap items-start">
                   <div className="flex flex-wrap items-center space-x-6">
                     <div className="hidden md:flex">
@@ -190,8 +186,8 @@ const BondDetail: React.FC = () => {
         }
         rightChildren={
           <>
-            {isConvertBond && !isMatured && !isFullyPaid && account && <RedeemError />}
             {<BondAction actionType={isConvertBond ? BondActions.Convert : BondActions.Redeem} />}
+            {isConvertBond && !isMatured && !isFullyPaid && <RedeemError />}
           </>
         }
       />
