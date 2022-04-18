@@ -81,30 +81,7 @@ const BondCard = ({ graphInfo }: { graphInfo: AuctionGraphDetail }) => {
   return (
     <div className="card card-bordered bond-card-color">
       <div className="card-body">
-        <div className="flex justify-between">
-          <h2 className="card-title">Bond information</h2>
-          <button className="btn btn-link space-x-2" disabled={true}>
-            <svg
-              fill="none"
-              height="18"
-              viewBox="0 0 18 18"
-              width="18"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M8.27228 0.999809L16.9999 9.00015L8.27228 17.0005"
-                stroke="white"
-                strokeMiterlimit="10"
-              />
-              <path
-                d="M0.999999 0.999809L9.72764 9.00015L1 17.0005"
-                stroke="white"
-                strokeMiterlimit="10"
-              />
-            </svg>
-            <span className="text-white text-xs font-normal">{graphInfo?.bond?.type}</span>
-          </button>
-        </div>
+        <h2 className="card-title">Bond information</h2>
 
         <div className="text-sm text-[#9F9F9F] flex justify-between items-end">
           <div className="flex items-center space-x-4">
