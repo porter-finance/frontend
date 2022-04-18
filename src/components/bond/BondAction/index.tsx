@@ -112,8 +112,8 @@ const BondAction = ({
   const [previewConvertVal, setPreviewConvertVal] = useState<string>('0')
   const [previewMintVal, setPreviewMintVal] = useState<string>('0')
   const isConvertComponent = componentType === BondActions.Convert
-  const isPartiallyPaid = useIsBondPartiallyPaid(bondId) // TODO UNDO
-  const isDefaulted = useIsBondDefaulted(bondId) // TODO UNDO
+  const isPartiallyPaid = useIsBondPartiallyPaid(bondId)
+  const isDefaulted = useIsBondDefaulted(bondId)
 
   const tokenToAction = useMemo(() => {
     if (isConvertComponent) return bondTokenInfo
