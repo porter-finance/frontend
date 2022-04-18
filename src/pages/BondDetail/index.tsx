@@ -147,7 +147,7 @@ const BondDetail: React.FC = () => {
     {
       title: 'Collateralization ratio',
       value: `${
-        round(Number(formatUnits(data?.collateralRatio || 0, bondTokenInfo?.decimals), 2)) * 100
+        round(Number(formatUnits(data?.collateralRatio || 0, bondTokenInfo?.decimals)), 2) * 100
       }%`,
       tooltip: 'Tooltip',
     },
