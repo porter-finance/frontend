@@ -249,7 +249,7 @@ const BondDetail: React.FC = () => {
             {(isPartiallyPaid || isFullyPaid || isDefaulted) && (
               <BondAction componentType={BondActions.Redeem} />
             )}
-            {!isMatured && !isFullyPaid && <RedeemError />}
+            {!isMatured && !isFullyPaid && !isDefaulted && <RedeemError />}
           </>
         }
       />
