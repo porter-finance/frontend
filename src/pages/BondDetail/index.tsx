@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createGlobalStyle } from 'styled-components'
 
+import { formatUnits } from '@ethersproject/units'
+import { useTokenBalance } from '@usedapp/core'
 import { useWeb3React } from '@web3-react/core'
 
 import Dev, { isDev } from '../../components/Dev'
@@ -14,10 +16,13 @@ import { ActiveStatusPill } from '../../components/auction/OrderbookTable'
 import BondAction from '../../components/bond/BondAction'
 import WarningModal from '../../components/modals/WarningModal'
 import TokenLogo from '../../components/token/TokenLogo'
+import { useTokenByAddressAndAutomaticallyAdd } from '../../hooks/Tokens'
 import { useBondDetails } from '../../hooks/useBondDetails'
 import { useIsBondDefaulted } from '../../hooks/useIsBondDefaulted'
 import { useIsBondFullyPaid } from '../../hooks/useIsBondFullyPaid'
 import { useIsBondPartiallyPaid } from '../../hooks/useIsBondPartiallyPaid'
+import { useTokenPrice } from '../../hooks/useTokenPrice'
+import { useFetchTokenByAddress } from '../../state/user/hooks'
 import { ConvertButtonOutline, LoadingTwoGrid, SimpleButtonOutline, TwoGridPage } from '../Auction'
 
 export enum BondActions {
@@ -63,56 +68,87 @@ const ConvertError = () => (
 )
 
 const BondDetail: React.FC = () => {
-  const { account } = useWeb3React()
+  const { account, chainId } = useWeb3React()
   const navigate = useNavigate()
   const bondIdentifier = useParams()
+  const fetchTok = useFetchTokenByAddress()
 
   const { data, loading: isLoading } = useBondDetails(bondIdentifier?.bondId)
   const invalidBond = React.useMemo(() => !bondIdentifier || !data, [bondIdentifier, data])
   const isMatured = new Date() > new Date(data?.maturityDate * 1000)
   const isFullyPaid = !!useIsBondFullyPaid(bondIdentifier?.bondId)
-  const isConvertBond = !isDev ? data?.type === 'convert' : false
-  const isPartiallyPaid = useIsBondPartiallyPaid(bondIdentifier?.bondId) // TODO UNDO
-  const isDefaulted = useIsBondDefaulted(bondIdentifier?.bondId) // TODO UNDO
+  const isConvertBond = isDev ? true : data?.type === 'convert'
+  const isPartiallyPaid = useIsBondPartiallyPaid(bondIdentifier?.bondId)
+  const isDefaulted = useIsBondDefaulted(bondIdentifier?.bondId)
+  const paymentToken = useTokenByAddressAndAutomaticallyAdd(data?.paymentToken)
+  const [collateralTokenInfo, setCollateralTokenInfo] = useState(null)
+  const [paymentTokenInfo, setPaymentTokenInfo] = useState(null)
+  const [bondTokenInfo, setBondTokenInfo] = useState(null)
+  const { data: price } = useTokenPrice(data?.collateralToken)
 
-  const extraDetails: Array<ExtraDetailsItemProps> = React.useMemo(
-    () => [
-      {
-        title: 'Face value',
-        value: `1 ${data?.paymentToken}`,
-        tooltip: 'Tooltip',
-      },
-      {
-        title: 'Collateral tokens',
-        value: `${data?.collateralToken}`,
-        tooltip: 'Tooltip',
-      },
-      {
-        title: 'Convertible tokens',
-        value: `${data?.collateralToken}`,
-        tooltip: 'Tooltip',
-        show: isConvertBond,
-      },
-      {
-        title: 'Estimated value',
-        value: '0.89 USDC',
-        tooltip: 'Tooltip',
-        bordered: 'purple',
-      },
-      {
-        title: 'Collateralization ratio',
-        value: `${data?.collateralRatio}%`,
-        tooltip: 'Tooltip',
-      },
-      {
-        title: 'Call strike price',
-        value: '25 USDC/UNI',
-        tooltip: 'Tooltip',
-        show: isConvertBond,
-      },
-    ],
-    [data, isConvertBond],
+  const paymentTokenBalance = useTokenBalance(
+    paymentToken?.token?.address,
+    bondIdentifier?.bondId,
+    {
+      chainId,
+    },
   )
+  useEffect(() => {
+    fetchTok(data?.collateralToken).then((r) => {
+      setCollateralTokenInfo(r)
+    })
+    fetchTok(data?.id).then((r) => {
+      setBondTokenInfo(r)
+    })
+    fetchTok(data?.paymentToken).then((r) => {
+      setPaymentTokenInfo(r)
+    })
+  }, [fetchTok, data?.id, data?.collateralToken, data?.paymentToken])
+
+  const collateralTokenBalance = useTokenBalance(data?.collateralToken, bondIdentifier?.bondId, {
+    chainId,
+  })
+
+  // .amountOwed of bond
+  const extraDetails: Array<ExtraDetailsItemProps> = [
+    {
+      title: 'Face value',
+      value: `1 ${paymentToken?.token?.symbol}`,
+      tooltip: 'Tooltip',
+    },
+    {
+      title: 'Collateral tokens',
+      value: `${formatUnits(collateralTokenBalance || 0, collateralTokenInfo?.decimals)} ${
+        collateralTokenInfo?.symbol || ''
+      }`,
+      tooltip: 'Tooltip',
+    },
+    {
+      title: 'Convertible tokens',
+      value: `${formatUnits(paymentTokenBalance || 0, paymentTokenInfo?.decimals)} ${
+        collateralTokenInfo?.symbol || ''
+      }`,
+      tooltip: 'Tooltip',
+      show: isConvertBond,
+    },
+    {
+      title: 'Estimated value',
+      value: `${price} USDC`,
+      tooltip: 'Tooltip',
+      bordered: 'purple',
+    },
+    {
+      title: 'Collateralization ratio',
+      value: `${Number(formatUnits(data?.collateralRatio || 0, bondTokenInfo?.decimals)) * 100}%`,
+      tooltip: 'Tooltip',
+    },
+    {
+      title: 'Call strike price',
+      value: '25 USDC/UNI', // TODO: not sure what this is
+      tooltip: 'Tooltip',
+      show: isConvertBond,
+    },
+  ]
 
   if (isLoading) {
     return (
