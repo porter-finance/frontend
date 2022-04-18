@@ -1,6 +1,7 @@
 import React from 'react'
 import { createGlobalStyle } from 'styled-components'
 
+import { formatUnits } from '@ethersproject/units'
 import dayjs from 'dayjs'
 
 import { ReactComponent as AuctionsIcon } from '../../assets/svg/auctions.svg'
@@ -12,6 +13,7 @@ import Table from '../../components/auctions/Table'
 import TokenLogo from '../../components/token/TokenLogo'
 import { useBondsPortfolio } from '../../hooks/useBondsPortfolio'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
+import { abbreviation } from '../../utils/numeral'
 import { ConvertButtonOutline, SimpleButtonOutline } from '../Auction'
 
 const GlobalStyle = createGlobalStyle`
@@ -103,7 +105,8 @@ const Portfolio = () => {
       // @TODO: not sure if size === amount === maxSupply
       // This shuold return how many this user owns tho
       // Do i have to do a new query against Bid to get their bidded size for an auction?
-      amount: item.maxSupply,
+      amount: `${item?.maxSupply ? abbreviation(formatUnits(item?.maxSupply, 18)) : 0}`,
+
       type: item?.type === 'convert' ? <ConvertIcon width={15} /> : <AuctionsIcon width={15} />,
       price: 'Unknown',
       // no price yet
