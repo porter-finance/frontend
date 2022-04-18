@@ -100,7 +100,13 @@ html {
     background: rgba(213, 213, 213, 0.1);
 }
 
+.mockup-code pre:before {
+    margin-right: 0;
+}
 
+.mockup-code pre {
+    margin-left: 2ch;
+}
 
 /* Charts */
 
