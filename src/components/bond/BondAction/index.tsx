@@ -22,6 +22,7 @@ import { BondActions } from '../../../pages/BondDetail'
 import { useActivePopups, useWalletModalToggle } from '../../../state/application/hooks'
 import { useFetchTokenByAddress } from '../../../state/user/hooks'
 import { ChainId, EASY_AUCTION_NETWORKS, getTokenDisplay } from '../../../utils'
+import { isDev } from '../../Dev'
 import { ActiveStatusPill } from '../../auction/OrderbookTable'
 import { Button } from '../../buttons/Button'
 import { Tooltip } from '../../common/Tooltip'
@@ -95,7 +96,7 @@ const BondAction = ({
   const [collateralTokenInfo, setCollateralTokenInfo] = useState(null)
   const [paymentTokenInfo, setPaymentTokenInfo] = useState(null)
 
-  const bondTokenBalance = useTokenBalance(derivedBondInfo?.id, account, {
+  let bondTokenBalance = useTokenBalance(derivedBondInfo?.id, account, {
     chainId,
   })
 
@@ -119,6 +120,10 @@ const BondAction = ({
     if (actionType === BondActions.Redeem) return bondTokenInfo
     if (actionType === BondActions.Mint) return collateralTokenInfo
   }, [actionType, collateralTokenInfo, bondTokenInfo, isConvertType])
+
+  if (isDev && bondTokenBalance?.lte(0)) {
+    bondTokenBalance = bondTokenBalance.add(20).pow(18)
+  }
 
   const tokenAmount = useMemo(() => {
     const tokenInfo = tokenToAction
@@ -464,22 +469,22 @@ const BondAction = ({
                     />
                   ) : (
                     <>
-                      <TokenInfo
-                        chainId={chainId}
-                        disabled={!account}
-                        token={collateralTokenInfo}
-                        // array of redeem val is [paymentTokens, collateralTokens]
-                        value={isConvertType ? previewConvertVal : previewRedeemVal[1]}
-                      />
                       {isPartiallyPaid && (
                         <TokenInfo
                           chainId={chainId}
                           disabled={!account}
-                          token={paymentTokenInfo}
+                          token={collateralTokenInfo}
                           // array of redeem val is [paymentTokens, collateralTokens]
-                          value={isConvertType ? previewConvertVal : previewRedeemVal[0]}
+                          value={isConvertType ? previewConvertVal : previewRedeemVal[1]}
                         />
                       )}
+                      <TokenInfo
+                        chainId={chainId}
+                        disabled={!account}
+                        token={paymentTokenInfo}
+                        // array of redeem val is [paymentTokens, collateralTokens]
+                        value={isConvertType ? previewConvertVal : previewRedeemVal[0]}
+                      />
                     </>
                   )}
 
