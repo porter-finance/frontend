@@ -89,7 +89,11 @@ const Offerings = () => {
       price: 'Unknown',
       // no price yet
       interestRate: calculateInterestRate(null, item.end),
-      status: item.live ? <ActiveStatusPill title="live" /> : 'Ended',
+      status: item.live ? (
+        <ActiveStatusPill title="Ongoing" />
+      ) : (
+        <ActiveStatusPill disabled dot={false} title="Ended" />
+      ),
       issuer: (
         <div className="flex flex-row items-center space-x-4">
           <div className="flex">
