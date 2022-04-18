@@ -4,6 +4,7 @@ import { createGlobalStyle } from 'styled-components'
 
 import { useWeb3React } from '@web3-react/core'
 
+import Dev from '../../components/Dev'
 import { AuctionTimer } from '../../components/auction/AuctionTimer'
 import {
   ExtraDetailsItem,
@@ -14,8 +15,10 @@ import BondAction from '../../components/bond/BondAction'
 import WarningModal from '../../components/modals/WarningModal'
 import TokenLogo from '../../components/token/TokenLogo'
 import { useBondDetails } from '../../hooks/useBondDetails'
+import { useIsBondDefaulted } from '../../hooks/useIsBondDefaulted'
 import { useIsBondFullyPaid } from '../../hooks/useIsBondFullyPaid'
-import { LoadingTwoGrid, TwoGridPage } from '../Auction'
+import { useIsBondPartiallyPaid } from '../../hooks/useIsBondPartiallyPaid'
+import { ConvertButtonOutline, LoadingTwoGrid, SimpleButtonOutline, TwoGridPage } from '../Auction'
 
 export enum BondActions {
   Redeem,
@@ -69,16 +72,11 @@ const BondDetail: React.FC = () => {
   const isMatured = new Date() > new Date(data?.maturityDate * 1000)
   const isFullyPaid = !!useIsBondFullyPaid(bondIdentifier?.bondId)
   const isConvertBond = data?.type === 'convert'
+  const isPartiallyPaid = useIsBondPartiallyPaid(bondIdentifier?.bondId) // TODO UNDO
+  const isDefaulted = useIsBondDefaulted(bondIdentifier?.bondId) // TODO UNDO
 
   const extraDetails: Array<ExtraDetailsItemProps> = React.useMemo(
     () => [
-      {
-        title: 'Balance',
-        value: '0,00',
-        tooltip: 'Tooltip',
-        bordered: 'purple',
-        disabled: !account,
-      },
       {
         title: 'Face value',
         value: `1 ${data?.paymentToken}`,
@@ -97,19 +95,13 @@ const BondDetail: React.FC = () => {
         show: data?.type === 'convert',
       },
       {
-        title: 'Estimated position value',
-        value: '0,00 USDC',
-        tooltip: 'Tooltip',
-        bordered: 'purple',
-        disabled: !account,
-      },
-      {
-        title: 'Estimated bond value',
+        title: 'Estimated value',
         value: '0.89 USDC',
         tooltip: 'Tooltip',
+        bordered: 'purple',
       },
       {
-        title: 'Collateralization Ratio',
+        title: 'Collateralization ratio',
         value: `${data?.collateralRatio}%`,
         tooltip: 'Tooltip',
       },
@@ -120,7 +112,7 @@ const BondDetail: React.FC = () => {
         show: data?.type === 'convert',
       },
     ],
-    [data, account],
+    [data],
   )
 
   if (isLoading) {
@@ -147,37 +139,44 @@ const BondDetail: React.FC = () => {
 
   const days = 86400000 // number of ms in a day
   const issuanceDate = new Date(data?.maturityDate * 1000 - 2000 * days).getTime()
-  const isPartiallyPaid = true // TODO UNDO
-  const isDefaulted = true // TODO UNDO
 
   return (
     <>
       <GlobalStyle />
+      <div className="py-2 flex content-center justify-center md:justify-between flex-wrap items-end">
+        <div className="flex flex-wrap items-center space-x-6">
+          <div className="hidden md:flex">
+            <TokenLogo
+              size="60px"
+              square
+              token={{
+                address: data?.collateralToken,
+                symbol: data?.symbol,
+              }}
+            />
+          </div>
+          <div>
+            <h1 className="text-3xl text-white">{data?.name}</h1>
+            <p className="text-blue-100 text-sm font-medium">{data?.symbol}</p>
+          </div>
+        </div>
+        <div>{isConvertBond ? <ConvertButtonOutline /> : <SimpleButtonOutline />}</div>
+      </div>
+
       <TwoGridPage
         leftChildren={
           <>
             <div className="card">
               <div className="card-body">
-                <div className="py-2 flex content-center justify-center md:justify-between flex-wrap items-start">
-                  <div className="flex flex-wrap items-center space-x-6">
-                    <div className="hidden md:flex">
-                      <TokenLogo
-                        size="60px"
-                        square
-                        token={{
-                          address: data?.collateralToken,
-                          symbol: data?.symbol,
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <h1 className="text-3xl text-white">{data?.name}</h1>
-                      <p className="text-blue-100 text-sm font-medium">{data?.symbol}</p>
-                    </div>
-                  </div>
-                  {!isMatured && <ActiveStatusPill />}
-                  {isMatured && <ActiveStatusPill disabled dot={false} title="Matured" />}
-                </div>
+                <h2 className="card-title flex flex-row items-center justify-between">
+                  <span>Bond information</span>
+                  {!isMatured ? (
+                    <ActiveStatusPill />
+                  ) : (
+                    <ActiveStatusPill disabled dot={false} title="Matured" />
+                  )}
+                </h2>
+
                 <AuctionTimer
                   color="purple"
                   endDate={data?.maturityDate}
@@ -187,7 +186,7 @@ const BondDetail: React.FC = () => {
                   text="Time until maturity"
                 />
 
-                <div className="grid gap-x-12 gap-y-8 grid-cols-1 pt-12 md:grid-cols-4">
+                <div className="grid gap-x-12 gap-y-8 grid-cols-1 pt-12 md:grid-cols-3">
                   {extraDetails.map((item, index) => (
                     <ExtraDetailsItem key={index} {...item} />
                   ))}
@@ -204,6 +203,8 @@ const BondDetail: React.FC = () => {
         }
         rightChildren={
           <>
+            {/* prettier-ignore */}
+            <Dev>{JSON.stringify({ isConvertBond, isMatured, isDefaulted, isPartiallyPaid, isFullyPaid, isWalletConnected: !!account }, null, 2)}</Dev>
             {isConvertBond && isMatured && <ConvertError />}
             {isConvertBond && !isFullyPaid && !isMatured && (
               <BondAction actionType={BondActions.Convert} />

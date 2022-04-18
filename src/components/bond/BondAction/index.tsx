@@ -12,7 +12,9 @@ import { ApprovalState, useApproveCallback } from '../../../hooks/useApproveCall
 import { useBondDetails } from '../../../hooks/useBondDetails'
 import { useBondContract } from '../../../hooks/useContract'
 import { useConvertBond } from '../../../hooks/useConvertBond'
+import { useIsBondDefaulted } from '../../../hooks/useIsBondDefaulted'
 import { useIsBondFullyPaid } from '../../../hooks/useIsBondFullyPaid'
+import { useIsBondPartiallyPaid } from '../../../hooks/useIsBondPartiallyPaid'
 import { useMintBond } from '../../../hooks/useMintBond'
 import { usePreviewBond } from '../../../hooks/usePreviewBond'
 import { useRedeemBond } from '../../../hooks/useRedeemBond'
@@ -109,8 +111,8 @@ const BondAction = ({
   const [previewConvertVal, setPreviewConvertVal] = useState<string>('0')
   const [previewMintVal, setPreviewMintVal] = useState<string>('0')
   const isConvertType = actionType === BondActions.Convert
-  const isPartiallyPaid = true // TODO UNDO
-  const isDefaulted = true // TODO UNDO
+  const isPartiallyPaid = useIsBondPartiallyPaid(bondId) // TODO UNDO
+  const isDefaulted = useIsBondDefaulted(bondId) // TODO UNDO
 
   const tokenToAction = useMemo(() => {
     if (isConvertType) return bondTokenInfo
