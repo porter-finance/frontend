@@ -1,14 +1,19 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
+import dayjs from 'dayjs'
+
+import { AuctionGraphDetail, useAuctionDetails } from '../../../hooks/useAuctionDetails'
+import { useBondExtraDetails } from '../../../hooks/useBondExtraDetails'
 import { TwoGridPage } from '../../../pages/Auction'
 import { AuctionState, DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
+import { calculateTimeLeft } from '../../../utils/tools'
 import TokenLogo from '../../token/TokenLogo'
 import AuctionDetails from '../AuctionDetails'
 import { AuctionNotStarted } from '../AuctionNotStarted'
 import Claimer from '../Claimer'
+import { ExtraDetailsItem } from '../ExtraDetailsItem'
 import OrderPlacement from '../OrderPlacement'
 import { OrderBookContainer } from '../OrderbookContainer'
 
@@ -53,8 +58,26 @@ const WarningCard = () => (
   </div>
 )
 
-const BondCard = ({ graphInfo }) => {
+const BondCard = ({ graphInfo }: { graphInfo: AuctionGraphDetail }) => {
   const navigate = useNavigate()
+  const extraDetails = useBondExtraDetails(graphInfo?.bond?.id)
+
+  extraDetails.push(
+    {
+      title: 'Time until maturity',
+      value: `${
+        calculateTimeLeft(graphInfo?.bond?.maturityDate) > 0
+          ? dayjs(graphInfo?.bond?.maturityDate * 1000).toNow(true)
+          : '0 days'
+      }`,
+    },
+    {
+      title: 'Maturity date',
+      value: `${dayjs(graphInfo?.bond?.maturityDate * 1000)
+        .utc()
+        .format('DD MMM YYYY')}`.toUpperCase(),
+    },
+  )
   return (
     <div className="card card-bordered bond-card-color">
       <div className="card-body">
@@ -99,14 +122,16 @@ const BondCard = ({ graphInfo }) => {
               </p>
             </div>
           </div>
-          <button
-            className="rounded-md !text-xs font-normal btn btn-sm btn-primary bg-[#532DBE]"
-            onClick={() => {
-              navigate(`/products/${graphInfo?.bond?.id}`)
-            }}
-          >
-            More Details
-          </button>
+        </div>
+
+        <div
+          className={`grid gap-x-12 gap-y-8 grid-cols-1 pt-12 ${
+            graphInfo?.bond?.type !== 'convert' ? 'md:grid-cols-3' : 'md:grid-cols-4'
+          }`}
+        >
+          {extraDetails.map((item, index) => (
+            <ExtraDetailsItem key={index} {...item} />
+          ))}
         </div>
       </div>
     </div>
