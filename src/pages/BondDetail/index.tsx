@@ -1,29 +1,21 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createGlobalStyle } from 'styled-components'
 
-import { formatUnits } from '@ethersproject/units'
-import { useTokenBalance } from '@usedapp/core'
 import { useWeb3React } from '@web3-react/core'
-import round from 'lodash.round'
 
 import Dev, { isDev } from '../../components/Dev'
 import { AuctionTimer } from '../../components/auction/AuctionTimer'
-import {
-  ExtraDetailsItem,
-  Props as ExtraDetailsItemProps,
-} from '../../components/auction/ExtraDetailsItem'
+import { ExtraDetailsItem } from '../../components/auction/ExtraDetailsItem'
 import { ActiveStatusPill } from '../../components/auction/OrderbookTable'
 import BondAction from '../../components/bond/BondAction'
 import WarningModal from '../../components/modals/WarningModal'
 import TokenLogo from '../../components/token/TokenLogo'
-import { useTokenByAddressAndAutomaticallyAdd } from '../../hooks/Tokens'
 import { useBondDetails } from '../../hooks/useBondDetails'
+import { useBondExtraDetails } from '../../hooks/useBondExtraDetails'
 import { useIsBondDefaulted } from '../../hooks/useIsBondDefaulted'
 import { useIsBondFullyPaid } from '../../hooks/useIsBondFullyPaid'
 import { useIsBondPartiallyPaid } from '../../hooks/useIsBondPartiallyPaid'
-import { useTokenPrice } from '../../hooks/useTokenPrice'
-import { useFetchTokenByAddress } from '../../state/user/hooks'
 import { ConvertButtonOutline, LoadingTwoGrid, SimpleButtonOutline, TwoGridPage } from '../Auction'
 
 export enum BondActions {
@@ -69,11 +61,11 @@ const ConvertError = () => (
 )
 
 const BondDetail: React.FC = () => {
-  const { account, chainId } = useWeb3React()
+  const { account } = useWeb3React()
   const navigate = useNavigate()
   const bondIdentifier = useParams()
-  const fetchTok = useFetchTokenByAddress()
 
+  const extraDetails = useBondExtraDetails(bondIdentifier?.bondId)
   const { data, loading: isLoading } = useBondDetails(bondIdentifier?.bondId)
   const invalidBond = React.useMemo(() => !bondIdentifier || !data, [bondIdentifier, data])
   const isMatured = new Date() > new Date(data?.maturityDate * 1000)
@@ -81,83 +73,6 @@ const BondDetail: React.FC = () => {
   const isConvertBond = isDev ? true : data?.type === 'convert'
   const isPartiallyPaid = useIsBondPartiallyPaid(bondIdentifier?.bondId)
   const isDefaulted = useIsBondDefaulted(bondIdentifier?.bondId)
-  const paymentToken = useTokenByAddressAndAutomaticallyAdd(data?.paymentToken)
-  const [collateralTokenInfo, setCollateralTokenInfo] = useState(null)
-  const [paymentTokenInfo, setPaymentTokenInfo] = useState(null)
-  const [bondTokenInfo, setBondTokenInfo] = useState(null)
-  const { data: price } = useTokenPrice(data?.collateralToken)
-
-  const paymentTokenBalance = useTokenBalance(
-    paymentToken?.token?.address,
-    bondIdentifier?.bondId,
-    {
-      chainId,
-    },
-  )
-  useEffect(() => {
-    fetchTok(data?.collateralToken).then((r) => {
-      setCollateralTokenInfo(r)
-    })
-    fetchTok(data?.id).then((r) => {
-      setBondTokenInfo(r)
-    })
-    fetchTok(data?.paymentToken).then((r) => {
-      setPaymentTokenInfo(r)
-    })
-  }, [fetchTok, data?.id, data?.collateralToken, data?.paymentToken])
-
-  const collateralTokenBalance = useTokenBalance(data?.collateralToken, bondIdentifier?.bondId, {
-    chainId,
-  })
-
-  const collateralDisplay = Number(
-    formatUnits(collateralTokenBalance || 0, collateralTokenInfo?.decimals),
-  )
-  const strikePrice = collateralDisplay > 0 ? round(1 / collateralDisplay, 2) : 0
-
-  // .amountOwed of bond
-  const extraDetails: Array<ExtraDetailsItemProps> = [
-    {
-      title: 'Face value',
-      value: `1 ${paymentToken?.token?.symbol}`,
-      tooltip: 'Tooltip',
-    },
-    {
-      title: 'Collateral tokens',
-      value: `${round(
-        formatUnits(collateralTokenBalance || 0, collateralTokenInfo?.decimals),
-        2,
-      )} ${collateralTokenInfo?.symbol || ''}`,
-      tooltip: 'Tooltip',
-    },
-    {
-      title: 'Convertible tokens',
-      value: `${round(formatUnits(paymentTokenBalance || 0, paymentTokenInfo?.decimals), 2)} ${
-        collateralTokenInfo?.symbol || ''
-      }`,
-      tooltip: 'Tooltip',
-      show: isConvertBond,
-    },
-    {
-      title: 'Estimated value',
-      value: `${price} USDC`,
-      tooltip: 'Tooltip',
-      bordered: 'purple',
-    },
-    {
-      title: 'Collateralization ratio',
-      value: `${
-        round(Number(formatUnits(data?.collateralRatio || 0, bondTokenInfo?.decimals)), 2) * 100
-      }%`,
-      tooltip: 'Tooltip',
-    },
-    {
-      title: 'Call strike price',
-      value: `${strikePrice} USDC/${collateralTokenInfo?.symbol || ''}`,
-      tooltip: 'Tooltip',
-      show: isConvertBond,
-    },
-  ]
 
   if (isLoading) {
     return (
