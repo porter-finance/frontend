@@ -5,6 +5,7 @@ import { createGlobalStyle } from 'styled-components'
 import { formatUnits } from '@ethersproject/units'
 import { useTokenBalance } from '@usedapp/core'
 import { useWeb3React } from '@web3-react/core'
+import round from 'lodash.round'
 
 import Dev, { isDev } from '../../components/Dev'
 import { AuctionTimer } from '../../components/auction/AuctionTimer'
@@ -109,6 +110,11 @@ const BondDetail: React.FC = () => {
     chainId,
   })
 
+  const collateralDisplay = Number(
+    formatUnits(collateralTokenBalance || 0, collateralTokenInfo?.decimals),
+  )
+  const strikePrice = collateralDisplay > 0 ? round(1 / collateralDisplay, 2) : 0
+
   // .amountOwed of bond
   const extraDetails: Array<ExtraDetailsItemProps> = [
     {
@@ -118,14 +124,15 @@ const BondDetail: React.FC = () => {
     },
     {
       title: 'Collateral tokens',
-      value: `${formatUnits(collateralTokenBalance || 0, collateralTokenInfo?.decimals)} ${
-        collateralTokenInfo?.symbol || ''
-      }`,
+      value: `${round(
+        formatUnits(collateralTokenBalance || 0, collateralTokenInfo?.decimals),
+        2,
+      )} ${collateralTokenInfo?.symbol || ''}`,
       tooltip: 'Tooltip',
     },
     {
       title: 'Convertible tokens',
-      value: `${formatUnits(paymentTokenBalance || 0, paymentTokenInfo?.decimals)} ${
+      value: `${round(formatUnits(paymentTokenBalance || 0, paymentTokenInfo?.decimals), 2)} ${
         collateralTokenInfo?.symbol || ''
       }`,
       tooltip: 'Tooltip',
@@ -139,12 +146,14 @@ const BondDetail: React.FC = () => {
     },
     {
       title: 'Collateralization ratio',
-      value: `${Number(formatUnits(data?.collateralRatio || 0, bondTokenInfo?.decimals)) * 100}%`,
+      value: `${
+        round(Number(formatUnits(data?.collateralRatio || 0, bondTokenInfo?.decimals), 2)) * 100
+      }%`,
       tooltip: 'Tooltip',
     },
     {
       title: 'Call strike price',
-      value: '25 USDC/UNI', // TODO: not sure what this is
+      value: `${strikePrice} USDC/${collateralTokenInfo?.symbol || ''}`,
       tooltip: 'Tooltip',
       show: isConvertBond,
     },
