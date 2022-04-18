@@ -110,26 +110,14 @@ export const AuctionTimer = ({
 
   return (
     <div className="" {...restProps}>
-      {(auctionState === AuctionState.ORDER_PLACING_AND_CANCELING ||
-        auctionState === AuctionState.ORDER_PLACING) && (
-        <div className="flex flex-col place-items-start space-y-1 mb-7">
-          <Time>
-            {timeLeft && timeLeft > -1 ? (
-              dayjs(endDate * 1000).toNow(true)
-            ) : (
-              <>
-                --
-                <Blink />
-                --
-                <Blink />
-                --
-              </>
-            )}
-          </Time>
-
-          <DateTitle>{text}</DateTitle>
-        </div>
-      )}
+      <div className="flex flex-col place-items-start space-y-1 mb-7">
+        {timeLeft && timeLeft > -1 ? (
+          <Time>{dayjs(endDate * 1000).toNow(true)}</Time>
+        ) : (
+          <Time>0 days</Time>
+        )}
+        <DateTitle>{text}</DateTitle>
+      </div>
 
       <div className="flex justify-between mb-3">
         <DateValue className="uppercase">

@@ -173,7 +173,7 @@ const BondDetail: React.FC = () => {
                   {!isMatured ? (
                     <ActiveStatusPill />
                   ) : (
-                    <ActiveStatusPill disabled dot={false} title="Matured" />
+                    <ActiveStatusPill disabled title="Matured" />
                   )}
                 </h2>
 
@@ -204,12 +204,10 @@ const BondDetail: React.FC = () => {
         rightChildren={
           <>
             {/* prettier-ignore */}
-            <Dev>{JSON.stringify({ isConvertBond, isMatured, isDefaulted, isPartiallyPaid, isFullyPaid, isWalletConnected: !!account }, null, 2)}</Dev>
+            <Dev>{JSON.stringify({ isConvertBond, beforeMaturity: !isMatured, afterMaturity: isMatured, isRepaid: isFullyPaid, isDefaulted, isPartiallyPaid, isWalletConnected: !!account }, null, 2)}</Dev>
             {isConvertBond && isMatured && <ConvertError />}
-            {isConvertBond && !isFullyPaid && !isMatured && (
-              <BondAction actionType={BondActions.Convert} />
-            )}
-            {isConvertBond && (isPartiallyPaid || isFullyPaid) && (
+            {isConvertBond && !isMatured && <BondAction actionType={BondActions.Convert} />}
+            {isConvertBond && (isPartiallyPaid || isFullyPaid || isDefaulted) && (
               <BondAction actionType={BondActions.Redeem} />
             )}
             {isConvertBond && !isMatured && !isFullyPaid && <RedeemError />}
