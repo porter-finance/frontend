@@ -30,7 +30,7 @@ const Title = styled.h4`
   color: #696969;
   line-height: 1.2;
   margin: 0;
-  text-transform: capitalize;
+  //text-transform: capitalize;
   white-space: nowrap;
 `
 
