@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 
+import { formatUnits } from '@ethersproject/units'
 import { TokenAmount } from '@josojo/honeyswap-sdk'
 
 import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
@@ -111,14 +112,14 @@ const AuctionDetails = (props: Props) => {
     () => [
       {
         title: 'Offering size',
-        value: graphInfo?.size,
+        value: `${graphInfo?.size ? abbreviation(formatUnits(graphInfo?.size, 18)) : 0}`,
         tooltip: 'Total number of bonds to be auctioned',
       },
       {
         title: 'Total bid volume',
         value: `${abbreviation(
           derivedAuctionInfo?.initialAuctionOrder?.sellAmount.toSignificant(4),
-        )}`,
+        )} ${biddingTokenDisplay}`,
         tooltip: 'Total amount of tokens available to be bought in the auction.',
       },
       {
@@ -132,29 +133,16 @@ const AuctionDetails = (props: Props) => {
                   derivedAuctionInfo.biddingToken,
                   auctionDetails.minFundingThreshold,
                 ).toSignificant(2),
-              )} ${getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId)}`,
-      },
-      {
-        title: 'Minimum bid size',
-        value: auctionDetails
-          ? `${abbreviation(
-              new TokenAmount(
-                derivedAuctionInfo?.biddingToken,
-                auctionDetails.minimumBiddingAmountPerOrder,
-              ).toSignificant(2),
-            )} ${getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId)}`
-          : '-',
-        tooltip: 'Each order must at least bid this amount',
+              )} ${biddingTokenDisplay}`,
       },
       {
         bordered: 'blue',
-        title: 'Current auction interest rate/price',
+        title: 'Current auction price | Current APR',
         tooltip: `This will be the auction's Closing Price if no more bids are submitted or cancelled, OR it will be the auction's Clearing Price if the auction concludes without additional bids.`,
         value: clearingPriceDisplay ? clearingPriceDisplay : '-',
       },
       {
-        bordered: 'blue',
-        title: 'Max interest rate/Min price',
+        title: 'Min price | Max APR',
         tooltip: 'Minimum bidding price the auctioneer defined for participation.',
         value: (
           <div className="flex items-center">
@@ -175,6 +163,18 @@ const AuctionDetails = (props: Props) => {
           </div>
         ),
       },
+      {
+        title: 'Minimum bid size',
+        value: auctionDetails
+          ? `${abbreviation(
+              new TokenAmount(
+                derivedAuctionInfo?.biddingToken,
+                auctionDetails.minimumBiddingAmountPerOrder,
+              ).toSignificant(2),
+            )} ${biddingTokenDisplay}`
+          : '-',
+        tooltip: 'Each order must at least bid this amount',
+      },
     ],
     [
       clearingPriceDisplay,
@@ -183,7 +183,6 @@ const AuctionDetails = (props: Props) => {
       initialPriceToDisplay,
       showPriceInverted,
       auctionDetails,
-      chainId,
       derivedAuctionInfo,
       auctioningTokenDisplay,
     ],
