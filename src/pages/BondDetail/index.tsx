@@ -4,7 +4,7 @@ import { createGlobalStyle } from 'styled-components'
 
 import { useWeb3React } from '@web3-react/core'
 
-import Dev from '../../components/Dev'
+import Dev, { isDev } from '../../components/Dev'
 import { AuctionTimer } from '../../components/auction/AuctionTimer'
 import {
   ExtraDetailsItem,
@@ -71,7 +71,7 @@ const BondDetail: React.FC = () => {
   const invalidBond = React.useMemo(() => !bondIdentifier || !data, [bondIdentifier, data])
   const isMatured = new Date() > new Date(data?.maturityDate * 1000)
   const isFullyPaid = !!useIsBondFullyPaid(bondIdentifier?.bondId)
-  const isConvertBond = data?.type === 'convert'
+  const isConvertBond = !isDev ? data?.type === 'convert' : false
   const isPartiallyPaid = useIsBondPartiallyPaid(bondIdentifier?.bondId) // TODO UNDO
   const isDefaulted = useIsBondDefaulted(bondIdentifier?.bondId) // TODO UNDO
 
@@ -86,13 +86,12 @@ const BondDetail: React.FC = () => {
         title: 'Collateral tokens',
         value: `${data?.collateralToken}`,
         tooltip: 'Tooltip',
-        show: data?.type === 'convert',
       },
       {
         title: 'Convertible tokens',
         value: `${data?.collateralToken}`,
         tooltip: 'Tooltip',
-        show: data?.type === 'convert',
+        show: isConvertBond,
       },
       {
         title: 'Estimated value',
@@ -109,10 +108,10 @@ const BondDetail: React.FC = () => {
         title: 'Call strike price',
         value: '25 USDC/UNI',
         tooltip: 'Tooltip',
-        show: data?.type === 'convert',
+        show: isConvertBond,
       },
     ],
-    [data],
+    [data, isConvertBond],
   )
 
   if (isLoading) {
@@ -186,7 +185,11 @@ const BondDetail: React.FC = () => {
                   text="Time until maturity"
                 />
 
-                <div className="grid gap-x-12 gap-y-8 grid-cols-1 pt-12 md:grid-cols-3">
+                <div
+                  className={`grid gap-x-12 gap-y-8 grid-cols-1 pt-12 ${
+                    isConvertBond ? 'md:grid-cols-3' : 'md:grid-cols-4'
+                  }`}
+                >
                   {extraDetails.map((item, index) => (
                     <ExtraDetailsItem key={index} {...item} />
                   ))}
@@ -206,11 +209,11 @@ const BondDetail: React.FC = () => {
             {/* prettier-ignore */}
             <Dev>{JSON.stringify({ isConvertBond, beforeMaturity: !isMatured, afterMaturity: isMatured, isRepaid: isFullyPaid, isDefaulted, isPartiallyPaid, isWalletConnected: !!account }, null, 2)}</Dev>
             {isConvertBond && isMatured && <ConvertError />}
-            {isConvertBond && !isMatured && <BondAction actionType={BondActions.Convert} />}
-            {isConvertBond && (isPartiallyPaid || isFullyPaid || isDefaulted) && (
-              <BondAction actionType={BondActions.Redeem} />
+            {isConvertBond && !isMatured && <BondAction componentType={BondActions.Convert} />}
+            {(isPartiallyPaid || isFullyPaid || isDefaulted) && (
+              <BondAction componentType={BondActions.Redeem} />
             )}
-            {isConvertBond && !isMatured && !isFullyPaid && <RedeemError />}
+            {!isMatured && !isFullyPaid && <RedeemError />}
           </>
         }
       />
