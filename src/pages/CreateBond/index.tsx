@@ -205,7 +205,7 @@ const CreateBond: React.FC = () => {
           <div>
             How much would you like to mint please
             <BondAction
-              actionType={BondActions.Mint}
+              componentType={BondActions.Mint}
               overwriteBondId={'0x68E9136ABE61132ea9ffDA783433bE49978d14b7'}
             />
           </div>
