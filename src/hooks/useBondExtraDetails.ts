@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { formatUnits } from '@ethersproject/units'
 import { useTokenBalance } from '@usedapp/core'
@@ -10,22 +10,14 @@ import { Props as ExtraDetailsItemProps } from '../components/auction/ExtraDetai
 import { useFetchTokenByAddress } from '../state/user/hooks'
 import { useTokenByAddressAndAutomaticallyAdd } from './Tokens'
 import { useBondDetails } from './useBondDetails'
-import { useIsBondDefaulted } from './useIsBondDefaulted'
-import { useIsBondFullyPaid } from './useIsBondFullyPaid'
-import { useIsBondPartiallyPaid } from './useIsBondPartiallyPaid'
 import { useTokenPrice } from './useTokenPrice'
 
 export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => {
-  const { account, chainId } = useWeb3React()
+  const { chainId } = useWeb3React()
   const fetchTok = useFetchTokenByAddress()
 
-  const { data, loading: isLoading } = useBondDetails(bondId)
-  const invalidBond = React.useMemo(() => !bondId || !data, [bondId, data])
-  const isMatured = new Date() > new Date(data?.maturityDate * 1000)
-  const isFullyPaid = !!useIsBondFullyPaid(bondId)
+  const { data } = useBondDetails(bondId)
   const isConvertBond = isDev ? true : data?.type === 'convert'
-  const isPartiallyPaid = useIsBondPartiallyPaid(bondId)
-  const isDefaulted = useIsBondDefaulted(bondId)
   const paymentToken = useTokenByAddressAndAutomaticallyAdd(data?.paymentToken)
   const [collateralTokenInfo, setCollateralTokenInfo] = useState(null)
   const [paymentTokenInfo, setPaymentTokenInfo] = useState(null)
