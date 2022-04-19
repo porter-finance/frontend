@@ -18,6 +18,7 @@ import { abbreviation } from '../../../utils/numeral'
 import { showChartsInverted } from '../../../utils/prices'
 import { AuctionTimer } from '../AuctionTimer'
 import { ExtraDetailsItem, Props as ExtraDetailsItemProps } from '../ExtraDetailsItem'
+import { ActiveStatusPill } from '../OrderbookTable'
 
 const TokenValue = styled.span`
   line-height: 1.2;
@@ -196,10 +197,16 @@ const AuctionDetails = (props: Props) => {
     ],
   )
 
+  const hasEnded = new Date() > new Date(derivedAuctionInfo?.auctionEndDate * 1000)
+  const statusLabel = hasEnded ? 'Ended' : 'Ongoing'
+
   return (
     <div className="card">
       <div className="card-body">
-        <h2 className="card-title">Auction information</h2>
+        <h2 className="card-title flex justify-between">
+          <span>Auction information</span>
+          <ActiveStatusPill disabled={hasEnded} title={statusLabel} />
+        </h2>
         <AuctionTimer
           auctionState={derivedAuctionInfo?.auctionState}
           color="blue"
@@ -207,7 +214,7 @@ const AuctionDetails = (props: Props) => {
           endText="End date"
           startDate={derivedAuctionInfo?.auctionStartDate}
           startText="Start date"
-          text={'Time until end'}
+          text="Ends in"
         />
 
         <div className="grid gap-x-12 gap-y-8 grid-cols-1 pt-12 md:grid-cols-3">

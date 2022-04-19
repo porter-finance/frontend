@@ -138,8 +138,6 @@ const Auction: React.FC = () => {
   )
 
   const auctionSymbolAuctioningToken = derivedAuctionInfo?.auctioningToken.symbol.slice(0, 7)
-  const statusLabel =
-    new Date(derivedAuctionInfo?.auctionEndDate * 1000) > new Date() ? 'Ongoing' : 'Ended'
 
   if (isLoading) {
     return <LoadingTwoGrid />
@@ -184,15 +182,7 @@ const Auction: React.FC = () => {
             </p>
           </div>
         </div>
-        <div className="flex justify-center md:mt-0 mt-5 space-x-3">
-          <AuctionButtonOutline />
-          <span className="inline-flex items-center px-2 space-x-1 py-1.5 rounded-full bg-white border-blue-100 border uppercase border-opacity-50 pointer-events-none text-[#404EED] font-medium">
-            <svg className="h-2 w-2" fill="#404EED" opacity="0.5" viewBox="0 0 8 8">
-              <circle cx={4} cy={4} r={3} />
-            </svg>
-            <span className="text-xs">{statusLabel}</span>
-          </span>
-        </div>
+        <AuctionButtonOutline />
       </div>
 
       <AuctionBody auctionIdentifier={auctionIdentifier} derivedAuctionInfo={derivedAuctionInfo} />
