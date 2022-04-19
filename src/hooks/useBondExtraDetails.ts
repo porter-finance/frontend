@@ -23,6 +23,7 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
   const [paymentTokenInfo, setPaymentTokenInfo] = useState(null)
   const [bondTokenInfo, setBondTokenInfo] = useState(null)
   const { data: collateralTokenPrice } = useTokenPrice(data?.collateralToken)
+  const { data: paymentTokenPrice } = useTokenPrice(data?.paymentToken)
 
   const paymentTokenBalance = useTokenBalance(paymentToken?.token?.address, bondId, {
     chainId,
@@ -79,7 +80,9 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
     {
       title: 'Collateralization ratio',
       value: `${
-        round(Number(formatUnits(data?.collateralRatio || 0, bondTokenInfo?.decimals)), 2) * 100
+        collateralTokenPrice && paymentTokenPrice
+          ? round(collateralTokenPrice / paymentTokenPrice, 2) * 100
+          : 0
       }%`,
       tooltip: 'Tooltip',
     },
