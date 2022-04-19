@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { formatUnits } from '@ethersproject/units'
 import { TokenAmount } from '@josojo/honeyswap-sdk'
 
+import { useAuctionBidVolume } from '../../../hooks/useAuctionBidVolume'
 import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
 import {
   DerivedAuctionInfo,
@@ -56,7 +57,7 @@ const AuctionDetails = (props: Props) => {
   const { auctionIdentifier, derivedAuctionInfo } = props
   const { chainId } = auctionIdentifier
   const { auctionDetails, graphInfo } = useAuctionDetails(auctionIdentifier)
-
+  const { totalBidVolume } = useAuctionBidVolume()
   const { showPriceInverted } = useOrderPlacementState()
   const { orderbookPrice: auctionCurrentPrice, orderbookPriceReversed: auctionPriceReversed } =
     useOrderbookState()
@@ -112,14 +113,22 @@ const AuctionDetails = (props: Props) => {
     () => [
       {
         title: 'Offering size',
-        value: `${graphInfo?.size ? abbreviation(formatUnits(graphInfo?.size, 18)) : 0}`,
+        value: `${
+          graphInfo?.size
+            ? abbreviation(formatUnits(graphInfo?.size, derivedAuctionInfo?.biddingToken?.decimals))
+            : 0
+        }`,
         tooltip: 'Total number of bonds to be auctioned',
       },
       {
         title: 'Total bid volume',
-        value: `${abbreviation(
-          derivedAuctionInfo?.initialAuctionOrder?.sellAmount.toSignificant(4),
-        )} ${biddingTokenDisplay}`,
+        value: `${
+          totalBidVolume
+            ? abbreviation(
+                formatUnits(`${totalBidVolume}`, derivedAuctionInfo?.biddingToken?.decimals),
+              )
+            : 0
+        } ${biddingTokenDisplay}`,
         tooltip: 'Total bid volume',
       },
       {
@@ -175,6 +184,7 @@ const AuctionDetails = (props: Props) => {
       },
     ],
     [
+      totalBidVolume,
       clearingPriceDisplay,
       graphInfo?.size,
       biddingTokenDisplay,
