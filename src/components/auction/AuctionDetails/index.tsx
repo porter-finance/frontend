@@ -6,16 +6,11 @@ import { TokenAmount } from '@josojo/honeyswap-sdk'
 
 import { useAuctionBidVolume } from '../../../hooks/useAuctionBidVolume'
 import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
-import {
-  DerivedAuctionInfo,
-  useOrderPlacementState,
-  useSwapActionHandlers,
-} from '../../../state/orderPlacement/hooks'
+import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderbookState } from '../../../state/orderbook/hooks'
 import { getTokenDisplay } from '../../../utils'
 import { abbreviation } from '../../../utils/numeral'
-import { showChartsInverted } from '../../../utils/prices'
 import { calculateInterestRate } from '../../form/InterestRateInputPanel'
 import { AuctionTimer } from '../AuctionTimer'
 import { ExtraDetailsItem, Props as ExtraDetailsItemProps } from '../ExtraDetailsItem'
@@ -60,20 +55,7 @@ const AuctionDetails = (props: Props) => {
   const { chainId } = auctionIdentifier
   const { auctionDetails, graphInfo } = useAuctionDetails(auctionIdentifier)
   const { totalBidVolume } = useAuctionBidVolume()
-  const { showPriceInverted } = useOrderPlacementState()
-  const { orderbookPrice: auctionCurrentPrice, orderbookPriceReversed: auctionPriceReversed } =
-    useOrderbookState()
-  const { onInvertPrices } = useSwapActionHandlers()
-
-  // Start with inverted prices, if orderbook is also show inverted,
-  // i.e. if the baseToken/auctioningToken is a stable token
-  React.useEffect(() => {
-    if (derivedAuctionInfo?.auctioningToken != null && !showPriceInverted) {
-      if (showChartsInverted(derivedAuctionInfo?.auctioningToken)) {
-        onInvertPrices()
-      }
-    }
-  }, [showPriceInverted, derivedAuctionInfo?.auctioningToken, onInvertPrices])
+  const { orderbookPrice: auctionCurrentPrice } = useOrderbookState()
 
   const biddingTokenDisplay = useMemo(
     () => getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId),
@@ -84,12 +66,9 @@ const AuctionDetails = (props: Props) => {
     [derivedAuctionInfo?.auctioningToken, chainId],
   )
   const clearingPriceDisplay = useMemo(() => {
-    const clearingPriceNumber = showPriceInverted ? auctionPriceReversed : auctionCurrentPrice
+    const clearingPriceNumber = auctionCurrentPrice
 
-    const priceSymbolStrings = showPriceInverted
-      ? `${getTokenDisplay(derivedAuctionInfo?.auctioningToken, chainId)} per
-    ${getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId)}`
-      : `${getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId)} per
+    const priceSymbolStrings = `${getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId)} per
     ${getTokenDisplay(derivedAuctionInfo?.auctioningToken, chainId)}
 `
 
@@ -101,8 +80,6 @@ const AuctionDetails = (props: Props) => {
       '-'
     )
   }, [
-    showPriceInverted,
-    auctionPriceReversed,
     auctionCurrentPrice,
     derivedAuctionInfo?.auctioningToken,
     derivedAuctionInfo?.biddingToken,
@@ -112,9 +89,7 @@ const AuctionDetails = (props: Props) => {
   const initialPriceToDisplay = derivedAuctionInfo?.initialPrice
 
   const maxAPR = calculateInterestRate(initialPriceToDisplay, derivedAuctionInfo?.auctionEndDate)
-  const currentAPR = calculateInterestRate(clearingPriceDisplay, derivedAuctionInfo?.auctionEndDate)
-
-  console.log(maxAPR, currentAPR)
+  const currentAPR = calculateInterestRate(auctionCurrentPrice, derivedAuctionInfo?.auctionEndDate)
 
   const extraDetails: Array<ExtraDetailsItemProps> = React.useMemo(
     () => [
@@ -179,16 +154,12 @@ const AuctionDetails = (props: Props) => {
           <div className="flex items-center">
             <TokenValue>
               {initialPriceToDisplay
-                ? showPriceInverted
-                  ? initialPriceToDisplay?.invert().toSignificant(5)
-                  : abbreviation(initialPriceToDisplay?.toSignificant(2))
+                ? abbreviation(initialPriceToDisplay?.toSignificant(2))
                 : ' - '}
             </TokenValue>
             <TokenSymbol>
               {initialPriceToDisplay && auctioningTokenDisplay
-                ? showPriceInverted
-                  ? ` ${auctioningTokenDisplay} per ${biddingTokenDisplay}`
-                  : ` ${biddingTokenDisplay} per ${auctioningTokenDisplay}`
+                ? ` ${biddingTokenDisplay} per ${auctioningTokenDisplay}`
                 : '-'}
             </TokenSymbol>
           </div>
@@ -208,7 +179,6 @@ const AuctionDetails = (props: Props) => {
       graphInfo?.size,
       biddingTokenDisplay,
       initialPriceToDisplay,
-      showPriceInverted,
       auctionDetails,
       derivedAuctionInfo,
       auctioningTokenDisplay,
