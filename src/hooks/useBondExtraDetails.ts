@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { formatUnits } from '@ethersproject/units'
 import { useTokenBalance } from '@usedapp/core'
 import { useWeb3React } from '@web3-react/core'
+import dayjs from 'dayjs'
 import round from 'lodash.round'
 
 import { isDev } from '../components/Dev'
@@ -23,6 +24,7 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
   const [paymentTokenInfo, setPaymentTokenInfo] = useState(null)
   const [bondTokenInfo, setBondTokenInfo] = useState(null)
   const { data: collateralTokenPrice } = useTokenPrice(data?.collateralToken)
+  const { data: paymentTokenPrice } = useTokenPrice(data?.paymentToken)
 
   const paymentTokenBalance = useTokenBalance(paymentToken?.token?.address, bondId, {
     chainId,
@@ -42,7 +44,7 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
   )
   const strikePrice = collateralDisplay > 0 ? round(1 / collateralDisplay, 2) : 0
 
-  const extraDetails: Array<ExtraDetailsItemProps> = [
+  return [
     {
       title: 'Face value',
       value: `1 ${paymentToken?.token?.symbol}`,
@@ -53,22 +55,22 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
       value: `${round(
         formatUnits(collateralTokenBalance || 0, collateralTokenInfo?.decimals),
         2,
-      )} ${collateralTokenInfo?.symbol || ''}`,
+      )} ${collateralTokenInfo?.symbol || ''} ($${collateralTokenPrice})`,
       tooltip: 'Tooltip',
     },
     {
       title: 'Convertible tokens',
       value: `${round(formatUnits(paymentTokenBalance || 0, paymentTokenInfo?.decimals), 2)} ${
         collateralTokenInfo?.symbol || ''
-      }`,
+      } ($${paymentTokenPrice})`,
       tooltip: 'Tooltip',
       show: isConvertBond,
     },
     {
-      title: 'Estimated value',
-      value: `${collateralTokenPrice} USDC`,
-      tooltip: 'Tooltip',
-      bordered: 'purple',
+      title: 'Maturity date',
+      value: `${dayjs(data?.maturityDate * 1000)
+        .utc()
+        .format('DD MMM YYYY')}`.toUpperCase(),
     },
     {
       title: 'Collateralization ratio',
@@ -84,6 +86,4 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
       show: isConvertBond,
     },
   ]
-
-  return extraDetails
 }

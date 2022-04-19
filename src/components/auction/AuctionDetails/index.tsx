@@ -16,6 +16,7 @@ import { useOrderbookState } from '../../../state/orderbook/hooks'
 import { getTokenDisplay } from '../../../utils'
 import { abbreviation } from '../../../utils/numeral'
 import { showChartsInverted } from '../../../utils/prices'
+import { calculateInterestRate } from '../../form/InterestRateInputPanel'
 import { AuctionTimer } from '../AuctionTimer'
 import { ExtraDetailsItem, Props as ExtraDetailsItemProps } from '../ExtraDetailsItem'
 import { ActiveStatusPill } from '../OrderbookTable'
@@ -110,6 +111,11 @@ const AuctionDetails = (props: Props) => {
 
   const initialPriceToDisplay = derivedAuctionInfo?.initialPrice
 
+  const maxAPR = calculateInterestRate(initialPriceToDisplay, derivedAuctionInfo?.auctionEndDate)
+  const currentAPR = calculateInterestRate(clearingPriceDisplay, derivedAuctionInfo?.auctionEndDate)
+
+  console.log(maxAPR, currentAPR)
+
   const extraDetails: Array<ExtraDetailsItemProps> = React.useMemo(
     () => [
       {
@@ -146,14 +152,29 @@ const AuctionDetails = (props: Props) => {
               )} ${biddingTokenDisplay}`,
       },
       {
-        title: 'Current auction price | Current APR',
+        title: 'Minimum bid size',
+        value: auctionDetails
+          ? `${formatUnits(
+              auctionDetails?.minimumBiddingAmountPerOrder,
+              derivedAuctionInfo?.biddingToken?.decimals,
+            )} ${biddingTokenDisplay}`
+          : '-',
+        tooltip: 'Each order must at least bid this amount',
+      },
+      {
+        title: 'Current bond price',
         tooltip: `This will be the auction's Closing Price if no more bids are submitted or cancelled, OR it will be the auction's Clearing Price if the auction concludes without additional bids.`,
         value: clearingPriceDisplay ? clearingPriceDisplay : '-',
         bordered: 'blue',
       },
       {
-        title: 'Min price | Max APR',
-        tooltip: 'Min price | Max APR',
+        title: 'Current bond APR',
+        value: currentAPR,
+        tooltip: 'Tooltip',
+      },
+      {
+        title: 'Minimum price',
+        tooltip: 'Min price',
         value: (
           <div className="flex items-center">
             <TokenValue>
@@ -174,17 +195,14 @@ const AuctionDetails = (props: Props) => {
         ),
       },
       {
-        title: 'Minimum bid size',
-        value: auctionDetails
-          ? `${formatUnits(
-              auctionDetails?.minimumBiddingAmountPerOrder,
-              derivedAuctionInfo?.biddingToken?.decimals,
-            )} ${biddingTokenDisplay}`
-          : '-',
-        tooltip: 'Each order must at least bid this amount',
+        title: 'Maximum APR',
+        value: maxAPR,
+        tooltip: 'Tooltip',
       },
     ],
     [
+      currentAPR,
+      maxAPR,
       totalBidVolume,
       clearingPriceDisplay,
       graphInfo?.size,
@@ -217,7 +235,7 @@ const AuctionDetails = (props: Props) => {
           text="Ends in"
         />
 
-        <div className="grid gap-x-12 gap-y-8 grid-cols-1 pt-12 md:grid-cols-3">
+        <div className="grid gap-x-12 gap-y-8 grid-cols-1 pt-12 md:grid-cols-4">
           {extraDetails.map((item, index) => (
             <ExtraDetailsItem key={index} {...item} />
           ))}
