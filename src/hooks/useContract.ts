@@ -3,10 +3,8 @@ import { useMemo } from 'react'
 import { Contract } from '@ethersproject/contracts'
 import IUniswapV2PairABI from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 
-import { EasyAuction } from '../../gen/types'
 import Bond_ABI from '../constants/abis/bond.json'
 import BondFactory_ABI from '../constants/abis/bondFactory.json'
-import EASYAUCTION_ABI from '../constants/abis/easyAuction/easyAuction.json'
 import ERC20_ABI from '../constants/abis/erc20.json'
 import { MULTICALL_ABI, MULTICALL_NETWORKS } from '../constants/multicall'
 import {
@@ -15,7 +13,7 @@ import {
   V1_FACTORY_ABI,
   V1_FACTORY_ADDRESS,
 } from '../constants/v1'
-import { ChainId, EASY_AUCTION_NETWORKS, getContract } from '../utils'
+import { ChainId, getContract } from '../utils'
 import { getLogger } from '../utils/logger'
 import { useActiveWeb3React } from './index'
 
@@ -59,11 +57,6 @@ export function useTokenContract(
   withSignerIfPossible = true,
 ): Maybe<Contract> {
   return useContract(tokenAddress, ERC20_ABI, withSignerIfPossible)
-}
-
-export function useEasyAuctionContract(): EasyAuction {
-  const { chainId } = useActiveWeb3React()
-  return new Contract(EASY_AUCTION_NETWORKS[chainId as ChainId], EASYAUCTION_ABI) as EasyAuction
 }
 
 export function useBondContract(
