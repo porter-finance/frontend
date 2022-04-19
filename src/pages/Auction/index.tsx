@@ -2,7 +2,9 @@ import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import { ReactComponent as AuctionsIcon } from '../../assets/svg/auctions.svg'
+import { ReactComponent as ConvertIcon } from '../../assets/svg/convert.svg'
 import { ReactComponent as OTCIcon } from '../../assets/svg/otc.svg'
+import { ReactComponent as SimpleIcon } from '../../assets/svg/simple.svg'
 import AuctionBody from '../../components/auction/AuctionBody'
 import WarningModal from '../../components/modals/WarningModal'
 import TokenLogo from '../../components/token/TokenLogo'
@@ -16,6 +18,18 @@ export const GhostButton = ({ children }) => (
   <span className="space-x-2 inline-flex items-center px-5 py-1.5 rounded-full bg-transparent text-white border-blue-100 border uppercase border-opacity-50 pointer-events-none">
     {children}
   </span>
+)
+
+export const ConvertButtonOutline = () => (
+  <GhostButton>
+    <ConvertIcon height={12.57} width={12.57} /> <span className="text-xs">Convert</span>
+  </GhostButton>
+)
+
+export const SimpleButtonOutline = () => (
+  <GhostButton>
+    <SimpleIcon height={12.57} width={12.57} /> <span className="text-xs">Simple</span>
+  </GhostButton>
 )
 
 export const AuctionButtonOutline = ({ plural = false }) => (
@@ -57,7 +71,7 @@ export const TwoGridPage = ({ hasHeader = true, leftChildren, rightChildren }) =
   </main>
 )
 
-const LoadingAuctionPage = () => (
+export const LoadingTwoGrid = () => (
   <TwoGridPage
     hasHeader={false}
     leftChildren={
@@ -128,7 +142,7 @@ const Auction: React.FC = () => {
     new Date(derivedAuctionInfo?.auctionEndDate * 1000) > new Date() ? 'Ongoing' : 'Ended'
 
   if (isLoading) {
-    return <LoadingAuctionPage />
+    return <LoadingTwoGrid />
   }
 
   if (invalidAuction) {
@@ -146,8 +160,9 @@ const Auction: React.FC = () => {
     <>
       <div className="py-2 flex content-center justify-center md:justify-between flex-wrap items-end">
         <div className="flex flex-wrap items-center space-x-6">
-          <div className="hidden md:block">
+          <div className="hidden md:flex">
             <TokenLogo
+              size="60px"
               square
               token={
                 derivedAuctionInfo?.graphInfo?.isSellingPorterBond

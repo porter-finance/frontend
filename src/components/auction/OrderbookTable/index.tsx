@@ -136,20 +136,29 @@ interface OrderBookTableProps {
   granularity: string
 }
 
-export const ActiveStatusPill = ({ disabled = false, dot = true, title = 'Active' }) => (
-  <button
-    className="text-[11px] text-xs uppercase font-normal disabled:text-[#9F9F9F] text-[#1E1E1E] disabled:bg-[#2C2C2C] pointer-events-none space-x-2 inline-flex items-center px-3 border py-1 border-transparent rounded-full shadow-sm bg-[#5BCD88] hover:none focus:outline-none focus:none"
-    disabled={disabled}
-  >
-    {dot && (
-      <svg fill="none" height="7" viewBox="0 0 7 7" width="7" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="3.5" cy="3.5" fill="#1E1E1E" opacity="0.5" r="3" />
-      </svg>
-    )}
+export const ActiveStatusPill = ({
+  className = '',
+  disabled = false,
+  dot = true,
+  title = 'Active',
+  ...rest
+}) => {
+  return (
+    <button
+      className={`max-h-[30px] text-[11px] text-xs uppercase font-normal disabled:text-[#181A1C] text-[#1E1E1E] disabled:bg-[#696969] pointer-events-none space-x-2 inline-flex items-center px-3 border py-1 border-transparent rounded-full shadow-sm bg-[#5BCD88] hover:none focus:outline-none focus:none ${className}`}
+      disabled={disabled}
+      {...rest}
+    >
+      {dot && (
+        <svg fill="none" height="7" viewBox="0 0 7 7" width="7" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="3.5" cy="3.5" fill={disabled ? '#181A1C' : '#1E1E1E'} opacity="0.5" r="3" />
+        </svg>
+      )}
 
-    {title}
-  </button>
-)
+      <span>{title}</span>
+    </button>
+  )
+}
 
 export const OrderBookTable: React.FC<OrderBookTableProps> = ({
   derivedAuctionInfo,
