@@ -67,7 +67,9 @@ const BondCard = ({ graphInfo }: { graphInfo: AuctionGraphDetail }) => {
       title: 'Time until maturity',
       value: `${
         calculateTimeLeft(graphInfo?.bond?.maturityDate) > 0
-          ? dayjs(graphInfo?.bond?.maturityDate * 1000).toNow(true)
+          ? dayjs(graphInfo?.bond?.maturityDate * 1000)
+              .utc()
+              .toNow(true)
           : '0 days'
       }`,
     },
