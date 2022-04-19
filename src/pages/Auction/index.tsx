@@ -176,7 +176,9 @@ const Auction: React.FC = () => {
             />
           </div>
           <div>
-            <h1 className="text-3xl text-white">{auctionSymbolAuctioningToken} Auction</h1>
+            <h1 className="text-3xl text-white capitalize">
+              {auctionSymbolAuctioningToken.toLowerCase()} Auction
+            </h1>
             <p className="text-blue-100 text-sm font-medium">
               {derivedAuctionInfo?.graphInfo?.bond?.symbol}
             </p>
