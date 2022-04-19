@@ -70,19 +70,19 @@ const TokenInfo = ({ chainId, disabled = false, token, value }) => (
   </div>
 )
 
-const getActionText = (actionType) => {
-  if (actionType === BondActions.Redeem) return 'Redeem'
-  if (actionType === BondActions.Convert) return 'Convert'
-  if (actionType === BondActions.Mint) return 'Mint'
+const getActionText = (componentType) => {
+  if (componentType === BondActions.Redeem) return 'Redeem'
+  if (componentType === BondActions.Convert) return 'Convert'
+  if (componentType === BondActions.Mint) return 'Mint'
 
   return 'Unknown'
 }
 
 const BondAction = ({
-  actionType,
+  componentType,
   overwriteBondId,
 }: {
-  actionType: BondActions
+  componentType: BondActions
   overwriteBondId?: string
 }) => {
   const { account, chainId } = useWeb3React()
@@ -111,15 +111,15 @@ const BondAction = ({
   const [previewRedeemVal, setPreviewRedeemVal] = useState<string[]>(['0', '0'])
   const [previewConvertVal, setPreviewConvertVal] = useState<string>('0')
   const [previewMintVal, setPreviewMintVal] = useState<string>('0')
-  const isConvertType = actionType === BondActions.Convert
+  const isConvertComponent = componentType === BondActions.Convert
   const isPartiallyPaid = useIsBondPartiallyPaid(bondId) // TODO UNDO
   const isDefaulted = useIsBondDefaulted(bondId) // TODO UNDO
 
   const tokenToAction = useMemo(() => {
-    if (isConvertType) return bondTokenInfo
-    if (actionType === BondActions.Redeem) return bondTokenInfo
-    if (actionType === BondActions.Mint) return collateralTokenInfo
-  }, [actionType, collateralTokenInfo, bondTokenInfo, isConvertType])
+    if (isConvertComponent) return bondTokenInfo
+    if (componentType === BondActions.Redeem) return bondTokenInfo
+    if (componentType === BondActions.Mint) return collateralTokenInfo
+  }, [componentType, collateralTokenInfo, bondTokenInfo, isConvertComponent])
 
   if (isDev && bondTokenBalance?.lte(0)) {
     bondTokenBalance = bondTokenBalance.add(20).pow(18)
@@ -159,7 +159,7 @@ const BondAction = ({
   useEffect(() => {
     if (!tokenAmount) return
 
-    if (actionType === BondActions.Redeem) {
+    if (componentType === BondActions.Redeem) {
       previewRedeem(tokenAmount).then((r) => {
         const [paymentTokens, collateralTokens] = r
         // returned in paymentTokens, collateralTokens
@@ -170,20 +170,20 @@ const BondAction = ({
       })
     }
 
-    if (isConvertType) {
+    if (isConvertComponent) {
       previewConvert(tokenAmount).then((r) => {
         setPreviewConvertVal(formatUnits(r, collateralTokenInfo?.decimals))
       })
     }
 
-    if (actionType === BondActions.Mint) {
+    if (componentType === BondActions.Mint) {
       previewMint(tokenAmount).then((r) => {
         setPreviewMintVal(formatUnits(r, collateralTokenInfo?.decimals))
       })
     }
   }, [
-    isConvertType,
-    actionType,
+    isConvertComponent,
+    componentType,
     paymentTokenInfo?.decimals,
     collateralTokenInfo?.decimals,
     previewRedeem,
@@ -213,19 +213,19 @@ const BondAction = ({
 
     setAttemptingTxn(true)
 
-    if (isConvertType) {
+    if (isConvertComponent) {
       hash = await convert().catch(() => {
         resetModal()
       })
     }
 
-    if (actionType === BondActions.Mint) {
+    if (componentType === BondActions.Mint) {
       hash = await mint().catch(() => {
         resetModal()
       })
     }
 
-    if (actionType === BondActions.Redeem) {
+    if (componentType === BondActions.Redeem) {
       hash = await redeem().catch(() => {
         resetModal()
       })
@@ -240,13 +240,13 @@ const BondAction = ({
   useEffect(() => {
     if (!derivedBondInfo || !account || (!bondTokenInfo && bondContract)) return
 
-    if (actionType === BondActions.Mint) {
+    if (componentType === BondActions.Mint) {
       return
     }
 
     setTotalBalance(formatUnits(bondTokenBalance || 0, bondTokenInfo?.decimals))
   }, [
-    actionType,
+    componentType,
     bondTokenBalance,
     derivedBondInfo,
     account,
@@ -259,14 +259,14 @@ const BondAction = ({
 
   useEffect(() => {
     const fetchData = async () => {
-      if (actionType !== BondActions.Mint) return
+      if (componentType !== BondActions.Mint) return
       const maxSupply = await bondContract.maxSupply()
       const totalSupply = await bondContract.totalSupply()
       setTotalBalance(formatUnits(maxSupply.sub(totalSupply) || 0, bondTokenInfo?.decimals))
     }
 
     fetchData()
-  }, [actionType, bondContract, bondTokenInfo])
+  }, [componentType, bondContract, bondTokenInfo])
 
   useEffect(() => {
     if (!isLoading && !invalidBond && derivedBondInfo) {
@@ -279,16 +279,16 @@ const BondAction = ({
       fetchTok(derivedBondInfo?.collateralToken).then((r) => {
         setCollateralTokenInfo(r)
       })
-      if (actionType === BondActions.Redeem) {
+      if (componentType === BondActions.Redeem) {
         fetchTok(derivedBondInfo?.paymentToken).then((r) => {
           setPaymentTokenInfo(r)
         })
       }
     }
-  }, [actionType, derivedBondInfo, isLoading, invalidBond, account, fetchTok, bondId])
+  }, [componentType, derivedBondInfo, isLoading, invalidBond, account, fetchTok, bondId])
 
   const isConvertable = useMemo(() => {
-    if (actionType !== BondActions.Convert) return false
+    if (componentType !== BondActions.Convert) return false
 
     if (isMatured) {
       return { error: 'Bond is matured' }
@@ -308,7 +308,7 @@ const BondAction = ({
 
     return true
   }, [
-    actionType,
+    componentType,
     account,
     bondTokenBalance,
     collateralTokenInfo?.decimals,
@@ -319,7 +319,7 @@ const BondAction = ({
   ])
 
   const isRedeemable = useMemo(() => {
-    if (actionType !== BondActions.Redeem) return false
+    if (componentType !== BondActions.Redeem) return false
     if (!account) return { error: 'Not logged in' }
     if (!isOwner) return { error: 'Not owner' }
     if (!isApproved) return { error: 'Not approved' }
@@ -335,7 +335,7 @@ const BondAction = ({
 
     return true
   }, [
-    actionType,
+    componentType,
     account,
     bondTokenBalance,
     bondTokenInfo?.decimals,
@@ -347,7 +347,7 @@ const BondAction = ({
   ])
 
   const isMintable = useMemo(() => {
-    if (actionType !== BondActions.Mint) return false
+    if (componentType !== BondActions.Mint) return false
 
     const hasBonds =
       account &&
@@ -358,7 +358,7 @@ const BondAction = ({
 
     return hasBonds && !isMatured
   }, [
-    actionType,
+    componentType,
     account,
     bondTokenBalance,
     bondTokenInfo?.decimals,
@@ -369,32 +369,32 @@ const BondAction = ({
   ])
 
   const pendingText = useMemo(
-    () => `Placing ${getActionText(actionType).toLowerCase()} order`,
-    [actionType],
+    () => `Placing ${getActionText(componentType).toLowerCase()} order`,
+    [componentType],
   )
 
   const isActionDisabled = useMemo(() => {
-    if (isConvertType) {
+    if (isConvertComponent) {
       console.log(isConvertable)
       return isConvertable !== true
     }
-    if (actionType === BondActions.Redeem) {
+    if (componentType === BondActions.Redeem) {
       console.log(isRedeemable)
       return isRedeemable !== true
     }
 
-    if (actionType === BondActions.Mint) return !isMintable
-  }, [isConvertType, actionType, isConvertable, isMintable, isRedeemable])
+    if (componentType === BondActions.Mint) return !isMintable
+  }, [isConvertComponent, componentType, isConvertable, isMintable, isRedeemable])
 
   const Status = () => {
-    if (isDefaulted && actionType === BondActions.Redeem) {
+    if (isDefaulted && componentType === BondActions.Redeem) {
       return <ActiveStatusPill className="!bg-[#DB3635]" dot={false} title="Defaulted" />
     }
-    if (isFullyPaid && actionType === BondActions.Redeem) {
+    if (isFullyPaid && componentType === BondActions.Redeem) {
       return <ActiveStatusPill dot={false} title="Repaid" />
     }
 
-    if (!isFullyPaid && isPartiallyPaid && isMatured && actionType === BondActions.Redeem) {
+    if (!isFullyPaid && isPartiallyPaid && isMatured && componentType === BondActions.Redeem) {
       return <ActiveStatusPill className="!bg-[#EDA651]" dot={false} title="Partially repaid" />
     }
 
@@ -405,10 +405,10 @@ const BondAction = ({
     <div className="card bond-card-color">
       <div className="card-body">
         <div className="flex flex-row justify-between items-start">
-          <h2 className="card-title">{getActionText(actionType)}</h2>
+          <h2 className="card-title">{getActionText(componentType)}</h2>
           {Status()}
         </div>
-        {isConvertType && !isMatured && derivedBondInfo && (
+        {isConvertComponent && !isMatured && derivedBondInfo && (
           <div className="space-y-1 mb-1">
             <div className="text-[#EEEFEB] text-sm">
               {dayjs(derivedBondInfo.maturityDate * 1000)
@@ -425,13 +425,13 @@ const BondAction = ({
           <div className="space-y-6">
             {account && (!bondTokenBalance || bondTokenBalance.lte(0)) ? (
               <div className="flex justify-center text-[12px] text-[#696969] border border-[#2C2C2C] p-12 rounded-lg">
-                <span>No bonds to {getActionText(actionType).toLowerCase()}</span>
+                <span>No bonds to {getActionText(componentType).toLowerCase()}</span>
               </div>
             ) : (
               <AmountInputPanel
-                amountText={`Amount of bonds to ${getActionText(actionType).toLowerCase()}`}
+                amountText={`Amount of bonds to ${getActionText(componentType).toLowerCase()}`}
                 balance={totalBalance}
-                balanceString={actionType === BondActions.Mint && 'Available'}
+                balanceString={componentType === BondActions.Mint && 'Available'}
                 chainId={bondTokenInfo?.chainId}
                 disabled={!account}
                 info={
@@ -441,7 +441,7 @@ const BondAction = ({
                     type: InfoType.error,
                   }
                 }
-                maxTitle={isConvertType ? 'Convert all' : 'Redeem all'}
+                maxTitle={isConvertComponent ? 'Convert all' : 'Redeem all'}
                 onMax={() => {
                   setBondsToRedeem(totalBalance)
                 }}
@@ -457,15 +457,15 @@ const BondAction = ({
               />
             )}
             <div className="text-xs text-[12px] text-[#696969] space-y-6">
-              {(isConvertType || actionType === BondActions.Redeem) && (
+              {(isConvertComponent || componentType === BondActions.Redeem) && (
                 <div className="space-y-2">
                   {isDefaulted ? (
                     <TokenInfo
                       chainId={chainId}
                       disabled={!account}
                       token={collateralTokenInfo}
-                      // array of redeem val is [paymentTokens, collateralTokens]
-                      value={isConvertType ? previewConvertVal : previewRedeemVal[1]}
+                      // array of previewRedeemVal is [paymentTokens, collateralTokens]
+                      value={isConvertComponent ? previewConvertVal : previewRedeemVal[1]}
                     />
                   ) : (
                     <>
@@ -474,16 +474,16 @@ const BondAction = ({
                           chainId={chainId}
                           disabled={!account}
                           token={collateralTokenInfo}
-                          // array of redeem val is [paymentTokens, collateralTokens]
-                          value={isConvertType ? previewConvertVal : previewRedeemVal[1]}
+                          // array of previewRedeemVal is [paymentTokens, collateralTokens]
+                          value={isConvertComponent ? previewConvertVal : previewRedeemVal[1]}
                         />
                       )}
                       <TokenInfo
                         chainId={chainId}
                         disabled={!account}
                         token={paymentTokenInfo}
-                        // array of redeem val is [paymentTokens, collateralTokens]
-                        value={isConvertType ? previewConvertVal : previewRedeemVal[0]}
+                        // array of previewRedeemVal is [paymentTokens, collateralTokens]
+                        value={isConvertComponent ? previewConvertVal : previewRedeemVal[0]}
                       />
                     </>
                   )}
@@ -499,10 +499,10 @@ const BondAction = ({
                 <ActionButton onClick={toggleWalletModal}>Connect wallet</ActionButton>
               ) : (
                 <ActionButton disabled={isActionDisabled} onClick={doTheAction}>
-                  {getActionText(actionType)}
+                  {getActionText(componentType)}
                 </ActionButton>
               )}
-              {actionType === BondActions.Mint && (
+              {componentType === BondActions.Mint && (
                 <p>Minting for: {previewMintVal} collateral tokens </p>
               )}
             </div>
