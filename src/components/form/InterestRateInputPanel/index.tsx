@@ -53,7 +53,11 @@ interface Props {
 export const calculateInterestRate = (price, auctionEndDate) => {
   if (!auctionEndDate) return '-'
   if (!price) return '-'
-  const years = Math.abs(dayjs().diff(auctionEndDate * 1000, 'year', true))
+  const years = Math.abs(
+    dayjs()
+      .utc()
+      .diff(auctionEndDate * 1000, 'year', true),
+  )
   const interestRate = (1 - price) / price / years
   return isNaN(interestRate) || interestRate === Infinity ? '-' : `${round(interestRate * 100, 2)}%`
 }
