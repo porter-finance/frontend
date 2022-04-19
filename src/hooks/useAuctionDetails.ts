@@ -40,19 +40,19 @@ export interface AuctionGraphDetail {
     name: string
     symbol: string
     owner: string
-    maturityDate: string
+    maturityDate: number
     paymentToken: string
     collateralToken: string
-    collateralRatio: string
-    convertibleRatio: string
+    collateralRatio: number
+    convertibleRatio: number
     maxSupply: number
     type: 'simple' | 'convert'
   }
-  minimum: string
-  size: string
-  start: string
-  end: string
-  filled: string
+  minimum: number
+  size: number
+  start: number
+  end: number
+  filled: number
   clearing: string
   live: boolean
 }

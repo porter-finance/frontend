@@ -15,6 +15,7 @@ const logger = getLogger('hooks/index')
 export function useActiveWeb3React() {
   const context = useWeb3ReactCore<Web3Provider>()
   const contextNetwork = useWeb3ReactCore<Web3Provider>(NetworkContextName)
+
   return context.active ? context : contextNetwork
 }
 

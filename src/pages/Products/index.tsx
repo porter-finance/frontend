@@ -1,6 +1,7 @@
 import React from 'react'
 import { createGlobalStyle } from 'styled-components'
 
+import { formatUnits } from '@ethersproject/units'
 import dayjs from 'dayjs'
 
 import { ReactComponent as AuctionsIcon } from '../../assets/svg/auctions.svg'
@@ -12,7 +13,8 @@ import Table from '../../components/auctions/Table'
 import TokenLogo from '../../components/token/TokenLogo'
 import { useAllBondInfo } from '../../hooks/useAllBondInfos'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
-import { GhostButton } from '../Auction'
+import { abbreviation } from '../../utils/numeral'
+import { ConvertButtonOutline, SimpleButtonOutline } from '../Auction'
 
 const GlobalStyle = createGlobalStyle`
   .siteHeader {
@@ -101,7 +103,8 @@ const Products = () => {
         </div>
       ),
       type: item?.type === 'convert' ? <ConvertIcon width={15} /> : <AuctionsIcon width={15} />,
-      supply: item.maxSupply,
+      supply: `${item?.maxSupply ? abbreviation(formatUnits(item?.maxSupply, 18)) : 0}`,
+
       // no price yet
       status:
         new Date() > new Date(item.maturityDate * 1000) ? (
@@ -143,12 +146,8 @@ const Products = () => {
               All
             </div>
             <DividerIcon />
-            <GhostButton>
-              <ConvertIcon height={12.57} width={12.57} /> <span className="text-xs">Convert</span>
-            </GhostButton>
-            <GhostButton>
-              <SimpleIcon height={12.57} width={12.57} /> <span className="text-xs">Simple</span>
-            </GhostButton>
+            <ConvertButtonOutline />
+            <SimpleButtonOutline />
           </>
         }
         loading={isLoading}

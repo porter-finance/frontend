@@ -1,5 +1,5 @@
 import { rgba } from 'polished'
-import React, { useState } from 'react'
+import React from 'react'
 import styled, { keyframes } from 'styled-components'
 
 import { Token } from '@josojo/honeyswap-sdk'
@@ -8,7 +8,8 @@ import ReactTooltip from 'react-tooltip'
 import { unwrapMessage } from '../../../constants'
 import { useActiveWeb3React } from '../../../hooks'
 import { ApprovalState } from '../../../hooks/useApproveCallback'
-import { ChainId, getTokenDisplay } from '../../../utils'
+import { ChainId } from '../../../utils'
+import { TokenPill } from '../../bond/BondAction'
 import { Tooltip } from '../../common/Tooltip'
 import { MiniLock } from '../../icons/MiniLock'
 import { MiniSpinner } from '../../icons/MiniSpinner'
@@ -19,13 +20,10 @@ import {
   FieldRowInput,
   FieldRowPrimaryButton,
   FieldRowPrimaryButtonText,
-  FieldRowToken,
-  FieldRowTokenSymbol,
   FieldRowTop,
   FieldRowWrapper,
   InfoType,
 } from '../../pureStyledComponents/FieldRow'
-import TokenLogo from '../../token/TokenLogo'
 import { FieldRowLabelStyled } from '../PriceInputPanel'
 
 const rotate = keyframes`
@@ -111,16 +109,26 @@ interface Props {
   onUserSellAmountInput: (val: string) => void
   token: Maybe<Token>
   unlock: unlockProps
+  amountText?: string
+  amountTooltip?: string
   wrap: wrapProps
+  maxTitle?: string
+  amountDescription?: string
   value: string
+  disabled?: boolean
 }
 
 const AmountInputPanel: React.FC<Props> = (props) => {
   const {
+    amountDescription,
+    amountText = 'Amount',
+    amountTooltip = 'Amount tooltip',
     balance,
     balanceString,
     chainId,
+    disabled,
     info,
+    maxTitle = 'Max',
     onMax,
     onUserSellAmountInput,
     token = null,
@@ -129,11 +137,11 @@ const AmountInputPanel: React.FC<Props> = (props) => {
     wrap,
     ...restProps
   } = props
-  const [readonly, setReadonly] = useState(true)
   const { account } = useActiveWeb3React()
   const isUnlocking = unlock.unlockState === ApprovalState.PENDING
   const error = info?.type === InfoType.error
   const dataTip = unwrapMessage[chainId]
+  const isDisabled = disabled === true
 
   return (
     <>
@@ -148,28 +156,15 @@ const AmountInputPanel: React.FC<Props> = (props) => {
       >
         <FieldRowTop>
           <FieldRowInput
-            disabled={!account}
+            disabled={!account || isDisabled}
             hasError={error}
-            onBlur={() => setReadonly(true)}
-            onFocus={() => setReadonly(false)}
             onUserSellAmountInput={onUserSellAmountInput}
-            readOnly={!account || readonly}
-            value={!account ? 0 : value}
+            placeholder="0.00"
+            readOnly={!account}
+            value={value}
           />
           <Wrap>
-            {token && (
-              <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#2C2C2C] rounded-full p-1 px-2">
-                {token.address && (
-                  <TokenLogo
-                    size={'16px'}
-                    token={{ address: token.address, symbol: token.symbol }}
-                  />
-                )}
-                {token && token.symbol && (
-                  <FieldRowTokenSymbol>{getTokenDisplay(token, chainId)}</FieldRowTokenSymbol>
-                )}
-              </FieldRowToken>
-            )}
+            {token && <TokenPill chainId={chainId} token={token} />}
             {unlock.isLocked && (
               <UnlockButton
                 disabled={isUnlocking}
@@ -218,16 +213,39 @@ const AmountInputPanel: React.FC<Props> = (props) => {
             )}
           </Wrap>
         </FieldRowTop>
-        <FieldRowBottom>
+        <FieldRowBottom className="flex mt-auto flex-col">
+          {amountDescription && (
+            <div>
+              <FieldRowLabelStyled className="space-x-1">
+                <FieldRowInfo
+                  className="!text-[#E0E0E0] mb-2 !text-[12px]"
+                  infoType={InfoType.info}
+                >
+                  {amountDescription}
+                </FieldRowInfo>
+              </FieldRowLabelStyled>
+            </div>
+          )}
           {info ? (
-            <FieldRowLabelStyled className="space-x-1">
-              <FieldRowInfo infoType={info?.type}>{info.text}</FieldRowInfo>
-            </FieldRowLabelStyled>
+            <div>
+              <FieldRowLabelStyled className="space-x-1">
+                <FieldRowInfo infoType={info?.type}>{info.text}</FieldRowInfo>
+              </FieldRowLabelStyled>
+            </div>
           ) : (
-            <FieldRowLabelStyled className="space-x-1">
-              <span>Amount</span>
-              <Tooltip text="Amount tooltip" />
-            </FieldRowLabelStyled>
+            <div className="flex justify-between">
+              <FieldRowLabelStyled className="space-x-1">
+                <span>{amountText}</span>
+                <Tooltip text={amountTooltip} />
+              </FieldRowLabelStyled>
+              <button
+                className="btn btn-xs normal-case !text-[#E0E0E0] font-normal !border-[#2A2B2C] px-3"
+                disabled={!onMax || !account}
+                onClick={onMax}
+              >
+                {maxTitle}
+              </button>
+            </div>
           )}
         </FieldRowBottom>
       </FieldRowWrapper>
