@@ -12,6 +12,7 @@ import { calculateTimeLeft } from '../../../utils/tools'
 import TokenLogo from '../../token/TokenLogo'
 import AuctionDetails from '../AuctionDetails'
 import { AuctionNotStarted } from '../AuctionNotStarted'
+import AuctionSettle from '../AuctionSettle'
 import Claimer from '../Claimer'
 import { ExtraDetailsItem } from '../ExtraDetailsItem'
 import OrderPlacement from '../OrderPlacement'
@@ -151,6 +152,7 @@ const AuctionBody = (props: AuctionBodyProps) => {
           }
           rightChildren={
             <>
+              {auctionState === AuctionState.NEEDS_SETTLED && <AuctionSettle />}
               {(auctionState === AuctionState.ORDER_PLACING ||
                 auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && (
                 <OrderPlacement
