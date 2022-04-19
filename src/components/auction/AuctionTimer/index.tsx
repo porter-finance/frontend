@@ -112,7 +112,11 @@ export const AuctionTimer = ({
     <div className="" {...restProps}>
       <div className="flex flex-col place-items-start space-y-1 mb-7">
         {timeLeft && timeLeft > -1 ? (
-          <Time>{dayjs(endDate * 1000).toNow(true)}</Time>
+          <Time>
+            {dayjs(endDate * 1000)
+              .utc()
+              .toNow(true)}
+          </Time>
         ) : (
           <Time>0 days</Time>
         )}
