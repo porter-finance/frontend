@@ -17,13 +17,15 @@ export function useSettleAuction(address: string) {
 
   const easyAuctionContract = getEasyAuctionContract(chainId as ChainId, library, account)
 
-  const settleAuction = useCallback(async (): Promise<ContractTransaction> => {
+  const settleAuction = useCallback(async (): Promise<ContractTransaction | undefined> => {
     if (!easyAuctionContract) {
-      throw new Error('missing contract')
+      logger.error('missing contract')
+      return
     }
 
     if (!address) {
-      throw new Error('missing address to settle')
+      logger.error('missing address to settle')
+      return
     }
 
     const response = await easyAuctionContract.settleAuction(address).catch((error: Error) => {
