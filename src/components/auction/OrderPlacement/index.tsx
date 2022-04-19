@@ -5,6 +5,7 @@ import { Fraction, TokenAmount } from '@josojo/honeyswap-sdk'
 import dayjs from 'dayjs'
 
 import kycLinks from '../../../assets/links/kycLinks.json'
+import { ReactComponent as PrivateIcon } from '../../../assets/svg/private.svg'
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../constants/config'
 import { useActiveWeb3React } from '../../../hooks'
 import { ApprovalState, useApproveCallback } from '../../../hooks/useApproveCallback'
@@ -349,10 +350,13 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     return (
       <div className="card card-bordered">
         <div className="card-body">
-          <h2 className="card-title !text-[#696969]">Private auction</h2>
+          <h2 className="card-title !text-[#696969] space-x-2">
+            <span>Private auction</span>
+            <PrivateIcon />
+          </h2>
 
           <div className="text-sm text-[#696969]">
-            This auction is only available for allow-listed wallets
+            This auction is only available for allowlisted wallets
           </div>
           {account && linkForKYC && (
             <EmptyContentTextSmall>

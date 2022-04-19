@@ -6,15 +6,13 @@ import { useWeb3React } from '@web3-react/core'
 
 import Dev, { isDev } from '../../components/Dev'
 import { AuctionTimer } from '../../components/auction/AuctionTimer'
-import {
-  ExtraDetailsItem,
-  Props as ExtraDetailsItemProps,
-} from '../../components/auction/ExtraDetailsItem'
+import { ExtraDetailsItem } from '../../components/auction/ExtraDetailsItem'
 import { ActiveStatusPill } from '../../components/auction/OrderbookTable'
 import BondAction from '../../components/bond/BondAction'
 import WarningModal from '../../components/modals/WarningModal'
 import TokenLogo from '../../components/token/TokenLogo'
 import { useBondDetails } from '../../hooks/useBondDetails'
+import { useBondExtraDetails } from '../../hooks/useBondExtraDetails'
 import { useIsBondDefaulted } from '../../hooks/useIsBondDefaulted'
 import { useIsBondFullyPaid } from '../../hooks/useIsBondFullyPaid'
 import { useIsBondPartiallyPaid } from '../../hooks/useIsBondPartiallyPaid'
@@ -67,52 +65,14 @@ const BondDetail: React.FC = () => {
   const navigate = useNavigate()
   const bondIdentifier = useParams()
 
+  const extraDetails = useBondExtraDetails(bondIdentifier?.bondId)
   const { data, loading: isLoading } = useBondDetails(bondIdentifier?.bondId)
   const invalidBond = React.useMemo(() => !bondIdentifier || !data, [bondIdentifier, data])
   const isMatured = new Date() > new Date(data?.maturityDate * 1000)
   const isFullyPaid = !!useIsBondFullyPaid(bondIdentifier?.bondId)
-  const isConvertBond = !isDev ? data?.type === 'convert' : false
-  const isPartiallyPaid = useIsBondPartiallyPaid(bondIdentifier?.bondId) // TODO UNDO
-  const isDefaulted = useIsBondDefaulted(bondIdentifier?.bondId) // TODO UNDO
-
-  const extraDetails: Array<ExtraDetailsItemProps> = React.useMemo(
-    () => [
-      {
-        title: 'Face value',
-        value: `1 ${data?.paymentToken}`,
-        tooltip: 'Tooltip',
-      },
-      {
-        title: 'Collateral tokens',
-        value: `${data?.collateralToken}`,
-        tooltip: 'Tooltip',
-      },
-      {
-        title: 'Convertible tokens',
-        value: `${data?.collateralToken}`,
-        tooltip: 'Tooltip',
-        show: isConvertBond,
-      },
-      {
-        title: 'Estimated value',
-        value: '0.89 USDC',
-        tooltip: 'Tooltip',
-        bordered: 'purple',
-      },
-      {
-        title: 'Collateralization ratio',
-        value: `${data?.collateralRatio}%`,
-        tooltip: 'Tooltip',
-      },
-      {
-        title: 'Call strike price',
-        value: '25 USDC/UNI',
-        tooltip: 'Tooltip',
-        show: isConvertBond,
-      },
-    ],
-    [data, isConvertBond],
-  )
+  const isConvertBond = isDev ? true : data?.type === 'convert'
+  const isPartiallyPaid = useIsBondPartiallyPaid(bondIdentifier?.bondId)
+  const isDefaulted = useIsBondDefaulted(bondIdentifier?.bondId)
 
   if (isLoading) {
     return (
@@ -213,7 +173,7 @@ const BondDetail: React.FC = () => {
             {(isPartiallyPaid || isFullyPaid || isDefaulted) && (
               <BondAction componentType={BondActions.Redeem} />
             )}
-            {!isMatured && !isFullyPaid && <RedeemError />}
+            {!isMatured && !isFullyPaid && !isDefaulted && <RedeemError />}
           </>
         }
       />

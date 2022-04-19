@@ -112,8 +112,8 @@ const BondAction = ({
   const [previewConvertVal, setPreviewConvertVal] = useState<string>('0')
   const [previewMintVal, setPreviewMintVal] = useState<string>('0')
   const isConvertComponent = componentType === BondActions.Convert
-  const isPartiallyPaid = useIsBondPartiallyPaid(bondId) // TODO UNDO
-  const isDefaulted = useIsBondDefaulted(bondId) // TODO UNDO
+  const isPartiallyPaid = useIsBondPartiallyPaid(bondId)
+  const isDefaulted = useIsBondDefaulted(bondId)
 
   const tokenToAction = useMemo(() => {
     if (isConvertComponent) return bondTokenInfo
@@ -272,17 +272,10 @@ const BondAction = ({
     if (!isLoading && !invalidBond && derivedBondInfo) {
       setIsOwner(derivedBondInfo?.owner.toLowerCase() === account?.toLowerCase())
 
-      fetchTok(bondId).then((r) => {
-        console.log(bondId, bondId, r)
-        setBondTokenInfo(r)
-      })
-      fetchTok(derivedBondInfo?.collateralToken).then((r) => {
-        setCollateralTokenInfo(r)
-      })
+      fetchTok(bondId).then(setBondTokenInfo)
+      fetchTok(derivedBondInfo?.collateralToken).then(setCollateralTokenInfo)
       if (componentType === BondActions.Redeem) {
-        fetchTok(derivedBondInfo?.paymentToken).then((r) => {
-          setPaymentTokenInfo(r)
-        })
+        fetchTok(derivedBondInfo?.paymentToken).then(setPaymentTokenInfo)
       }
     }
   }, [componentType, derivedBondInfo, isLoading, invalidBond, account, fetchTok, bondId])
