@@ -53,6 +53,7 @@ export enum AuctionState {
   ORDER_PLACING,
   PRICE_SUBMISSION,
   CLAIMING,
+  NEEDS_SETTLED,
 }
 
 export function orderToSellOrder(
@@ -511,6 +512,12 @@ export function useDeriveAuctionState(
     let auctionState: Maybe<AuctionState> = null
     if (!auctioningTokenAddress) {
       auctionState = AuctionState.NOT_YET_STARTED
+    } else if (
+      auctionDetails?.endTimeTimestamp &&
+      new Date() >= new Date(auctionDetails?.endTimeTimestamp * 1000) &&
+      clearingPriceSellOrder?.buyAmount?.toSignificant(1) == '0'
+    ) {
+      auctionState = AuctionState.NEEDS_SETTLED
     } else {
       const auctionEndDate = auctionDetails?.endTimeTimestamp
       const orderCancellationEndDate = auctionDetails?.orderCancellationEndDate
@@ -593,7 +600,6 @@ export function useDerivedClaimInfo(
       : claimStatus === ClaimState.NOT_APPLICABLE
       ? 'You had no participation on this auction.'
       : ''
-
   const isLoading = isAuctionDataLoading || claimStatus === ClaimState.UNKNOWN
 
   return {
