@@ -22,7 +22,7 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
   const [collateralTokenInfo, setCollateralTokenInfo] = useState(null)
   const [paymentTokenInfo, setPaymentTokenInfo] = useState(null)
   const [bondTokenInfo, setBondTokenInfo] = useState(null)
-  const { data: price } = useTokenPrice(data?.collateralToken)
+  const { data: collateralTokenPrice } = useTokenPrice(data?.collateralToken)
 
   const paymentTokenBalance = useTokenBalance(paymentToken?.token?.address, bondId, {
     chainId,
@@ -72,7 +72,7 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
     },
     {
       title: 'Estimated value',
-      value: `${price} USDC`,
+      value: `${collateralTokenPrice} USDC`,
       tooltip: 'Tooltip',
       bordered: 'purple',
     },
