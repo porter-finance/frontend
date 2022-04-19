@@ -80,7 +80,7 @@ export const OrderBookContainer = (props) => {
 
             <div className="flex items-center">
               {auctionStarted && (
-                <button className="btn-group">
+                <div className="btn-group">
                   <button
                     className={`btn ${!showAllOrders && 'btn-active'}`}
                     onClick={() => showAllOrders && setShowAllOrders(false)}
@@ -93,7 +93,7 @@ export const OrderBookContainer = (props) => {
                   >
                     My Orders
                   </button>
-                </button>
+                </div>
               )}
             </div>
           </div>
