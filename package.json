@@ -7,8 +7,9 @@
     "node": ">=4.4.7"
   },
   "scripts": {
+    "typechain:generate": "yarn typechain --target=ethers-v5 ./src/constants/abis/**/*.json --out-dir=./gen/types",
     "start": "react-app-rewired start",
-    "build": "cross-env REACT_APP_GIT_COMMIT_HASH=$(git show -s --format=%H) react-app-rewired build",
+    "build": "cross-env REACT_APP_GIT_COMMIT_HASH=$(git show -s --format=%H) yarn typechain:generate && react-app-rewired build",
     "ipfs-build": "cross-env PUBLIC_URL=\".\" react-app-rewired build",
     "ipfs-publish": "ipfs-deploy -p infura -O dist ./build",
     "test": "react-app-rewired test --env=jsdom",
@@ -19,7 +20,8 @@
     "cy:run": "cypress run",
     "serve:build": "serve -s build -l 3000",
     "integration-test": "yarn build && start-server-and-test 'yarn run serve:build' http://localhost:3000 cy:run",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "postinstall":"yarn typechain:generate"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -47,6 +49,8 @@
     "@types/react-redux": "^7.1.23",
     "@types/react-window": "^1.8.2",
     "@types/rebass": "^4.0.5",
+    "@typechain/ethers-v5": "^9.0.0",
+    "typechain": "^7.0.0",
     "@types/styled-components": "^5.1.24",
     "@types/testing-library__cypress": "^5.0.5",
     "@typescript-eslint/eslint-plugin": "^5.16.0",
