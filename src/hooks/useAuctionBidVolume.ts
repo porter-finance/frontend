@@ -24,6 +24,9 @@ export const useAuctionBidVolume = (): Maybe<{ totalBidVolume: number; loading: 
     logger.error('Error getting useAuctionBidVolume info', error)
   }
 
-  const totalBidVolume = data?.bids.reduce((a, b) => Number(a.size) + Number(b.size))
+  const totalBidVolume =
+    Array.isArray(data?.bids) &&
+    data.bids.length &&
+    data.bids.reduce((a, b) => Number(a.size) + Number(b.size))
   return { totalBidVolume, loading }
 }
