@@ -1,5 +1,7 @@
 import React from 'react'
 
+import { formatUnits } from '@ethersproject/units'
+
 import { ReactComponent as AuctionsIcon } from '../../assets/svg/auctions.svg'
 import { ReactComponent as ConvertIcon } from '../../assets/svg/convert.svg'
 import { ReactComponent as DividerIcon } from '../../assets/svg/divider.svg'
@@ -11,6 +13,7 @@ import TokenLogo from '../../components/token/TokenLogo'
 import { useActiveWeb3React } from '../../hooks'
 import { useAllAuctionInfo } from '../../hooks/useAllAuctionInfos'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
+import { abbreviation } from '../../utils/numeral'
 import { AuctionButtonOutline, OTCButtonOutline } from '../Auction'
 
 const columns = [
@@ -83,13 +86,18 @@ const Offerings = () => {
       id: item.id,
       search: JSON.stringify(item),
       auctionId: `#${item.id}`,
-      size: item.size,
+      size: `${abbreviation(formatUnits(item?.size, 18))}`,
       offering:
         item?.bond?.type === 'convert' ? <ConvertIcon width={15} /> : <AuctionsIcon width={15} />,
       price: 'Unknown',
       // no price yet
       interestRate: calculateInterestRate(null, item.end),
-      status: item.live ? <ActiveStatusPill title="live" /> : 'Ended',
+      status:
+        new Date(item?.end * 1000) > new Date() ? (
+          <ActiveStatusPill title="Ongoing" />
+        ) : (
+          <ActiveStatusPill disabled dot={false} title="Ended" />
+        ),
       issuer: (
         <div className="flex flex-row items-center space-x-4">
           <div className="flex">
