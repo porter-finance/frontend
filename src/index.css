@@ -64,11 +64,15 @@ html {
 .card.place-order-color {
     border-image: conic-gradient(black, black, black, black, black, black, black) 1;
     border-image-source: linear-gradient(131.96deg, #404EED 0%, rgba(64, 78, 237, 0) 100%);
+
+    @apply card-bordered
 }
 
 .card.bond-card-color {
     border-image: conic-gradient(black, black, black, black, black, black, black) 1;
     border-image-source: linear-gradient(131.96deg, #532DBE 0%, rgba(83, 45, 190, 0.15) 100%);
+
+    @apply card-bordered;
 }
 
 .card-title {
@@ -80,18 +84,29 @@ html {
     @apply mb-4;
 }
 
-.progress-primary::-webkit-progress-value {
+.progress-blue::-webkit-progress-value {
     background: linear-gradient(270deg, #404EED -0.07%, #2B3BF4 100%);
     border-radius: 4px;
 }
 
-.progress-primary {
+.progress-purple::-webkit-progress-value {
+    background: linear-gradient(270deg, #6433d9 -0.07%, #532DBE 100%);
+    border-radius: 4px;
+}
+
+.progress {
     height: 12px;
     border-radius: 4px;
     background: rgba(213, 213, 213, 0.1);
 }
 
+.mockup-code pre:before {
+    margin-right: 0;
+}
 
+.mockup-code pre {
+    margin-left: 2ch;
+}
 
 /* Charts */
 
