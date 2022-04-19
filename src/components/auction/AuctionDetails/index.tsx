@@ -120,7 +120,7 @@ const AuctionDetails = (props: Props) => {
         value: `${abbreviation(
           derivedAuctionInfo?.initialAuctionOrder?.sellAmount.toSignificant(4),
         )} ${biddingTokenDisplay}`,
-        tooltip: 'Total amount of tokens available to be bought in the auction.',
+        tooltip: 'Total bid volume',
       },
       {
         title: 'Minimum funding threshold',
@@ -136,14 +136,14 @@ const AuctionDetails = (props: Props) => {
               )} ${biddingTokenDisplay}`,
       },
       {
-        bordered: 'blue',
         title: 'Current auction price | Current APR',
         tooltip: `This will be the auction's Closing Price if no more bids are submitted or cancelled, OR it will be the auction's Clearing Price if the auction concludes without additional bids.`,
         value: clearingPriceDisplay ? clearingPriceDisplay : '-',
+        bordered: 'blue',
       },
       {
         title: 'Min price | Max APR',
-        tooltip: 'Minimum bidding price the auctioneer defined for participation.',
+        tooltip: 'Min price | Max APR',
         value: (
           <div className="flex items-center">
             <TokenValue>
@@ -166,11 +166,9 @@ const AuctionDetails = (props: Props) => {
       {
         title: 'Minimum bid size',
         value: auctionDetails
-          ? `${abbreviation(
-              new TokenAmount(
-                derivedAuctionInfo?.biddingToken,
-                auctionDetails.minimumBiddingAmountPerOrder,
-              ).toSignificant(2),
+          ? `${formatUnits(
+              auctionDetails?.minimumBiddingAmountPerOrder,
+              derivedAuctionInfo?.biddingToken?.decimals,
             )} ${biddingTokenDisplay}`
           : '-',
         tooltip: 'Each order must at least bid this amount',
