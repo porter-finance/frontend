@@ -88,7 +88,10 @@ const AuctionDetails = (props: Props) => {
 
   const initialPriceToDisplay = derivedAuctionInfo?.initialPrice
 
-  const maxAPR = calculateInterestRate(initialPriceToDisplay, derivedAuctionInfo?.auctionEndDate)
+  const maxAPR = calculateInterestRate(
+    initialPriceToDisplay?.toSignificant(2),
+    derivedAuctionInfo?.auctionEndDate,
+  )
   const currentAPR = calculateInterestRate(auctionCurrentPrice, derivedAuctionInfo?.auctionEndDate)
 
   const extraDetails: Array<ExtraDetailsItemProps> = React.useMemo(
