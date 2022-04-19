@@ -21,7 +21,7 @@
     "serve:build": "serve -s build -l 3000",
     "integration-test": "yarn build && start-server-and-test 'yarn run serve:build' http://localhost:3000 cy:run",
     "prepare": "husky install",
-    "postinstall":"typechain:generate"
+    "postinstall":"yarn typechain:generate"
   },
   "eslintConfig": {
     "extends": "react-app"
