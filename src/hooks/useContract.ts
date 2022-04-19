@@ -68,7 +68,11 @@ export function useBondContract(
 
 export function useBondFactoryContract(withSignerIfPossible = true): Maybe<Contract> {
   const { chainId } = useActiveWeb3React()
-  return useContract(V1_BOND_FACTORY_ADDRESS[chainId], BondFactory_ABI, withSignerIfPossible)
+  return useContract(
+    V1_BOND_FACTORY_ADDRESS[chainId as ChainId],
+    BondFactory_ABI,
+    withSignerIfPossible,
+  )
 }
 
 export function usePairContract(
