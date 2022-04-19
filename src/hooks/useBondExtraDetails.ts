@@ -28,15 +28,9 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
     chainId,
   })
   useEffect(() => {
-    fetchTok(data?.collateralToken).then((r) => {
-      setCollateralTokenInfo(r)
-    })
-    fetchTok(data?.id).then((r) => {
-      setBondTokenInfo(r)
-    })
-    fetchTok(data?.paymentToken).then((r) => {
-      setPaymentTokenInfo(r)
-    })
+    fetchTok(data?.collateralToken).then(setCollateralTokenInfo)
+    fetchTok(data?.id).then(setBondTokenInfo)
+    fetchTok(data?.paymentToken).then(setPaymentTokenInfo)
   }, [fetchTok, data?.id, data?.collateralToken, data?.paymentToken])
 
   const collateralTokenBalance = useTokenBalance(data?.collateralToken, bondId, {
