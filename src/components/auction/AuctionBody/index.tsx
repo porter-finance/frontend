@@ -1,14 +1,20 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
+import dayjs from 'dayjs'
+
+import { AuctionGraphDetail, useAuctionDetails } from '../../../hooks/useAuctionDetails'
+import { useBondExtraDetails } from '../../../hooks/useBondExtraDetails'
 import { TwoGridPage } from '../../../pages/Auction'
 import { AuctionState, DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
+import { calculateTimeLeft } from '../../../utils/tools'
 import TokenLogo from '../../token/TokenLogo'
 import AuctionDetails from '../AuctionDetails'
 import { AuctionNotStarted } from '../AuctionNotStarted'
+import AuctionSettle from '../AuctionSettle'
 import Claimer from '../Claimer'
+import { ExtraDetailsItem } from '../ExtraDetailsItem'
 import OrderPlacement from '../OrderPlacement'
 import { OrderBookContainer } from '../OrderbookContainer'
 
@@ -53,35 +59,32 @@ const WarningCard = () => (
   </div>
 )
 
-const BondCard = ({ graphInfo }) => {
+const BondCard = ({ graphInfo }: { graphInfo: AuctionGraphDetail }) => {
   const navigate = useNavigate()
+  const extraDetails = useBondExtraDetails(graphInfo?.bond?.id)
+
+  extraDetails.push(
+    {
+      title: 'Time until maturity',
+      value: `${
+        calculateTimeLeft(graphInfo?.bond?.maturityDate) > 0
+          ? dayjs(graphInfo?.bond?.maturityDate * 1000)
+              .utc()
+              .toNow(true)
+          : '0 days'
+      }`,
+    },
+    {
+      title: 'Maturity date',
+      value: `${dayjs(graphInfo?.bond?.maturityDate * 1000)
+        .utc()
+        .format('DD MMM YYYY')}`.toUpperCase(),
+    },
+  )
   return (
     <div className="card card-bordered bond-card-color">
       <div className="card-body">
-        <div className="flex justify-between">
-          <h2 className="card-title">Bond information</h2>
-          <button className="btn btn-link space-x-2" disabled={true}>
-            <svg
-              fill="none"
-              height="18"
-              viewBox="0 0 18 18"
-              width="18"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M8.27228 0.999809L16.9999 9.00015L8.27228 17.0005"
-                stroke="white"
-                strokeMiterlimit="10"
-              />
-              <path
-                d="M0.999999 0.999809L9.72764 9.00015L1 17.0005"
-                stroke="white"
-                strokeMiterlimit="10"
-              />
-            </svg>
-            <span className="text-white text-xs font-normal">{graphInfo?.bond?.type}</span>
-          </button>
-        </div>
+        <h2 className="card-title">Bond information</h2>
 
         <div className="text-sm text-[#9F9F9F] flex justify-between items-end">
           <div className="flex items-center space-x-4">
@@ -99,14 +102,16 @@ const BondCard = ({ graphInfo }) => {
               </p>
             </div>
           </div>
-          <button
-            className="rounded-md !text-xs font-normal btn btn-sm btn-primary bg-[#532DBE]"
-            onClick={() => {
-              navigate(`/products/${graphInfo?.bond?.id}`)
-            }}
-          >
-            More Details
-          </button>
+        </div>
+
+        <div
+          className={`grid gap-x-12 gap-y-8 grid-cols-1 pt-12 ${
+            graphInfo?.bond?.type !== 'convert' ? 'md:grid-cols-3' : 'md:grid-cols-4'
+          }`}
+        >
+          {extraDetails.map((item, index) => (
+            <ExtraDetailsItem key={index} {...item} />
+          ))}
         </div>
       </div>
     </div>
@@ -147,6 +152,7 @@ const AuctionBody = (props: AuctionBodyProps) => {
           }
           rightChildren={
             <>
+              {auctionState === AuctionState.NEEDS_SETTLED && <AuctionSettle />}
               {(auctionState === AuctionState.ORDER_PLACING ||
                 auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && (
                 <OrderPlacement
