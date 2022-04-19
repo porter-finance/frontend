@@ -349,10 +349,39 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     return (
       <div className="card card-bordered">
         <div className="card-body">
-          <h2 className="card-title !text-[#696969]">Private auction</h2>
+          <h2 className="card-title !text-[#696969] space-x-2">
+            <span>Private auction</span>
+            <svg
+              fill="none"
+              height="20"
+              viewBox="0 0 14 20"
+              width="14"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                fill="#D6D6D6"
+                height="11.6"
+                rx="0.5"
+                stroke="#D6D6D6"
+                width="13"
+                x="0.5"
+                y="7.70117"
+              />
+              <mask fill="white" id="path-2-inside-1_9430_5148">
+                <path d="M2.80078 1.20117C2.80078 0.648888 3.2485 0.201172 3.80078 0.201172H10.2008C10.7531 0.201172 11.2008 0.648887 11.2008 1.20117V10.0012H2.80078V1.20117Z" />
+              </mask>
+              <path
+                d="M2.80078 1.20117C2.80078 0.648888 3.2485 0.201172 3.80078 0.201172H10.2008C10.7531 0.201172 11.2008 0.648887 11.2008 1.20117V10.0012H2.80078V1.20117Z"
+                mask="url(#path-2-inside-1_9430_5148)"
+                stroke="#D6D6D6"
+                strokeWidth="3"
+              />
+              <rect fill="#131415" height="5.6" width="2.8" x="5.59961" y="11.4004" />
+            </svg>
+          </h2>
 
           <div className="text-sm text-[#696969]">
-            This auction is only available for allow-listed wallets
+            This auction is only available for allowlisted wallets
           </div>
           {account && linkForKYC && (
             <EmptyContentTextSmall>
