@@ -48,6 +48,13 @@ const bidsQuery = gql`
     bids(first: 100, where: { account: $account, auction: $auctionId }) {
       id
       timestamp
+      canceltx
+      claimtx
+      createtx
+      payable
+      size
+      bytes
+      auction
     }
   }
 `
