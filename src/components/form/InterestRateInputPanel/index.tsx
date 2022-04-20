@@ -50,7 +50,11 @@ interface Props {
 }
 
 // Interest rate = (1-Price) / Price / (years to maturity)
-export const calculateInterestRate = (price, auctionEndDate) => {
+export const calculateInterestRate = (
+  price: number | string,
+  auctionEndDate: number,
+  display = true,
+): string | number => {
   if (!auctionEndDate) return '-'
   if (!price) return '-'
   const years = Math.abs(
@@ -58,8 +62,14 @@ export const calculateInterestRate = (price, auctionEndDate) => {
       .utc()
       .diff(auctionEndDate * 1000, 'year', true),
   )
-  const interestRate = (1 - price) / price / years
-  return isNaN(interestRate) || interestRate === Infinity ? '-' : `${round(interestRate * 100, 2)}%`
+  let interestRate = (1 - Number(price)) / Number(price) / years
+  interestRate = isNaN(interestRate) || interestRate === Infinity ? 0 : interestRate
+
+  if (display) {
+    return !interestRate ? '-' : `${round(interestRate * 100, 2)}%`
+  }
+
+  return interestRate
 }
 
 const InterestRateInputPanel = (props: Props) => {
