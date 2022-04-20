@@ -3,7 +3,6 @@ import { createGlobalStyle } from 'styled-components'
 
 import { formatUnits } from '@ethersproject/units'
 import dayjs from 'dayjs'
-import round from 'lodash.round'
 
 import { ReactComponent as AuctionsIcon } from '../../assets/svg/auctions.svg'
 import { ReactComponent as ConvertIcon } from '../../assets/svg/convert.svg'
@@ -88,12 +87,10 @@ const Portfolio = () => {
 
   useSetNoDefaultNetworkId()
 
-  data?.forEach((item) => {
-    // TODO: get this from graphql? coingecko?
-    const currentPrice = 1337
+  data?.forEach((bond) => {
     tableData.push({
-      id: item.id,
-      search: JSON.stringify(item),
+      id: bond.id,
+      search: JSON.stringify(bond),
       issuer: (
         <div className="flex flex-row items-center space-x-4">
           <div className="flex">
@@ -101,60 +98,41 @@ const Portfolio = () => {
               size="30px"
               square
               token={{
-                address: item?.collateralToken,
-                symbol: item?.symbol,
+                address: bond?.collateralToken,
+                symbol: bond?.symbol,
               }}
             />
           </div>
           <div className="flex flex-col text-[#EEEFEB] text-lg">
             <div className="flex items-center space-x-2 capitalize">
-              <span>{item?.name.toLowerCase()} Bond</span>
-              {item?.type === 'convert' ? <ConvertIcon width={15} /> : <AuctionsIcon width={15} />}
+              <span>{bond?.name.toLowerCase()} Bond</span>
+              {bond?.type === 'convert' ? <ConvertIcon width={15} /> : <AuctionsIcon width={15} />}
             </div>
-            <p className="text-[#9F9F9F] text-sm uppercase">{item?.symbol}</p>
+            <p className="text-[#9F9F9F] text-sm uppercase">{bond?.symbol}</p>
           </div>
         </div>
       ),
-      // @TODO: not sure if size === amount === maxSupply
-      // This shuold return how many this user owns tho
-      // Do i have to do a new query against Bid to get their bidded size for an auction?
-      amount: `${item?.maxSupply ? abbreviation(formatUnits(item?.maxSupply, 18)) : 0}`,
-
-      maturityValue: round(
-        10 * Number(calculateInterestRate(currentPrice, item.maturityDate, false)) + currentPrice,
-        2,
-      ),
-      fixedAPY: `${round(
-        (1 +
-          Number(calculateInterestRate(currentPrice, item.maturityDate, false)) /
-            Math.abs(
-              dayjs()
-                .utc()
-                .diff(item.maturityDate * 1000, 'year', true),
-            )) *
-          (Math.abs(
-            dayjs()
-              .utc()
-              .diff(item.maturityDate * 1000, 'year', true),
-          ) -
-            1),
-        2,
-      )}%`,
+      // TODO: This shuold return how many this user owns tho NOT max supply
+      amount: `${bond?.maxSupply ? abbreviation(formatUnits(bond?.maxSupply, 18)) : 0}`,
+      // TODO: graphql should return payment token symbol
+      maturityValue: `1 ${bond.paymentToken}`,
+      // TODO: make this use auction.clearing
+      fixedAPY: calculateInterestRate(10, bond.maturityDate),
       status:
-        new Date() > new Date(item.maturityDate * 1000) ? (
+        new Date() > new Date(bond.maturityDate * 1000) ? (
           <ActiveStatusPill disabled dot={false} title="Matured" />
         ) : (
           <ActiveStatusPill dot={false} title="Active" />
         ),
       maturityDate: (
         <span className="uppercase">
-          {dayjs(item.maturityDate * 1000)
+          {dayjs(bond.maturityDate * 1000)
             .utc()
             .format('DD MMM YYYY')}
         </span>
       ),
 
-      url: `/products/${item.id}`,
+      url: `/products/${bond.id}`,
     })
   })
 
