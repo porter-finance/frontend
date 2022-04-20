@@ -60,7 +60,6 @@ export const calculateInterestRate = (price, auctionEndDate) => {
   )
 
   const interestRate = (1 - price) / price / years
-  console.log(price, 1 - price, price, years)
   return isNaN(interestRate) || interestRate === Infinity ? '-' : `${round(interestRate * 100, 2)}%`
 }
 

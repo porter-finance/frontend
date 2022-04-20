@@ -55,14 +55,16 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
       value: `${round(
         formatUnits(collateralTokenBalance || 0, collateralTokenInfo?.decimals),
         2,
-      )} ${collateralTokenInfo?.symbol || ''} ($${collateralTokenPrice})`,
+      )} ${collateralTokenInfo?.symbol || ''}`,
+      hint: `($${collateralTokenPrice})`,
       tooltip: 'Tooltip',
     },
     {
       title: 'Convertible tokens',
       value: `${round(formatUnits(paymentTokenBalance || 0, paymentTokenInfo?.decimals), 2)} ${
         collateralTokenInfo?.symbol || ''
-      } ($${paymentTokenPrice})`,
+      }`,
+      hint: `($${paymentTokenPrice})`,
       tooltip: 'Tooltip',
       show: isConvertBond,
     },
