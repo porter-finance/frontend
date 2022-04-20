@@ -13,6 +13,7 @@ import WarningModal from '../../components/modals/WarningModal'
 import TokenLogo from '../../components/token/TokenLogo'
 import { useBondDetails } from '../../hooks/useBondDetails'
 import { useBondExtraDetails } from '../../hooks/useBondExtraDetails'
+import { useHistoricTokenPrice } from '../../hooks/useHistoricTokenPrice'
 import { useIsBondDefaulted } from '../../hooks/useIsBondDefaulted'
 import { useIsBondFullyPaid } from '../../hooks/useIsBondFullyPaid'
 import { useIsBondPartiallyPaid } from '../../hooks/useIsBondPartiallyPaid'
@@ -73,6 +74,7 @@ const BondDetail: React.FC = () => {
   const isConvertBond = isDev ? true : data?.type === 'convert'
   const isPartiallyPaid = useIsBondPartiallyPaid(bondIdentifier?.bondId)
   const isDefaulted = useIsBondDefaulted(bondIdentifier?.bondId)
+  const graphData = useHistoricTokenPrice(data?.collateralToken, 30)
 
   if (isLoading) {
     return (
