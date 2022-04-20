@@ -67,14 +67,14 @@ const BondDetail: React.FC = () => {
   const bondIdentifier = useParams()
 
   const extraDetails = useBondExtraDetails(bondIdentifier?.bondId)
-  const { data, loading: isLoading } = useBondDetails(bondIdentifier?.bondId)
-  const invalidBond = React.useMemo(() => !bondIdentifier || !data, [bondIdentifier, data])
-  const isMatured = new Date() > new Date(data?.maturityDate * 1000)
+  const { bond, loading: isLoading } = useBondDetails(bondIdentifier?.bondId)
+  const invalidBond = React.useMemo(() => !bondIdentifier || !bond, [bondIdentifier, bond])
+  const isMatured = new Date() > new Date(bond?.maturityDate * 1000)
   const isFullyPaid = !!useIsBondFullyPaid(bondIdentifier?.bondId)
-  const isConvertBond = isDev ? true : data?.type === 'convert'
+  const isConvertBond = isDev ? false : bond?.type === 'convert'
   const isPartiallyPaid = useIsBondPartiallyPaid(bondIdentifier?.bondId)
   const isDefaulted = useIsBondDefaulted(bondIdentifier?.bondId)
-  const graphData = useHistoricTokenPrice(data?.collateralToken, 30)
+  const graphData = useHistoricTokenPrice(bond?.collateralToken, 30)
   console.log({ graphData })
   if (isLoading) {
     return (
@@ -99,7 +99,7 @@ const BondDetail: React.FC = () => {
     )
 
   const days = 86400000 // number of ms in a day
-  const issuanceDate = new Date(data?.maturityDate * 1000 - 2000 * days).getTime()
+  const issuanceDate = new Date(bond?.maturityDate * 1000 - 2000 * days).getTime()
 
   return (
     <>
@@ -111,14 +111,14 @@ const BondDetail: React.FC = () => {
               size="60px"
               square
               token={{
-                address: data?.collateralToken,
-                symbol: data?.symbol,
+                address: bond?.collateralToken,
+                symbol: bond?.symbol,
               }}
             />
           </div>
           <div>
-            <h1 className="text-3xl text-white">{data?.name}</h1>
-            <p className="text-blue-100 text-sm font-medium">{data?.symbol}</p>
+            <h1 className="text-3xl text-white capitalize">{bond?.name.toLowerCase()} Bond</h1>
+            <p className="text-blue-100 text-sm font-medium">{bond?.symbol}</p>
           </div>
         </div>
         <div>{isConvertBond ? <ConvertButtonOutline /> : <SimpleButtonOutline />}</div>
@@ -140,7 +140,7 @@ const BondDetail: React.FC = () => {
 
                 <AuctionTimer
                   color="purple"
-                  endDate={data?.maturityDate}
+                  endDate={bond?.maturityDate}
                   endText="Maturity date"
                   startDate={issuanceDate / 1000}
                   startText="Issuance date"
