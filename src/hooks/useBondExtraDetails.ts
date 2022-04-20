@@ -17,25 +17,25 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
   const { chainId } = useWeb3React()
   const fetchTok = useFetchTokenByAddress()
 
-  const { data } = useBondDetails(bondId)
-  const isConvertBond = isDev ? true : data?.type === 'convert'
-  const paymentToken = useTokenByAddressAndAutomaticallyAdd(data?.paymentToken)
+  const { bond } = useBondDetails(bondId)
+  const isConvertBond = isDev ? true : bond?.type === 'convert'
+  const paymentToken = useTokenByAddressAndAutomaticallyAdd(bond?.paymentToken)
   const [collateralTokenInfo, setCollateralTokenInfo] = useState(null)
   const [paymentTokenInfo, setPaymentTokenInfo] = useState(null)
   const [bondTokenInfo, setBondTokenInfo] = useState(null)
-  const { data: collateralTokenPrice } = useTokenPrice(data?.collateralToken)
-  const { data: paymentTokenPrice } = useTokenPrice(data?.paymentToken)
+  const { data: collateralTokenPrice } = useTokenPrice(bond?.collateralToken)
+  const { data: paymentTokenPrice } = useTokenPrice(bond?.paymentToken)
 
   const paymentTokenBalance = useTokenBalance(paymentToken?.token?.address, bondId, {
     chainId,
   })
   useEffect(() => {
-    fetchTok(data?.collateralToken).then(setCollateralTokenInfo)
-    fetchTok(data?.id).then(setBondTokenInfo)
-    fetchTok(data?.paymentToken).then(setPaymentTokenInfo)
-  }, [fetchTok, data?.id, data?.collateralToken, data?.paymentToken])
+    fetchTok(bond?.collateralToken).then(setCollateralTokenInfo)
+    fetchTok(bond?.id).then(setBondTokenInfo)
+    fetchTok(bond?.paymentToken).then(setPaymentTokenInfo)
+  }, [fetchTok, bond?.id, bond?.collateralToken, bond?.paymentToken])
 
-  const collateralTokenBalance = useTokenBalance(data?.collateralToken, bondId, {
+  const collateralTokenBalance = useTokenBalance(bond?.collateralToken, bondId, {
     chainId,
   })
 
@@ -70,14 +70,14 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
     },
     {
       title: 'Maturity date',
-      value: `${dayjs(data?.maturityDate * 1000)
+      value: `${dayjs(bond?.maturityDate * 1000)
         .utc()
         .format('DD MMM YYYY')}`.toUpperCase(),
     },
     {
       title: 'Collateralization ratio',
       value: `${
-        round(Number(formatUnits(data?.collateralRatio || 0, bondTokenInfo?.decimals)), 2) * 100
+        round(Number(formatUnits(bond?.collateralRatio || 0, bondTokenInfo?.decimals)), 2) * 100
       }%`,
       tooltip: 'Tooltip',
     },
