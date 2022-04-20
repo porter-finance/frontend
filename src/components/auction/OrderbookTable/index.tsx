@@ -4,12 +4,16 @@ import styled from 'styled-components'
 import round from 'lodash.round'
 import { usePagination, useTable } from 'react-table'
 
+import { useActiveWeb3React } from '../../../hooks'
 import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
+import { BidInfo } from '../../../hooks/useParticipatingAuctionBids'
 import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { useOrderbookState } from '../../../state/orderbook/hooks'
+import { OrderStatus } from '../../../state/orders/reducer'
 import { getTokenDisplay } from '../../../utils'
 import { calculateInterestRate } from '../../form/InterestRateInputPanel'
 import { Cell } from '../../pureStyledComponents/Cell'
+import { orderStatusText } from '../OrdersTable'
 
 export const OverflowWrap = styled.div`
   max-width: 100%;
@@ -18,7 +22,9 @@ export const OverflowWrap = styled.div`
   overflow-y: auto;
 `
 
-export const TableDesign = ({ columns, data }) => {
+export const TableDesign = ({ columns, data, showConnect = false }) => {
+  const { account } = useActiveWeb3React()
+
   // Use the state and functions returned from useTable to build your UI
   const {
     canNextPage,
@@ -72,25 +78,49 @@ export const TableDesign = ({ columns, data }) => {
                 className="bg-transparent text-center py-[100px] text-[#696969] space-y-4"
                 colSpan={5}
               >
-                <svg
-                  className="m-auto"
-                  fill="none"
-                  height="40"
-                  viewBox="0 0 32 40"
-                  width="32"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M27.202 4.35355L27.2113 4.36285L27.2211 4.37165L31.5 8.22268V39.5H0.5V0.5H23.3484L27.202 4.35355Z"
-                    stroke="white"
-                    strokeOpacity="0.6"
-                  />
-                  <path d="M7 14H25" stroke="white" strokeOpacity="0.6" />
-                  <path d="M7 19H25" stroke="white" strokeOpacity="0.6" />
-                  <path d="M7 24H25" stroke="white" strokeOpacity="0.6" />
-                  <path d="M7 29H25" stroke="white" strokeOpacity="0.6" />
-                </svg>
-                <div className="text-base">No orders placed yet</div>
+                {(account || !showConnect) && (
+                  <svg
+                    className="m-auto"
+                    fill="none"
+                    height="40"
+                    viewBox="0 0 32 40"
+                    width="32"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M27.202 4.35355L27.2113 4.36285L27.2211 4.37165L31.5 8.22268V39.5H0.5V0.5H23.3484L27.202 4.35355Z"
+                      stroke="white"
+                      strokeOpacity="0.6"
+                    />
+                    <path d="M7 14H25" stroke="white" strokeOpacity="0.6" />
+                    <path d="M7 19H25" stroke="white" strokeOpacity="0.6" />
+                    <path d="M7 24H25" stroke="white" strokeOpacity="0.6" />
+                    <path d="M7 29H25" stroke="white" strokeOpacity="0.6" />
+                  </svg>
+                )}
+                {!account && showConnect && (
+                  <svg
+                    className="m-auto"
+                    fill="none"
+                    height="22"
+                    viewBox="0 0 44 22"
+                    width="44"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M4.45065 10.9993C4.45065 7.29435 7.46232 4.28268 11.1673 4.28268H19.834V0.166016H11.1673C5.18732 0.166016 0.333984 5.01935 0.333984 10.9993C0.333984 16.9793 5.18732 21.8327 11.1673 21.8327H19.834V17.716H11.1673C7.46232 17.716 4.45065 14.7043 4.45065 10.9993ZM13.334 13.166H30.6673V8.83268H13.334V13.166ZM32.834 0.166016H24.1673V4.28268H32.834C36.539 4.28268 39.5507 7.29435 39.5507 10.9993C39.5507 14.7043 36.539 17.716 32.834 17.716H24.1673V21.8327H32.834C38.814 21.8327 43.6673 16.9793 43.6673 10.9993C43.6673 5.01935 38.814 0.166016 32.834 0.166016Z"
+                      fill="white"
+                      fillOpacity="0.6"
+                    />
+                  </svg>
+                )}
+                <div className="text-base">
+                  {!account && showConnect
+                    ? 'Connect your wallet to view your orders'
+                    : account && showConnect
+                    ? 'You have not placed any orders'
+                    : 'No orders have been placed'}
+                </div>
               </td>
             </tr>
           )}
@@ -133,7 +163,7 @@ export const TableDesign = ({ columns, data }) => {
 
 interface OrderBookTableProps {
   derivedAuctionInfo: DerivedAuctionInfo
-  granularity: string
+  bids: BidInfo[]
 }
 
 export const ActiveStatusPill = ({
@@ -160,10 +190,7 @@ export const ActiveStatusPill = ({
   )
 }
 
-export const OrderBookTable: React.FC<OrderBookTableProps> = ({
-  derivedAuctionInfo,
-  granularity,
-}) => {
+export const OrderBookTable: React.FC<OrderBookTableProps> = ({ bids, derivedAuctionInfo }) => {
   const maturityDate = useBondMaturityForAuction()
 
   const columns = React.useMemo(
@@ -192,13 +219,8 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({
     [],
   )
 
-  const { bids, chainId, error } = useOrderbookState()
+  const { chainId } = useOrderbookState()
   const data = []
-
-  const biddingTokenDisplay = useMemo(
-    () => getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId),
-    [derivedAuctionInfo?.biddingToken, chainId],
-  )
 
   const auctioningTokenDisplay = useMemo(
     () => getTokenDisplay(derivedAuctionInfo?.auctioningToken, chainId),
@@ -209,12 +231,16 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({
 
   !noBids &&
     bids.forEach((row, i) => {
-      const status = <ActiveStatusPill />
+      let statusText = ''
+      if (row.createtx) statusText = orderStatusText[OrderStatus.PLACED]
+      if (!row.createtx) statusText = orderStatusText[OrderStatus.PENDING]
+      if (row.canceltx) statusText = 'Cancelled'
+      const status = <ActiveStatusPill title={statusText} />
 
-      const price = `${round(row.price, 6)} ${auctioningTokenDisplay}`
+      const price = `${round(row.payable, 6)} ${auctioningTokenDisplay}`
 
-      const interest = `${calculateInterestRate(row.price, maturityDate)}`
-      const amount = `${round(row.volume, 6)} ${auctioningTokenDisplay}`
+      const interest = `${calculateInterestRate(row.payable, maturityDate)}`
+      const amount = `${round(row.size, 6)} ${auctioningTokenDisplay}`
       const transactions = (
         <svg
           fill="none"
