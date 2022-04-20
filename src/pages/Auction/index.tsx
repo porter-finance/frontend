@@ -15,14 +15,14 @@ import { useTokenListState } from '../../state/tokenList/hooks'
 import { isAddress } from '../../utils'
 
 export const GhostButton = ({ children }) => (
-  <span className="space-x-2 inline-flex items-center px-5 py-1.5 rounded-full bg-transparent text-white border-blue-100 border uppercase border-opacity-50 pointer-events-none">
+  <span className="leading-none space-x-2 inline-flex items-center px-5 py-2 rounded-full bg-transparent text-white border-blue-100 border uppercase border-opacity-50 pointer-events-none">
     {children}
   </span>
 )
 
 export const ConvertButtonOutline = () => (
   <GhostButton>
-    <ConvertIcon height={12.57} width={12.57} /> <span className="text-xs">Convert</span>
+    <ConvertIcon height={12.57} width={12.57} /> <span className="text-xs">Convertible</span>
   </GhostButton>
 )
 
