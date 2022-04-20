@@ -1,7 +1,6 @@
 import React from 'react'
 import { createGlobalStyle } from 'styled-components'
 
-import { formatUnits } from '@ethersproject/units'
 import dayjs from 'dayjs'
 
 import { ReactComponent as AuctionsIcon } from '../../assets/svg/auctions.svg'
@@ -10,10 +9,10 @@ import { ReactComponent as DividerIcon } from '../../assets/svg/divider.svg'
 import { ReactComponent as SimpleIcon } from '../../assets/svg/simple.svg'
 import { ActiveStatusPill } from '../../components/auction/OrderbookTable'
 import Table from '../../components/auctions/Table'
+import { calculateInterestRate } from '../../components/form/InterestRateInputPanel'
 import TokenLogo from '../../components/token/TokenLogo'
 import { useAllBondInfo } from '../../hooks/useAllBondInfos'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
-import { abbreviation } from '../../utils/numeral'
 import { ConvertButtonOutline, SimpleButtonOutline } from '../Auction'
 
 const GlobalStyle = createGlobalStyle`
@@ -32,16 +31,8 @@ const columns = [
     filter: 'searchInTags',
   },
   {
-    Header: 'Type',
-    accessor: 'type',
-    align: 'flex-start',
-    show: true,
-    style: {},
-    filter: 'searchInTags',
-  },
-  {
-    Header: 'Supply',
-    accessor: 'supply',
+    Header: 'Fixed APY',
+    accessor: 'fixedAPY',
     align: 'flex-start',
     show: true,
     style: {},
@@ -50,6 +41,14 @@ const columns = [
   {
     Header: 'Maturity Date',
     accessor: 'maturityDate',
+    align: 'flex-start',
+    show: true,
+    style: {},
+    filter: 'searchInTags',
+  },
+  {
+    Header: 'Value at maturity',
+    accessor: 'maturityValue',
     align: 'flex-start',
     show: true,
     style: {},
@@ -79,6 +78,9 @@ const Products = () => {
   useSetNoDefaultNetworkId()
 
   data?.forEach((item) => {
+    // TODO: get this from graphql? coingecko?
+    const clearingPrice = 10
+
     tableData.push({
       id: item.id,
       search: JSON.stringify(item),
@@ -94,18 +96,19 @@ const Products = () => {
               }}
             />
           </div>
-          <div className="flex flex-col">
-            <p className="text-[#EEEFEB] text-lg items-center inline-flex space-x-3">
-              <span>{item?.name} Auction</span>
-            </p>
+          <div className="flex flex-col text-[#EEEFEB] text-lg">
+            <div className="flex items-center space-x-2 capitalize">
+              <span>{item?.name.toLowerCase()} Bond</span>
+              {item?.type === 'convert' ? <ConvertIcon width={15} /> : <AuctionsIcon width={15} />}
+            </div>
             <p className="text-[#9F9F9F] text-sm uppercase">{item?.symbol}</p>
           </div>
         </div>
       ),
-      type: item?.type === 'convert' ? <ConvertIcon width={15} /> : <AuctionsIcon width={15} />,
-      supply: `${item?.maxSupply ? abbreviation(formatUnits(item?.maxSupply, 18)) : 0}`,
+      fixedAPY: calculateInterestRate(clearingPrice, item.maturityDate),
+      // TODO: graphql should return payment token symbol
+      maturityValue: `1 ${item.paymentToken}`,
 
-      // no price yet
       status:
         new Date() > new Date(item.maturityDate * 1000) ? (
           <ActiveStatusPill disabled dot={false} title="Matured" />
