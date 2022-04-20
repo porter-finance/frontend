@@ -48,7 +48,7 @@ const columns = [
     filter: 'searchInTags',
   },
   {
-    Header: 'Maturity Value',
+    Header: 'Value at maturity',
     accessor: 'maturityValue',
     align: 'flex-start',
     show: true,
