@@ -19,7 +19,7 @@ import { calculateInterestRate } from '../../form/InterestRateInputPanel'
 import ConfirmationModal from '../../modals/ConfirmationModal'
 import WarningModal from '../../modals/WarningModal'
 import CancelModalFooter from '../../modals/common/CancelModalFooter'
-import { OverflowWrap, TableDesign } from '../OrderbookTable'
+import { BidTransactionLink, OverflowWrap, TableDesign } from '../OrderbookTable'
 
 interface OrdersTableProps {
   auctionIdentifier: AuctionIdentifier
@@ -116,7 +116,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
       },
       {
         Header: 'Transaction',
-        accessor: 'actions',
+        accessor: 'transaction',
       },
     ],
     [],
@@ -164,7 +164,9 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
         </button>
       )
 
-      data.push({ status, price, interest, amount, actions })
+      const transaction = <BidTransactionLink bid={order} />
+
+      data.push({ status, price, interest, amount, transaction })
     })
 
   return (
