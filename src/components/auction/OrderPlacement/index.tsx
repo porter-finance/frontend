@@ -6,7 +6,6 @@ import dayjs from 'dayjs'
 
 import kycLinks from '../../../assets/links/kycLinks.json'
 import { ReactComponent as PrivateIcon } from '../../../assets/svg/private.svg'
-import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../constants/config'
 import { useActiveWeb3React } from '../../../hooks'
 import { ApprovalState, useApproveCallback } from '../../../hooks/useApproveCallback'
 import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
@@ -34,7 +33,7 @@ import {
   isTokenWMATIC,
   isTokenXDAI,
 } from '../../../utils'
-import { convertPriceIntoBuyAndSellAmount, getInverse } from '../../../utils/prices'
+import { convertPriceIntoBuyAndSellAmount } from '../../../utils/prices'
 import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
 import { Tooltip } from '../../common/Tooltip'
@@ -96,7 +95,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const { account, chainId: chainIdFromWeb3 } = useActiveWeb3React()
   const orders: OrderState | undefined = useOrderState()
   const toggleWalletModal = useWalletModalToggle()
-  const { interestRate, price, sellAmount, showPriceInverted } = useOrderPlacementState()
+  const { price, sellAmount, showPriceInverted } = useOrderPlacementState()
   const { errorAmount, errorInterestRate, errorPrice } = useGetOrderPlacementError(
     derivedAuctionInfo,
     auctionState,
@@ -140,20 +139,11 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   useEffect(() => {
     onUserPriceInput(price)
     if (price == '-' && derivedAuctionInfo?.clearingPrice) {
-      showPriceInverted
-        ? onUserPriceInput(
-            derivedAuctionInfo?.clearingPrice
-              .invert()
-              .multiply(new Fraction('999', '1000'))
-              .toSignificant(4),
-          )
-        : onUserPriceInput(
-            derivedAuctionInfo?.clearingPrice
-              .multiply(new Fraction('1001', '1000'))
-              .toSignificant(4),
-          )
+      onUserPriceInput(
+        derivedAuctionInfo?.clearingPrice.multiply(new Fraction('1001', '1000')).toSignificant(4),
+      )
     }
-  }, [onUserPriceInput, price, derivedAuctionInfo, showPriceInverted])
+  }, [onUserPriceInput, price, derivedAuctionInfo])
 
   const resetModal = () => {
     if (!pendingConfirmation) {
@@ -196,10 +186,8 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   )
   const notApproved = approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING
   const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
-  const coversClearingPrice = (price: string | undefined, showPriceInverted: boolean): boolean => {
-    const standardizedPrice = showPriceInverted
-      ? getInverse(price, NUMBER_OF_DIGITS_FOR_INVERSION)
-      : price
+  const coversClearingPrice = (price: string | undefined): boolean => {
+    const standardizedPrice = price
 
     const { buyAmountScaled, sellAmountScaled } = convertPriceIntoBuyAndSellAmount(
       derivedAuctionInfo?.auctioningToken,
@@ -215,8 +203,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
       )
   }
   const hasRiskNotCoveringClearingPrice =
-    auctionState === AuctionState.ORDER_PLACING_AND_CANCELING &&
-    coversClearingPrice(price, showPriceInverted)
+    auctionState === AuctionState.ORDER_PLACING_AND_CANCELING && coversClearingPrice(price)
 
   const handleShowConfirm = () => {
     if (chainId !== chainIdFromWeb3) {
@@ -281,17 +268,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
           }
         : null,
     [errorPrice],
-  )
-
-  const interestRateInfo = React.useMemo(
-    () =>
-      errorInterestRate
-        ? {
-            text: errorInterestRate,
-            type: InfoType.error,
-          }
-        : null,
-    [errorInterestRate],
   )
 
   const disablePlaceOrder =
@@ -372,12 +348,10 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
           {(!isPrivate || signatureAvailable) && (
             <>
               <AmountInputPanel
-                balance={balanceString}
                 chainId={chainId}
                 info={amountInfo}
-                onMax={onMaxInput}
                 onUserSellAmountInput={onUserSellAmountInput}
-                token={biddingToken}
+                token={auctioningToken}
                 unlock={{ isLocked: notApproved, onUnlock: approveCallback, unlockState: approval }}
                 value={sellAmount}
                 wrap={{
@@ -408,9 +382,11 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
 
               <InterestRateInputPanel
                 account={account}
+                amount={Number(sellAmount)}
+                amountToken={auctioningTokenDisplay}
                 chainId={chainId}
-                info={interestRateInfo}
-                price={price}
+                price={Number(price)}
+                priceToken={biddingTokenDisplay}
               />
 
               {!account ? (
@@ -429,7 +405,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                       <button
                         className="btn btn-xs btn-link text-[#9F9F9F] font-normal text-xs"
                         disabled={!onMaxInput || !account}
-                        onClick={onMaxInput}
                       >
                         {!balanceString ||
                         balanceString === '0' ||
