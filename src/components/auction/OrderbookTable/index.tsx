@@ -190,11 +190,14 @@ export const ActiveStatusPill = ({
   )
 }
 
-export const BidTransactionLink = (bid) => {
+export const BidTransactionLink = ({ bid }) => {
   const { chainId } = useActiveWeb3React()
+  const hash = bid.canceltx || bid.claimtx || bid.createtx
+
+  if (!hash) return <span>N/A</span>
 
   return (
-    <a href={getExplorerLink(chainId, bid.canceltx || bid.claimtx || bid.createtx, 'transaction')}>
+    <a href={getExplorerLink(chainId, hash, 'transaction')} rel="noreferrer" target="_blank">
       <svg
         fill="none"
         height="16"
@@ -251,7 +254,7 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({ bids, derivedAuc
   const noBids = !Array.isArray(bids) || bids.length === 0
 
   !noBids &&
-    bids.forEach((row, i) => {
+    bids.forEach((row) => {
       let statusText = ''
       if (row.createtx) statusText = orderStatusText[OrderStatus.PLACED]
       if (!row.createtx) statusText = orderStatusText[OrderStatus.PENDING]
