@@ -31,7 +31,7 @@ export const ActionButton = ({ children, ...props }) => (
     {...props}
     className={`btn btn-sm normal-case w-full hover:bg-blue-500 ${
       props.disabled ? '!bg-[#2C2C2C] !text-[#696969]' : 'bg-[#404EED] text-white'
-    } font-normal ${props.className}`}
+    } font-normal h-[41px] ${props.className}`}
   >
     {children}
   </button>
