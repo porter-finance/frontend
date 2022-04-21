@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
 
 import { Token } from '@josojo/honeyswap-sdk'
@@ -50,7 +50,6 @@ const PriceInputPanel = (props: Props) => {
     ...restProps
   } = props
 
-  const [readonly, setReadonly] = useState(true)
   const error = info?.type === InfoType.error
 
   const { biddingTokenDisplay } = useMemo(() => {
@@ -78,10 +77,8 @@ const PriceInputPanel = (props: Props) => {
           <FieldRowInput
             disabled={!account || disabled === true}
             hasError={error}
-            onBlur={() => setReadonly(true)}
-            onFocus={() => setReadonly(false)}
             onUserSellAmountInput={onUserPriceInput}
-            readOnly={!account || readonly}
+            readOnly={!account}
             value={!account ? 0 : value}
           />
           {token && (
@@ -107,7 +104,7 @@ const PriceInputPanel = (props: Props) => {
             </FieldRowLabelStyled>
           ) : (
             <FieldRowLabelStyled className="space-x-1">
-              <span>Price</span>
+              <span>Maximum price</span>
               <Tooltip text="Bidding price tooltip" />
             </FieldRowLabelStyled>
           )}
