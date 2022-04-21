@@ -115,7 +115,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
         accessor: 'amount',
       },
       {
-        Header: 'Actions',
+        Header: 'Transaction',
         accessor: 'actions',
       },
     ],
