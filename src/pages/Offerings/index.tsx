@@ -82,20 +82,19 @@ const Offerings = () => {
   allAuctions?.forEach((auction) => {
     tableData.push({
       id: auction.id,
-      currentPrice: auction.clearing, // TODO use grpahql to get decimal & symbol and convert this
+      currentPrice: '-', // TODO use grpahql to get decimal & symbol and convert this
       search: JSON.stringify(auction),
       auctionId: `#${auction.id}`,
       price: `1 ${auction?.bidding?.symbol}`,
       // TODO graphql should return clearing decimal so i can caclulate interest rate correctly
       fixedAPY: calculateInterestRate(auction.clearing, auction.end),
-      status:
-        new Date(auction?.end * 1000) > new Date() ? (
-          <ActiveStatusPill title="Ongoing" />
-        ) : (
-          <ActiveStatusPill disabled dot={false} title="Ended" />
-        ),
+      status: auction.live ? (
+        <ActiveStatusPill title="Ongoing" />
+      ) : (
+        <ActiveStatusPill disabled dot={false} title="Ended" />
+      ),
       // TODO: graphql should return payment token symbol
-      maturityValue: `1 ${auction.bond.paymentToken}`,
+      maturityValue: `1 ${auction?.bond?.paymentToken?.symbol}`,
       maturityDate: (
         <span className="uppercase">
           {dayjs(auction?.bond?.maturityDate * 1000)
