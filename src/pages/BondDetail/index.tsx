@@ -249,7 +249,7 @@ const BondDetail: React.FC = () => {
 
                 {/* TODO: extract this component from everywhere, its a nice empty state */}
                 {!account && <EmptyConnectWallet />}
-                {account && !positionData?.length ? <EmptyConnected bondName={data?.name} /> : null}
+                {account && !positionData?.length ? <EmptyConnected bondName={bond?.name} /> : null}
                 {account && positionData?.length ? (
                   <PositionPanel positions={positionData} />
                 ) : null}
