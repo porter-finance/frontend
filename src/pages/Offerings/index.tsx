@@ -93,7 +93,6 @@ const Offerings = () => {
       ) : (
         <ActiveStatusPill disabled dot={false} title="Ended" />
       ),
-      // TODO: graphql should return payment token symbol
       maturityValue: `1 ${auction?.bond?.paymentToken?.symbol}`,
       maturityDate: (
         <span className="uppercase">
