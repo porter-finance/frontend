@@ -27,8 +27,18 @@ const bondsQuery = gql`
       type
       owner
       maturityDate
-      paymentToken
-      collateralToken
+      paymentToken {
+        id
+        symbol
+        name
+        decimals
+      }
+      collateralToken {
+        id
+        symbol
+        name
+        decimals
+      }
       collateralRatio
       convertibleRatio
       maxSupply
