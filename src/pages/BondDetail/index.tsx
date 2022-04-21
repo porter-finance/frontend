@@ -16,7 +16,6 @@ import { useBondExtraDetails } from '../../hooks/useBondExtraDetails'
 import { useIsBondDefaulted } from '../../hooks/useIsBondDefaulted'
 import { useIsBondFullyPaid } from '../../hooks/useIsBondFullyPaid'
 import { useIsBondPartiallyPaid } from '../../hooks/useIsBondPartiallyPaid'
-import { useParticipatingAuctionBids } from '../../hooks/useParticipatingAuctionBids'
 import { useHistoricTokenPrice } from '../../hooks/useTokenPrice'
 import { ConvertButtonOutline, LoadingTwoGrid, SimpleButtonOutline, TwoGridPage } from '../Auction'
 
@@ -126,7 +125,7 @@ const positionColumns = [
 ]
 // TODO Do mapping of positions from gql to the following data structure
 const positionData = Array(10).fill({
-  amount: 750000,
+  amount: '750,000',
   price: '0.875 USDC',
   fixedAPY: '13%',
   maturityDate: '22 AUG 2022',
@@ -135,7 +134,7 @@ const positionData = Array(10).fill({
 const PositionPanel = ({ positions }) => {
   return (
     <div>
-      <TableDesign columns={positionColumns} data={positionData} showConnect />
+      <TableDesign columns={positionColumns} data={positions} showConnect />
     </div>
   )
 }
@@ -144,7 +143,6 @@ const BondDetail: React.FC = () => {
   const { account } = useWeb3React()
   const navigate = useNavigate()
   const bondIdentifier = useParams()
-  const { bids } = useParticipatingAuctionBids()
 
   const extraDetails = useBondExtraDetails(bondIdentifier?.bondId)
   const { data, loading: isLoading } = useBondDetails(bondIdentifier?.bondId)
@@ -154,6 +152,8 @@ const BondDetail: React.FC = () => {
   const isConvertBond = isDev ? true : data?.type === 'convert'
   const isPartiallyPaid = useIsBondPartiallyPaid(bondIdentifier?.bondId)
   const isDefaulted = useIsBondDefaulted(bondIdentifier?.bondId)
+
+  // TODO write the grpah using this data
   const graphData = useHistoricTokenPrice(data?.collateralToken, 30)
 
   if (isLoading) {
