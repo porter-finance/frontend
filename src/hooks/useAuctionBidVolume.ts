@@ -13,11 +13,20 @@ const bidQuery = gql`
     }
   }
 `
+const accountBidsQuery = gql`
+  query TotalBidSize($auctionId: Int!, $accountId: String!) {
+    bids(where: { auction: $auctionId, account: $accountId }) {
+      size
+    }
+  }
+`
 
-export const useAuctionBidVolume = (): Maybe<{ totalBidVolume: number; loading: boolean }> => {
+export const useAuctionBidVolume = (
+  accountId?: string,
+): Maybe<{ totalBidVolume: number; loading: boolean }> => {
   const { auctionId } = useParams()
-  const { data, error, loading } = useQuery(bidQuery, {
-    variables: { auctionId: Number(auctionId) },
+  const { data, error, loading } = useQuery(accountId ? accountBidsQuery : bidQuery, {
+    variables: { auctionId: Number(auctionId), accountId },
   })
 
   if (error) {
