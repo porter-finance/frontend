@@ -81,29 +81,6 @@ const EmptyContentTextSmall = styled(EmptyContentText)`
   margin-top: 0;
 `
 
-const Warning = styled.div`
-  align-items: center;
-  display: flex;
-  margin-top: 16px;
-
-  .fill {
-    fill: #9f9f9f;
-  }
-`
-
-const WarningText = styled.div`
-  color: #9f9f9f;
-  margin-left: 8px;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 14px;
-  /* identical to box height */
-
-  display: flex;
-  align-items: flex-end;
-  letter-spacing: 0.03em;
-`
-
 interface OrderPlacementProps {
   auctionIdentifier: AuctionIdentifier
   derivedAuctionInfo: DerivedAuctionInfo
