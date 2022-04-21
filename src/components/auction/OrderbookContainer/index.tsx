@@ -3,11 +3,8 @@ import styled from 'styled-components'
 
 import * as CSS from 'csstype'
 
-import {
-  useGranularityOptions,
-  useOrderbookDataCallback,
-  useOrderbookState,
-} from '../../../state/orderbook/hooks'
+import { useParticipatingAuctionBids } from '../../../hooks/useParticipatingAuctionBids'
+import { useOrderbookDataCallback } from '../../../state/orderbook/hooks'
 import { OrderBook } from '../Orderbook'
 import { OrderBookTable } from '../OrderbookTable'
 import OrdersTable from '../OrdersTable'
@@ -63,9 +60,8 @@ export const Wrap = styled.div<Partial<CSS.Properties & WrapProps>>`
 
 export const OrderBookContainer = (props) => {
   const { auctionIdentifier, auctionStarted, derivedAuctionInfo } = props
-  const { bids } = useOrderbookState()
-  const { granularity } = useGranularityOptions(bids)
   const [showAllOrders, setShowAllOrders] = useState(false)
+  const { bids } = useParticipatingAuctionBids()
 
   useOrderbookDataCallback(auctionIdentifier)
 
@@ -100,13 +96,12 @@ export const OrderBookContainer = (props) => {
           {showAllOrders && auctionStarted && (
             <OrdersTable
               auctionIdentifier={auctionIdentifier}
+              bids={bids}
               derivedAuctionInfo={derivedAuctionInfo}
             />
           )}
 
-          {!showAllOrders && (
-            <OrderBookTable derivedAuctionInfo={derivedAuctionInfo} granularity={granularity} />
-          )}
+          {!showAllOrders && <OrderBookTable bids={bids} derivedAuctionInfo={derivedAuctionInfo} />}
         </div>
       </div>
     </>

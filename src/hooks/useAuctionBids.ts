@@ -9,10 +9,17 @@ import { BidInfo } from './useParticipatingAuctionBids'
 const logger = getLogger('useAuctionBids')
 
 const bidsQuery = gql`
-  query AuctionBidList($auctionId: ID!) {
+  query AuctionBidList($auctionId: Int!) {
     bids(first: 100, where: { auction: $auctionId }) {
       id
       timestamp
+      canceltx
+      claimtx
+      createtx
+      payable
+      size
+      bytes
+      auction
     }
   }
 `
@@ -24,7 +31,7 @@ export const useAuctionBids = (): Maybe<{
   const { auctionId } = parseURL(useParams<RouteAuctionIdentifier>())
 
   const { data, error } = useQuery(bidsQuery, {
-    variables: { auctionId: `${auctionId}` },
+    variables: { auctionId: Number(auctionId) },
   })
 
   if (error) {
