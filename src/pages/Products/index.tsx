@@ -11,7 +11,7 @@ import { ActiveStatusPill } from '../../components/auction/OrderbookTable'
 import Table from '../../components/auctions/Table'
 import { calculateInterestRate } from '../../components/form/InterestRateInputPanel'
 import TokenLogo from '../../components/token/TokenLogo'
-import { useAllBondInfo } from '../../hooks/useAllBondInfos'
+import { useBonds } from '../../hooks/useBond'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import { ConvertButtonOutline, SimpleButtonOutline } from '../Auction'
 
@@ -71,17 +71,14 @@ const columns = [
   },
 ]
 
-const Products = () => {
-  const data = useAllBondInfo()
-  const tableData = []
+const createTable = (data) => {
+  if (!data) return []
 
-  useSetNoDefaultNetworkId()
-
-  data?.forEach((item) => {
+  return data.map((item) => {
     // TODO: get this from graphql? coingecko?
     const clearingPrice = 10
 
-    tableData.push({
+    return {
       id: item.id,
       search: JSON.stringify(item),
       issuer: (
@@ -124,10 +121,14 @@ const Products = () => {
       ),
 
       url: `/products/${item.id}`,
-    })
+    }
   })
+}
 
-  const isLoading = React.useMemo(() => data === undefined || data === null, [data])
+const Products = () => {
+  const { data, loading } = useBonds()
+  const tableData = createTable(data)
+  useSetNoDefaultNetworkId()
 
   return (
     <>
@@ -153,7 +154,7 @@ const Products = () => {
             <SimpleButtonOutline />
           </>
         }
-        loading={isLoading}
+        loading={loading}
         title="Products"
       />
     </>
