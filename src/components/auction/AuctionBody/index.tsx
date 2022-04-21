@@ -1,5 +1,7 @@
 import React from 'react'
 
+import useGeoLocation from 'react-ipgeolocation'
+
 import { AuctionGraphDetail, useAuctionDetails } from '../../../hooks/useAuctionDetails'
 import { useBondExtraDetails } from '../../../hooks/useBondExtraDetails'
 import { TwoGridPage } from '../../../pages/Auction'
@@ -19,7 +21,7 @@ interface AuctionBodyProps {
   derivedAuctionInfo: DerivedAuctionInfo
 }
 
-const WarningCard = () => (
+const DisabledCountryWarning = () => (
   <div className="card card-bordered">
     <div className="card-body">
       <div className="flex flex-row items-center space-x-2">
@@ -40,16 +42,19 @@ const WarningCard = () => (
         <span className="text-[#EDA651]">Warning</span>
       </div>
       <div className="text-sm text-[#9F9F9F]">
-        The warning will display a paragraph of text and will be dismissable by a button. It also
-        links to auction documentation.
+        Bonds are not available to people or companies who are residents of, or are located,
+        incorporated or have a registered agent in, the United States or a restricted territory.
+        More details can be found in our Terms of Use
       </div>
       <div className="card-actions mt-6">
-        <button className="btn btn-sm btn-warning normal-case text-sm font-normal">
-          Ok, I understand
-        </button>
-        <button className="btn btn-sm btn-link text-white normal-case text-sm font-normal">
+        <a
+          className="btn btn-sm btn-warning normal-case text-sm font-normal"
+          href="https://docs.porter.finance/"
+          rel="noreferrer"
+          target="_blank"
+        >
           Learn more
-        </button>
+        </a>
       </div>
     </div>
   </div>
@@ -97,6 +102,8 @@ const AuctionBody = (props: AuctionBodyProps) => {
     derivedAuctionInfo: { auctionState },
     derivedAuctionInfo,
   } = props
+  const location = useGeoLocation()
+  const disabledCountry = location?.country === 'US'
   const { graphInfo } = useAuctionDetails(auctionIdentifier)
   const auctionStarted = React.useMemo(
     () => auctionState !== undefined && auctionState !== AuctionState.NOT_YET_STARTED,
@@ -140,7 +147,7 @@ const AuctionBody = (props: AuctionBodyProps) => {
                   derivedAuctionInfo={derivedAuctionInfo}
                 />
               )}
-              <WarningCard />
+              {disabledCountry && <DisabledCountryWarning />}
             </>
           }
         />
