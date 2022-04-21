@@ -1,14 +1,10 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
-
-import dayjs from 'dayjs'
 
 import { AuctionGraphDetail, useAuctionDetails } from '../../../hooks/useAuctionDetails'
 import { useBondExtraDetails } from '../../../hooks/useBondExtraDetails'
 import { TwoGridPage } from '../../../pages/Auction'
 import { AuctionState, DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
-import { calculateTimeLeft } from '../../../utils/tools'
 import TokenLogo from '../../token/TokenLogo'
 import AuctionDetails from '../AuctionDetails'
 import { AuctionNotStarted } from '../AuctionNotStarted'
@@ -60,27 +56,8 @@ const WarningCard = () => (
 )
 
 const BondCard = ({ graphInfo }: { graphInfo: AuctionGraphDetail }) => {
-  const navigate = useNavigate()
   const extraDetails = useBondExtraDetails(graphInfo?.bond?.id)
 
-  extraDetails.push(
-    {
-      title: 'Time until maturity',
-      value: `${
-        calculateTimeLeft(graphInfo?.bond?.maturityDate) > 0
-          ? dayjs(graphInfo?.bond?.maturityDate * 1000)
-              .utc()
-              .toNow(true)
-          : '0 days'
-      }`,
-    },
-    {
-      title: 'Maturity date',
-      value: `${dayjs(graphInfo?.bond?.maturityDate * 1000)
-        .utc()
-        .format('DD MMM YYYY')}`.toUpperCase(),
-    },
-  )
   return (
     <div className="card card-bordered bond-card-color">
       <div className="card-body">
@@ -94,21 +71,17 @@ const BondCard = ({ graphInfo }: { graphInfo: AuctionGraphDetail }) => {
             />
 
             <div className="space-y-2">
-              <h2 className="text-2xl text-white font-normal">
-                {graphInfo?.bond?.name || 'Bond name'}
+              <h2 className="text-2xl text-white font-normal capitalize">
+                {graphInfo?.bond?.name.toLowerCase() || 'Bond Name'} Bond
               </h2>
               <p className="text-[#9F9F9F] text-xs font-normal uppercase">
-                {graphInfo?.bond?.symbol || 'Bond symbol'}
+                {graphInfo?.bond?.symbol || 'Bond Symbol'}
               </p>
             </div>
           </div>
         </div>
 
-        <div
-          className={`grid gap-x-12 gap-y-8 grid-cols-1 pt-12 ${
-            graphInfo?.bond?.type !== 'convert' ? 'md:grid-cols-3' : 'md:grid-cols-4'
-          }`}
-        >
+        <div className="grid gap-x-12 gap-y-8 grid-cols-1 pt-12 md:grid-cols-3">
           {extraDetails.map((item, index) => (
             <ExtraDetailsItem key={index} {...item} />
           ))}
