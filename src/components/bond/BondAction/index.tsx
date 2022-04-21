@@ -91,7 +91,7 @@ const BondAction = ({
   const params = useParams()
 
   const bondId = overwriteBondId || params?.bondId
-  const { data: derivedBondInfo, loading: isLoading } = useBondDetails(bondId)
+  const { bond: derivedBondInfo, loading: isLoading } = useBondDetails(bondId)
   const [bondTokenInfo, setBondTokenInfo] = useState(null)
   const [collateralTokenInfo, setCollateralTokenInfo] = useState(null)
   const [paymentTokenInfo, setPaymentTokenInfo] = useState(null)
