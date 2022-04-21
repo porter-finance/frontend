@@ -22,7 +22,7 @@ const bondsQuery = gql`
   }
 `
 
-export const useBondDetails = (bondId: string): Maybe<{ data: BondInfo; loading: boolean }> => {
+export const useBondDetails = (bondId: string): Maybe<{ bond: BondInfo; loading: boolean }> => {
   const { data, error, loading } = useQuery(bondsQuery, {
     variables: { bondID: bondId.toLowerCase() },
   })
@@ -31,6 +31,5 @@ export const useBondDetails = (bondId: string): Maybe<{ data: BondInfo; loading:
     logger.error('Error getting useBondDetails info', error)
   }
 
-  const info = data?.bond
-  return { data: info, loading }
+  return { bond: data?.bond, loading }
 }

@@ -52,6 +52,12 @@ html {
     color: #2C2C2C;
 }
 
+.btn-error {
+    background-color: #D25453;
+    border-color: #D25453;
+    color: #2C2C2C;
+}
+
 .card {
     @apply rounded-md;
     @apply bg-neutral;
