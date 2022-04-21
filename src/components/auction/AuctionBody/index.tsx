@@ -1,4 +1,5 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import useGeoLocation from 'react-ipgeolocation'
 
@@ -62,6 +63,7 @@ const DisabledCountryError = () => (
 
 const BondCard = ({ graphInfo }: { graphInfo: AuctionGraphDetail }) => {
   const extraDetails = useBondExtraDetails(graphInfo?.bond?.id)
+  const navigate = useNavigate()
 
   return (
     <div className="card card-bordered bond-card-color">
