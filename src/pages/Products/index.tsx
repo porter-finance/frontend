@@ -21,13 +21,21 @@ const GlobalStyle = createGlobalStyle`
   }
 `
 
-const columns = [
+export const columns = (showAmount = false) => [
   {
     Header: 'Issuer',
     accessor: 'issuer',
     align: 'flex-start',
     show: true,
     style: { height: '100%', justifyContent: 'center' },
+    filter: 'searchInTags',
+  },
+  {
+    Header: 'Amount',
+    accessor: 'amount',
+    align: 'flex-start',
+    show: showAmount,
+    style: {},
     filter: 'searchInTags',
   },
   {
@@ -38,6 +46,7 @@ const columns = [
     style: {},
     filter: 'searchInTags',
   },
+
   {
     Header: 'Maturity Date',
     accessor: 'maturityDate',
@@ -71,9 +80,9 @@ const columns = [
   },
 ]
 
-const createTable = (data: BondInfo[]) => {
+export const createTable = (data: BondInfo[]) => {
   return data.map((bond: BondInfo) => {
-    const { collateralToken, id, maturityDate, name, paymentToken, symbol, type } = bond
+    const { amount, collateralToken, id, maturityDate, name, paymentToken, symbol, type } = bond
 
     return {
       id,
@@ -99,6 +108,7 @@ const createTable = (data: BondInfo[]) => {
           </div>
         </div>
       ),
+      amount,
       // TODO graphql should return clearing decimal so i can caclulate interest rate correctly
       fixedAPY: '-',
       maturityValue: `1 ${paymentToken.symbol}`,
@@ -131,7 +141,7 @@ const Products = () => {
     <>
       <GlobalStyle />
       <Table
-        columns={columns}
+        columns={columns()}
         data={tableData}
         emptyActionClass="!bg-[#532DBE]"
         emptyActionText="Get notify"
