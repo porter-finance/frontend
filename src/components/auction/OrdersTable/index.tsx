@@ -151,20 +151,23 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
       const amount = `${round(order.size, 6)} ${auctioningTokenDisplay}`
 
       //  TODO: add way to check pending cancellations when they click cancel button
-      const actions = !hideCancelButton && (
-        <button
-          className="btn btn-outline btn-error normal-case btn-xs font-normal opacity-50 px-3"
-          disabled={isOrderCancellationExpired}
-          onClick={() => {
-            setOrderId(order.id)
-            setShowConfirm(true)
-          }}
-        >
-          Cancel
-        </button>
+      const transaction = (
+        <div className="flex flex-row items-center space-x-5">
+          <BidTransactionLink bid={order} />
+          {!hideCancelButton && (
+            <button
+              className="btn btn-outline btn-error normal-case btn-xs font-normal opacity-50 px-3"
+              disabled={isOrderCancellationExpired}
+              onClick={() => {
+                setOrderId(order.id)
+                setShowConfirm(true)
+              }}
+            >
+              Cancel
+            </button>
+          )}
+        </div>
       )
-
-      const transaction = <BidTransactionLink bid={order} />
 
       data.push({ status, price, interest, amount, transaction })
     })
