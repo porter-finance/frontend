@@ -6,25 +6,14 @@ import round from 'lodash.round'
 
 import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
 import { Tooltip } from '../../common/Tooltip'
-import {
-  FieldRowInfo,
-  FieldRowInfoProps,
-  FieldRowInput,
-  FieldRowLabel,
-  InfoType,
-} from '../../pureStyledComponents/FieldRow'
-
-const FieldRowLabelStyled = styled(FieldRowLabel)`
-  align-items: center;
-  display: flex;
-  font-weight: 400;
-  font-size: 12px;
-  color: #696969;
-  letter-spacing: 0.03em;
-`
+import { FieldRowInfoProps, InfoType } from '../../pureStyledComponents/FieldRow'
 
 const FieldRowLabelStyledText = styled.span`
   margin-right: 5px;
+  font-weight: 400;
+  font-size: 12px;
+  color: #696969;
+  letter-spacing: 0.06em;
 `
 
 const FieldRowWrapper = styled.div<{ error?: boolean }>`
@@ -43,9 +32,7 @@ const FieldRowWrapper = styled.div<{ error?: boolean }>`
 interface Props {
   account: string
   chainId: number
-  disabled?: boolean
   info?: FieldRowInfoProps
-  onUserInterestRateInput: (val: string) => void
   price: string
 }
 
@@ -64,33 +51,40 @@ export const calculateInterestRate = (price, auctionEndDate) => {
 }
 
 const InterestRateInputPanel = (props: Props) => {
-  const { account, disabled, info, onUserInterestRateInput, price, ...restProps } = props
+  const { account, info, price, ...restProps } = props
   const maturityDate = useBondMaturityForAuction()
   const error = info?.type === InfoType.error
 
   return (
     <>
-      <FieldRowWrapper className="justify-center my-4" error={error} {...restProps}>
-        <div className="flex flex-row items-center justify-center">
-          <FieldRowInput
-            disabled={disabled === true}
-            hasError={error}
-            onUserSellAmountInput={onUserInterestRateInput}
-            readOnly
-            value={!account ? '-' : calculateInterestRate(price, maturityDate)}
-          />
-          <FieldRowLabelStyled className="space-x-1">
-            {info ? (
-              <>
-                <FieldRowInfo infoType={info?.type}>{info.text}</FieldRowInfo>
-              </>
-            ) : (
-              <>
-                <FieldRowLabelStyledText className="text-sm">Interest rate</FieldRowLabelStyledText>
-                <Tooltip text="Interest rate tooltip" />
-              </>
-            )}
-          </FieldRowLabelStyled>
+      <FieldRowWrapper className="my-4 space-y-3 py-1" error={error} {...restProps}>
+        <div className="flex flex-row justify-between">
+          <div>{!account ? '-' : calculateInterestRate(price, maturityDate)}</div>
+          <div className="space-x-1 flex items-center">
+            <FieldRowLabelStyledText>Interest rate</FieldRowLabelStyledText>
+            <Tooltip text="Tooltip" />
+          </div>
+        </div>
+        <div className="flex flex-row justify-between">
+          <div>{!account ? '-' : calculateInterestRate(price, maturityDate)}</div>
+          <div className="space-x-1 flex items-center">
+            <FieldRowLabelStyledText>You receive</FieldRowLabelStyledText>
+            <Tooltip text="Tooltip" />
+          </div>
+        </div>
+        <div className="flex flex-row justify-between">
+          <div>{!account ? '-' : calculateInterestRate(price, maturityDate)}</div>
+          <div className="space-x-1 flex items-center">
+            <FieldRowLabelStyledText>You earn</FieldRowLabelStyledText>
+            <Tooltip text="Tooltip" />
+          </div>
+        </div>
+        <div className="flex flex-row justify-between">
+          <div>{!account ? '-' : calculateInterestRate(price, maturityDate)}</div>
+          <div className="space-x-1 flex items-center">
+            <FieldRowLabelStyledText>Your APR</FieldRowLabelStyledText>
+            <Tooltip text="Tooltip" />
+          </div>
         </div>
       </FieldRowWrapper>
     </>

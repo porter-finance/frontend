@@ -103,8 +103,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     auctionIdentifier,
     showPriceInverted,
   )
-  const { onUserInterestRateInput, onUserPriceInput, onUserSellAmountInput } =
-    useSwapActionHandlers()
+  const { onUserPriceInput, onUserSellAmountInput } = useSwapActionHandlers()
   const { auctionDetails, auctionInfoLoading } = useAuctionDetails(auctionIdentifier)
   const { signature } = useSignature(auctionIdentifier, account)
 
@@ -410,14 +409,15 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
               <InterestRateInputPanel
                 account={account}
                 chainId={chainId}
-                disabled={!account}
                 info={interestRateInfo}
-                onUserInterestRateInput={onUserInterestRateInput}
                 price={price}
               />
 
               {!account ? (
-                <ActionButton onClick={toggleWalletModal}>Connect wallet</ActionButton>
+                <>
+                  <ActionButton onClick={toggleWalletModal}>Connect wallet</ActionButton>
+                  <div className="mt-4 text-xs text-[#9F9F9F]">Wallet not connected</div>
+                </>
               ) : (
                 <>
                   <ActionButton disabled={disablePlaceOrder} onClick={handleShowConfirm}>
@@ -443,7 +443,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                   </div>
                 </>
               )}
-              {!account && <div className="mt-4 text-xs text-[#9F9F9F]">Wallet not connected</div>}
             </>
           )}
         </Wrapper>
