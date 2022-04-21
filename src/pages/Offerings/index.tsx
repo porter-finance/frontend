@@ -1,9 +1,8 @@
 import React from 'react'
 
-import { formatUnits } from '@ethersproject/units'
+import dayjs from 'dayjs'
 
 import { ReactComponent as AuctionsIcon } from '../../assets/svg/auctions.svg'
-import { ReactComponent as ConvertIcon } from '../../assets/svg/convert.svg'
 import { ReactComponent as DividerIcon } from '../../assets/svg/divider.svg'
 import { ReactComponent as OTCIcon } from '../../assets/svg/otc.svg'
 import { ActiveStatusPill } from '../../components/auction/OrderbookTable'
@@ -13,45 +12,44 @@ import TokenLogo from '../../components/token/TokenLogo'
 import { useActiveWeb3React } from '../../hooks'
 import { useAllAuctionInfo } from '../../hooks/useAllAuctionInfos'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
-import { abbreviation } from '../../utils/numeral'
 import { AuctionButtonOutline, OTCButtonOutline } from '../Auction'
 
 const columns = [
   {
-    Header: 'Issuer',
-    accessor: 'issuer',
+    Header: 'Offering',
+    accessor: 'offering',
     align: 'flex-start',
     show: true,
     style: { height: '100%', justifyContent: 'center' },
     filter: 'searchInTags',
   },
   {
-    Header: 'Offering',
-    accessor: 'offering',
+    Header: 'Current Price',
+    accessor: 'currentPrice',
     align: 'flex-start',
     show: true,
     style: {},
     filter: 'searchInTags',
   },
   {
-    Header: 'Size',
-    accessor: 'size',
+    Header: 'Fixed APY',
+    accessor: 'fixedAPY',
     align: 'flex-start',
     show: true,
     style: {},
     filter: 'searchInTags',
   },
   {
-    Header: 'Interest Rate',
-    accessor: 'interestRate',
+    Header: 'Maturity Date',
+    accessor: 'maturityDate',
     align: 'flex-start',
     show: true,
     style: {},
     filter: 'searchInTags',
   },
   {
-    Header: 'Price',
-    accessor: 'price',
+    Header: 'Value at maturity',
+    accessor: 'maturityValue',
     align: 'flex-start',
     show: true,
     style: {},
@@ -81,44 +79,52 @@ const Offerings = () => {
 
   useSetNoDefaultNetworkId()
 
-  allAuctions?.forEach((item) => {
+  allAuctions?.forEach((auction) => {
     tableData.push({
-      id: item.id,
-      search: JSON.stringify(item),
-      auctionId: `#${item.id}`,
-      size: `${abbreviation(formatUnits(item?.size, 18))}`,
-      offering:
-        item?.bond?.type === 'convert' ? <ConvertIcon width={15} /> : <AuctionsIcon width={15} />,
-      price: 'Unknown',
-      // no price yet
-      interestRate: calculateInterestRate(null, item.end),
+      id: auction.id,
+      currentPrice: auction.clearing, // TODO use grpahql to get decimal & symbol and convert this
+      search: JSON.stringify(auction),
+      auctionId: `#${auction.id}`,
+      price: `1 ${auction?.bidding?.symbol}`,
+      // TODO graphql should return clearing decimal so i can caclulate interest rate correctly
+      fixedAPY: calculateInterestRate(auction.clearing, auction.end),
       status:
-        new Date(item?.end * 1000) > new Date() ? (
+        new Date(auction?.end * 1000) > new Date() ? (
           <ActiveStatusPill title="Ongoing" />
         ) : (
           <ActiveStatusPill disabled dot={false} title="Ended" />
         ),
-      issuer: (
+      // TODO: graphql should return payment token symbol
+      maturityValue: `1 ${auction.bond.paymentToken}`,
+      maturityDate: (
+        <span className="uppercase">
+          {dayjs(auction?.bond?.maturityDate * 1000)
+            .utc()
+            .format('DD MMM YYYY')}
+        </span>
+      ),
+      offering: (
         <div className="flex flex-row items-center space-x-4">
           <div className="flex">
             <TokenLogo
               size="30px"
               square
               token={{
-                address: item?.bond?.collateralToken,
-                symbol: item?.bond?.symbol,
+                address: auction?.bond?.collateralToken,
+                symbol: auction?.bond?.symbol,
               }}
             />
           </div>
-          <div className="flex flex-col">
-            <p className="text-[#EEEFEB] text-lg items-center inline-flex space-x-3">
-              <span>{item?.bidding?.symbol} Auction</span>
-            </p>
-            <p className="text-[#9F9F9F] text-sm uppercase">{item?.bidding?.symbol}</p>
+          <div className="flex flex-col text-[#EEEFEB] text-lg">
+            <div className="flex items-center space-x-2 capitalize">
+              <span>{auction?.bond?.name.toLowerCase()} Bond</span>
+              <AuctionsIcon width={15} />
+            </div>
+            <p className="text-[#9F9F9F] text-sm uppercase">{auction?.bidding?.symbol}</p>
           </div>
         </div>
       ),
-      url: `/offerings/${item.id}/${chainId}`,
+      url: `/offerings/${auction.id}/${chainId}`,
     })
   })
 
