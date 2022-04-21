@@ -89,7 +89,7 @@ const BondCard = ({ graphInfo }: { graphInfo: AuctionGraphDetail }) => {
         <div className="text-sm text-[#9F9F9F] flex justify-between items-end">
           <div
             className="flex items-center space-x-4 cursor-pointer"
-            onClick={() => navigate(`/products/${graphInfo?.bond?.id}`)}
+            onClick={() => navigate(`/products/${graphInfo?.bond?.id || ''}`)}
           >
             <TokenLogo
               square
