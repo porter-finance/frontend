@@ -10,6 +10,7 @@ export interface BondInfo {
   symbol: string
   owner: string
   type: string
+  amount?: number
   maturityDate: number
   paymentToken: Token
   collateralToken: Token
