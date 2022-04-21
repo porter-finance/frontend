@@ -10,6 +10,7 @@ import { ReactComponent as DividerIcon } from '../../assets/svg/divider.svg'
 import { ReactComponent as WalletIcon } from '../../assets/svg/wallet.svg'
 import { ActiveStatusPill } from '../../components/auction/OrderbookTable'
 import Table from '../../components/auctions/Table'
+import { calculateInterestRate } from '../../components/form/InterestRateInputPanel'
 import TokenLogo from '../../components/token/TokenLogo'
 import { useBondsPortfolio } from '../../hooks/useBondsPortfolio'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
@@ -32,14 +33,6 @@ const columns = [
     filter: 'searchInTags',
   },
   {
-    Header: 'Type',
-    accessor: 'type',
-    align: 'flex-start',
-    show: true,
-    style: {},
-    filter: 'searchInTags',
-  },
-  {
     Header: 'Amount',
     accessor: 'amount',
     align: 'flex-start',
@@ -48,8 +41,24 @@ const columns = [
     filter: 'searchInTags',
   },
   {
+    Header: 'Fixed APY',
+    accessor: 'fixedAPY',
+    align: 'flex-start',
+    show: true,
+    style: {},
+    filter: 'searchInTags',
+  },
+  {
     Header: 'Maturity Date',
     accessor: 'maturityDate',
+    align: 'flex-start',
+    show: true,
+    style: {},
+    filter: 'searchInTags',
+  },
+  {
+    Header: 'Value at Maturity',
+    accessor: 'maturityValue',
     align: 'flex-start',
     show: true,
     style: {},
@@ -78,10 +87,10 @@ const Portfolio = () => {
 
   useSetNoDefaultNetworkId()
 
-  data?.forEach((item) => {
+  data?.forEach((bond) => {
     tableData.push({
-      id: item.id,
-      search: JSON.stringify(item),
+      id: bond.id,
+      search: JSON.stringify(bond),
       issuer: (
         <div className="flex flex-row items-center space-x-4">
           <div className="flex">
@@ -89,42 +98,41 @@ const Portfolio = () => {
               size="30px"
               square
               token={{
-                address: item?.collateralToken,
-                symbol: item?.symbol,
+                address: bond?.collateralToken,
+                symbol: bond?.symbol,
               }}
             />
           </div>
-          <div className="flex flex-col">
-            <p className="text-[#EEEFEB] text-lg items-center inline-flex space-x-3">
-              <span>{item?.name} Auction</span>
-            </p>
-            <p className="text-[#9F9F9F] text-sm uppercase">{item?.symbol}</p>
+          <div className="flex flex-col text-[#EEEFEB] text-lg">
+            <div className="flex items-center space-x-2 capitalize">
+              <span>{bond?.name.toLowerCase()} Bond</span>
+              {bond?.type === 'convert' ? <ConvertIcon width={15} /> : <AuctionsIcon width={15} />}
+            </div>
+            <p className="text-[#9F9F9F] text-sm uppercase">{bond?.symbol}</p>
           </div>
         </div>
       ),
-      // @TODO: not sure if size === amount === maxSupply
-      // This shuold return how many this user owns tho
-      // Do i have to do a new query against Bid to get their bidded size for an auction?
-      amount: `${item?.maxSupply ? abbreviation(formatUnits(item?.maxSupply, 18)) : 0}`,
-
-      type: item?.type === 'convert' ? <ConvertIcon width={15} /> : <AuctionsIcon width={15} />,
-      price: 'Unknown',
-      // no price yet
+      // TODO: This shuold return how many this user owns tho NOT max supply
+      amount: `${bond?.maxSupply ? abbreviation(formatUnits(bond?.maxSupply, 18)) : 0}`,
+      // TODO: graphql should return payment token symbol
+      maturityValue: `1 ${bond.paymentToken}`,
+      // TODO: make this use auction.clearing
+      fixedAPY: calculateInterestRate(10, bond.maturityDate),
       status:
-        new Date() > new Date(item.maturityDate * 1000) ? (
+        new Date() > new Date(bond.maturityDate * 1000) ? (
           <ActiveStatusPill disabled dot={false} title="Matured" />
         ) : (
           <ActiveStatusPill dot={false} title="Active" />
         ),
       maturityDate: (
         <span className="uppercase">
-          {dayjs(item.maturityDate * 1000)
+          {dayjs(bond.maturityDate * 1000)
             .utc()
             .format('DD MMM YYYY')}
         </span>
       ),
 
-      url: `/products/${item.id}`,
+      url: `/products/${bond.id}`,
     })
   })
 
