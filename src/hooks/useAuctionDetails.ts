@@ -97,7 +97,7 @@ export const useAuctionDetails = (
   })
 
   if (error) {
-    logger.error('Error getting useBondDetails info', error)
+    logger.error('Error getting useBond info', error)
   }
 
   const graphInfo = data?.auction

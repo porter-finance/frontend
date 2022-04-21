@@ -11,7 +11,7 @@ import { ActiveStatusPill, TableDesign } from '../../components/auction/Orderboo
 import BondAction from '../../components/bond/BondAction'
 import WarningModal from '../../components/modals/WarningModal'
 import TokenLogo from '../../components/token/TokenLogo'
-import { useBondDetails } from '../../hooks/useBondDetails'
+import { useBond } from '../../hooks/useBond'
 import { useBondExtraDetails } from '../../hooks/useBondExtraDetails'
 import { useIsBondDefaulted } from '../../hooks/useIsBondDefaulted'
 import { useIsBondFullyPaid } from '../../hooks/useIsBondFullyPaid'
@@ -145,7 +145,7 @@ const BondDetail: React.FC = () => {
   const bondIdentifier = useParams()
 
   const extraDetails = useBondExtraDetails(bondIdentifier?.bondId)
-  const { data, loading: isLoading } = useBondDetails(bondIdentifier?.bondId)
+  const { data, loading: isLoading } = useBond(bondIdentifier?.bondId)
   const invalidBond = React.useMemo(() => !bondIdentifier || !data, [bondIdentifier, data])
   const isMatured = new Date() > new Date(data?.maturityDate * 1000)
   const isFullyPaid = !!useIsBondFullyPaid(bondIdentifier?.bondId)
