@@ -66,7 +66,7 @@ const InterestRateInputPanel = ({
       <FieldRowWrapper className="my-4 space-y-3 py-1" {...restProps}>
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            {!account ? '-' : (price * amount).toLocaleString()} {priceToken}
+            {!account ? '-' : `${(price * amount).toLocaleString()} ${priceToken}`}
           </div>
           <div className="space-x-1 flex items-center">
             <FieldRowLabelStyledText>Interest rate</FieldRowLabelStyledText>
@@ -75,7 +75,7 @@ const InterestRateInputPanel = ({
         </div>
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            {!account ? '-' : amount.toLocaleString()} {amountToken}
+            {!account ? '-' : `${amount.toLocaleString()} ${amountToken}`}
           </div>
           <div className="space-x-1 flex items-center">
             <FieldRowLabelStyledText>You receive</FieldRowLabelStyledText>
@@ -84,7 +84,7 @@ const InterestRateInputPanel = ({
         </div>
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            {!account ? '-' : (amount - price * amount).toLocaleString()} {priceToken}
+            {!account ? '-' : `${(amount - price * amount).toLocaleString()} ${priceToken}`}
           </div>
           <div className="space-x-1 flex items-center">
             <FieldRowLabelStyledText>You earn</FieldRowLabelStyledText>
