@@ -59,16 +59,18 @@ const bidsQuery = gql`
   }
 `
 
-export const useParticipatingAuctionBids = (): Maybe<{
+export const useParticipatingAuctionBids = (
+  auctionId?: number,
+): Maybe<{
   bids: BidInfo[]
   error: ApolloError | undefined
 }> => {
-  const { auctionId } = parseURL(useParams<RouteAuctionIdentifier>())
+  const { auctionId: urlAuctionId } = parseURL(useParams<RouteAuctionIdentifier>())
   const { account } = useActiveWeb3React()
 
   const { data, error } = useQuery(bidsQuery, {
     variables: {
-      auctionId,
+      auctionId: auctionId || urlAuctionId,
       account: (account && account?.toLowerCase()) || '0x00',
     },
   })
