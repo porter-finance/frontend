@@ -11,7 +11,7 @@ import { ActiveStatusPill } from '../../components/auction/OrderbookTable'
 import Table from '../../components/auctions/Table'
 import { calculateInterestRate } from '../../components/form/InterestRateInputPanel'
 import TokenLogo from '../../components/token/TokenLogo'
-import { useBonds } from '../../hooks/useBond'
+import { BondInfo, useBonds } from '../../hooks/useBond'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import { ConvertButtonOutline, SimpleButtonOutline } from '../Auction'
 
@@ -71,13 +71,8 @@ const columns = [
   },
 ]
 
-const createTable = (data) => {
-  if (!data) return []
-
-  return data.map((item) => {
-    // TODO: get this from graphql? coingecko?
-    const clearingPrice = 10
-
+const createTable = (data: BondInfo[]) => {
+  return data.map((item: BondInfo) => {
     return {
       id: item.id,
       search: JSON.stringify(item),
@@ -88,8 +83,8 @@ const createTable = (data) => {
               size="30px"
               square
               token={{
-                address: item?.collateralToken,
-                symbol: item?.symbol,
+                address: item.collateralToken.id,
+                symbol: item.symbol,
               }}
             />
           </div>
@@ -103,7 +98,7 @@ const createTable = (data) => {
         </div>
       ),
       // TODO graphql should return clearing decimal so i can caclulate interest rate correctly
-      fixedAPY: calculateInterestRate(clearingPrice, item.maturityDate),
+      fixedAPY: '-',
       maturityValue: `1 ${item.paymentToken.symbol}`,
 
       status:
@@ -127,7 +122,7 @@ const createTable = (data) => {
 
 const Products = () => {
   const { data, loading } = useBonds()
-  const tableData = createTable(data)
+  const tableData = data ? createTable(data) : []
   useSetNoDefaultNetworkId()
 
   return (
