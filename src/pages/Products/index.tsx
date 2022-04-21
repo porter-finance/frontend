@@ -72,10 +72,12 @@ const columns = [
 ]
 
 const createTable = (data: BondInfo[]) => {
-  return data.map((item: BondInfo) => {
+  return data.map((bond: BondInfo) => {
+    const { collateralToken, id, maturityDate, name, paymentToken, symbol, type } = bond
+
     return {
-      id: item.id,
-      search: JSON.stringify(item),
+      id,
+      search: JSON.stringify(bond),
       issuer: (
         <div className="flex flex-row items-center space-x-4">
           <div className="flex">
@@ -83,39 +85,39 @@ const createTable = (data: BondInfo[]) => {
               size="30px"
               square
               token={{
-                address: item.collateralToken.id,
-                symbol: item.symbol,
+                address: collateralToken.id,
+                symbol,
               }}
             />
           </div>
           <div className="flex flex-col text-[#EEEFEB] text-lg">
             <div className="flex items-center space-x-2 capitalize">
-              <span>{item?.name.toLowerCase()} Bond</span>
-              {item?.type === 'convert' ? <ConvertIcon width={15} /> : <AuctionsIcon width={15} />}
+              <span>{name.toLowerCase()} Bond</span>
+              {type === 'convert' ? <ConvertIcon width={15} /> : <AuctionsIcon width={15} />}
             </div>
-            <p className="text-[#9F9F9F] text-sm uppercase">{item?.symbol}</p>
+            <p className="text-[#9F9F9F] text-sm uppercase">{symbol}</p>
           </div>
         </div>
       ),
       // TODO graphql should return clearing decimal so i can caclulate interest rate correctly
       fixedAPY: '-',
-      maturityValue: `1 ${item.paymentToken.symbol}`,
+      maturityValue: `1 ${paymentToken.symbol}`,
 
       status:
-        new Date() > new Date(item.maturityDate * 1000) ? (
+        new Date() > new Date(maturityDate * 1000) ? (
           <ActiveStatusPill disabled dot={false} title="Matured" />
         ) : (
           <ActiveStatusPill dot={false} title="Active" />
         ),
       maturityDate: (
         <span className="uppercase">
-          {dayjs(item.maturityDate * 1000)
+          {dayjs(maturityDate * 1000)
             .utc()
             .format('DD MMM YYYY')}
         </span>
       ),
 
-      url: `/products/${item.id}`,
+      url: `/products/${id}`,
     }
   })
 }
