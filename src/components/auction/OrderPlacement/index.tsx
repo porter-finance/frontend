@@ -190,12 +190,10 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const notApproved = approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING
   const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
   const coversClearingPrice = (price: string | undefined): boolean => {
-    const standardizedPrice = price
-
     const { buyAmountScaled, sellAmountScaled } = convertPriceIntoBuyAndSellAmount(
       derivedAuctionInfo?.auctioningToken,
       derivedAuctionInfo?.biddingToken,
-      standardizedPrice == '-' ? '1' : standardizedPrice,
+      price == '-' ? '1' : price,
       sellAmount,
     )
 
