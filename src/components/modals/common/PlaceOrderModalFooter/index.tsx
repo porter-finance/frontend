@@ -118,7 +118,7 @@ const SwapModalFooter: React.FC<Props> = (props) => {
   return (
     <>
       <Row>
-        <Text>{biddingTokenDisplay} Tokens sold</Text>
+        <Text>{biddingTokenDisplay} Tokens bought</Text>
         <Value>
           <TextNoWrap>{abbreviation(sellAmount, 10)}</TextNoWrap>
           <div>
