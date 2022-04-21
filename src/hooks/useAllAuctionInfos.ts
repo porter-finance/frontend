@@ -13,8 +13,10 @@ export interface AuctionInfo {
   bond: {
     type: string
     name: string
+    paymentToken: string
     collateralToken: string
     symbol: string
+    maturityDate: number
   }
   bidding: {
     id: string
@@ -26,17 +28,19 @@ export interface AuctionInfo {
 
 const auctionsQuery = gql`
   query AllAuctions {
-    auctions(first: 100) {
+    auctions(first: 100, where: { isSellingPorterBond: true }) {
       id
       size
       end
       live
       clearing
       bond {
+        paymentToken
         type
         name
         symbol
         collateralToken
+        maturityDate
       }
       bidding {
         id
