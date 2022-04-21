@@ -6,7 +6,6 @@ import round from 'lodash.round'
 
 import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
 import { Tooltip } from '../../common/Tooltip'
-import { FieldRowInfoProps, InfoType } from '../../pureStyledComponents/FieldRow'
 
 const FieldRowLabelStyledText = styled.span`
   margin-right: 5px;
@@ -31,9 +30,11 @@ const FieldRowWrapper = styled.div<{ error?: boolean }>`
 `
 interface Props {
   account: string
+  amountToken: string
+  priceToken: string
+  amount: number
   chainId: number
-  info?: FieldRowInfoProps
-  price: string
+  price: number
 }
 
 // Interest rate = (1-Price) / Price / (years to maturity)
@@ -50,37 +51,50 @@ export const calculateInterestRate = (price, auctionEndDate) => {
   return isNaN(interestRate) || interestRate === Infinity ? '-' : `${round(interestRate * 100, 2)}%`
 }
 
-const InterestRateInputPanel = (props: Props) => {
-  const { account, info, price, ...restProps } = props
+const InterestRateInputPanel = ({
+  account,
+  amount,
+  amountToken,
+  price,
+  priceToken,
+  ...restProps
+}: Props) => {
   const maturityDate = useBondMaturityForAuction()
-  const error = info?.type === InfoType.error
 
   return (
     <>
-      <FieldRowWrapper className="my-4 space-y-3 py-1" error={error} {...restProps}>
+      <FieldRowWrapper className="my-4 space-y-3 py-1" {...restProps}>
         <div className="flex flex-row justify-between">
-          <div>{!account ? '-' : calculateInterestRate(price, maturityDate)}</div>
+          <div className="text-sm text-[#E0E0E0]">
+            {!account ? '-' : (price * amount).toLocaleString()} {priceToken}
+          </div>
           <div className="space-x-1 flex items-center">
             <FieldRowLabelStyledText>Interest rate</FieldRowLabelStyledText>
             <Tooltip text="Tooltip" />
           </div>
         </div>
         <div className="flex flex-row justify-between">
-          <div>{!account ? '-' : calculateInterestRate(price, maturityDate)}</div>
+          <div className="text-sm text-[#E0E0E0]">
+            {!account ? '-' : amount.toLocaleString()} {amountToken}
+          </div>
           <div className="space-x-1 flex items-center">
             <FieldRowLabelStyledText>You receive</FieldRowLabelStyledText>
             <Tooltip text="Tooltip" />
           </div>
         </div>
         <div className="flex flex-row justify-between">
-          <div>{!account ? '-' : calculateInterestRate(price, maturityDate)}</div>
+          <div className="text-sm text-[#E0E0E0]">
+            {!account ? '-' : (amount - price * amount).toLocaleString()} {priceToken}
+          </div>
           <div className="space-x-1 flex items-center">
             <FieldRowLabelStyledText>You earn</FieldRowLabelStyledText>
             <Tooltip text="Tooltip" />
           </div>
         </div>
         <div className="flex flex-row justify-between">
-          <div>{!account ? '-' : calculateInterestRate(price, maturityDate)}</div>
+          <div className="text-sm text-[#E0E0E0]">
+            {!account ? '-' : calculateInterestRate(price, maturityDate)}
+          </div>
           <div className="space-x-1 flex items-center">
             <FieldRowLabelStyledText>Your APR</FieldRowLabelStyledText>
             <Tooltip text="Tooltip" />
