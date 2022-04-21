@@ -7,7 +7,7 @@ import { useWeb3React } from '@web3-react/core'
 import Dev, { isDev } from '../../components/Dev'
 import { AuctionTimer } from '../../components/auction/AuctionTimer'
 import { ExtraDetailsItem } from '../../components/auction/ExtraDetailsItem'
-import { ActiveStatusPill } from '../../components/auction/OrderbookTable'
+import { ActiveStatusPill, TableDesign } from '../../components/auction/OrderbookTable'
 import BondAction from '../../components/bond/BondAction'
 import WarningModal from '../../components/modals/WarningModal'
 import TokenLogo from '../../components/token/TokenLogo'
@@ -16,6 +16,7 @@ import { useBondExtraDetails } from '../../hooks/useBondExtraDetails'
 import { useIsBondDefaulted } from '../../hooks/useIsBondDefaulted'
 import { useIsBondFullyPaid } from '../../hooks/useIsBondFullyPaid'
 import { useIsBondPartiallyPaid } from '../../hooks/useIsBondPartiallyPaid'
+import { useParticipatingAuctionBids } from '../../hooks/useParticipatingAuctionBids'
 import { useHistoricTokenPrice } from '../../hooks/useTokenPrice'
 import { ConvertButtonOutline, LoadingTwoGrid, SimpleButtonOutline, TwoGridPage } from '../Auction'
 
@@ -46,6 +47,46 @@ const RedeemError = () => (
   </div>
 )
 
+const EmptyConnectWallet = () => (
+  <div className="text-center py-[50px] text-[#696969] space-y-4">
+    <svg
+      className="m-auto"
+      fill="none"
+      height="22"
+      viewBox="0 0 44 22"
+      width="44"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M4.45065 10.9993C4.45065 7.29435 7.46232 4.28268 11.1673 4.28268H19.834V0.166016H11.1673C5.18732 0.166016 0.333984 5.01935 0.333984 10.9993C0.333984 16.9793 5.18732 21.8327 11.1673 21.8327H19.834V17.716H11.1673C7.46232 17.716 4.45065 14.7043 4.45065 10.9993ZM13.334 13.166H30.6673V8.83268H13.334V13.166ZM32.834 0.166016H24.1673V4.28268H32.834C36.539 4.28268 39.5507 7.29435 39.5507 10.9993C39.5507 14.7043 36.539 17.716 32.834 17.716H24.1673V21.8327H32.834C38.814 21.8327 43.6673 16.9793 43.6673 10.9993C43.6673 5.01935 38.814 0.166016 32.834 0.166016Z"
+        fill="white"
+        fillOpacity="0.6"
+      />
+    </svg>
+    <div className="text-base">Connect your wallet to view your position</div>
+  </div>
+)
+
+const EmptyConnected = ({ bondName }) => (
+  <div className="text-center py-[50px] text-[#696969] space-y-4">
+    <svg
+      className="m-auto"
+      fill="none"
+      height="22"
+      viewBox="0 0 44 22"
+      width="44"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M4.45065 10.9993C4.45065 7.29435 7.46232 4.28268 11.1673 4.28268H19.834V0.166016H11.1673C5.18732 0.166016 0.333984 5.01935 0.333984 10.9993C0.333984 16.9793 5.18732 21.8327 11.1673 21.8327H19.834V17.716H11.1673C7.46232 17.716 4.45065 14.7043 4.45065 10.9993ZM13.334 13.166H30.6673V8.83268H13.334V13.166ZM32.834 0.166016H24.1673V4.28268H32.834C36.539 4.28268 39.5507 7.29435 39.5507 10.9993C39.5507 14.7043 36.539 17.716 32.834 17.716H24.1673V21.8327H32.834C38.814 21.8327 43.6673 16.9793 43.6673 10.9993C43.6673 5.01935 38.814 0.166016 32.834 0.166016Z"
+        fill="white"
+        fillOpacity="0.6"
+      />
+    </svg>
+    <div className="text-base">You don&quot;t own any {bondName}</div>
+  </div>
+)
+
 const ConvertError = () => (
   <div className="card card-bordered">
     <div className="card-body">
@@ -61,10 +102,49 @@ const ConvertError = () => (
   </div>
 )
 
+const positionColumns = [
+  {
+    Header: 'Amount',
+    accessor: 'amount',
+  },
+  {
+    Header: 'Issuance price',
+    accessor: 'price',
+  },
+  {
+    Header: 'Fixed APY',
+    accessor: 'fixedAPY',
+  },
+  {
+    Header: 'Maturity Date',
+    accessor: 'maturityDate',
+  },
+  {
+    Header: 'Value at maturity',
+    accessor: 'maturityValue',
+  },
+]
+// TODO Do mapping of positions from gql to the following data structure
+const positionData = Array(10).fill({
+  amount: 750000,
+  price: '0.875 USDC',
+  fixedAPY: '13%',
+  maturityDate: '22 AUG 2022',
+  maturityValue: '750,000 USDC',
+})
+const PositionPanel = ({ positions }) => {
+  return (
+    <div>
+      <TableDesign columns={positionColumns} data={positionData} showConnect />
+    </div>
+  )
+}
+
 const BondDetail: React.FC = () => {
   const { account } = useWeb3React()
   const navigate = useNavigate()
   const bondIdentifier = useParams()
+  const { bids } = useParticipatingAuctionBids()
 
   const extraDetails = useBondExtraDetails(bondIdentifier?.bondId)
   const { data, loading: isLoading } = useBondDetails(bondIdentifier?.bondId)
@@ -75,7 +155,7 @@ const BondDetail: React.FC = () => {
   const isPartiallyPaid = useIsBondPartiallyPaid(bondIdentifier?.bondId)
   const isDefaulted = useIsBondDefaulted(bondIdentifier?.bondId)
   const graphData = useHistoricTokenPrice(data?.collateralToken, 30)
-  console.log({ graphData })
+
   if (isLoading) {
     return (
       <>
@@ -162,6 +242,19 @@ const BondDetail: React.FC = () => {
             <div className="card">
               <div className="card-body">
                 <h2 className="card-title">Graph goes here</h2>
+              </div>
+            </div>
+
+            <div className="card">
+              <div className="card-body">
+                <h2 className="card-title">Your position</h2>
+
+                {/* TODO: extract this component from everywhere, its a nice empty state */}
+                {!account && <EmptyConnectWallet />}
+                {account && !positionData?.length ? <EmptyConnected bondName={data?.name} /> : null}
+                {account && positionData?.length ? (
+                  <PositionPanel positions={positionData} />
+                ) : null}
               </div>
             </div>
           </>
