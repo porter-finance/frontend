@@ -1,38 +1,47 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 
-import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../constants/config'
+import round from 'lodash.round'
+
+import { useActiveWeb3React } from '../../../hooks'
+import { useAuctionBids } from '../../../hooks/useAuctionBids'
 import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
 import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
+import { BidInfo } from '../../../hooks/useParticipatingAuctionBids'
 import {
   AuctionState,
   DerivedAuctionInfo,
   useAllUserOrders,
-  useOrderPlacementState,
 } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
-import { useOrderState } from '../../../state/orders/hooks'
-import { OrderState, OrderStatus } from '../../../state/orders/reducer'
-import { abbreviation } from '../../../utils/numeral'
-import { getInverse } from '../../../utils/prices'
+import { OrderStatus } from '../../../state/orders/reducer'
+import { getTokenDisplay } from '../../../utils'
 import { calculateInterestRate } from '../../form/InterestRateInputPanel'
 import ConfirmationModal from '../../modals/ConfirmationModal'
 import WarningModal from '../../modals/WarningModal'
 import CancelModalFooter from '../../modals/common/CancelModalFooter'
-import { OverflowWrap, TableDesign } from '../OrderbookTable'
+import { BidTransactionLink, OverflowWrap, TableDesign } from '../OrderbookTable'
 
 interface OrdersTableProps {
   auctionIdentifier: AuctionIdentifier
   derivedAuctionInfo: DerivedAuctionInfo
+  bids: BidInfo[]
 }
 
+const pendingText = `Cancelling Order`
+export const orderStatusText = {
+  [OrderStatus.PLACED]: 'Active',
+  [OrderStatus.PENDING]: 'Pending',
+  [OrderStatus.PENDING_CANCELLATION]: 'Cancelling',
+}
 const OrdersTable: React.FC<OrdersTableProps> = (props) => {
   const {
     auctionIdentifier,
     derivedAuctionInfo,
     derivedAuctionInfo: { auctionState },
   } = props
+  const { chainId } = useActiveWeb3React()
   const maturityDate = useBondMaturityForAuction()
-  const orders: OrderState | undefined = useOrderState()
+  const orders = useAuctionBids()
   const cancelOrderCallback = useCancelOrderCallback(
     auctionIdentifier,
     derivedAuctionInfo?.biddingToken,
@@ -44,7 +53,6 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
   const [orderError, setOrderError] = useState<string>()
   const [txHash, setTxHash] = useState<string>('')
   const [orderId, setOrderId] = useState<string>('')
-  const { showPriceInverted } = useOrderPlacementState()
 
   const resetModal = useCallback(() => {
     setPendingConfirmation(true)
@@ -72,25 +80,20 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
     derivedAuctionInfo?.orderCancellationEndDate !== 0
   const orderCancellationEndMilliseconds = derivedAuctionInfo?.orderCancellationEndDate * 1000
 
-  const pendingText = `Cancelling Order`
-  const orderStatusText = {
-    [OrderStatus.PLACED]: 'Placed',
-    [OrderStatus.PENDING]: 'Pending',
-    [OrderStatus.PENDING_CANCELLATION]: 'Cancelling',
-  }
   const now = Math.trunc(Date.now())
-  const ordersEmpty = !orders.orders || orders.orders.length == 0
+  const ordersEmpty = !orders.bids || orders.bids.length == 0
 
   // the array is frozen in strict mode, we will need to copy the array before sorting it
-  const ordersSortered = orders.orders
-    .slice()
-    .sort((orderA, orderB) => Number(orderB.price) - Number(orderA.price))
   const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
   const isOrderCancellationExpired =
     hasLastCancellationDate && now > orderCancellationEndMilliseconds && orderPlacingOnly
   const orderSubmissionFinished =
     auctionState === AuctionState.CLAIMING || auctionState === AuctionState.PRICE_SUBMISSION
   const hideCancelButton = orderPlacingOnly || orderSubmissionFinished
+  const auctioningTokenDisplay = useMemo(
+    () => getTokenDisplay(derivedAuctionInfo?.auctioningToken, chainId),
+    [derivedAuctionInfo?.auctioningToken, chainId],
+  )
 
   useAllUserOrders(auctionIdentifier, derivedAuctionInfo)
   const columns = React.useMemo(
@@ -112,8 +115,8 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
         accessor: 'amount',
       },
       {
-        Header: 'Actions',
-        accessor: 'actions',
+        Header: 'Transaction',
+        accessor: 'transaction',
       },
     ],
     [],
@@ -121,7 +124,11 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
   const data = []
 
   !ordersEmpty &&
-    ordersSortered.forEach((order, i) => {
+    orders.bids.forEach((order, i) => {
+      let statusText = ''
+      if (order.createtx) statusText = orderStatusText[OrderStatus.PLACED]
+      if (!order.createtx) statusText = orderStatusText[OrderStatus.PENDING]
+      if (order.canceltx) statusText = 'Cancelled'
       const status = (
         <div className="pointer-events-none space-x-2 inline-flex items-center px-2 border py-1 border-transparent rounded-full shadow-sm bg-[#5BCD88] hover:none focus:outline-none focus:none">
           <svg
@@ -134,39 +141,41 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
             <circle cx="3.5" cy="3.5" fill="#1E1E1E" opacity="0.5" r="3" />
           </svg>
 
-          <span className="text-xs uppercase font-normal !text-[#1E1E1E]">
-            {orderStatusText[order.status]}
-          </span>
+          <span className="text-xs uppercase font-normal !text-[#1E1E1E]">{statusText}</span>
         </div>
       )
 
-      const price = `${abbreviation(
-        showPriceInverted ? getInverse(order.price, NUMBER_OF_DIGITS_FOR_INVERSION) : order.price,
-      )}`
+      const price = `${round(order.payable, 6)} ${auctioningTokenDisplay}`
 
-      const interest = `${calculateInterestRate(order.price, maturityDate)}`
-      const amount = order.sellAmount
+      const interest = `${calculateInterestRate(order.payable, maturityDate)}`
+      const amount = `${round(order.size, 6)} ${auctioningTokenDisplay}`
 
-      const actions = !hideCancelButton && (
-        <button
-          className="btn btn-outline btn-error normal-case btn-xs font-normal opacity-50 px-3"
-          disabled={isOrderCancellationExpired || order.status === OrderStatus.PENDING_CANCELLATION}
-          onClick={() => {
-            setOrderId(order.id)
-            setShowConfirm(true)
-          }}
-        >
-          Cancel
-        </button>
+      //  TODO: add way to check pending cancellations when they click cancel button
+      const transaction = (
+        <div className="flex flex-row items-center space-x-5">
+          <BidTransactionLink bid={order} />
+          {!hideCancelButton && (
+            <button
+              className="btn btn-outline btn-error normal-case btn-xs font-normal opacity-50 px-3"
+              disabled={isOrderCancellationExpired}
+              onClick={() => {
+                setOrderId(order.id)
+                setShowConfirm(true)
+              }}
+            >
+              Cancel
+            </button>
+          )}
+        </div>
       )
 
-      data.push({ status, price, interest, amount, actions })
+      data.push({ status, price, interest, amount, transaction })
     })
 
   return (
     <>
       <OverflowWrap>
-        <TableDesign columns={columns} data={data} />
+        <TableDesign columns={columns} data={data} showConnect />
       </OverflowWrap>
       <ConfirmationModal
         attemptingTxn={attemptingTxn}

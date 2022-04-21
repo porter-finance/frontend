@@ -13,11 +13,14 @@ export function useSettleAuction(address: string) {
   const { account, chainId, library } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
 
-  if (!account || !chainId || !library) throw new Error('missing deps')
-
-  const easyAuctionContract = getEasyAuctionContract(chainId as ChainId, library, account)
-
   const settleAuction = useCallback(async (): Promise<ContractTransaction | undefined> => {
+    if (!account || !chainId || !library) {
+      logger.error('missing deps')
+      return
+    }
+
+    const easyAuctionContract = getEasyAuctionContract(chainId as ChainId, library, account)
+
     if (!easyAuctionContract) {
       logger.error('missing contract')
       return
@@ -35,7 +38,7 @@ export function useSettleAuction(address: string) {
 
     addTransaction(response)
     return response
-  }, [addTransaction, address, easyAuctionContract])
+  }, [addTransaction, address, chainId, account, library])
 
   return { settleAuction }
 }
