@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components'
 
 import { Fraction, TokenAmount } from '@josojo/honeyswap-sdk'
 import dayjs from 'dayjs'
+import useGeoLocation from 'react-ipgeolocation'
 
 import kycLinks from '../../../assets/links/kycLinks.json'
 import { ReactComponent as PrivateIcon } from '../../../assets/svg/private.svg'
@@ -91,6 +92,8 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     derivedAuctionInfo: { auctionState },
     derivedAuctionInfo,
   } = props
+  const location = useGeoLocation()
+  const disabledCountry = location?.country === 'US'
   const { chainId } = auctionIdentifier
   const { account, chainId: chainIdFromWeb3 } = useActiveWeb3React()
   const orders: OrderState | undefined = useOrderState()
@@ -271,7 +274,8 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   )
 
   const disablePlaceOrder =
-    (errorAmount ||
+    disabledCountry ||
+    ((errorAmount ||
       errorPrice ||
       errorInterestRate ||
       notApproved ||
@@ -280,7 +284,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
       showConfirm ||
       sellAmount === '' ||
       price === '') &&
-    true
+      true)
 
   const isWrappable =
     biddingTokenBalance &&
