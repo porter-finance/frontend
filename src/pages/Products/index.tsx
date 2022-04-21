@@ -105,6 +105,7 @@ const Products = () => {
           </div>
         </div>
       ),
+      // TODO graphql should return clearing decimal so i can caclulate interest rate correctly
       fixedAPY: calculateInterestRate(clearingPrice, item.maturityDate),
       // TODO: graphql should return payment token symbol
       maturityValue: `1 ${item.paymentToken}`,
