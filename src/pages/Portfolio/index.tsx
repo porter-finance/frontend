@@ -1,20 +1,11 @@
 import React from 'react'
 import { createGlobalStyle } from 'styled-components'
 
-import { formatUnits } from '@ethersproject/units'
-import dayjs from 'dayjs'
-
-import { ReactComponent as AuctionsIcon } from '../../assets/svg/auctions.svg'
-import { ReactComponent as ConvertIcon } from '../../assets/svg/convert.svg'
 import { ReactComponent as DividerIcon } from '../../assets/svg/divider.svg'
 import { ReactComponent as WalletIcon } from '../../assets/svg/wallet.svg'
-import { ActiveStatusPill } from '../../components/auction/OrderbookTable'
 import Table from '../../components/auctions/Table'
-import { calculateInterestRate } from '../../components/form/InterestRateInputPanel'
-import TokenLogo from '../../components/token/TokenLogo'
 import { useBondsPortfolio } from '../../hooks/useBondsPortfolio'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
-import { abbreviation } from '../../utils/numeral'
 import { ConvertButtonOutline, SimpleButtonOutline } from '../Auction'
 import { columns, createTable } from '../Products'
 
