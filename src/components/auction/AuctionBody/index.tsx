@@ -143,7 +143,7 @@ const AuctionBody = (props: AuctionBodyProps) => {
                 derivedAuctionInfo={derivedAuctionInfo}
               />
 
-              {graphInfo?.isSellingPorterBond && <BondCard graphInfo={graphInfo} />}
+              {graphInfo && <BondCard graphInfo={graphInfo} />}
 
               <OrderBookContainer
                 auctionIdentifier={auctionIdentifier}
