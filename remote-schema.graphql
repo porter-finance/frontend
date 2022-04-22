@@ -19,8 +19,10 @@ type Account {
     bids(first: Int = 100, orderBy: Bid_orderBy, orderDirection: OrderDirection, skip: Int = 0, where: Bid_filter): [Bid!]
     "Account address"
     id: ID!
+    "List of TokenBalance objects"
+    tokenBalances(first: Int = 100, orderBy: TokenBalance_orderBy, orderDirection: OrderDirection, skip: Int = 0, where: TokenBalance_filter): [TokenBalance!]
     "User ID assigned by Gnosis Auction contract"
-    userid: String!
+    userid: String
 }
 
 type Auction {
@@ -71,23 +73,31 @@ type Bid {
 }
 
 type Bond {
+    amountUnpaid: BigInt!
     collateralRatio: BigInt!
-    collateralToken: Bytes!
+    collateralToken: Token!
+    collateralTokenAmount: BigInt!
     convertibleRatio: BigInt!
+    convertibleTokenAmount: BigInt!
+    decimals: Int!
     id: ID!
     maturityDate: BigInt!
     maxSupply: BigInt!
     name: String!
     owner: Bytes!
-    paymentToken: Bytes!
+    paymentToken: Token!
+    state: BondState
     symbol: String!
+    tokenBalances(first: Int = 100, orderBy: TokenBalance_orderBy, orderDirection: OrderDirection, skip: Int = 0, where: TokenBalance_filter): [TokenBalance!]!
     type: BondType
 }
 
-type Factory {
+type BondFactory {
     bondCount: BigInt!
+    bonds(first: Int = 100, orderBy: Bond_orderBy, orderDirection: OrderDirection, skip: Int = 0, where: Bond_filter): [Bond!]
     id: ID!
-    isAllowListEnabled: Boolean!
+    isIssuerAllowListEnabled: Boolean!
+    isTokenAllowListEnabled: Boolean!
 }
 
 type Query {
@@ -154,6 +164,24 @@ type Query {
         "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."
         subgraphError: _SubgraphErrorPolicy_! = deny
     ): Bond
+    bondFactories(
+        "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int = 100,
+        orderBy: BondFactory_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int = 0,
+        "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."
+        subgraphError: _SubgraphErrorPolicy_! = deny,
+        where: BondFactory_filter
+    ): [BondFactory!]!
+    bondFactory(
+        "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!,
+        "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."
+        subgraphError: _SubgraphErrorPolicy_! = deny
+    ): BondFactory
     bonds(
         "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."
         block: Block_height,
@@ -165,24 +193,6 @@ type Query {
         subgraphError: _SubgraphErrorPolicy_! = deny,
         where: Bond_filter
     ): [Bond!]!
-    factories(
-        "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."
-        block: Block_height,
-        first: Int = 100,
-        orderBy: Factory_orderBy,
-        orderDirection: OrderDirection,
-        skip: Int = 0,
-        "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."
-        subgraphError: _SubgraphErrorPolicy_! = deny,
-        where: Factory_filter
-    ): [Factory!]!
-    factory(
-        "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."
-        block: Block_height,
-        id: ID!,
-        "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."
-        subgraphError: _SubgraphErrorPolicy_! = deny
-    ): Factory
     token(
         "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."
         block: Block_height,
@@ -190,6 +200,24 @@ type Query {
         "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."
         subgraphError: _SubgraphErrorPolicy_! = deny
     ): Token
+    tokenBalance(
+        "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!,
+        "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."
+        subgraphError: _SubgraphErrorPolicy_! = deny
+    ): TokenBalance
+    tokenBalances(
+        "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int = 100,
+        orderBy: TokenBalance_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int = 0,
+        "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."
+        subgraphError: _SubgraphErrorPolicy_! = deny,
+        where: TokenBalance_filter
+    ): [TokenBalance!]!
     tokens(
         "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."
         block: Block_height,
@@ -267,6 +295,24 @@ type Subscription {
         "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."
         subgraphError: _SubgraphErrorPolicy_! = deny
     ): Bond
+    bondFactories(
+        "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int = 100,
+        orderBy: BondFactory_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int = 0,
+        "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."
+        subgraphError: _SubgraphErrorPolicy_! = deny,
+        where: BondFactory_filter
+    ): [BondFactory!]!
+    bondFactory(
+        "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!,
+        "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."
+        subgraphError: _SubgraphErrorPolicy_! = deny
+    ): BondFactory
     bonds(
         "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."
         block: Block_height,
@@ -278,24 +324,6 @@ type Subscription {
         subgraphError: _SubgraphErrorPolicy_! = deny,
         where: Bond_filter
     ): [Bond!]!
-    factories(
-        "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."
-        block: Block_height,
-        first: Int = 100,
-        orderBy: Factory_orderBy,
-        orderDirection: OrderDirection,
-        skip: Int = 0,
-        "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."
-        subgraphError: _SubgraphErrorPolicy_! = deny,
-        where: Factory_filter
-    ): [Factory!]!
-    factory(
-        "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."
-        block: Block_height,
-        id: ID!,
-        "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."
-        subgraphError: _SubgraphErrorPolicy_! = deny
-    ): Factory
     token(
         "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."
         block: Block_height,
@@ -303,6 +331,24 @@ type Subscription {
         "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."
         subgraphError: _SubgraphErrorPolicy_! = deny
     ): Token
+    tokenBalance(
+        "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!,
+        "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."
+        subgraphError: _SubgraphErrorPolicy_! = deny
+    ): TokenBalance
+    tokenBalances(
+        "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int = 100,
+        orderBy: TokenBalance_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int = 0,
+        "Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."
+        subgraphError: _SubgraphErrorPolicy_! = deny,
+        where: TokenBalance_filter
+    ): [TokenBalance!]!
     tokens(
         "The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."
         block: Block_height,
@@ -325,6 +371,13 @@ type Token {
     name: String!
     "Token symbol"
     symbol: String!
+}
+
+type TokenBalance {
+    account: Account!
+    amount: BigInt!
+    bond: Bond!
+    id: ID!
 }
 
 type _Block_ {
@@ -353,6 +406,7 @@ type _Meta_ {
 enum Account_orderBy {
     bids
     id
+    tokenBalances
     userid
 }
 
@@ -383,35 +437,57 @@ enum Bid_orderBy {
     timestamp
 }
 
+enum BondFactory_orderBy {
+    bondCount
+    bonds
+    id
+    isIssuerAllowListEnabled
+    isTokenAllowListEnabled
+}
+
+enum BondState {
+    active
+    defaulted
+    paid
+    paidEarly
+}
+
 enum BondType {
     convert
     simple
 }
 
 enum Bond_orderBy {
+    amountUnpaid
     collateralRatio
     collateralToken
+    collateralTokenAmount
     convertibleRatio
+    convertibleTokenAmount
+    decimals
     id
     maturityDate
     maxSupply
     name
     owner
     paymentToken
+    state
     symbol
+    tokenBalances
     type
-}
-
-enum Factory_orderBy {
-    bondCount
-    id
-    isAllowListEnabled
 }
 
 "Defines the order direction, either ascending or descending"
 enum OrderDirection {
     asc
     desc
+}
+
+enum TokenBalance_orderBy {
+    account
+    amount
+    bond
+    id
 }
 
 enum Token_orderBy {
@@ -687,9 +763,52 @@ input Block_height {
     number_gte: Int
 }
 
+input BondFactory_filter {
+    "Filter for the block changed event."
+    _change_block: BlockChangedFilter
+    bondCount: BigInt
+    bondCount_gt: BigInt
+    bondCount_gte: BigInt
+    bondCount_in: [BigInt!]
+    bondCount_lt: BigInt
+    bondCount_lte: BigInt
+    bondCount_not: BigInt
+    bondCount_not_in: [BigInt!]
+    bonds: [String!]
+    bonds_contains: [String!]
+    bonds_contains_nocase: [String!]
+    bonds_not: [String!]
+    bonds_not_contains: [String!]
+    bonds_not_contains_nocase: [String!]
+    id: ID
+    id_gt: ID
+    id_gte: ID
+    id_in: [ID!]
+    id_lt: ID
+    id_lte: ID
+    id_not: ID
+    id_not_in: [ID!]
+    isIssuerAllowListEnabled: Boolean
+    isIssuerAllowListEnabled_in: [Boolean!]
+    isIssuerAllowListEnabled_not: Boolean
+    isIssuerAllowListEnabled_not_in: [Boolean!]
+    isTokenAllowListEnabled: Boolean
+    isTokenAllowListEnabled_in: [Boolean!]
+    isTokenAllowListEnabled_not: Boolean
+    isTokenAllowListEnabled_not_in: [Boolean!]
+}
+
 input Bond_filter {
     "Filter for the block changed event."
     _change_block: BlockChangedFilter
+    amountUnpaid: BigInt
+    amountUnpaid_gt: BigInt
+    amountUnpaid_gte: BigInt
+    amountUnpaid_in: [BigInt!]
+    amountUnpaid_lt: BigInt
+    amountUnpaid_lte: BigInt
+    amountUnpaid_not: BigInt
+    amountUnpaid_not_in: [BigInt!]
     collateralRatio: BigInt
     collateralRatio_gt: BigInt
     collateralRatio_gte: BigInt
@@ -698,12 +817,34 @@ input Bond_filter {
     collateralRatio_lte: BigInt
     collateralRatio_not: BigInt
     collateralRatio_not_in: [BigInt!]
-    collateralToken: Bytes
-    collateralToken_contains: Bytes
-    collateralToken_in: [Bytes!]
-    collateralToken_not: Bytes
-    collateralToken_not_contains: Bytes
-    collateralToken_not_in: [Bytes!]
+    collateralToken: String
+    collateralTokenAmount: BigInt
+    collateralTokenAmount_gt: BigInt
+    collateralTokenAmount_gte: BigInt
+    collateralTokenAmount_in: [BigInt!]
+    collateralTokenAmount_lt: BigInt
+    collateralTokenAmount_lte: BigInt
+    collateralTokenAmount_not: BigInt
+    collateralTokenAmount_not_in: [BigInt!]
+    collateralToken_contains: String
+    collateralToken_contains_nocase: String
+    collateralToken_ends_with: String
+    collateralToken_ends_with_nocase: String
+    collateralToken_gt: String
+    collateralToken_gte: String
+    collateralToken_in: [String!]
+    collateralToken_lt: String
+    collateralToken_lte: String
+    collateralToken_not: String
+    collateralToken_not_contains: String
+    collateralToken_not_contains_nocase: String
+    collateralToken_not_ends_with: String
+    collateralToken_not_ends_with_nocase: String
+    collateralToken_not_in: [String!]
+    collateralToken_not_starts_with: String
+    collateralToken_not_starts_with_nocase: String
+    collateralToken_starts_with: String
+    collateralToken_starts_with_nocase: String
     convertibleRatio: BigInt
     convertibleRatio_gt: BigInt
     convertibleRatio_gte: BigInt
@@ -712,6 +853,22 @@ input Bond_filter {
     convertibleRatio_lte: BigInt
     convertibleRatio_not: BigInt
     convertibleRatio_not_in: [BigInt!]
+    convertibleTokenAmount: BigInt
+    convertibleTokenAmount_gt: BigInt
+    convertibleTokenAmount_gte: BigInt
+    convertibleTokenAmount_in: [BigInt!]
+    convertibleTokenAmount_lt: BigInt
+    convertibleTokenAmount_lte: BigInt
+    convertibleTokenAmount_not: BigInt
+    convertibleTokenAmount_not_in: [BigInt!]
+    decimals: Int
+    decimals_gt: Int
+    decimals_gte: Int
+    decimals_in: [Int!]
+    decimals_lt: Int
+    decimals_lte: Int
+    decimals_not: Int
+    decimals_not_in: [Int!]
     id: ID
     id_gt: ID
     id_gte: ID
@@ -762,12 +919,30 @@ input Bond_filter {
     owner_not: Bytes
     owner_not_contains: Bytes
     owner_not_in: [Bytes!]
-    paymentToken: Bytes
-    paymentToken_contains: Bytes
-    paymentToken_in: [Bytes!]
-    paymentToken_not: Bytes
-    paymentToken_not_contains: Bytes
-    paymentToken_not_in: [Bytes!]
+    paymentToken: String
+    paymentToken_contains: String
+    paymentToken_contains_nocase: String
+    paymentToken_ends_with: String
+    paymentToken_ends_with_nocase: String
+    paymentToken_gt: String
+    paymentToken_gte: String
+    paymentToken_in: [String!]
+    paymentToken_lt: String
+    paymentToken_lte: String
+    paymentToken_not: String
+    paymentToken_not_contains: String
+    paymentToken_not_contains_nocase: String
+    paymentToken_not_ends_with: String
+    paymentToken_not_ends_with_nocase: String
+    paymentToken_not_in: [String!]
+    paymentToken_not_starts_with: String
+    paymentToken_not_starts_with_nocase: String
+    paymentToken_starts_with: String
+    paymentToken_starts_with_nocase: String
+    state: BondState
+    state_in: [BondState!]
+    state_not: BondState
+    state_not_in: [BondState!]
     symbol: String
     symbol_contains: String
     symbol_contains_nocase: String
@@ -794,17 +969,57 @@ input Bond_filter {
     type_not_in: [BondType!]
 }
 
-input Factory_filter {
+input TokenBalance_filter {
     "Filter for the block changed event."
     _change_block: BlockChangedFilter
-    bondCount: BigInt
-    bondCount_gt: BigInt
-    bondCount_gte: BigInt
-    bondCount_in: [BigInt!]
-    bondCount_lt: BigInt
-    bondCount_lte: BigInt
-    bondCount_not: BigInt
-    bondCount_not_in: [BigInt!]
+    account: String
+    account_contains: String
+    account_contains_nocase: String
+    account_ends_with: String
+    account_ends_with_nocase: String
+    account_gt: String
+    account_gte: String
+    account_in: [String!]
+    account_lt: String
+    account_lte: String
+    account_not: String
+    account_not_contains: String
+    account_not_contains_nocase: String
+    account_not_ends_with: String
+    account_not_ends_with_nocase: String
+    account_not_in: [String!]
+    account_not_starts_with: String
+    account_not_starts_with_nocase: String
+    account_starts_with: String
+    account_starts_with_nocase: String
+    amount: BigInt
+    amount_gt: BigInt
+    amount_gte: BigInt
+    amount_in: [BigInt!]
+    amount_lt: BigInt
+    amount_lte: BigInt
+    amount_not: BigInt
+    amount_not_in: [BigInt!]
+    bond: String
+    bond_contains: String
+    bond_contains_nocase: String
+    bond_ends_with: String
+    bond_ends_with_nocase: String
+    bond_gt: String
+    bond_gte: String
+    bond_in: [String!]
+    bond_lt: String
+    bond_lte: String
+    bond_not: String
+    bond_not_contains: String
+    bond_not_contains_nocase: String
+    bond_not_ends_with: String
+    bond_not_ends_with_nocase: String
+    bond_not_in: [String!]
+    bond_not_starts_with: String
+    bond_not_starts_with_nocase: String
+    bond_starts_with: String
+    bond_starts_with_nocase: String
     id: ID
     id_gt: ID
     id_gte: ID
@@ -813,10 +1028,6 @@ input Factory_filter {
     id_lte: ID
     id_not: ID
     id_not_in: [ID!]
-    isAllowListEnabled: Boolean
-    isAllowListEnabled_in: [Boolean!]
-    isAllowListEnabled_not: Boolean
-    isAllowListEnabled_not_in: [Boolean!]
 }
 
 input Token_filter {

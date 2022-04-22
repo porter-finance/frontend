@@ -11,7 +11,7 @@ import { ActiveStatusPill, TableDesign } from '../../components/auction/Orderboo
 import BondAction from '../../components/bond/BondAction'
 import WarningModal from '../../components/modals/WarningModal'
 import TokenLogo from '../../components/token/TokenLogo'
-import { useBondDetails } from '../../hooks/useBondDetails'
+import { useBond } from '../../hooks/useBond'
 import { useBondExtraDetails } from '../../hooks/useBondExtraDetails'
 import { useIsBondDefaulted } from '../../hooks/useIsBondDefaulted'
 import { useIsBondFullyPaid } from '../../hooks/useIsBondFullyPaid'
@@ -145,7 +145,7 @@ const BondDetail: React.FC = () => {
   const bondIdentifier = useParams()
 
   const extraDetails = useBondExtraDetails(bondIdentifier?.bondId)
-  const { bond, loading: isLoading } = useBondDetails(bondIdentifier?.bondId)
+  const { data: bond, loading: isLoading } = useBond(bondIdentifier?.bondId)
   const invalidBond = React.useMemo(() => !bondIdentifier || !bond, [bondIdentifier, bond])
   const isMatured = new Date() > new Date(bond?.maturityDate * 1000)
   const isFullyPaid = !!useIsBondFullyPaid(bondIdentifier?.bondId)
@@ -153,7 +153,7 @@ const BondDetail: React.FC = () => {
   const isPartiallyPaid = useIsBondPartiallyPaid(bondIdentifier?.bondId)
   const isDefaulted = useIsBondDefaulted(bondIdentifier?.bondId)
   // TODO write the grpah using this data
-  const graphData = useHistoricTokenPrice(bond?.collateralToken, 30)
+  const graphData = useHistoricTokenPrice(bond?.collateralToken.id, 30)
   if (isLoading) {
     return (
       <>
@@ -189,7 +189,7 @@ const BondDetail: React.FC = () => {
               size="60px"
               square
               token={{
-                address: bond?.collateralToken,
+                address: bond?.collateralToken.id,
                 symbol: bond?.symbol,
               }}
             />

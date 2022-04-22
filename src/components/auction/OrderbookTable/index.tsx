@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 
-import round from 'lodash.round'
+import { round } from 'lodash'
 import { usePagination, useTable } from 'react-table'
 
 import { useActiveWeb3React } from '../../../hooks'

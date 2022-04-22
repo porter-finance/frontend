@@ -1,70 +1,45 @@
-import { useEffect, useState } from 'react'
-
 import { formatUnits } from '@ethersproject/units'
-import { useTokenBalance } from '@usedapp/core'
-import { useWeb3React } from '@web3-react/core'
 import dayjs from 'dayjs'
-import round from 'lodash.round'
+import { round } from 'lodash'
 
-import { isDev } from '../components/Dev'
 import { Props as ExtraDetailsItemProps } from '../components/auction/ExtraDetailsItem'
-import { useFetchTokenByAddress } from '../state/user/hooks'
-import { useTokenByAddressAndAutomaticallyAdd } from './Tokens'
-import { useBondDetails } from './useBondDetails'
+import { useBond } from './useBond'
 import { useTokenPrice } from './useTokenPrice'
 
 export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => {
-  const { chainId } = useWeb3React()
-  const fetchTok = useFetchTokenByAddress()
+  const { data: bond } = useBond(bondId)
+  const isConvertBond = bond?.type === 'convert'
+  const { data: collateralTokenPrice } = useTokenPrice(bond?.collateralToken.id)
+  // TODO - use this value, its value should always be close to 1 tho since its a stable
+  // const { data: paymentTokenPrice } = useTokenPrice(bond?.paymentToken.id)
+  const paymentTokenPrice = 1
 
-  const { bond } = useBondDetails(bondId)
-  const isConvertBond = isDev ? true : bond?.type === 'convert'
-  const paymentToken = useTokenByAddressAndAutomaticallyAdd(bond?.paymentToken)
-  const [collateralTokenInfo, setCollateralTokenInfo] = useState(null)
-  const [paymentTokenInfo, setPaymentTokenInfo] = useState(null)
-  const [bondTokenInfo, setBondTokenInfo] = useState(null)
-  const { data: collateralTokenPrice } = useTokenPrice(bond?.collateralToken)
-  const { data: paymentTokenPrice } = useTokenPrice(bond?.paymentToken)
+  const collateralPerBond = bond ? formatUnits(bond.collateralRatio, bond.decimals) : 0
+  const convertiblePerBond = bond ? formatUnits(bond.convertibleRatio, bond.decimals) : 0
+  const collateralValue = round(Number(collateralPerBond) * collateralTokenPrice, 2)
+  const convertibleValue = round(Number(convertiblePerBond) * collateralTokenPrice, 2)
 
-  const paymentTokenBalance = useTokenBalance(paymentToken?.token?.address, bondId, {
-    chainId,
-  })
-  useEffect(() => {
-    fetchTok(bond?.collateralToken).then(setCollateralTokenInfo)
-    fetchTok(bond?.id).then(setBondTokenInfo)
-    fetchTok(bond?.paymentToken).then(setPaymentTokenInfo)
-  }, [fetchTok, bond?.id, bond?.collateralToken, bond?.paymentToken])
+  const collateralizationRatio = round((collateralValue / paymentTokenPrice) * 100, 2)
 
-  const collateralTokenBalance = useTokenBalance(bond?.collateralToken, bondId, {
-    chainId,
-  })
-
-  const collateralDisplay = Number(
-    formatUnits(collateralTokenBalance || 0, collateralTokenInfo?.decimals),
-  )
-  const strikePrice = collateralDisplay > 0 ? round(1 / collateralDisplay, 2) : 0
+  // const strikePrice = collateralDisplay > 0 ? round(1 / collateralDisplay, 2) : 0
 
   return [
     {
       title: 'Face value',
-      value: `1 ${paymentToken?.token?.symbol}`,
+      value: `1 ${bond?.paymentToken.symbol}`,
       tooltip: 'Tooltip',
     },
     {
       title: 'Collateral tokens',
-      value: `${round(
-        formatUnits(collateralTokenBalance || 0, collateralTokenInfo?.decimals),
-        2,
-      )} ${collateralTokenInfo?.symbol || ''}`,
-      hint: `($${collateralTokenPrice})`,
+      value: `${collateralPerBond} ${bond?.collateralToken.symbol || ''}`,
+      hint: `($${collateralValue})`,
       tooltip: 'Tooltip',
     },
     {
       title: 'Convertible tokens',
-      value: `${round(formatUnits(paymentTokenBalance || 0, paymentTokenInfo?.decimals), 2)} ${
-        collateralTokenInfo?.symbol || ''
-      }`,
-      hint: `($${paymentTokenPrice})`,
+      value: `${convertiblePerBond} ${bond?.collateralToken.symbol || ''}`,
+      hint: `($${convertibleValue})`,
+
       tooltip: 'Tooltip',
       show: isConvertBond,
     },
@@ -76,14 +51,13 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
     },
     {
       title: 'Collateralization ratio',
-      value: `${
-        round(Number(formatUnits(bond?.collateralRatio || 0, bondTokenInfo?.decimals)), 2) * 100
-      }%`,
+      value: `${collateralizationRatio}%`,
       tooltip: 'Tooltip',
     },
     {
       title: 'Call strike price',
-      value: `${strikePrice} USDC/${collateralTokenInfo?.symbol || ''}`,
+      // value: `${strikePrice} USDC/${collateralTokenInfo?.symbol || ''}`,
+      value: '-',
       tooltip: 'Tooltip',
       show: isConvertBond,
     },

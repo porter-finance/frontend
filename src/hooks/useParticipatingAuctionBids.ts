@@ -25,10 +25,10 @@ export interface BidInfo {
   }
 
   // Quantity of bonds
-  size: string
+  size: number
 
   // Total amount of collateral paid by bidder
-  payable: string
+  payable: number
 
   // Encoding of user ID, bid buy amount and bid sell amount
   bytes: string
