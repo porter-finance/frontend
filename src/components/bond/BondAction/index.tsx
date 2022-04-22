@@ -4,7 +4,6 @@ import styled from 'styled-components'
 
 import { formatUnits, parseUnits } from '@ethersproject/units'
 import { TokenAmount } from '@josojo/honeyswap-sdk'
-import { useTokenBalance } from '@usedapp/core'
 import { useWeb3React } from '@web3-react/core'
 import dayjs from 'dayjs'
 
@@ -91,17 +90,17 @@ const BondAction = ({
   const params = useParams()
 
   const bondId = overwriteBondId || params?.bondId
-  const { data: derivedBondInfo, loading: isLoading } = useBond(bondId)
+  const { data: bondInfo, loading: isLoading } = useBond(bondId, account)
   const [bondTokenInfo, setBondTokenInfo] = useState(null)
   const [collateralTokenInfo, setCollateralTokenInfo] = useState(null)
   const [paymentTokenInfo, setPaymentTokenInfo] = useState(null)
 
-  let bondTokenBalance = useTokenBalance(derivedBondInfo?.id, account, {
-    chainId,
-  })
+  // doesn't seem to work?
+  const bondTokenBalance = bondInfo?.tokenBalances?.[0]?.amount || 0
+  console.log({ bondTokenBalance, bondInfo, field: bondInfo?.tokenBalances?.[0]?.amount })
 
   const isFullyPaid = !!useIsBondFullyPaid(bondId)
-  const isMatured = derivedBondInfo && new Date() > new Date(derivedBondInfo.maturityDate * 1000)
+  const isMatured = bondInfo && new Date() > new Date(bondInfo.maturityDate * 1000)
 
   const [isOwner, setIsOwner] = useState(false)
   const [bondsToRedeem, setBondsToRedeem] = useState('0.00')
@@ -121,9 +120,9 @@ const BondAction = ({
     if (componentType === BondActions.Mint) return collateralTokenInfo
   }, [componentType, collateralTokenInfo, bondTokenInfo, isConvertComponent])
 
-  if (isDev && bondTokenBalance?.lte(0)) {
-    bondTokenBalance = bondTokenBalance.add(20).pow(18)
-  }
+  // if (isDev && bondTokenBalance?.lte(0)) {
+  //   bondTokenBalance = bondTokenBalance.add(20).pow(18)
+  // }
 
   const tokenAmount = useMemo(() => {
     const tokenInfo = tokenToAction
@@ -149,7 +148,6 @@ const BondAction = ({
   const { previewConvert, previewMint, previewRedeem } = usePreviewBond(bondId)
   const toggleWalletModal = useWalletModalToggle()
 
-  const [totalBalance, setTotalBalance] = useState('0')
   const isApproved = approval !== ApprovalState.NOT_APPROVED && approval !== ApprovalState.PENDING
 
   const onUserSellAmountInput = (theInput) => {
@@ -238,47 +236,47 @@ const BondAction = ({
   }
 
   useEffect(() => {
-    if (!derivedBondInfo || !account || (!bondTokenInfo && bondContract)) return
+    if (!bondInfo || !account || (!bondTokenInfo && bondContract)) return
 
     if (componentType === BondActions.Mint) {
       return
     }
 
-    setTotalBalance(formatUnits(bondTokenBalance || 0, bondTokenInfo?.decimals))
+    // setTotalBalance(formatUnits(bondTokenBalance || 0, bondTokenInfo?.decimals))
   }, [
     componentType,
     bondTokenBalance,
-    derivedBondInfo,
+    bondInfo,
     account,
     bondContract,
     bondTokenInfo,
     attemptingTxn,
   ])
 
-  const invalidBond = useMemo(() => !bondId || !derivedBondInfo, [bondId, derivedBondInfo])
+  const invalidBond = useMemo(() => !bondId || !bondInfo, [bondId, bondInfo])
 
   useEffect(() => {
     const fetchData = async () => {
       if (componentType !== BondActions.Mint) return
       const maxSupply = await bondContract.maxSupply()
       const totalSupply = await bondContract.totalSupply()
-      setTotalBalance(formatUnits(maxSupply.sub(totalSupply) || 0, bondTokenInfo?.decimals))
+      // setTotalBalance(formatUnits(maxSupply.sub(totalSupply) || 0, bondTokenInfo?.decimals))
     }
 
     fetchData()
   }, [componentType, bondContract, bondTokenInfo])
 
   useEffect(() => {
-    if (!isLoading && !invalidBond && derivedBondInfo) {
-      setIsOwner(derivedBondInfo?.owner.toLowerCase() === account?.toLowerCase())
+    if (!isLoading && !invalidBond && bondInfo) {
+      setIsOwner(bondInfo?.owner.toLowerCase() === account?.toLowerCase())
 
       fetchTok(bondId).then(setBondTokenInfo)
-      fetchTok(derivedBondInfo?.collateralToken.id).then(setCollateralTokenInfo)
+      fetchTok(bondInfo?.collateralToken.id).then(setCollateralTokenInfo)
       if (componentType === BondActions.Redeem) {
-        fetchTok(derivedBondInfo?.paymentToken.id).then(setPaymentTokenInfo)
+        fetchTok(bondInfo?.paymentToken.id).then(setPaymentTokenInfo)
       }
     }
-  }, [componentType, derivedBondInfo, isLoading, invalidBond, account, fetchTok, bondId])
+  }, [componentType, bondInfo, isLoading, invalidBond, account, fetchTok, bondId])
 
   const isConvertable = useMemo(() => {
     if (componentType !== BondActions.Convert) return false
@@ -401,10 +399,10 @@ const BondAction = ({
           <h2 className="card-title">{getActionText(componentType)}</h2>
           {Status()}
         </div>
-        {isConvertComponent && !isMatured && derivedBondInfo && (
+        {isConvertComponent && !isMatured && bondInfo && (
           <div className="space-y-1 mb-1">
             <div className="text-[#EEEFEB] text-sm">
-              {dayjs(derivedBondInfo.maturityDate * 1000)
+              {dayjs(bondInfo.maturityDate * 1000)
                 .utc()
                 .format('MMM DD, YYYY HH:mm UTC')}
             </div>
@@ -416,14 +414,14 @@ const BondAction = ({
         )}
         <div>
           <div className="space-y-6">
-            {account && (!bondTokenBalance || bondTokenBalance.lte(0)) ? (
+            {account && !bondTokenBalance ? (
               <div className="flex justify-center text-[12px] text-[#696969] border border-[#2C2C2C] p-12 rounded-lg">
                 <span>No bonds to {getActionText(componentType).toLowerCase()}</span>
               </div>
             ) : (
               <AmountInputPanel
                 amountText={`Amount of bonds to ${getActionText(componentType).toLowerCase()}`}
-                balance={totalBalance}
+                balance={formatUnits(bondTokenBalance || 0, bondTokenInfo?.decimals)}
                 balanceString={componentType === BondActions.Mint && 'Available'}
                 chainId={bondTokenInfo?.chainId}
                 disabled={!account}
@@ -436,7 +434,7 @@ const BondAction = ({
                 }
                 maxTitle={isConvertComponent ? 'Convert all' : 'Redeem all'}
                 onMax={() => {
-                  setBondsToRedeem(totalBalance)
+                  setBondsToRedeem(bondTokenBalance)
                 }}
                 onUserSellAmountInput={onUserSellAmountInput}
                 token={tokenToAction}
