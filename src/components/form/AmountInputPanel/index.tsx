@@ -159,9 +159,9 @@ const AmountInputPanel: React.FC<Props> = (props) => {
             disabled={!account || isDisabled}
             hasError={error}
             onUserSellAmountInput={onUserSellAmountInput}
-            placeholder="0.00"
+            placeholder="-"
             readOnly={!account}
-            value={value}
+            value={!account ? '-' : value}
           />
           <Wrap>
             {token && <TokenPill chainId={chainId} token={token} />}
