@@ -4,6 +4,7 @@ import { createGlobalStyle } from 'styled-components'
 
 import { useWeb3React } from '@web3-react/core'
 
+import { ReactComponent as ConnectIcon } from '../../assets/svg/connect.svg'
 import Dev, { isDev } from '../../components/Dev'
 import { AuctionTimer } from '../../components/auction/AuctionTimer'
 import { ExtraDetailsItem } from '../../components/auction/ExtraDetailsItem'
@@ -48,20 +49,7 @@ const RedeemError = () => (
 
 const EmptyConnectWallet = () => (
   <div className="text-center py-[50px] text-[#696969] space-y-4">
-    <svg
-      className="m-auto"
-      fill="none"
-      height="22"
-      viewBox="0 0 44 22"
-      width="44"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M4.45065 10.9993C4.45065 7.29435 7.46232 4.28268 11.1673 4.28268H19.834V0.166016H11.1673C5.18732 0.166016 0.333984 5.01935 0.333984 10.9993C0.333984 16.9793 5.18732 21.8327 11.1673 21.8327H19.834V17.716H11.1673C7.46232 17.716 4.45065 14.7043 4.45065 10.9993ZM13.334 13.166H30.6673V8.83268H13.334V13.166ZM32.834 0.166016H24.1673V4.28268H32.834C36.539 4.28268 39.5507 7.29435 39.5507 10.9993C39.5507 14.7043 36.539 17.716 32.834 17.716H24.1673V21.8327H32.834C38.814 21.8327 43.6673 16.9793 43.6673 10.9993C43.6673 5.01935 38.814 0.166016 32.834 0.166016Z"
-        fill="white"
-        fillOpacity="0.6"
-      />
-    </svg>
+    <ConnectIcon />
     <div className="text-base">Connect your wallet to view your position</div>
   </div>
 )
