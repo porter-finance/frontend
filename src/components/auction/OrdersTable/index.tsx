@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react'
 
-import round from 'lodash.round'
+import { round } from 'lodash'
 
 import { useActiveWeb3React } from '../../../hooks'
 import { useAuctionBids } from '../../../hooks/useAuctionBids'
