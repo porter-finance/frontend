@@ -1,6 +1,6 @@
 import { formatUnits } from '@ethersproject/units'
 import dayjs from 'dayjs'
-import round from 'lodash.round'
+import { round } from 'lodash'
 
 import { Props as ExtraDetailsItemProps } from '../components/auction/ExtraDetailsItem'
 import { useBond } from './useBond'
@@ -9,43 +9,36 @@ import { useTokenPrice } from './useTokenPrice'
 export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => {
   const { data: bond } = useBond(bondId)
   const isConvertBond = bond?.type === 'convert'
-  const { collateralToken, paymentToken } = bond || {}
-  const { data: collateralTokenPrice } = useTokenPrice(collateralToken?.id)
-  const { data: paymentTokenPrice } = useTokenPrice(bond?.paymentToken.id)
+  const { data: collateralTokenPrice } = useTokenPrice(bond?.collateralToken.id)
+  // TODO - use this value, its value should always be close to 1 tho since its a stable
+  // const { data: paymentTokenPrice } = useTokenPrice(bond?.paymentToken.id)
+  const paymentTokenPrice = 1
 
-  // const oneEther = BigNumber.from("1000000000000000000");
+  const collateralPerBond = bond ? formatUnits(bond.collateralRatio, bond.decimals) : 0
+  const convertiblePerBond = bond ? formatUnits(bond.convertibleRatio, bond.decimals) : 0
+  const collateralValue = round(Number(collateralPerBond) * collateralTokenPrice, 2)
+  const convertibleValue = round(Number(convertiblePerBond) * collateralTokenPrice, 2)
 
-  // const collateralPerBond = bond?.collateralRatio / (1000000000000000000 * bond?.decimals)
-  // const collateralPerBond = formatUnits(bond?.collateralRatio, (bond?.decimals + 18))
+  const collateralizationRatio = round((collateralValue / paymentTokenPrice) * 100, 2)
 
-  // const collateralDisplay = Number(
-  //   formatUnits(collateralToken || 0, collateralTokenInfo?.decimals),
-  // )
   // const strikePrice = collateralDisplay > 0 ? round(1 / collateralDisplay, 2) : 0
 
   return [
     {
       title: 'Face value',
-      value: `1 ${paymentToken?.symbol}`,
+      value: `1 ${bond?.paymentToken.symbol}`,
       tooltip: 'Tooltip',
     },
     {
       title: 'Collateral tokens',
-      value: `${'-'}`,
-      hint: `($${collateralTokenPrice})`,
-
-      // value: `${round(
-      //   formatUnits(collateralTokenBalance || 0, collateralTokenInfo?.decimals),
-      //   2,
-      // )} ${collateralTokenInfo?.symbol || ''}`,
+      value: `${collateralPerBond} ${bond?.collateralToken.symbol || ''}`,
+      hint: `($${collateralValue})`,
       tooltip: 'Tooltip',
     },
     {
       title: 'Convertible tokens',
-      // value: `${round(formatUnits(paymentTokenBalance || 0, paymentTokenInfo?.decimals), 2)} ${collateralTokenInfo?.symbol || ''
-      //   }`,
-      value: '-',
-      hint: `($${paymentTokenPrice})`,
+      value: `${convertiblePerBond} ${bond?.collateralToken.symbol || ''}`,
+      hint: `($${convertibleValue})`,
 
       tooltip: 'Tooltip',
       show: isConvertBond,
@@ -58,9 +51,7 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
     },
     {
       title: 'Collateralization ratio',
-      // value: `${round(Number(formatUnits(data?.collateralRatio || 0, bondTokenInfo?.decimals)), 2) * 100
-      //   }%`,
-      value: '-',
+      value: `${collateralizationRatio}%`,
       tooltip: 'Tooltip',
     },
     {
