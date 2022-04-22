@@ -88,12 +88,14 @@ export interface Props {
   disabled?: boolean
   bordered?: string
   url?: string
-  value: string | ReactElement | Element
+  hint?: string | number | ReactElement | Element
+  value: string | number | ReactElement | Element
 }
 
 export const ExtraDetailsItem: React.FC<Props> = ({
   bordered,
   disabled = false,
+  hint,
   show = true,
   title,
   tooltip,
@@ -107,6 +109,7 @@ export const ExtraDetailsItem: React.FC<Props> = ({
         <Value className={`${disabled ? 'text-[#696969]' : 'text-white'}`}>
           <ValueText className="overflow-hidden overflow-ellipsis">{value || 'Unknown'}</ValueText>
           {url && <Link href={url} />}
+          {hint && <span className="text-[#979797]">{hint}</span>}
         </Value>
         <Title>
           <TitleText className="text">{title}</TitleText>
