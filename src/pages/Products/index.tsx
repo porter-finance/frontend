@@ -9,9 +9,8 @@ import { ReactComponent as DividerIcon } from '../../assets/svg/divider.svg'
 import { ReactComponent as SimpleIcon } from '../../assets/svg/simple.svg'
 import { ActiveStatusPill } from '../../components/auction/OrderbookTable'
 import Table from '../../components/auctions/Table'
-import { calculateInterestRate } from '../../components/form/InterestRateInputPanel'
 import TokenLogo from '../../components/token/TokenLogo'
-import { useAllBondInfo } from '../../hooks/useAllBondInfos'
+import { BondInfo, useBonds } from '../../hooks/useBond'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import { ConvertButtonOutline, SimpleButtonOutline } from '../Auction'
 
@@ -21,13 +20,21 @@ const GlobalStyle = createGlobalStyle`
   }
 `
 
-const columns = [
+export const columns = (showAmount = false) => [
   {
     Header: 'Issuer',
     accessor: 'issuer',
     align: 'flex-start',
     show: true,
     style: { height: '100%', justifyContent: 'center' },
+    filter: 'searchInTags',
+  },
+  {
+    Header: 'Amount',
+    accessor: 'amount',
+    align: 'flex-start',
+    show: showAmount,
+    style: {},
     filter: 'searchInTags',
   },
   {
@@ -38,6 +45,7 @@ const columns = [
     style: {},
     filter: 'searchInTags',
   },
+
   {
     Header: 'Maturity Date',
     accessor: 'maturityDate',
@@ -71,19 +79,13 @@ const columns = [
   },
 ]
 
-const Products = () => {
-  const data = useAllBondInfo()
-  const tableData = []
+export const createTable = (data: BondInfo[]) => {
+  return data.map((bond: BondInfo) => {
+    const { amount, collateralToken, id, maturityDate, name, paymentToken, symbol, type } = bond
 
-  useSetNoDefaultNetworkId()
-
-  data?.forEach((item) => {
-    // TODO: get this from graphql? coingecko?
-    const clearingPrice = 10
-
-    tableData.push({
-      id: item.id,
-      search: JSON.stringify(item),
+    return {
+      id,
+      search: JSON.stringify(bond),
       issuer: (
         <div className="flex flex-row items-center space-x-4">
           <div className="flex">
@@ -91,50 +93,54 @@ const Products = () => {
               size="30px"
               square
               token={{
-                address: item?.collateralToken,
-                symbol: item?.symbol,
+                address: collateralToken.id,
+                symbol,
               }}
             />
           </div>
           <div className="flex flex-col text-[#EEEFEB] text-lg">
             <div className="flex items-center space-x-2 capitalize">
-              <span>{item?.name.toLowerCase()} Bond</span>
-              {item?.type === 'convert' ? <ConvertIcon width={15} /> : <AuctionsIcon width={15} />}
+              <span>{name.toLowerCase()} Bond</span>
+              {type === 'convert' ? <ConvertIcon width={15} /> : <AuctionsIcon width={15} />}
             </div>
-            <p className="text-[#9F9F9F] text-sm uppercase">{item?.symbol}</p>
+            <p className="text-[#9F9F9F] text-sm uppercase">{symbol}</p>
           </div>
         </div>
       ),
+      amount,
       // TODO graphql should return clearing decimal so i can caclulate interest rate correctly
-      fixedAPY: calculateInterestRate(clearingPrice, item.maturityDate),
-      // TODO: graphql should return payment token symbol
-      maturityValue: `1 ${item.paymentToken}`,
+      fixedAPY: '-',
+      maturityValue: `1 ${paymentToken.symbol}`,
 
       status:
-        new Date() > new Date(item.maturityDate * 1000) ? (
+        new Date() > new Date(maturityDate * 1000) ? (
           <ActiveStatusPill disabled dot={false} title="Matured" />
         ) : (
           <ActiveStatusPill dot={false} title="Active" />
         ),
       maturityDate: (
         <span className="uppercase">
-          {dayjs(item.maturityDate * 1000)
+          {dayjs(maturityDate * 1000)
             .utc()
             .format('DD MMM YYYY')}
         </span>
       ),
 
-      url: `/products/${item.id}`,
-    })
+      url: `/products/${id}`,
+    }
   })
+}
 
-  const isLoading = React.useMemo(() => data === undefined || data === null, [data])
+const Products = () => {
+  const { data, loading } = useBonds()
+  const tableData = data ? createTable(data) : []
+  useSetNoDefaultNetworkId()
 
   return (
     <>
       <GlobalStyle />
       <Table
-        columns={columns}
+        columns={columns()}
         data={tableData}
         emptyActionClass="!bg-[#532DBE]"
         emptyActionText="Get notify"
@@ -154,7 +160,7 @@ const Products = () => {
             <SimpleButtonOutline />
           </>
         }
-        loading={isLoading}
+        loading={loading}
         title="Products"
       />
     </>

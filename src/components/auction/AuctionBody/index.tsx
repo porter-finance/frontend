@@ -77,7 +77,10 @@ const BondCard = ({ graphInfo }: { graphInfo: AuctionGraphDetail }) => {
           >
             <TokenLogo
               square
-              token={{ address: graphInfo?.bond?.collateralToken, symbol: graphInfo?.bond?.symbol }}
+              token={{
+                address: graphInfo?.bond?.collateralToken.id,
+                symbol: graphInfo?.bond?.symbol,
+              }}
             />
 
             <div className="space-y-2">
@@ -125,7 +128,7 @@ const AuctionBody = (props: AuctionBodyProps) => {
                 derivedAuctionInfo={derivedAuctionInfo}
               />
 
-              {graphInfo?.isSellingPorterBond && <BondCard graphInfo={graphInfo} />}
+              {graphInfo && <BondCard graphInfo={graphInfo} />}
 
               <OrderBookContainer
                 auctionIdentifier={auctionIdentifier}

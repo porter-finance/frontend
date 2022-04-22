@@ -9,7 +9,7 @@ import { useWeb3React } from '@web3-react/core'
 import dayjs from 'dayjs'
 
 import { ApprovalState, useApproveCallback } from '../../../hooks/useApproveCallback'
-import { useBondDetails } from '../../../hooks/useBondDetails'
+import { useBond } from '../../../hooks/useBond'
 import { useBondContract } from '../../../hooks/useContract'
 import { useConvertBond } from '../../../hooks/useConvertBond'
 import { useIsBondDefaulted } from '../../../hooks/useIsBondDefaulted'
@@ -91,7 +91,7 @@ const BondAction = ({
   const params = useParams()
 
   const bondId = overwriteBondId || params?.bondId
-  const { bond: derivedBondInfo, loading: isLoading } = useBondDetails(bondId)
+  const { data: derivedBondInfo, loading: isLoading } = useBond(bondId)
   const [bondTokenInfo, setBondTokenInfo] = useState(null)
   const [collateralTokenInfo, setCollateralTokenInfo] = useState(null)
   const [paymentTokenInfo, setPaymentTokenInfo] = useState(null)
@@ -273,9 +273,9 @@ const BondAction = ({
       setIsOwner(derivedBondInfo?.owner.toLowerCase() === account?.toLowerCase())
 
       fetchTok(bondId).then(setBondTokenInfo)
-      fetchTok(derivedBondInfo?.collateralToken).then(setCollateralTokenInfo)
+      fetchTok(derivedBondInfo?.collateralToken.id).then(setCollateralTokenInfo)
       if (componentType === BondActions.Redeem) {
-        fetchTok(derivedBondInfo?.paymentToken).then(setPaymentTokenInfo)
+        fetchTok(derivedBondInfo?.paymentToken.id).then(setPaymentTokenInfo)
       }
     }
   }, [componentType, derivedBondInfo, isLoading, invalidBond, account, fetchTok, bondId])
