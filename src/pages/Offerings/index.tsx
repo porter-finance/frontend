@@ -93,7 +93,7 @@ const Offerings = () => {
       ) : (
         <ActiveStatusPill disabled dot={false} title="Ended" />
       ),
-      maturityValue: `1 ${auction?.bond?.paymentToken?.symbol}`,
+      maturityValue: `1 ${auction?.bond.paymentToken.symbol}`,
       maturityDate: (
         <span className="uppercase">
           {dayjs(auction?.bond?.maturityDate * 1000)
@@ -108,7 +108,7 @@ const Offerings = () => {
               size="30px"
               square
               token={{
-                address: auction?.bond?.collateralToken,
+                address: auction?.bond?.collateralToken.id,
                 symbol: auction?.bond?.symbol,
               }}
             />

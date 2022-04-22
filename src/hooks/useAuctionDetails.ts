@@ -6,6 +6,7 @@ import { additionalServiceApi } from '../api'
 import { PricePoint } from '../api/AdditionalServicesApi'
 import { AuctionIdentifier } from '../state/orderPlacement/reducer'
 import { getLogger } from '../utils/logger'
+import { Token } from './useBond'
 
 const logger = getLogger('useAuctionDetails')
 
@@ -40,8 +41,8 @@ export interface AuctionGraphDetail {
     symbol: string
     owner: string
     maturityDate: number
-    paymentToken: string
-    collateralToken: string
+    paymentToken: Token
+    collateralToken: Token
     collateralRatio: number
     convertibleRatio: number
     maxSupply: number
@@ -66,8 +67,14 @@ const auctionsQuery = gql`
         symbol
         owner
         maturityDate
-        paymentToken
-        collateralToken
+        paymentToken {
+          id
+          symbol
+        }
+        collateralToken {
+          id
+          symbol
+        }
         collateralRatio
         convertibleRatio
         maxSupply
