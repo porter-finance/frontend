@@ -1,4 +1,5 @@
 import { formatUnits } from '@ethersproject/units'
+import dayjs from 'dayjs'
 import round from 'lodash.round'
 
 import { Props as ExtraDetailsItemProps } from '../components/auction/ExtraDetailsItem'
@@ -10,6 +11,7 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
   const isConvertBond = bond?.type === 'convert'
   const { collateralToken, paymentToken } = bond || {}
   const { data: collateralTokenPrice } = useTokenPrice(collateralToken?.id)
+  const { data: paymentTokenPrice } = useTokenPrice(bond?.paymentToken.id)
 
   // const oneEther = BigNumber.from("1000000000000000000");
 
@@ -21,7 +23,7 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
   // )
   // const strikePrice = collateralDisplay > 0 ? round(1 / collateralDisplay, 2) : 0
 
-  const extraDetails: Array<ExtraDetailsItemProps> = [
+  return [
     {
       title: 'Face value',
       value: `1 ${paymentToken?.symbol}`,
@@ -30,6 +32,7 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
     {
       title: 'Collateral tokens',
       value: `${'-'}`,
+      hint: `($${collateralTokenPrice})`,
 
       // value: `${round(
       //   formatUnits(collateralTokenBalance || 0, collateralTokenInfo?.decimals),
@@ -42,15 +45,16 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
       // value: `${round(formatUnits(paymentTokenBalance || 0, paymentTokenInfo?.decimals), 2)} ${collateralTokenInfo?.symbol || ''
       //   }`,
       value: '-',
+      hint: `($${paymentTokenPrice})`,
 
       tooltip: 'Tooltip',
       show: isConvertBond,
     },
     {
-      title: 'Estimated value',
-      value: `${collateralTokenPrice} USDC`,
-      tooltip: 'Tooltip',
-      bordered: 'purple',
+      title: 'Maturity date',
+      value: `${dayjs(bond?.maturityDate * 1000)
+        .utc()
+        .format('DD MMM YYYY')}`.toUpperCase(),
     },
     {
       title: 'Collateralization ratio',
@@ -67,6 +71,4 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
       show: isConvertBond,
     },
   ]
-
-  return extraDetails
 }

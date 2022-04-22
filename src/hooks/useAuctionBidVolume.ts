@@ -37,5 +37,5 @@ export const useAuctionBidVolume = (
     Array.isArray(data?.bids) &&
     data.bids.length &&
     data.bids.reduce((a, b) => Number(a.size) + Number(b.size))
-  return { totalBidVolume, loading }
+  return { totalBidVolume: totalBidVolume?.size || totalBidVolume, loading }
 }
