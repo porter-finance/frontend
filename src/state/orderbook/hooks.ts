@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 
-import round from 'lodash.round'
+import { round } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { AppDispatch, AppState } from '..'
