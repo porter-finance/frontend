@@ -6,6 +6,7 @@ import { additionalServiceApi } from '../api'
 import { PricePoint } from '../api/AdditionalServicesApi'
 import { AuctionIdentifier } from '../state/orderPlacement/reducer'
 import { getLogger } from '../utils/logger'
+import { Token } from './useBond'
 
 const logger = getLogger('useAuctionDetails')
 
@@ -34,15 +35,14 @@ export interface AuctionInfoDetail {
 
 export interface AuctionGraphDetail {
   id: string
-  isSellingPorterBond: string
   bond: {
     id: string
     name: string
     symbol: string
     owner: string
     maturityDate: number
-    paymentToken: string
-    collateralToken: string
+    paymentToken: Token
+    collateralToken: Token
     collateralRatio: number
     convertibleRatio: number
     maxSupply: number
@@ -61,15 +61,20 @@ const auctionsQuery = gql`
   query Auction($auctionID: ID!) {
     auction(id: $auctionID) {
       id
-      isSellingPorterBond
       bond {
         id
         name
         symbol
         owner
         maturityDate
-        paymentToken
-        collateralToken
+        paymentToken {
+          id
+          symbol
+        }
+        collateralToken {
+          id
+          symbol
+        }
         collateralRatio
         convertibleRatio
         maxSupply
@@ -99,7 +104,7 @@ export const useAuctionDetails = (
   })
 
   if (error) {
-    logger.error('Error getting useBondDetails info', error)
+    logger.error('Error getting useBond info', error)
   }
 
   const graphInfo = data?.auction

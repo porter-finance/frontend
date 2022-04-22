@@ -162,17 +162,10 @@ const Auction: React.FC = () => {
             <TokenLogo
               size="60px"
               square
-              token={
-                derivedAuctionInfo?.graphInfo?.isSellingPorterBond
-                  ? {
-                      address: derivedAuctionInfo?.graphInfo?.bond?.collateralToken,
-                      symbol: derivedAuctionInfo?.graphInfo?.bond?.symbol,
-                    }
-                  : {
-                      address: derivedAuctionInfo?.auctioningToken.address,
-                      symbol: derivedAuctionInfo?.auctioningToken.symbol,
-                    }
-              }
+              token={{
+                address: derivedAuctionInfo?.graphInfo?.bond?.collateralToken.id,
+                symbol: derivedAuctionInfo?.graphInfo?.bond?.symbol,
+              }}
             />
           </div>
           <div>
