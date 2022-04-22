@@ -89,10 +89,11 @@ Balance.defaultProps = {
   disabled: false,
 }
 
-interface unlockProps {
+export interface unlockProps {
   isLocked: boolean
-  onUnlock: () => void
+  onUnlock: () => Promise<void>
   unlockState: ApprovalState
+  token?: string
 }
 
 interface wrapProps {
