@@ -42,10 +42,8 @@ import { Tooltip } from '../../common/Tooltip'
 import AmountInputPanel from '../../form/AmountInputPanel'
 import InterestRateInputPanel from '../../form/InterestRateInputPanel'
 import PriceInputPanel from '../../form/PriceInputPanel'
-import DialogDemo from '../../modals/AlertDialogModal'
-import ConfirmationModal from '../../modals/ConfirmationModal'
+import ConfirmationDialog from '../../modals/ConfirmationDialog'
 import WarningModal from '../../modals/WarningModal'
-import SwapModalFooter from '../../modals/common/PlaceOrderModalFooter'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { EmptyContentText } from '../../pureStyledComponents/EmptyContent'
 import { InfoType } from '../../pureStyledComponents/FieldRow'
@@ -398,6 +396,16 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                   <ActionButton disabled={disablePlaceOrder} onClick={handleShowConfirm}>
                     Review order
                   </ActionButton>
+                  <ConfirmationDialog
+                    onOpenChange={setShowConfirm}
+                    open={showConfirm}
+                    unlock={{
+                      token: biddingTokenDisplay,
+                      isLocked: notApproved,
+                      onUnlock: approveCallback,
+                      unlockState: approval,
+                    }}
+                  />
                   <div className="flex flex-row justify-between items-center text-xs text-[#9F9F9F] mt-4 mb-3">
                     <div>{biddingTokenDisplay} Balance</div>
                     <div>
@@ -438,35 +446,34 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
           }}
           title="Warning!"
         />
-        <DialogDemo />
-        <ConfirmationModal
-          attemptingTxn={attemptingTxn}
-          content={
-            <SwapModalFooter
-              auctioningToken={auctioningToken}
-              biddingToken={biddingToken}
-              cancelDate={cancelDate}
-              chainId={chainId}
-              confirmText={'Confirm'}
-              hasRiskNotCoveringClearingPrice={hasRiskNotCoveringClearingPrice}
-              isPriceInverted={showPriceInverted}
-              onPlaceOrder={onPlaceOrder}
-              orderPlacingOnly={orderPlacingOnly}
-              price={price}
-              sellAmount={sellAmount}
-            />
-          }
-          hash={txHash}
-          isOpen={showConfirm}
-          onDismiss={() => {
-            resetModal()
-            setShowConfirm(false)
-          }}
-          pendingConfirmation={pendingConfirmation}
-          pendingText={pendingText}
-          title="Confirm Order"
-          width={504}
-        />
+        {/*<ConfirmationModal*/}
+        {/*  attemptingTxn={attemptingTxn}*/}
+        {/*  content={*/}
+        {/*    <SwapModalFooter*/}
+        {/*      auctioningToken={auctioningToken}*/}
+        {/*      biddingToken={biddingToken}*/}
+        {/*      cancelDate={cancelDate}*/}
+        {/*      chainId={chainId}*/}
+        {/*      confirmText={'Confirm'}*/}
+        {/*      hasRiskNotCoveringClearingPrice={hasRiskNotCoveringClearingPrice}*/}
+        {/*      isPriceInverted={showPriceInverted}*/}
+        {/*      onPlaceOrder={onPlaceOrder}*/}
+        {/*      orderPlacingOnly={orderPlacingOnly}*/}
+        {/*      price={price}*/}
+        {/*      sellAmount={sellAmount}*/}
+        {/*    />*/}
+        {/*  }*/}
+        {/*  hash={txHash}*/}
+        {/*  isOpen={showConfirm}*/}
+        {/*  onDismiss={() => {*/}
+        {/*    resetModal()*/}
+        {/*    setShowConfirm(false)*/}
+        {/*  }}*/}
+        {/*  pendingConfirmation={pendingConfirmation}*/}
+        {/*  pendingText={pendingText}*/}
+        {/*  title="Confirm Order"*/}
+        {/*  width={504}*/}
+        {/*/>*/}
       </div>
     </div>
   )
