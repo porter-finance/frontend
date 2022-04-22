@@ -8,6 +8,7 @@ export interface BondInfo {
   id: string
   name: string
   symbol: string
+  decimals: number
   owner: string
   type: string
   amount?: number
@@ -18,7 +19,7 @@ export interface BondInfo {
   convertibleRatio: number
   maxSupply: number
 }
-interface Token {
+export interface Token {
   id: string
   name: string
   decimals: number
