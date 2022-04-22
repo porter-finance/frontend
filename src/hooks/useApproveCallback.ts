@@ -35,6 +35,7 @@ export function useApproveCallback(
     account ?? undefined,
     addressToApprove,
   )
+  console.log(currentAllowance, amountToApprove?.token, account, addressToApprove)
   const pendingApproval = useHasPendingApproval(amountToApprove?.token?.address, addressToApprove)
 
   // check the current approval status
@@ -96,6 +97,8 @@ export function useApproveCallback(
           summary: 'Approve ' + amountToApprove?.token?.symbol,
           approval: { tokenAddress: amountToApprove.token.address, spender: addressToApprove },
         })
+
+        return response
       })
       .catch((error: Error) => {
         logger.debug('Failed to approve token', error)
