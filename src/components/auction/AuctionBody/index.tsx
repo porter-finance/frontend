@@ -117,6 +117,12 @@ const AuctionBody = (props: AuctionBodyProps) => {
     () => auctionState !== undefined && auctionState !== AuctionState.NOT_YET_STARTED,
     [auctionState],
   )
+
+  const placeAndCancel = [
+    AuctionState.ORDER_PLACING,
+    AuctionState.ORDER_PLACING_AND_CANCELING,
+  ].includes(auctionState)
+
   return (
     <>
       {auctionStarted && (
@@ -141,12 +147,14 @@ const AuctionBody = (props: AuctionBodyProps) => {
           rightChildren={
             <>
               {auctionState === AuctionState.NEEDS_SETTLED && <AuctionSettle />}
-              {(auctionState === AuctionState.ORDER_PLACING ||
-                auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && (
-                <OrderPlacement
-                  auctionIdentifier={auctionIdentifier}
-                  derivedAuctionInfo={derivedAuctionInfo}
-                />
+              {placeAndCancel && (
+                <>
+                  <OrderPlacement
+                    auctionIdentifier={auctionIdentifier}
+                    derivedAuctionInfo={derivedAuctionInfo}
+                  />
+                  {disabledCountry && placeAndCancel && <DisabledCountryError />}
+                </>
               )}
               {(auctionState === AuctionState.CLAIMING ||
                 auctionState === AuctionState.PRICE_SUBMISSION) && (
@@ -155,7 +163,6 @@ const AuctionBody = (props: AuctionBodyProps) => {
                   derivedAuctionInfo={derivedAuctionInfo}
                 />
               )}
-              {disabledCountry && <DisabledCountryError />}
             </>
           }
         />
