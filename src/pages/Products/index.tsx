@@ -1,6 +1,7 @@
 import React from 'react'
 import { createGlobalStyle } from 'styled-components'
 
+import { formatUnits } from '@ethersproject/units'
 import dayjs from 'dayjs'
 
 import { ReactComponent as AuctionsIcon } from '../../assets/svg/auctions.svg'
@@ -81,7 +82,17 @@ export const columns = (showAmount = false) => [
 
 export const createTable = (data: BondInfo[]) => {
   return data.map((bond: BondInfo) => {
-    const { amount, collateralToken, id, maturityDate, name, paymentToken, symbol, type } = bond
+    const {
+      amount,
+      collateralToken,
+      decimals,
+      id,
+      maturityDate,
+      name,
+      paymentToken,
+      symbol,
+      type,
+    } = bond
 
     return {
       id,
@@ -107,7 +118,7 @@ export const createTable = (data: BondInfo[]) => {
           </div>
         </div>
       ),
-      amount,
+      amount: amount ? formatUnits(amount, decimals) : '-',
       // TODO graphql should return clearing decimal so i can caclulate interest rate correctly
       fixedAPY: '-',
       maturityValue: `1 ${paymentToken.symbol}`,
