@@ -17,6 +17,7 @@ import {
   NETWORK_URL_RINKEBY,
   NETWORK_URL_XDAI,
 } from '../constants/config'
+import { Token as GraphToken } from '../hooks/useBond'
 import { getLogger } from '../utils/logger'
 
 const logger = getLogger('utils/index')
@@ -236,13 +237,16 @@ export function escapeRegExp(string: string): string {
 }
 
 // Always return a non-undefined token display
-export function getTokenDisplay(token: Token, chainId: ChainId): string {
-  if (isTokenXDAI(token.address, chainId)) return `XDAI`
-  if (isTokenWETH(token.address, chainId)) return `ETH`
-  if (isTokenWMATIC(token.address, chainId)) return `MATIC`
+export function getTokenDisplay(token: Token, chainId: any): string {
   return (
     token?.symbol?.slice(0, 7) || token?.name?.slice(0, 7) || token?.address.slice(0, 7) || '🤔'
   )
+}
+
+export function getDisplay(token: GraphToken): string {
+  if (!token?.symbol) return '-'
+
+  return token.symbol.slice(0, 7)
 }
 
 // Always return a non-undefined token display
