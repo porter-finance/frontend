@@ -2,7 +2,7 @@ import * as am4charts from '@amcharts/amcharts4/charts'
 import * as am4core from '@amcharts/amcharts4/core'
 import am4themesSpiritedaway from '@amcharts/amcharts4/themes/spiritedaway'
 import { Token } from '@josojo/honeyswap-sdk'
-import round from 'lodash.round'
+import { round } from 'lodash'
 
 import { ChainId, getTokenDisplay } from '../../../utils'
 import { calculateInterestRate } from '../../form/InterestRateInputPanel'
