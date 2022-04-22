@@ -39,6 +39,7 @@ export interface AuctionGraphDetail {
     id: string
     name: string
     symbol: string
+    decimals: number
     owner: string
     maturityDate: number
     paymentToken: Token
@@ -48,6 +49,7 @@ export interface AuctionGraphDetail {
     maxSupply: number
     type: 'simple' | 'convert'
   }
+  bidding: Token
   minimum: number
   size: number
   start: number
@@ -65,6 +67,7 @@ const auctionsQuery = gql`
         id
         name
         symbol
+        decimals
         owner
         maturityDate
         paymentToken {
@@ -79,6 +82,10 @@ const auctionsQuery = gql`
         convertibleRatio
         maxSupply
         type
+      }
+      bidding {
+        symbol
+        decimals
       }
       minimum
       size
