@@ -8,6 +8,7 @@ import { useBondExtraDetails } from '../../../hooks/useBondExtraDetails'
 import { TwoGridPage } from '../../../pages/Auction'
 import { AuctionState, DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
+import { isDev } from '../../Dev'
 import TokenLogo from '../../token/TokenLogo'
 import AuctionDetails from '../AuctionDetails'
 import { AuctionNotStarted } from '../AuctionNotStarted'
@@ -118,10 +119,9 @@ const AuctionBody = (props: AuctionBodyProps) => {
     [auctionState],
   )
 
-  const placeAndCancel = [
-    AuctionState.ORDER_PLACING,
-    AuctionState.ORDER_PLACING_AND_CANCELING,
-  ].includes(auctionState)
+  const placeAndCancel =
+    isDev ||
+    [AuctionState.ORDER_PLACING, AuctionState.ORDER_PLACING_AND_CANCELING].includes(auctionState)
 
   return (
     <>
