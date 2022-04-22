@@ -3,6 +3,7 @@ import { createGlobalStyle } from 'styled-components'
 
 import { formatUnits } from '@ethersproject/units'
 import dayjs from 'dayjs'
+import { round } from 'lodash'
 
 import { ReactComponent as AuctionsIcon } from '../../assets/svg/auctions.svg'
 import { ReactComponent as ConvertIcon } from '../../assets/svg/convert.svg'
@@ -118,7 +119,7 @@ export const createTable = (data: BondInfo[]) => {
           </div>
         </div>
       ),
-      amount: amount ? formatUnits(amount, decimals) : '-',
+      amount: amount ? round(Number(formatUnits(amount, decimals)), decimals) : '-',
       // TODO graphql should return clearing decimal so i can caclulate interest rate correctly
       fixedAPY: '-',
       maturityValue: `1 ${paymentToken.symbol}`,
