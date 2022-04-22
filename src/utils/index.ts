@@ -5,7 +5,6 @@ import { Contract } from '@ethersproject/contracts'
 import { JsonRpcSigner, Provider, Web3Provider } from '@ethersproject/providers'
 import { parseBytes32String } from '@ethersproject/strings'
 import { JSBI, Percent, Token, TokenAmount, WETH } from '@josojo/honeyswap-sdk'
-import { Token as GraphToken } from '../hooks/useBond'
 import IUniswapV2PairABI from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 
 import { EasyAuction } from '../../gen/types'
@@ -18,6 +17,7 @@ import {
   NETWORK_URL_RINKEBY,
   NETWORK_URL_XDAI,
 } from '../constants/config'
+import { Token as GraphToken } from '../hooks/useBond'
 import { getLogger } from '../utils/logger'
 
 const logger = getLogger('utils/index')
@@ -238,7 +238,6 @@ export function escapeRegExp(string: string): string {
 
 // Always return a non-undefined token display
 export function getTokenDisplay(token: Token, chainId: any): string {
-
   return (
     token?.symbol?.slice(0, 7) || token?.name?.slice(0, 7) || token?.address.slice(0, 7) || '🤔'
   )
@@ -247,9 +246,7 @@ export function getTokenDisplay(token: Token, chainId: any): string {
 export function getDisplay(token: GraphToken): string {
   if (!token?.symbol) return '-'
 
-  return (
-    token.symbol.slice(0, 7)
-  )
+  return token.symbol.slice(0, 7)
 }
 
 // Always return a non-undefined token display
