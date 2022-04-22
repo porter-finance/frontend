@@ -273,9 +273,9 @@ const BondAction = ({
       setIsOwner(derivedBondInfo?.owner.toLowerCase() === account?.toLowerCase())
 
       fetchTok(bondId).then(setBondTokenInfo)
-      fetchTok(derivedBondInfo?.collateralToken).then(setCollateralTokenInfo)
+      fetchTok(derivedBondInfo?.collateralToken.id).then(setCollateralTokenInfo)
       if (componentType === BondActions.Redeem) {
-        fetchTok(derivedBondInfo?.paymentToken).then(setPaymentTokenInfo)
+        fetchTok(derivedBondInfo?.paymentToken.id).then(setPaymentTokenInfo)
       }
     }
   }, [componentType, derivedBondInfo, isLoading, invalidBond, account, fetchTok, bondId])
