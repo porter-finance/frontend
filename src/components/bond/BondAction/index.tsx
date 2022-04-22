@@ -65,7 +65,7 @@ const TokenInfo = ({ chainId, disabled = false, token, value }) => (
       disabled ? 'text-[#696969]' : 'text-white'
     } flex justify-between`}
   >
-    <div>{parseFloat(value).toFixed(2)}</div>
+    <div>{Number(value) ? parseFloat(value).toFixed(2) : '-'}</div>
     <TokenPill chainId={chainId} token={token} />
   </div>
 )

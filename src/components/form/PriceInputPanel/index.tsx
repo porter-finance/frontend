@@ -78,8 +78,9 @@ const PriceInputPanel = (props: Props) => {
             disabled={!account || disabled === true}
             hasError={error}
             onUserSellAmountInput={onUserPriceInput}
+            placeholder="-"
             readOnly={!account}
-            value={!account ? 0 : value}
+            value={value}
           />
           {token && (
             <>
