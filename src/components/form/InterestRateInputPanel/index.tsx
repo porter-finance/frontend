@@ -60,6 +60,15 @@ export const calculateInterestRate = (
   return interestRate
 }
 
+export const getReviewData = ({ amount, amountToken, maturityDate, price, priceToken }) => {
+  return {
+    apr: calculateInterestRate(price, maturityDate),
+    earn: `${(amount - price * amount).toLocaleString()} ${priceToken}`,
+    receive: `${amount.toLocaleString()} ${amountToken}`,
+    interest: `${(price * amount).toLocaleString()} ${priceToken}`,
+  }
+}
+
 const InterestRateInputPanel = ({
   account,
   amount,
@@ -69,52 +78,43 @@ const InterestRateInputPanel = ({
   ...restProps
 }: Props) => {
   const maturityDate = useBondMaturityForAuction()
+  const data = getReviewData({ price, amount, maturityDate, priceToken, amountToken })
 
   return (
-    <>
-      <FieldRowWrapper className="my-4 space-y-3 py-1" {...restProps}>
-        <div className="flex flex-row justify-between">
-          <div className="text-sm text-[#E0E0E0]">
-            {!account || !price || !amount
-              ? '-'
-              : `${(price * amount).toLocaleString()} ${priceToken}`}
-          </div>
-          <div className="space-x-1 flex items-center">
-            <FieldRowLabelStyledText>Interest rate</FieldRowLabelStyledText>
-            <Tooltip text="Tooltip" />
-          </div>
+    <FieldRowWrapper className="my-4 space-y-3 py-1" {...restProps}>
+      <div className="flex flex-row justify-between">
+        <div className="text-sm text-[#E0E0E0]">
+          {!account || !price || !amount ? '-' : data.interest}
         </div>
-        <div className="flex flex-row justify-between">
-          <div className="text-sm text-[#E0E0E0]">
-            {!account || !amount ? '-' : `${amount.toLocaleString()} ${amountToken}`}
-          </div>
-          <div className="space-x-1 flex items-center">
-            <FieldRowLabelStyledText>You receive</FieldRowLabelStyledText>
-            <Tooltip text="Tooltip" />
-          </div>
+        <div className="space-x-1 flex items-center">
+          <FieldRowLabelStyledText>Interest rate</FieldRowLabelStyledText>
+          <Tooltip text="Tooltip" />
         </div>
-        <div className="flex flex-row justify-between">
-          <div className="text-sm text-[#E0E0E0]">
-            {!account || !price || !amount
-              ? '-'
-              : `${(amount - price * amount).toLocaleString()} ${priceToken}`}
-          </div>
-          <div className="space-x-1 flex items-center">
-            <FieldRowLabelStyledText>You earn</FieldRowLabelStyledText>
-            <Tooltip text="Tooltip" />
-          </div>
+      </div>
+      <div className="flex flex-row justify-between">
+        <div className="text-sm text-[#E0E0E0]">{!account || !amount ? '-' : data.receive}</div>
+        <div className="space-x-1 flex items-center">
+          <FieldRowLabelStyledText>You receive</FieldRowLabelStyledText>
+          <Tooltip text="Tooltip" />
         </div>
-        <div className="flex flex-row justify-between">
-          <div className="text-sm text-[#E0E0E0]">
-            {!account ? '-' : calculateInterestRate(price, maturityDate)}
-          </div>
-          <div className="space-x-1 flex items-center">
-            <FieldRowLabelStyledText>Your APR</FieldRowLabelStyledText>
-            <Tooltip text="Tooltip" />
-          </div>
+      </div>
+      <div className="flex flex-row justify-between">
+        <div className="text-sm text-[#E0E0E0]">
+          {!account || !price || !amount ? '-' : data.earn}
         </div>
-      </FieldRowWrapper>
-    </>
+        <div className="space-x-1 flex items-center">
+          <FieldRowLabelStyledText>You earn</FieldRowLabelStyledText>
+          <Tooltip text="Tooltip" />
+        </div>
+      </div>
+      <div className="flex flex-row justify-between">
+        <div className="text-sm text-[#E0E0E0]">{!account ? '-' : data.apr}</div>
+        <div className="space-x-1 flex items-center">
+          <FieldRowLabelStyledText>Your APR</FieldRowLabelStyledText>
+          <Tooltip text="Tooltip" />
+        </div>
+      </div>
+    </FieldRowWrapper>
   )
 }
 
