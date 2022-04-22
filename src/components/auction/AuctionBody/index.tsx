@@ -153,7 +153,7 @@ const AuctionBody = (props: AuctionBodyProps) => {
                     auctionIdentifier={auctionIdentifier}
                     derivedAuctionInfo={derivedAuctionInfo}
                   />
-                  {disabledCountry && placeAndCancel && <DisabledCountryError />}
+                  {disabledCountry && <DisabledCountryError />}
                 </>
               )}
               {(auctionState === AuctionState.CLAIMING ||
