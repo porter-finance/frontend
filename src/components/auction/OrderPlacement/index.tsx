@@ -36,6 +36,7 @@ import {
 } from '../../../utils'
 import { convertPriceIntoBuyAndSellAmount } from '../../../utils/prices'
 import { getChainName } from '../../../utils/tools'
+import { isDev } from '../../Dev'
 import { Button } from '../../buttons/Button'
 import { Tooltip } from '../../common/Tooltip'
 import AmountInputPanel from '../../form/AmountInputPanel'
@@ -93,7 +94,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     derivedAuctionInfo,
   } = props
   const location = useGeoLocation()
-  const disabledCountry = location?.country === 'US'
+  const disabledCountry = !isDev && location?.country === 'US'
   const { chainId } = auctionIdentifier
   const { account, chainId: chainIdFromWeb3 } = useActiveWeb3React()
   const orders: OrderState | undefined = useOrderState()
@@ -188,6 +189,8 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     [auctioningToken, chainId],
   )
   const notApproved = approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING
+  const showUnlockMessage =
+    approval !== ApprovalState.APPROVED && notApproved && approval !== ApprovalState.PENDING
   const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
   const coversClearingPrice = (price: string | undefined): boolean => {
     const { buyAmountScaled, sellAmountScaled } = convertPriceIntoBuyAndSellAmount(
@@ -246,18 +249,13 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
 
   const amountInfo = React.useMemo(
     () =>
-      approval !== ApprovalState.APPROVED && notApproved && approval !== ApprovalState.PENDING
-        ? {
-            text: `You need to unlock ${biddingTokenDisplay} to allow the smart contract to interact with it.`,
-            type: InfoType.info,
-          }
-        : errorAmount
+      errorAmount
         ? {
             text: errorAmount,
             type: InfoType.error,
           }
         : null,
-    [approval, errorAmount, notApproved, biddingTokenDisplay],
+    [errorAmount],
   )
 
   const priceInfo = React.useMemo(
@@ -276,7 +274,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     ((errorAmount ||
       errorPrice ||
       errorInterestRate ||
-      notApproved ||
       showWarning ||
       showWarningWrongChainId ||
       showConfirm ||
@@ -330,7 +327,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   return (
     <div className="card place-order-color">
       <div className="card-body">
-        <h2 className="card-title">Place Order</h2>
+        <h2 className="card-title">Place order</h2>
 
         {cancelDate && derivedAuctionInfo && (
           <div className="space-y-1">
@@ -354,7 +351,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                 info={amountInfo}
                 onUserSellAmountInput={onUserSellAmountInput}
                 token={auctioningToken}
-                unlock={{ isLocked: notApproved, onUnlock: approveCallback, unlockState: approval }}
                 value={sellAmount}
                 wrap={{
                   isWrappable,
@@ -399,7 +395,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
               ) : (
                 <>
                   <ActionButton disabled={disablePlaceOrder} onClick={handleShowConfirm}>
-                    Place order
+                    Review order
                   </ActionButton>
                   <div className="flex flex-row justify-between items-center text-xs text-[#9F9F9F] mt-4 mb-3">
                     <div>{biddingTokenDisplay} Balance</div>
