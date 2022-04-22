@@ -152,7 +152,7 @@ const Claimer: React.FC<Props> = (props) => {
           <div className="mb-7 space-y-3">
             <TokenItem>
               <div className="text-base text-white">
-                {claimableBidFunds ? `${claimableBidFunds.toSignificant(6)}` : `0.00`}
+                {claimableBidFunds ? `${claimableBidFunds.toSignificant(6)}` : `-`}
               </div>
               <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#2C2C2C] rounded-full p-1 px-2">
                 {biddingToken.address && (
@@ -172,7 +172,7 @@ const Claimer: React.FC<Props> = (props) => {
             {derivedAuctionInfo?.graphInfo?.filled > 0 && (
               <TokenItem>
                 <div className="text-base text-white">
-                  {claimableBonds ? `${claimableBonds.toSignificant(6)}` : `0.00`}
+                  {claimableBonds ? `${claimableBonds.toSignificant(6)}` : `-`}
                 </div>
                 <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#2C2C2C] rounded-full p-1 px-2">
                   {auctioningToken.address && (
