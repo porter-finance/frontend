@@ -62,26 +62,18 @@ const AuctionDetails = (props: Props) => {
 
   const clearingPriceDisplay = (
     <TokenValue>
-      {abbreviation(auctionCurrentPrice)}{' '}
-      {`${getDisplay(graphInfo?.bidding)} per
-       ${getDisplay(graphInfo?.bond)}`}
+      {abbreviation(auctionCurrentPrice)} {`${getDisplay(graphInfo?.bidding)}`}
     </TokenValue>
   )
 
   const initialPriceToDisplay = derivedAuctionInfo?.initialPrice
 
-  const maxAPR = calculateInterestRate(
-    initialPriceToDisplay?.toSignificant(2),
-    derivedAuctionInfo?.auctionEndDate,
-  )
-  const currentAPR = calculateInterestRate(auctionCurrentPrice, derivedAuctionInfo?.auctionEndDate)
-
   const extraDetails: Array<ExtraDetailsItemProps> = [
     {
       title: 'Offering size',
       value: `${
-        graphInfo?.size ? abbreviation(formatUnits(graphInfo?.size, graphInfo.bond.decimals)) : 0
-      }`,
+        graphInfo?.size ? abbreviation(formatUnits(graphInfo.size, graphInfo.bond.decimals)) : 0
+      } bonds`,
       tooltip: 'Total number of bonds to be auctioned',
     },
     {
@@ -122,7 +114,7 @@ const AuctionDetails = (props: Props) => {
     },
     {
       title: 'Current bond APR',
-      value: currentAPR,
+      value: '-',
       tooltip: 'Tooltip',
     },
     {
@@ -134,16 +126,14 @@ const AuctionDetails = (props: Props) => {
             {initialPriceToDisplay ? abbreviation(initialPriceToDisplay?.toSignificant(2)) : ' - '}
           </TokenValue>
           <TokenSymbol>
-            {initialPriceToDisplay && auctioningTokenDisplay
-              ? ` ${biddingTokenDisplay} per ${auctioningTokenDisplay}`
-              : '-'}
+            {initialPriceToDisplay && auctioningTokenDisplay ? ` ${biddingTokenDisplay}` : '-'}
           </TokenSymbol>
         </div>
       ),
     },
     {
       title: 'Maximum APR',
-      value: maxAPR,
+      value: '-',
       tooltip: 'Tooltip',
     },
   ]
