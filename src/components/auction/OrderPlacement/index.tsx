@@ -42,6 +42,7 @@ import { Tooltip } from '../../common/Tooltip'
 import AmountInputPanel from '../../form/AmountInputPanel'
 import InterestRateInputPanel from '../../form/InterestRateInputPanel'
 import PriceInputPanel from '../../form/PriceInputPanel'
+import DialogDemo from '../../modals/AlertDialogModal'
 import ConfirmationModal from '../../modals/ConfirmationModal'
 import WarningModal from '../../modals/WarningModal'
 import SwapModalFooter from '../../modals/common/PlaceOrderModalFooter'
@@ -437,6 +438,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
           }}
           title="Warning!"
         />
+        <DialogDemo />
         <ConfirmationModal
           attemptingTxn={attemptingTxn}
           content={
