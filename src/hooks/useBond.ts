@@ -18,6 +18,7 @@ export interface BondInfo {
   collateralRatio: number
   convertibleRatio: number
   maxSupply: number
+  tokenBalances: any
 }
 export interface Token {
   id: string
@@ -27,7 +28,7 @@ export interface Token {
 }
 
 const singleBondQuery = gql`
-  query Bond($bondID: ID!) {
+  query Bond($bondID: ID!, $accountID: String!) {
     bond(id: $bondID) {
       id
       name
@@ -48,6 +49,9 @@ const singleBondQuery = gql`
         symbol
         name
         decimals
+      }
+      tokenBalances(where: { account: $accountID }) {
+        amount
       }
       collateralRatio
       convertibleRatio
@@ -86,9 +90,9 @@ interface SingleBond {
   data: BondInfo
   loading: boolean
 }
-export const useBond = (bondId: string): SingleBond => {
+export const useBond = (bondID: string, accountID = ''): SingleBond => {
   const { data, error, loading } = useQuery(singleBondQuery, {
-    variables: { bondID: bondId.toLowerCase() },
+    variables: { bondID: bondID.toLowerCase(), accountID: accountID.toLowerCase() },
   })
 
   if (error) {
