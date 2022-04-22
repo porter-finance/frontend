@@ -16,6 +16,7 @@ const bondsQuery = gql`
           id
           name
           symbol
+          decimals
           type
           owner
           maturityDate
