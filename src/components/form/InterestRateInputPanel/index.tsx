@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 import dayjs from 'dayjs'
-import round from 'lodash.round'
+import { round } from 'lodash'
 
 import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
 import { Tooltip } from '../../common/Tooltip'
