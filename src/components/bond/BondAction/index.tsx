@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { formatUnits, parseUnits } from '@ethersproject/units'
-import { TokenAmount, Token } from '@josojo/honeyswap-sdk'
+import { Token, TokenAmount } from '@josojo/honeyswap-sdk'
 import { useWeb3React } from '@web3-react/core'
 import dayjs from 'dayjs'
 
@@ -11,8 +11,6 @@ import { ApprovalState, useApproveCallback } from '../../../hooks/useApproveCall
 import { useBond } from '../../../hooks/useBond'
 import { useBondContract } from '../../../hooks/useContract'
 import { useConvertBond } from '../../../hooks/useConvertBond'
-import { useIsBondFullyPaid } from '../../../hooks/useIsBondFullyPaid'
-
 import { usePreviewBond } from '../../../hooks/usePreviewBond'
 import { useRedeemBond } from '../../../hooks/useRedeemBond'
 import { BondActions } from '../../../pages/BondDetail'
@@ -34,30 +32,27 @@ const ActionButton = styled(Button)`
 `
 
 export const TokenPill = ({ chainId, token }) => {
-  return (
-    token ? (
-      <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#2C2C2C] rounded-full p-1 px-2 pl-1">
-        {token.address && (
-          <TokenLogo
-            size={'16px'}
-            token={{
-              address: token.address,
-              symbol: token.symbol,
-            }}
-          />
-        )}
-        {token.symbol && (
-          <FieldRowTokenSymbol>{getTokenDisplay(token, chainId)}</FieldRowTokenSymbol>
-        )}
-      </FieldRowToken>
-    ) : null
-  )
+  return token ? (
+    <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#2C2C2C] rounded-full p-1 px-2 pl-1">
+      {token.address && (
+        <TokenLogo
+          size={'16px'}
+          token={{
+            address: token.address,
+            symbol: token.symbol,
+          }}
+        />
+      )}
+      {token.symbol && <FieldRowTokenSymbol>{getTokenDisplay(token, chainId)}</FieldRowTokenSymbol>}
+    </FieldRowToken>
+  ) : null
 }
 
 const TokenInfo = ({ chainId, disabled = false, token, value }) => (
   <div
-    className={`text-base text-white ${disabled ? 'text-[#696969]' : 'text-white'
-      } flex justify-between`}
+    className={`text-base text-white ${
+      disabled ? 'text-[#696969]' : 'text-white'
+    } flex justify-between`}
   >
     <div>{Number(value) ? parseFloat(value).toFixed(2) : '-'}</div>
     <TokenPill chainId={chainId} token={token} />
@@ -86,7 +81,6 @@ const BondAction = ({
 
   const bondTokenBalance = bondInfo?.tokenBalances?.[0]?.amount || 0
 
-  const isFullyPaid = !!useIsBondFullyPaid(bondId)
   const isMatured = bondInfo && new Date() > new Date(bondInfo.maturityDate * 1000)
 
   const [bondsToRedeem, setBondsToRedeem] = useState('0.00')
@@ -107,13 +101,9 @@ const BondAction = ({
   let tok = null
   if (bondInfo) {
     const bondsToRedeemBigNumber = parseUnits(bondsToRedeem, bondInfo.decimals)
-    tok = new Token(chainId, bondInfo.id, bondInfo.decimals)
+    tok = new Token(chainId, bondInfo.id, bondInfo.decimals, bondInfo.symbol, bondInfo.name)
     BondAmount = new TokenAmount(tok, bondsToRedeemBigNumber.toString())
-
   }
-
-
-
 
   const [approval, approveCallback] = useApproveCallback(
     BondAmount,
@@ -135,7 +125,7 @@ const BondAction = ({
   }
 
   useEffect(() => {
-    if (!bondsToRedeem) return
+    if (!BondAmount) return
 
     if (componentType === BondActions.Redeem) {
       previewRedeem(BondAmount).then((r) => {
@@ -153,8 +143,6 @@ const BondAction = ({
         setPreviewConvertVal(formatUnits(r, bondInfo?.collateralToken?.decimals))
       })
     }
-
-
   }, [
     isConvertComponent,
     componentType,
@@ -163,6 +151,7 @@ const BondAction = ({
     previewRedeem,
     previewConvert,
     previewMint,
+    BondAmount,
   ])
 
   const resetModal = () => {
@@ -192,8 +181,6 @@ const BondAction = ({
       })
     }
 
-
-
     if (componentType === BondActions.Redeem) {
       hash = await redeem().catch(() => {
         resetModal()
@@ -205,11 +192,6 @@ const BondAction = ({
       setPendingConfirmation(false)
     }
   }
-
-
-
-
-
 
   const isConvertable = useMemo(() => {
     if (componentType !== BondActions.Convert) return false
@@ -244,7 +226,7 @@ const BondAction = ({
     if (componentType !== BondActions.Redeem) return false
     if (!account) return { error: 'Not logged in' }
     if (!isApproved) return { error: 'Not approved' }
-    if (!isFullyPaid && !isMatured) {
+    if (!isPaid && !isMatured) {
       return { error: 'Must be fully paid or matured' }
     }
 
@@ -263,10 +245,8 @@ const BondAction = ({
     bondsToRedeem,
     isApproved,
     isMatured,
-    isFullyPaid,
+    isPaid,
   ])
-
-
 
   const pendingText = useMemo(
     () => `Placing ${getActionText(componentType).toLowerCase()} order`,
@@ -281,7 +261,6 @@ const BondAction = ({
     if (componentType === BondActions.Redeem) {
       return isRedeemable !== true
     }
-
   }, [isConvertComponent, componentType, isConvertable, isRedeemable])
 
   const Status = () => {
@@ -292,7 +271,7 @@ const BondAction = ({
       return <ActiveStatusPill dot={false} title="Repaid" />
     }
 
-    if (!isFullyPaid && isPartiallyPaid && isMatured && componentType === BondActions.Redeem) {
+    if (!isPaid && isPartiallyPaid && isMatured && componentType === BondActions.Redeem) {
       return <ActiveStatusPill className="!bg-[#EDA651]" dot={false} title="Partially repaid" />
     }
 
@@ -320,6 +299,8 @@ const BondAction = ({
           </div>
         )}
         <div>
+          {console.log(bondTokenBalance)}
+
           <div className="space-y-6">
             {account && !bondTokenBalance ? (
               <div className="flex justify-center text-[12px] text-[#696969] border border-[#2C2C2C] p-12 rounded-lg">
@@ -400,7 +381,6 @@ const BondAction = ({
                   {getActionText(componentType)}
                 </ActionButton>
               )}
-
             </div>
           </div>
 

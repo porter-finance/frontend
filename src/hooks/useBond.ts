@@ -12,7 +12,7 @@ export interface BondInfo {
   owner: string
   type: string
   amount?: number
-  state: "active" | "paidEarly" | "defaulted" | "paid"
+  state: 'active' | 'paidEarly' | 'defaulted' | 'paid'
   maturityDate: number
   paymentToken: Token
   collateralToken: Token
