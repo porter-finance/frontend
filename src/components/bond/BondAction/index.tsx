@@ -57,16 +57,26 @@ export const TokenPill = ({ token }) => {
   )
 }
 
-export const TokenInfo = ({ disabled = false, token, value }) => (
-  <div
-    className={`text-base text-white ${
-      disabled ? 'text-[#696969]' : 'text-white'
-    } flex justify-between`}
-  >
-    <div>{Number(value) ? parseFloat(value).toFixed(2).toLocaleString() : '-'}</div>
-    <TokenPill token={token} />
-  </div>
-)
+export const TokenInfo = ({ disabled = false, extra = '', plus = false, token, value }) => {
+  return (
+    <div
+      className={`text-base text-white ${
+        disabled ? 'text-[#696969]' : 'text-white'
+      } flex justify-between`}
+    >
+      <div className="space-x-2">
+        <span>
+          {Number(`${value}`.replaceAll(',', ''))
+            ? parseFloat(`${value}`.replaceAll(',', '')).toLocaleString()
+            : '-'}
+          {plus ? '+' : ''}
+        </span>
+        <span className="text-[#696969]">{extra}</span>
+      </div>
+      <TokenPill token={token} />
+    </div>
+  )
+}
 
 const getActionText = (componentType) => {
   if (componentType === BondActions.Redeem) return 'Redeem'

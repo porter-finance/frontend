@@ -147,14 +147,14 @@ const ConfirmationDialog = ({
               </div>
             </div>
             <div className="text-xs text-[12px] text-[#696969] space-y-2 border-b border-b-[#D5D5D519] pb-4">
-              <TokenInfo token={amountToken} value={data.receive} />
+              <TokenInfo plus token={amountToken} value={data.receive} />
               <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
                 <span>Amount of bonds you receive</span>
                 <Tooltip text="Tooltip" />
               </div>
             </div>
             <div className="text-xs text-[12px] text-[#696969] space-y-2 border-b border-b-[#D5D5D519] pb-4">
-              <TokenInfo token={priceToken} value={data.earn} />
+              <TokenInfo extra={`(${data.apr}+)`} plus token={priceToken} value={data.earn} />
               <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
                 <span>Amount of interest you earn</span>
                 <Tooltip text="Tooltip" />
