@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { formatUnits, parseUnits } from '@ethersproject/units'
-import { TokenAmount } from '@josojo/honeyswap-sdk'
+import { TokenAmount, Token } from '@josojo/honeyswap-sdk'
 import { useWeb3React } from '@web3-react/core'
 import dayjs from 'dayjs'
 
@@ -11,17 +11,13 @@ import { ApprovalState, useApproveCallback } from '../../../hooks/useApproveCall
 import { useBond } from '../../../hooks/useBond'
 import { useBondContract } from '../../../hooks/useContract'
 import { useConvertBond } from '../../../hooks/useConvertBond'
-import { useIsBondDefaulted } from '../../../hooks/useIsBondDefaulted'
 import { useIsBondFullyPaid } from '../../../hooks/useIsBondFullyPaid'
-import { useIsBondPartiallyPaid } from '../../../hooks/useIsBondPartiallyPaid'
-import { useMintBond } from '../../../hooks/useMintBond'
+
 import { usePreviewBond } from '../../../hooks/usePreviewBond'
 import { useRedeemBond } from '../../../hooks/useRedeemBond'
 import { BondActions } from '../../../pages/BondDetail'
 import { useActivePopups, useWalletModalToggle } from '../../../state/application/hooks'
-import { useFetchTokenByAddress } from '../../../state/user/hooks'
 import { ChainId, EASY_AUCTION_NETWORKS, getTokenDisplay } from '../../../utils'
-import { isDev } from '../../Dev'
 import { ActiveStatusPill } from '../../auction/OrderbookTable'
 import { Button } from '../../buttons/Button'
 import { Tooltip } from '../../common/Tooltip'
@@ -39,7 +35,7 @@ const ActionButton = styled(Button)`
 
 export const TokenPill = ({ chainId, token }) => {
   return (
-    token && (
+    token ? (
       <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#2C2C2C] rounded-full p-1 px-2 pl-1">
         {token.address && (
           <TokenLogo
@@ -54,15 +50,14 @@ export const TokenPill = ({ chainId, token }) => {
           <FieldRowTokenSymbol>{getTokenDisplay(token, chainId)}</FieldRowTokenSymbol>
         )}
       </FieldRowToken>
-    )
+    ) : null
   )
 }
 
 const TokenInfo = ({ chainId, disabled = false, token, value }) => (
   <div
-    className={`text-base text-white ${
-      disabled ? 'text-[#696969]' : 'text-white'
-    } flex justify-between`}
+    className={`text-base text-white ${disabled ? 'text-[#696969]' : 'text-white'
+      } flex justify-between`}
   >
     <div>{Number(value) ? parseFloat(value).toFixed(2) : '-'}</div>
     <TokenPill chainId={chainId} token={token} />
@@ -72,8 +67,6 @@ const TokenInfo = ({ chainId, disabled = false, token, value }) => (
 const getActionText = (componentType) => {
   if (componentType === BondActions.Redeem) return 'Redeem'
   if (componentType === BondActions.Convert) return 'Convert'
-  if (componentType === BondActions.Mint) return 'Mint'
-
   return 'Unknown'
 }
 
@@ -85,66 +78,55 @@ const BondAction = ({
   overwriteBondId?: string
 }) => {
   const { account, chainId } = useWeb3React()
-  const fetchTok = useFetchTokenByAddress()
   const activePopups = useActivePopups()
   const params = useParams()
 
   const bondId = overwriteBondId || params?.bondId
   const { data: bondInfo, loading: isLoading } = useBond(bondId, account)
-  const [bondTokenInfo, setBondTokenInfo] = useState(null)
-  const [collateralTokenInfo, setCollateralTokenInfo] = useState(null)
-  const [paymentTokenInfo, setPaymentTokenInfo] = useState(null)
 
-  // doesn't seem to work?
   const bondTokenBalance = bondInfo?.tokenBalances?.[0]?.amount || 0
-  console.log({ bondTokenBalance, bondInfo, field: bondInfo?.tokenBalances?.[0]?.amount })
 
   const isFullyPaid = !!useIsBondFullyPaid(bondId)
   const isMatured = bondInfo && new Date() > new Date(bondInfo.maturityDate * 1000)
 
-  const [isOwner, setIsOwner] = useState(false)
   const [bondsToRedeem, setBondsToRedeem] = useState('0.00')
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false)
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true)
   const [txHash, setTxHash] = useState<string>('')
   const [previewRedeemVal, setPreviewRedeemVal] = useState<string[]>(['0', '0'])
   const [previewConvertVal, setPreviewConvertVal] = useState<string>('0')
-  const [previewMintVal, setPreviewMintVal] = useState<string>('0')
   const isConvertComponent = componentType === BondActions.Convert
-  const isPartiallyPaid = useIsBondPartiallyPaid(bondId)
-  const isDefaulted = useIsBondDefaulted(bondId)
 
-  const tokenToAction = useMemo(() => {
-    if (isConvertComponent) return bondTokenInfo
-    if (componentType === BondActions.Redeem) return bondTokenInfo
-    if (componentType === BondActions.Mint) return collateralTokenInfo
-  }, [componentType, collateralTokenInfo, bondTokenInfo, isConvertComponent])
+  // TODO ADD THIS TO THE GRAPH
+  const isPartiallyPaid = false
 
-  // if (isDev && bondTokenBalance?.lte(0)) {
-  //   bondTokenBalance = bondTokenBalance.add(20).pow(18)
-  // }
+  const isDefaulted = bondInfo?.state === 'defaulted'
+  const isPaid = bondInfo?.state === 'paidEarly' || bondInfo?.state === 'paid'
+  const tokenAmount = bondsToRedeem
 
-  const tokenAmount = useMemo(() => {
-    const tokenInfo = tokenToAction
-    // wait for token info to be filled before trying to convert into a redeemable number
-    // we need decimals
-    if (!tokenInfo) return null
+  let BondAmount = null
+  let tok = null
+  if (bondInfo) {
+    const bondsToRedeemBigNumber = parseUnits(bondsToRedeem, bondInfo.decimals)
+    tok = new Token(chainId, bondInfo?.id, bondInfo.decimals)
+    BondAmount = new TokenAmount(tok, bondsToRedeemBigNumber.toString())
 
-    const bondsToRedeemBigNumber = parseUnits(bondsToRedeem, tokenInfo.decimals)
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore its a big number i swear
-    return new TokenAmount(tokenInfo, bondsToRedeemBigNumber)
-  }, [tokenToAction, bondsToRedeem])
+  }
+
+
+
+
   const [approval, approveCallback] = useApproveCallback(
-    tokenAmount,
+    BondAmount,
     EASY_AUCTION_NETWORKS[chainId as ChainId],
     chainId as ChainId,
   )
 
+  const isOwner = bondInfo?.owner.toLowerCase() === account?.toLowerCase()
+
   const bondContract = useBondContract(bondId)
-  const { redeem } = useRedeemBond(tokenAmount, bondId)
-  const { convert } = useConvertBond(tokenAmount, bondId)
-  const { mint } = useMintBond(tokenAmount, bondId)
+  const { redeem } = useRedeemBond(BondAmount, bondId)
+  const { convert } = useConvertBond(BondAmount, bondId)
   const { previewConvert, previewMint, previewRedeem } = usePreviewBond(bondId)
   const toggleWalletModal = useWalletModalToggle()
 
@@ -158,32 +140,28 @@ const BondAction = ({
     if (!tokenAmount) return
 
     if (componentType === BondActions.Redeem) {
-      previewRedeem(tokenAmount).then((r) => {
+      previewRedeem(BondAmount).then((r) => {
         const [paymentTokens, collateralTokens] = r
         // returned in paymentTokens, collateralTokens
         setPreviewRedeemVal([
-          formatUnits(paymentTokens, paymentTokenInfo?.decimals),
-          formatUnits(collateralTokens, collateralTokenInfo?.decimals),
+          formatUnits(paymentTokens, bondInfo?.paymentToken.decimals),
+          formatUnits(collateralTokens, bondInfo?.collateralToken?.decimals),
         ])
       })
     }
 
     if (isConvertComponent) {
-      previewConvert(tokenAmount).then((r) => {
-        setPreviewConvertVal(formatUnits(r, collateralTokenInfo?.decimals))
+      previewConvert(BondAmount).then((r) => {
+        setPreviewConvertVal(formatUnits(r, bondInfo?.collateralToken?.decimals))
       })
     }
 
-    if (componentType === BondActions.Mint) {
-      previewMint(tokenAmount).then((r) => {
-        setPreviewMintVal(formatUnits(r, collateralTokenInfo?.decimals))
-      })
-    }
+
   }, [
     isConvertComponent,
     componentType,
-    paymentTokenInfo?.decimals,
-    collateralTokenInfo?.decimals,
+    bondInfo?.paymentToken.decimals,
+    bondInfo?.collateralToken?.decimals,
     previewRedeem,
     previewConvert,
     tokenAmount,
@@ -217,11 +195,7 @@ const BondAction = ({
       })
     }
 
-    if (componentType === BondActions.Mint) {
-      hash = await mint().catch(() => {
-        resetModal()
-      })
-    }
+
 
     if (componentType === BondActions.Redeem) {
       hash = await redeem().catch(() => {
@@ -235,48 +209,10 @@ const BondAction = ({
     }
   }
 
-  useEffect(() => {
-    if (!bondInfo || !account || (!bondTokenInfo && bondContract)) return
 
-    if (componentType === BondActions.Mint) {
-      return
-    }
 
-    // setTotalBalance(formatUnits(bondTokenBalance || 0, bondTokenInfo?.decimals))
-  }, [
-    componentType,
-    bondTokenBalance,
-    bondInfo,
-    account,
-    bondContract,
-    bondTokenInfo,
-    attemptingTxn,
-  ])
 
-  const invalidBond = useMemo(() => !bondId || !bondInfo, [bondId, bondInfo])
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (componentType !== BondActions.Mint) return
-      const maxSupply = await bondContract.maxSupply()
-      const totalSupply = await bondContract.totalSupply()
-      // setTotalBalance(formatUnits(maxSupply.sub(totalSupply) || 0, bondTokenInfo?.decimals))
-    }
-
-    fetchData()
-  }, [componentType, bondContract, bondTokenInfo])
-
-  useEffect(() => {
-    if (!isLoading && !invalidBond && bondInfo) {
-      setIsOwner(bondInfo?.owner.toLowerCase() === account?.toLowerCase())
-
-      fetchTok(bondId).then(setBondTokenInfo)
-      fetchTok(bondInfo?.collateralToken.id).then(setCollateralTokenInfo)
-      if (componentType === BondActions.Redeem) {
-        fetchTok(bondInfo?.paymentToken.id).then(setPaymentTokenInfo)
-      }
-    }
-  }, [componentType, bondInfo, isLoading, invalidBond, account, fetchTok, bondId])
 
   const isConvertable = useMemo(() => {
     if (componentType !== BondActions.Convert) return false
@@ -286,13 +222,12 @@ const BondAction = ({
     }
 
     if (!account) return { error: 'Not logged in' }
-    if (!isOwner) return { error: 'Not owner' }
     if (!isApproved) return { error: 'Not approved' }
 
-    const validInput = parseUnits(bondsToRedeem, collateralTokenInfo?.decimals).gt(0)
+    const validInput = parseUnits(bondsToRedeem, bondInfo?.collateralToken?.decimals).gt(0)
     if (!validInput) return { error: 'Input must be > 0' }
 
-    const notEnoughBalance = parseUnits(bondsToRedeem, collateralTokenInfo?.decimals).gt(
+    const notEnoughBalance = parseUnits(bondsToRedeem, bondInfo?.collateralToken?.decimals).gt(
       bondTokenBalance,
     )
     if (notEnoughBalance) return { error: 'Bonds to redeem exceeds balance' }
@@ -302,26 +237,24 @@ const BondAction = ({
     componentType,
     account,
     bondTokenBalance,
-    collateralTokenInfo?.decimals,
+    bondInfo?.collateralToken?.decimals,
     bondsToRedeem,
     isApproved,
     isMatured,
-    isOwner,
   ])
 
   const isRedeemable = useMemo(() => {
     if (componentType !== BondActions.Redeem) return false
     if (!account) return { error: 'Not logged in' }
-    if (!isOwner) return { error: 'Not owner' }
     if (!isApproved) return { error: 'Not approved' }
     if (!isFullyPaid && !isMatured) {
       return { error: 'Must be fully paid or matured' }
     }
 
-    const validInput = parseUnits(bondsToRedeem, bondTokenInfo?.decimals).gt(0)
+    const validInput = parseUnits(bondsToRedeem, bondInfo?.decimals).gt(0)
     if (!validInput) return { error: 'Input must be > 0' }
 
-    const notEnoughBalance = parseUnits(bondsToRedeem, bondTokenInfo?.decimals).gt(bondTokenBalance)
+    const notEnoughBalance = parseUnits(bondsToRedeem, bondInfo?.decimals).gt(bondTokenBalance)
     if (notEnoughBalance) return { error: 'Bonds to redeem exceeds balance' }
 
     return true
@@ -329,35 +262,14 @@ const BondAction = ({
     componentType,
     account,
     bondTokenBalance,
-    bondTokenInfo?.decimals,
+    bondInfo?.decimals,
     bondsToRedeem,
     isApproved,
     isMatured,
-    isOwner,
     isFullyPaid,
   ])
 
-  const isMintable = useMemo(() => {
-    if (componentType !== BondActions.Mint) return false
 
-    const hasBonds =
-      account &&
-      isOwner &&
-      isApproved &&
-      parseUnits(bondsToRedeem, bondTokenInfo?.decimals).gt(0) &&
-      parseUnits(bondsToRedeem, bondTokenInfo?.decimals).lte(bondTokenBalance)
-
-    return hasBonds && !isMatured
-  }, [
-    componentType,
-    account,
-    bondTokenBalance,
-    bondTokenInfo?.decimals,
-    bondsToRedeem,
-    isApproved,
-    isMatured,
-    isOwner,
-  ])
 
   const pendingText = useMemo(
     () => `Placing ${getActionText(componentType).toLowerCase()} order`,
@@ -370,18 +282,16 @@ const BondAction = ({
       return isConvertable !== true
     }
     if (componentType === BondActions.Redeem) {
-      console.log(isRedeemable)
       return isRedeemable !== true
     }
 
-    if (componentType === BondActions.Mint) return !isMintable
-  }, [isConvertComponent, componentType, isConvertable, isMintable, isRedeemable])
+  }, [isConvertComponent, componentType, isConvertable, isRedeemable])
 
   const Status = () => {
     if (isDefaulted && componentType === BondActions.Redeem) {
       return <ActiveStatusPill className="!bg-[#DB3635]" dot={false} title="Defaulted" />
     }
-    if (isFullyPaid && componentType === BondActions.Redeem) {
+    if (isPaid && componentType === BondActions.Redeem) {
       return <ActiveStatusPill dot={false} title="Repaid" />
     }
 
@@ -421,9 +331,9 @@ const BondAction = ({
             ) : (
               <AmountInputPanel
                 amountText={`Amount of bonds to ${getActionText(componentType).toLowerCase()}`}
-                balance={formatUnits(bondTokenBalance || 0, bondTokenInfo?.decimals)}
+                balance={formatUnits(bondTokenBalance || 0, bondInfo?.decimals)}
                 balanceString={componentType === BondActions.Mint && 'Available'}
-                chainId={bondTokenInfo?.chainId}
+                chainId={chainId}
                 disabled={!account}
                 info={
                   account &&
@@ -437,7 +347,7 @@ const BondAction = ({
                   setBondsToRedeem(bondTokenBalance)
                 }}
                 onUserSellAmountInput={onUserSellAmountInput}
-                token={tokenToAction}
+                token={tok}
                 unlock={{
                   isLocked: isOwner && !isApproved,
                   onUnlock: approveCallback,
@@ -454,7 +364,7 @@ const BondAction = ({
                     <TokenInfo
                       chainId={chainId}
                       disabled={!account}
-                      token={collateralTokenInfo}
+                      token={bondInfo?.collateralToken}
                       // array of previewRedeemVal is [paymentTokens, collateralTokens]
                       value={isConvertComponent ? previewConvertVal : previewRedeemVal[1]}
                     />
@@ -464,7 +374,7 @@ const BondAction = ({
                         <TokenInfo
                           chainId={chainId}
                           disabled={!account}
-                          token={collateralTokenInfo}
+                          token={bondInfo?.collateralToken}
                           // array of previewRedeemVal is [paymentTokens, collateralTokens]
                           value={isConvertComponent ? previewConvertVal : previewRedeemVal[1]}
                         />
@@ -472,7 +382,7 @@ const BondAction = ({
                       <TokenInfo
                         chainId={chainId}
                         disabled={!account}
-                        token={paymentTokenInfo}
+                        token={bondInfo?.paymentToken}
                         // array of previewRedeemVal is [paymentTokens, collateralTokens]
                         value={isConvertComponent ? previewConvertVal : previewRedeemVal[0]}
                       />
@@ -493,9 +403,7 @@ const BondAction = ({
                   {getActionText(componentType)}
                 </ActionButton>
               )}
-              {componentType === BondActions.Mint && (
-                <p>Minting for: {previewMintVal} collateral tokens </p>
-              )}
+
             </div>
           </div>
 
