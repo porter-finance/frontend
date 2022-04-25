@@ -15,7 +15,6 @@ import { useSignature } from '../../../hooks/useSignature'
 import { LoadingBox } from '../../../pages/Auction'
 import { useWalletModalToggle } from '../../../state/application/hooks'
 import {
-  AuctionState,
   DerivedAuctionInfo,
   tryParseAmount,
   useGetOrderPlacementError,
@@ -34,7 +33,6 @@ import {
   isTokenWMATIC,
   isTokenXDAI,
 } from '../../../utils'
-import { convertPriceIntoBuyAndSellAmount } from '../../../utils/prices'
 import { getChainName } from '../../../utils/tools'
 import { isDev } from '../../Dev'
 import { Button } from '../../buttons/Button'
@@ -112,9 +110,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [showWarning, setShowWarning] = useState<boolean>(false)
   const [showWarningWrongChainId, setShowWarningWrongChainId] = useState<boolean>(false)
-  const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirmed
-  const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true) // waiting for user confirmation
-  const [txHash, setTxHash] = useState<string>('')
 
   const auctioningToken = React.useMemo(
     () => derivedAuctionInfo.auctioningToken,
@@ -148,14 +143,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     }
   }, [onUserPriceInput, price, derivedAuctionInfo])
 
-  const resetModal = () => {
-    if (!pendingConfirmation) {
-      onUserSellAmountInput('')
-    }
-    setPendingConfirmation(true)
-    setAttemptingTxn(false)
-  }
-
   const placeOrderCallback = usePlaceOrderCallback(
     auctionIdentifier,
     signature,
@@ -164,21 +151,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     biddingToken,
   )
 
-  const onPlaceOrder = () => {
-    setAttemptingTxn(true)
-
-    placeOrderCallback()
-      .then((hash) => {
-        setTxHash(hash)
-        setPendingConfirmation(false)
-      })
-      .catch(() => {
-        resetModal()
-        setShowConfirm(false)
-      })
-  }
-
-  const pendingText = `Placing order`
   const biddingTokenDisplay = useMemo(
     () => getFullTokenDisplay(biddingToken, chainId),
     [biddingToken, chainId],
@@ -188,25 +160,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     [auctioningToken, chainId],
   )
   const notApproved = approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING
-  const showUnlockMessage =
-    approval !== ApprovalState.APPROVED && notApproved && approval !== ApprovalState.PENDING
-  const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
-  const coversClearingPrice = (price: string | undefined): boolean => {
-    const { buyAmountScaled, sellAmountScaled } = convertPriceIntoBuyAndSellAmount(
-      derivedAuctionInfo?.auctioningToken,
-      derivedAuctionInfo?.biddingToken,
-      price == '-' ? '1' : price,
-      sellAmount,
-    )
-
-    return sellAmountScaled
-      ?.mul(derivedAuctionInfo?.clearingPriceSellOrder?.buyAmount.raw.toString())
-      .lte(
-        buyAmountScaled?.mul(derivedAuctionInfo?.clearingPriceSellOrder?.sellAmount.raw.toString()),
-      )
-  }
-  const hasRiskNotCoveringClearingPrice =
-    auctionState === AuctionState.ORDER_PLACING_AND_CANCELING && coversClearingPrice(price)
 
   const handleShowConfirm = () => {
     if (chainId !== chainIdFromWeb3) {
@@ -452,34 +405,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
           }}
           title="Warning!"
         />
-        {/*<ConfirmationModal*/}
-        {/*  attemptingTxn={attemptingTxn}*/}
-        {/*  content={*/}
-        {/*    <SwapModalFooter*/}
-        {/*      auctioningToken={auctioningToken}*/}
-        {/*      biddingToken={biddingToken}*/}
-        {/*      cancelDate={cancelDate}*/}
-        {/*      chainId={chainId}*/}
-        {/*      confirmText={'Confirm'}*/}
-        {/*      hasRiskNotCoveringClearingPrice={hasRiskNotCoveringClearingPrice}*/}
-        {/*      isPriceInverted={showPriceInverted}*/}
-        {/*      onPlaceOrder={onPlaceOrder}*/}
-        {/*      orderPlacingOnly={orderPlacingOnly}*/}
-        {/*      price={price}*/}
-        {/*      sellAmount={sellAmount}*/}
-        {/*    />*/}
-        {/*  }*/}
-        {/*  hash={txHash}*/}
-        {/*  isOpen={showConfirm}*/}
-        {/*  onDismiss={() => {*/}
-        {/*    resetModal()*/}
-        {/*    setShowConfirm(false)*/}
-        {/*  }}*/}
-        {/*  pendingConfirmation={pendingConfirmation}*/}
-        {/*  pendingText={pendingText}*/}
-        {/*  title="Confirm Order"*/}
-        {/*  width={504}*/}
-        {/*/>*/}
       </div>
     </div>
   )
