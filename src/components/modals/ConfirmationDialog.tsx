@@ -110,30 +110,38 @@ const IconButton = styled('button', {
   '&:focus': { boxShadow: `0 0 0 2px ${violet.violet7}` },
 })
 
-const WarningText = ({ cancelCutoff }) => (
-  <div className="space-y-3">
-    <div className="flex flex-row items-center space-x-2">
-      <svg
-        fill="none"
-        height="15"
-        viewBox="0 0 15 15"
-        width="15"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          clipRule="evenodd"
-          d="M7.21424 14.5C11.1834 14.5 14.4011 11.366 14.4011 7.5C14.4011 3.63401 11.1834 0.5 7.21424 0.5C3.24503 0.5 0.0273438 3.63401 0.0273438 7.5C0.0273438 11.366 3.24503 14.5 7.21424 14.5ZM6.21449 4.02497C6.19983 3.73938 6.43361 3.5 6.7272 3.5H7.70128C7.99486 3.5 8.22865 3.73938 8.21399 4.02497L8.00865 8.02497C7.99499 8.29107 7.76949 8.5 7.49594 8.5H6.93254C6.65899 8.5 6.43349 8.29107 6.41983 8.02497L6.21449 4.02497ZM6.18754 10.5C6.18754 9.94772 6.64721 9.5 7.21424 9.5C7.78127 9.5 8.24094 9.94772 8.24094 10.5C8.24094 11.0523 7.78127 11.5 7.21424 11.5C6.64721 11.5 6.18754 11.0523 6.18754 10.5Z"
-          fill="#EDA651"
-          fillRule="evenodd"
-        />
-      </svg>
-      <span className="text-[#EDA651]">Warning</span>
+const WarningText = ({ cancelCutoff, orderPlacingOnly }) =>
+  orderPlacingOnly || cancelCutoff ? (
+    <div className="space-y-3">
+      <div className="flex flex-row items-center space-x-2">
+        <svg
+          fill="none"
+          height="15"
+          viewBox="0 0 15 15"
+          width="15"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            clipRule="evenodd"
+            d="M7.21424 14.5C11.1834 14.5 14.4011 11.366 14.4011 7.5C14.4011 3.63401 11.1834 0.5 7.21424 0.5C3.24503 0.5 0.0273438 3.63401 0.0273438 7.5C0.0273438 11.366 3.24503 14.5 7.21424 14.5ZM6.21449 4.02497C6.19983 3.73938 6.43361 3.5 6.7272 3.5H7.70128C7.99486 3.5 8.22865 3.73938 8.21399 4.02497L8.00865 8.02497C7.99499 8.29107 7.76949 8.5 7.49594 8.5H6.93254C6.65899 8.5 6.43349 8.29107 6.41983 8.02497L6.21449 4.02497ZM6.18754 10.5C6.18754 9.94772 6.64721 9.5 7.21424 9.5C7.78127 9.5 8.24094 9.94772 8.24094 10.5C8.24094 11.0523 7.78127 11.5 7.21424 11.5C6.64721 11.5 6.18754 11.0523 6.18754 10.5Z"
+            fill="#EDA651"
+            fillRule="evenodd"
+          />
+        </svg>
+        <span className="text-[#EDA651]">Warning</span>
+      </div>
+      {orderPlacingOnly && !cancelCutoff && (
+        <div className="text-sm text-[#D6D6D6]">Orders cannot be cancelled once placed.</div>
+      )}
+      {cancelCutoff && (
+        <div className="text-sm text-[#D6D6D6]">
+          Orders cannot be cancelled after {cancelCutoff}.
+        </div>
+      )}
     </div>
-    <div className="text-sm text-[#D6D6D6]">Orders cannot be cancelled after {cancelCutoff}.</div>
-  </div>
-)
+  ) : null
 
-const ReviewInfo = ({ amount, amountToken, cancelCutoff, data, priceToken }) => (
+const ReviewInfo = ({ amount, amountToken, cancelCutoff, data, orderPlacingOnly, priceToken }) => (
   <div className="space-y-6 mt-10">
     <div className="text-xs text-[12px] text-[#696969] space-y-2 border-b border-b-[#D5D5D519] pb-4">
       <TokenInfo token={priceToken} value={amount} />
@@ -156,7 +164,7 @@ const ReviewInfo = ({ amount, amountToken, cancelCutoff, data, priceToken }) => 
         <Tooltip text="Tooltip" />
       </div>
     </div>
-    <WarningText cancelCutoff={cancelCutoff} />
+    <WarningText cancelCutoff={cancelCutoff} orderPlacingOnly={orderPlacingOnly} />
   </div>
 )
 
@@ -199,6 +207,7 @@ const TokenApproval = ({
   amountToken,
   cancelCutoff,
   maturityDate,
+  orderPlacingOnly,
   price,
   priceToken,
   setShowTokenTransactionComplete,
@@ -210,6 +219,7 @@ const TokenApproval = ({
   amountToken: Token
   maturityDate: number
   cancelCutoff: string
+  orderPlacingOnly: boolean
   price: string
   priceToken: Token
   setShowTokenTransactionComplete: (hash: string) => void
@@ -240,6 +250,7 @@ const TokenApproval = ({
                 amountToken={amountToken}
                 cancelCutoff={cancelCutoff}
                 data={data}
+                orderPlacingOnly={orderPlacingOnly}
                 priceToken={priceToken}
               />
             ),
@@ -308,6 +319,7 @@ const ConfirmationDialog = ({
   maturityDate,
   onOpenChange,
   open,
+  orderPlacingOnly,
   placeOrder,
   price,
   priceToken,
@@ -317,6 +329,7 @@ const ConfirmationDialog = ({
   amount: number
   amountToken: Token
   maturityDate: number
+  orderPlacingOnly: boolean
   cancelCutoff: string
   price: string
   priceToken: Token
@@ -369,6 +382,7 @@ const ConfirmationDialog = ({
                 maturityDate={maturityDate}
                 onOpenChange={onOpenChange}
                 open={open}
+                orderPlacingOnly={orderPlacingOnly}
                 placeOrder={placeOrder}
                 price={price}
                 priceToken={priceToken}
