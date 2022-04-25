@@ -3,7 +3,6 @@ import styled from 'styled-components'
 
 import ReactTooltip from 'react-tooltip'
 
-import { CookiesBanner } from '../components/common/CookiesBanner'
 import { TopDisclaimer } from '../components/common/TopDisclaimer'
 import { Footer } from '../components/layout/Footer'
 import { Header } from '../components/layout/Header'
@@ -13,7 +12,6 @@ import { InnerContainer } from '../components/pureStyledComponents/InnerContaine
 import { MainScroll } from '../components/pureStyledComponents/MainScroll'
 import { MainWrapper } from '../components/pureStyledComponents/MainWrapper'
 import Web3ReactManager from '../components/web3/Web3ReactManager'
-import useShowCookies from '../hooks/useShowCookies'
 import useShowTopWarning from '../hooks/useShowTopWarning'
 
 export const InnerApp = styled(InnerContainer)`
@@ -25,7 +23,6 @@ export const InnerApp = styled(InnerContainer)`
 `
 
 const App: React.FC = () => {
-  const { setShowCookiesBanner, showCookiesBanner } = useShowCookies()
   const { showTopWarning } = useShowTopWarning()
 
   return (
@@ -50,12 +47,6 @@ const App: React.FC = () => {
           </InnerApp>
           <Footer />
         </MainScroll>
-        <CookiesBanner
-          isBannerVisible={showCookiesBanner}
-          onHide={() => {
-            setShowCookiesBanner(false)
-          }}
-        />
       </MainWrapper>
     </Suspense>
   )
