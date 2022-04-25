@@ -60,7 +60,9 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
     },
     {
       title: 'Call strike price',
-      value: `${strikePrice} USDC/${bond?.collateralToken.symbol || ''}`,
+      value: `${strikePrice} ${bond?.paymentToken.symbol || ''}/${
+        bond?.collateralToken.symbol || ''
+      }`,
       tooltip: 'Tooltip',
       show: isConvertBond,
     },
