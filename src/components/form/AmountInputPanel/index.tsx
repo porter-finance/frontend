@@ -165,7 +165,7 @@ const AmountInputPanel: React.FC<Props> = (props) => {
             value={!account ? '-' : value}
           />
           <Wrap>
-            {token && <TokenPill chainId={chainId} token={token} />}
+            {token && <TokenPill token={token} />}
             {unlock?.isLocked && (
               <UnlockButton
                 disabled={isUnlocking}
