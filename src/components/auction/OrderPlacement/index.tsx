@@ -402,6 +402,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                     maturityDate={derivedAuctionInfo?.graphInfo?.bond?.maturityDate}
                     onOpenChange={setShowConfirm}
                     open={showConfirm}
+                    placeOrder={placeOrderCallback}
                     price={price}
                     priceToken={biddingToken}
                     unlock={{

@@ -35,7 +35,6 @@ export function useApproveCallback(
     account ?? undefined,
     addressToApprove,
   )
-  console.log(currentAllowance, amountToApprove?.token, account, addressToApprove)
   const pendingApproval = useHasPendingApproval(amountToApprove?.token?.address, addressToApprove)
 
   // check the current approval status
