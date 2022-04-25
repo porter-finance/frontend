@@ -276,6 +276,12 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     )
   }
 
+  const cancelCutoff =
+    derivedAuctionInfo?.orderCancellationEndDate &&
+    dayjs(derivedAuctionInfo?.orderCancellationEndDate * 1000)
+      .utc()
+      .format('MMM DD, YYYY HH:mm UTC')
+
   return (
     <div className="card place-order-color">
       <div className="card-body">
@@ -283,11 +289,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
 
         {cancelDate && derivedAuctionInfo && (
           <div className="space-y-1">
-            <div className="text-[#EEEFEB] text-sm">
-              {dayjs(derivedAuctionInfo.orderCancellationEndDate * 1000)
-                .utc()
-                .format('MMM DD, YYYY HH:mm UTC')}
-            </div>
+            <div className="text-[#EEEFEB] text-sm">{cancelCutoff}</div>
             <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
               <span>Order cancellation cutoff date</span>
               <Tooltip text="Order cutoff date tooltip" />
@@ -352,6 +354,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                   <ConfirmationDialog
                     amount={Number(sellAmount)}
                     amountToken={auctioningToken}
+                    cancelCutoff={cancelCutoff}
                     maturityDate={derivedAuctionInfo?.graphInfo?.bond?.maturityDate}
                     onOpenChange={setShowConfirm}
                     open={showConfirm}
