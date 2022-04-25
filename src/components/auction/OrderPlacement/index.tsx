@@ -15,6 +15,7 @@ import { useSignature } from '../../../hooks/useSignature'
 import { LoadingBox } from '../../../pages/Auction'
 import { useWalletModalToggle } from '../../../state/application/hooks'
 import {
+  AuctionState,
   DerivedAuctionInfo,
   tryParseAmount,
   useGetOrderPlacementError,
@@ -184,7 +185,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
         : undefined,
     [derivedAuctionInfo?.auctionEndDate, derivedAuctionInfo?.orderCancellationEndDate],
   )
-
+  const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
   const isPrivate = React.useMemo(
     () => auctionDetails && auctionDetails.isPrivateAuction,
     [auctionDetails],
@@ -358,6 +359,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                     maturityDate={derivedAuctionInfo?.graphInfo?.bond?.maturityDate}
                     onOpenChange={setShowConfirm}
                     open={showConfirm}
+                    orderPlacingOnly={orderPlacingOnly}
                     placeOrder={placeOrderCallback}
                     price={price}
                     priceToken={biddingToken}
