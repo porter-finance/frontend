@@ -14,8 +14,12 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
   // const { data: paymentTokenPrice } = useTokenPrice(bond?.paymentToken.id)
   const paymentTokenPrice = 1
 
-  const collateralPerBond = bond ? Number(formatUnits(bond.collateralRatio, bond.decimals)) : 0
-  const convertiblePerBond = bond ? Number(formatUnits(bond.convertibleRatio, bond.decimals)) : 0
+  const collateralPerBond = bond
+    ? Number(formatUnits(bond.collateralRatio, bond.collateralToken.decimals))
+    : 0
+  const convertiblePerBond = bond
+    ? Number(formatUnits(bond.convertibleRatio, bond.collateralToken.decimals))
+    : 0
   const collateralValue = round(collateralPerBond * collateralTokenPrice, 2)
   const convertibleValue = round(convertiblePerBond * collateralTokenPrice, 2)
 
@@ -56,7 +60,9 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
     },
     {
       title: 'Call strike price',
-      value: `${strikePrice} USDC/${bond?.collateralToken.symbol || ''}`,
+      value: `${strikePrice} ${bond?.paymentToken.symbol || ''}/${
+        bond?.collateralToken.symbol || ''
+      }`,
       tooltip: 'Tooltip',
       show: isConvertBond,
     },
