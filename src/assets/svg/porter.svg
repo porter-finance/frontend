@@ -1,6 +1,6 @@
 <svg width="136" height="136" viewBox="0 0 136 136" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g filter="url(#filter0_dd_9561_3811)">
-        <circle cx="68" cy="60" r="52" fill="#181A1C"/>
+        <circle cx="68" cy="60" r="52" />
         <circle cx="68" cy="60" r="51.5" stroke="url(#paint0_linear_9561_3811)"/>
     </g>
     <path fill-rule="evenodd" clip-rule="evenodd" d="M75.7051 56.5898V71.8463L92.1605 80.0005V64.0425L75.7051 56.5898Z" fill="#696969"/>
