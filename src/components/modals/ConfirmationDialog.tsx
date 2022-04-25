@@ -92,9 +92,6 @@ export const DialogTitle = StyledTitle
 export const DialogDescription = StyledDescription
 export const DialogClose = DialogPrimitive.Close
 
-// Your app...
-const Flex = styled('div', { display: 'flex' })
-
 const IconButton = styled('button', {
   all: 'unset',
   fontFamily: 'inherit',
@@ -113,7 +110,7 @@ const IconButton = styled('button', {
   '&:focus': { boxShadow: `0 0 0 2px ${violet.violet7}` },
 })
 
-const WarningText = () => (
+const WarningText = ({ cancelCutoff }) => (
   <div className="space-y-3">
     <div className="flex flex-row items-center space-x-2">
       <svg
@@ -132,11 +129,11 @@ const WarningText = () => (
       </svg>
       <span className="text-[#EDA651]">Warning</span>
     </div>
-    <div className="text-sm text-[#D6D6D6]">Orders cannot be cancelled once placed.</div>
+    <div className="text-sm text-[#D6D6D6]">Orders cannot be cancelled after {cancelCutoff}.</div>
   </div>
 )
 
-const ReviewInfo = ({ amount, amountToken, data, priceToken }) => (
+const ReviewInfo = ({ amount, amountToken, cancelCutoff, data, priceToken }) => (
   <div className="space-y-6 mt-10">
     <div className="text-xs text-[12px] text-[#696969] space-y-2 border-b border-b-[#D5D5D519] pb-4">
       <TokenInfo token={priceToken} value={amount} />
@@ -159,7 +156,7 @@ const ReviewInfo = ({ amount, amountToken, data, priceToken }) => (
         <Tooltip text="Tooltip" />
       </div>
     </div>
-    <WarningText />
+    <WarningText cancelCutoff={cancelCutoff} />
   </div>
 )
 
@@ -200,6 +197,7 @@ const GhostTransactionLink = ({ chainId, hash }) => (
 const TokenApproval = ({
   amount,
   amountToken,
+  cancelCutoff,
   maturityDate,
   price,
   priceToken,
@@ -211,6 +209,7 @@ const TokenApproval = ({
   amount: number
   amountToken: Token
   maturityDate: number
+  cancelCutoff: string
   price: string
   priceToken: Token
   setShowTokenTransactionComplete: (hash: string) => void
@@ -239,6 +238,7 @@ const TokenApproval = ({
               <ReviewInfo
                 amount={amount}
                 amountToken={amountToken}
+                cancelCutoff={cancelCutoff}
                 data={data}
                 priceToken={priceToken}
               />
@@ -304,6 +304,7 @@ enum OrderState {
 const ConfirmationDialog = ({
   amount,
   amountToken,
+  cancelCutoff,
   maturityDate,
   onOpenChange,
   open,
@@ -316,6 +317,7 @@ const ConfirmationDialog = ({
   amount: number
   amountToken: Token
   maturityDate: number
+  cancelCutoff: string
   price: string
   priceToken: Token
   unlock: unlockProps
@@ -363,6 +365,7 @@ const ConfirmationDialog = ({
               <TokenApproval
                 amount={amount}
                 amountToken={amountToken}
+                cancelCutoff={cancelCutoff}
                 maturityDate={maturityDate}
                 onOpenChange={onOpenChange}
                 open={open}
