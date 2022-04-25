@@ -126,13 +126,6 @@ export function useTokenBalancesTreatWETHAsETH(
   }, [balancesWithoutWETH, ETHBalance, includesWETH, address, chainId])
 }
 
-// get the balance for a single token/account combo
-export function useTokenBalance(account?: string, token?: Token): TokenAmount | undefined {
-  const tokenBalances = useTokenBalances(account, [token])
-  if (!token) return
-  return tokenBalances[token.address]
-}
-
 // mimics the behavior of useAddressBalance
 export function useTokenBalanceTreatingWETHasETHonXDAI(
   account?: string,
