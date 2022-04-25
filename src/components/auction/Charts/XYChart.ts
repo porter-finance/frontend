@@ -202,9 +202,9 @@ interface DrawInformation {
 }
 
 export const drawInformation = (props: DrawInformation) => {
-  const { baseToken, chainId, chart, maturityDate, quoteToken } = props
+  const { baseToken, chart, maturityDate, quoteToken } = props
   const baseTokenLabel = baseToken.symbol
-  const quoteTokenLabel = getTokenDisplay(quoteToken, chainId)
+  const quoteTokenLabel = getTokenDisplay(quoteToken)
   const market = quoteTokenLabel + '-' + baseTokenLabel
 
   const priceTitle = ` Price`

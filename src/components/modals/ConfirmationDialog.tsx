@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 
+import { Token } from '@josojo/honeyswap-sdk'
 import { violet } from '@radix-ui/colors'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { Cross2Icon } from '@radix-ui/react-icons'
@@ -9,7 +10,10 @@ import { ReactComponent as GreenCheckIcon } from '../../assets/svg/greencheck.sv
 import { ReactComponent as PorterIcon } from '../../assets/svg/porter.svg'
 import { ApprovalState } from '../../hooks/useApproveCallback'
 import { ActionButton } from '../auction/Claimer'
+import { TokenInfo } from '../bond/BondAction'
+import { Tooltip } from '../common/Tooltip'
 import { unlockProps } from '../form/AmountInputPanel'
+import { getReviewData } from '../form/InterestRateInputPanel'
 
 const overlayShow = keyframes({
   '0%': { opacity: 0 },
@@ -107,24 +111,56 @@ const IconButton = styled('button', {
 })
 
 const ConfirmationDialog = ({
+  amount,
+  amountToken,
+  maturityDate,
   onOpenChange,
   open,
+  price,
+  priceToken,
   unlock,
 }: {
+  amount: number
+  amountToken: Token
+  maturityDate: number
+  price: string
+  priceToken: Token
   unlock: unlockProps
   onOpenChange: (open: boolean) => void
   open: boolean
 }) => {
   const isUnlocking = unlock?.unlockState === ApprovalState.PENDING
   const [waitingForWalletUnlock, setWaitingForWalletUnlock] = useState(false)
-  console.log(unlock.unlockState)
+  const data = getReviewData({ amount, maturityDate, price })
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent>
         <DialogTitle>Review order</DialogTitle>
         <DialogDescription>
-          Make changes to your profile here. Click save when you&apos;re done.
+          <div className="space-y-6 mt-10">
+            <div className="text-xs text-[12px] text-[#696969] space-y-2 border-b border-b-[#D5D5D519] pb-4">
+              <TokenInfo token={priceToken} value={amount} />
+              <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
+                <span>Amount you pay</span>
+                <Tooltip text="Tooltip" />
+              </div>
+            </div>
+            <div className="text-xs text-[12px] text-[#696969] space-y-2 border-b border-b-[#D5D5D519] pb-4">
+              <TokenInfo token={amountToken} value={data.receive} />
+              <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
+                <span>Amount of bonds you receive</span>
+                <Tooltip text="Tooltip" />
+              </div>
+            </div>
+            <div className="text-xs text-[12px] text-[#696969] space-y-2 border-b border-b-[#D5D5D519] pb-4">
+              <TokenInfo token={priceToken} value={data.earn} />
+              <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
+                <span>Amount of interest you earn</span>
+                <Tooltip text="Tooltip" />
+              </div>
+            </div>
+          </div>
           {unlock.isLocked && (
             <div className="flex items-center flex-col">
               {isUnlocking && !waitingForWalletUnlock && (
@@ -140,34 +176,30 @@ const ConfirmationDialog = ({
                   <span>{unlock.token} Approved</span>
                 </>
               )}
-
-              <ActionButton
-                aria-label={`Approve ${unlock.token}`}
-                className={waitingForWalletUnlock || isUnlocking ? 'loading' : ''}
-                onClick={() => {
-                  setWaitingForWalletUnlock(true)
-                  unlock
-                    .onUnlock()
-                    .then((response) => {
-                      console.log(response)
-                      setWaitingForWalletUnlock(false)
-                    })
-                    .catch(() => {
-                      setWaitingForWalletUnlock(false)
-                    })
-                }}
-              >
-                {!isUnlocking && !waitingForWalletUnlock && `Approve ${unlock.token}`}
-                {!isUnlocking && waitingForWalletUnlock && 'Confirm approval in wallet'}
-                {isUnlocking && !waitingForWalletUnlock && `Approving ${unlock.token}`}
-              </ActionButton>
             </div>
           )}
         </DialogDescription>
         <Flex css={{ marginTop: 25, justifyContent: 'flex-end' }}>
-          <DialogClose asChild>
-            <ActionButton aria-label="Close">Close</ActionButton>
-          </DialogClose>
+          <ActionButton
+            aria-label={`Approve ${unlock.token}`}
+            className={waitingForWalletUnlock || isUnlocking ? 'loading' : ''}
+            onClick={() => {
+              setWaitingForWalletUnlock(true)
+              unlock
+                .onUnlock()
+                .then((response) => {
+                  console.log(response)
+                  setWaitingForWalletUnlock(false)
+                })
+                .catch(() => {
+                  setWaitingForWalletUnlock(false)
+                })
+            }}
+          >
+            {!isUnlocking && !waitingForWalletUnlock && `Approve ${unlock.token}`}
+            {!isUnlocking && waitingForWalletUnlock && 'Confirm approval in wallet'}
+            {isUnlocking && !waitingForWalletUnlock && `Approving ${unlock.token}`}
+          </ActionButton>
         </Flex>
         <DialogClose asChild>
           <IconButton>

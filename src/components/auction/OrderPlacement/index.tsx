@@ -397,8 +397,13 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                     Review order
                   </ActionButton>
                   <ConfirmationDialog
+                    amount={Number(sellAmount)}
+                    amountToken={auctioningToken}
+                    maturityDate={derivedAuctionInfo?.graphInfo?.bond?.maturityDate}
                     onOpenChange={setShowConfirm}
                     open={showConfirm}
+                    price={price}
+                    priceToken={biddingToken}
                     unlock={{
                       token: biddingTokenDisplay,
                       isLocked: notApproved,
