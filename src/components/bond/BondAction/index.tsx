@@ -102,13 +102,12 @@ const BondAction = ({
 
   const isDefaulted = bondInfo?.state === 'defaulted'
   const isPaid = bondInfo?.state === 'paidEarly' || bondInfo?.state === 'paid'
-  const tokenAmount = bondsToRedeem
 
   let BondAmount = null
   let tok = null
   if (bondInfo) {
     const bondsToRedeemBigNumber = parseUnits(bondsToRedeem, bondInfo.decimals)
-    tok = new Token(chainId, bondInfo?.id, bondInfo.decimals)
+    tok = new Token(chainId, bondInfo.id, bondInfo.decimals)
     BondAmount = new TokenAmount(tok, bondsToRedeemBigNumber.toString())
 
   }
@@ -124,7 +123,6 @@ const BondAction = ({
 
   const isOwner = bondInfo?.owner.toLowerCase() === account?.toLowerCase()
 
-  const bondContract = useBondContract(bondId)
   const { redeem } = useRedeemBond(BondAmount, bondId)
   const { convert } = useConvertBond(BondAmount, bondId)
   const { previewConvert, previewMint, previewRedeem } = usePreviewBond(bondId)
@@ -137,7 +135,7 @@ const BondAction = ({
   }
 
   useEffect(() => {
-    if (!tokenAmount) return
+    if (!bondsToRedeem) return
 
     if (componentType === BondActions.Redeem) {
       previewRedeem(BondAmount).then((r) => {
@@ -164,7 +162,6 @@ const BondAction = ({
     bondInfo?.collateralToken?.decimals,
     previewRedeem,
     previewConvert,
-    tokenAmount,
     previewMint,
   ])
 
@@ -344,7 +341,7 @@ const BondAction = ({
                 }
                 maxTitle={isConvertComponent ? 'Convert all' : 'Redeem all'}
                 onMax={() => {
-                  setBondsToRedeem(bondTokenBalance)
+                  setBondsToRedeem(formatUnits(bondTokenBalance, bondInfo?.decimals))
                 }}
                 onUserSellAmountInput={onUserSellAmountInput}
                 token={tok}
