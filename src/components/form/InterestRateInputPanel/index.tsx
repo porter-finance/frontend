@@ -60,12 +60,12 @@ export const calculateInterestRate = (
   return interestRate
 }
 
-export const getReviewData = ({ amount, amountToken, maturityDate, price, priceToken }) => {
+export const getReviewData = ({ amount, maturityDate, price }) => {
   return {
     apr: calculateInterestRate(price, maturityDate),
-    earn: `${(amount - price * amount).toLocaleString()} ${priceToken}`,
-    receive: `${amount.toLocaleString()} ${amountToken}`,
-    interest: `${(price * amount).toLocaleString()} ${priceToken}`,
+    earn: `${(amount - price * amount).toLocaleString()}`,
+    receive: `${amount.toLocaleString()}`,
+    interest: `${(price * amount).toLocaleString()}`,
   }
 }
 
@@ -78,13 +78,13 @@ const InterestRateInputPanel = ({
   ...restProps
 }: Props) => {
   const maturityDate = useBondMaturityForAuction()
-  const data = getReviewData({ price, amount, maturityDate, priceToken, amountToken })
+  const data = getReviewData({ price, amount, maturityDate })
 
   return (
     <FieldRowWrapper className="my-4 space-y-3 py-1" {...restProps}>
       <div className="flex flex-row justify-between">
         <div className="text-sm text-[#E0E0E0]">
-          {!account || !price || !amount ? '-' : data.interest}
+          {!account || !price || !amount ? '-' : `${data.interest} ${priceToken}`}
         </div>
         <div className="space-x-1 flex items-center">
           <FieldRowLabelStyledText>Interest rate</FieldRowLabelStyledText>
@@ -92,7 +92,9 @@ const InterestRateInputPanel = ({
         </div>
       </div>
       <div className="flex flex-row justify-between">
-        <div className="text-sm text-[#E0E0E0]">{!account || !amount ? '-' : data.receive}</div>
+        <div className="text-sm text-[#E0E0E0]">
+          {!account || !amount ? '-' : `${data.receive} ${amountToken}`}
+        </div>
         <div className="space-x-1 flex items-center">
           <FieldRowLabelStyledText>You receive</FieldRowLabelStyledText>
           <Tooltip text="Tooltip" />
@@ -100,7 +102,7 @@ const InterestRateInputPanel = ({
       </div>
       <div className="flex flex-row justify-between">
         <div className="text-sm text-[#E0E0E0]">
-          {!account || !price || !amount ? '-' : data.earn}
+          {!account || !price || !amount ? '-' : `${data.earn} ${priceToken}`}
         </div>
         <div className="space-x-1 flex items-center">
           <FieldRowLabelStyledText>You earn</FieldRowLabelStyledText>
