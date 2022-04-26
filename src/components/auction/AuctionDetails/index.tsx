@@ -11,7 +11,6 @@ import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderbookState } from '../../../state/orderbook/hooks'
 import { getDisplay } from '../../../utils'
 import { abbreviation } from '../../../utils/numeral'
-import { calculateInterestRate } from '../../form/InterestRateInputPanel'
 import { AuctionTimer } from '../AuctionTimer'
 import { ExtraDetailsItem, Props as ExtraDetailsItemProps } from '../ExtraDetailsItem'
 import { ActiveStatusPill } from '../OrderbookTable'
@@ -102,7 +101,8 @@ const AuctionDetails = (props: Props) => {
     {
       title: 'Minimum bid size',
       value: auctionDetails
-        ? `${formatUnits(graphInfo?.minimum, graphInfo?.bidding.decimals)} ${biddingTokenDisplay}`
+        ? graphInfo?.minimum &&
+          `${formatUnits(graphInfo?.minimum, graphInfo?.bidding.decimals)} ${biddingTokenDisplay}`
         : '-',
       tooltip: 'Each order must at least bid this amount',
     },
