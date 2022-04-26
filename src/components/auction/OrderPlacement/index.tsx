@@ -35,7 +35,6 @@ import {
   isTokenXDAI,
 } from '../../../utils'
 import { getChainName } from '../../../utils/tools'
-import { isDev } from '../../Dev'
 import { Button } from '../../buttons/Button'
 import { Tooltip } from '../../common/Tooltip'
 import AmountInputPanel from '../../form/AmountInputPanel'
@@ -92,7 +91,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     derivedAuctionInfo,
   } = props
   const location = useGeoLocation()
-  const disabledCountry = !isDev && location?.country === 'US'
+  const disabledCountry = process.env.NODE_ENV !== 'development' && location?.country === 'US'
   const { chainId } = auctionIdentifier
   const { account, chainId: chainIdFromWeb3 } = useActiveWeb3React()
   const orders: OrderState | undefined = useOrderState()
