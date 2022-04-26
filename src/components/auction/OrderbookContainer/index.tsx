@@ -3,7 +3,7 @@ import styled from 'styled-components'
 
 import * as CSS from 'csstype'
 
-import { useParticipatingAuctionBids } from '../../../hooks/useParticipatingAuctionBids'
+import { useAuctionBids } from '../../../hooks/useAuctionBids'
 import { useOrderbookDataCallback } from '../../../state/orderbook/hooks'
 import { OrderBook } from '../Orderbook'
 import { OrderBookTable } from '../OrderbookTable'
@@ -60,8 +60,8 @@ export const Wrap = styled.div<Partial<CSS.Properties & WrapProps>>`
 
 export const OrderBookContainer = (props) => {
   const { auctionIdentifier, auctionStarted, derivedAuctionInfo } = props
-  const [showAllOrders, setShowAllOrders] = useState(false)
-  const { bids } = useParticipatingAuctionBids()
+  const [showMyOrders, setShowMyOrders] = useState(false)
+  const { bids } = useAuctionBids()
 
   useOrderbookDataCallback(auctionIdentifier)
 
@@ -78,14 +78,14 @@ export const OrderBookContainer = (props) => {
               {auctionStarted && (
                 <div className="btn-group">
                   <button
-                    className={`btn ${!showAllOrders && 'btn-active'}`}
-                    onClick={() => showAllOrders && setShowAllOrders(false)}
+                    className={`btn ${!showMyOrders && 'btn-active'}`}
+                    onClick={() => showMyOrders && setShowMyOrders(false)}
                   >
                     Orders
                   </button>
                   <button
-                    className={`btn ${showAllOrders && 'btn-active'}`}
-                    onClick={() => !showAllOrders && setShowAllOrders(true)}
+                    className={`btn ${showMyOrders && 'btn-active'}`}
+                    onClick={() => !showMyOrders && setShowMyOrders(true)}
                   >
                     My Orders
                   </button>
@@ -93,15 +93,14 @@ export const OrderBookContainer = (props) => {
               )}
             </div>
           </div>
-          {showAllOrders && auctionStarted && (
+          {showMyOrders && auctionStarted && (
             <OrdersTable
               auctionIdentifier={auctionIdentifier}
-              bids={bids}
               derivedAuctionInfo={derivedAuctionInfo}
             />
           )}
 
-          {!showAllOrders && <OrderBookTable bids={bids} derivedAuctionInfo={derivedAuctionInfo} />}
+          {!showMyOrders && <OrderBookTable bids={bids} derivedAuctionInfo={derivedAuctionInfo} />}
         </div>
       </div>
     </>
