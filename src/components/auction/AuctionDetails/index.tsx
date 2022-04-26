@@ -106,7 +106,6 @@ const AuctionDetails = (props: Props) => {
             graphInfo.minimumBidSize,
             graphInfo.bidding.decimals,
           )} ${biddingTokenDisplay} `
-
         : '-',
       tooltip: 'Each order must at least bid this amount',
     },
