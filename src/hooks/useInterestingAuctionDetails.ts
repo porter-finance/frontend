@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { additionalServiceApi } from '../api'
 import { getLogger } from '../utils/logger'
-import { AuctionInfo } from './useAllAuctionInfos'
+import { Auction } from './useAuction'
 
 const logger = getLogger('useInterestingAuctionInfo')
 
@@ -12,8 +12,8 @@ interface InterestingAuctionInfo {
 
 export function useInterestingAuctionInfo(
   params?: Maybe<InterestingAuctionInfo>,
-): Maybe<AuctionInfo[]> {
-  const [auctionInfo, setMostInterestingAuctions] = useState<Maybe<AuctionInfo[]>>(null)
+): Maybe<Auction[]> {
+  const [auctionInfo, setMostInterestingAuctions] = useState<Maybe<Auction[]>>(null)
 
   useEffect(() => {
     let cancelled = false
