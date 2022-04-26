@@ -60,14 +60,16 @@ export const calculateInterestRate = (
   return interestRate
 }
 
-export const getReviewData = ({ amount, maturityDate, price }) => {
-  return {
-    apr: calculateInterestRate(price, maturityDate),
-    earn: `${(amount - price * amount).toLocaleString()}`,
-    receive: `${amount.toLocaleString()}`,
-    interest: `${(price * amount).toLocaleString()}`,
-  }
-}
+export const getReviewData = ({
+  amount,
+  maturityDate,
+  price,
+}): { apr: string | number; earn: string; receive: string; pay: string } => ({
+  apr: calculateInterestRate(price, maturityDate),
+  earn: `${(amount - price * amount).toLocaleString()}`,
+  receive: `${amount.toLocaleString()}`,
+  pay: `${(price * amount).toLocaleString()}`,
+})
 
 const InterestRateInputPanel = ({
   account,
@@ -84,7 +86,7 @@ const InterestRateInputPanel = ({
     <FieldRowWrapper className="my-4 space-y-3 py-1" {...restProps}>
       <div className="flex flex-row justify-between">
         <div className="text-sm text-[#E0E0E0]">
-          {!account || !price || !amount ? '-' : `${data.interest} ${priceToken}`}
+          {!account || !price || !amount ? '-' : `${data.pay} ${priceToken}`}
         </div>
         <div className="space-x-1 flex items-center">
           <FieldRowLabelStyledText>You pay</FieldRowLabelStyledText>
