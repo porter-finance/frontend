@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 
 import useGeoLocation from 'react-ipgeolocation'
 
-import { AuctionGraphDetail, useAuctionDetails } from '../../../hooks/useAuctionDetails'
+import { Auction, useAuction } from '../../../hooks/useAuction'
 import { useBondExtraDetails } from '../../../hooks/useBondExtraDetails'
 import { TwoGridPage } from '../../../pages/Auction'
 import { AuctionState, DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
@@ -62,8 +62,8 @@ const DisabledCountryError = () => (
   </div>
 )
 
-const BondCard = ({ graphInfo }: { graphInfo: AuctionGraphDetail }) => {
-  const extraDetails = useBondExtraDetails(graphInfo?.bond?.id)
+const BondCard = ({ graphInfo }: { graphInfo: Auction }) => {
+  const extraDetails = useBondExtraDetails(graphInfo?.bond.id)
   const navigate = useNavigate()
 
   return (
@@ -74,22 +74,22 @@ const BondCard = ({ graphInfo }: { graphInfo: AuctionGraphDetail }) => {
         <div className="text-sm text-[#9F9F9F] flex justify-between items-end">
           <div
             className="flex items-center space-x-4 cursor-pointer"
-            onClick={() => navigate(`/products/${graphInfo?.bond?.id || ''}`)}
+            onClick={() => navigate(`/products/${graphInfo?.bond.id || ''}`)}
           >
             <TokenLogo
               square
               token={{
-                address: graphInfo?.bond?.collateralToken.id,
-                symbol: graphInfo?.bond?.symbol,
+                address: graphInfo?.bond.collateralToken.id,
+                symbol: graphInfo?.bond.symbol,
               }}
             />
 
             <div className="space-y-2">
               <h2 className="text-2xl text-white font-normal capitalize">
-                {graphInfo?.bond?.name.toLowerCase() || 'Bond Name'} Bond
+                {graphInfo?.bond.name.toLowerCase() || 'Bond Name'} Bond
               </h2>
               <p className="text-[#9F9F9F] text-xs font-normal uppercase">
-                {graphInfo?.bond?.symbol || 'Bond Symbol'}
+                {graphInfo?.bond.symbol || 'Bond Symbol'}
               </p>
             </div>
           </div>
@@ -113,7 +113,7 @@ const AuctionBody = (props: AuctionBodyProps) => {
   } = props
   const location = useGeoLocation()
   const disabledCountry = process.env.NODE_ENV !== 'development' && location?.country === 'US'
-  const { graphInfo } = useAuctionDetails(auctionIdentifier)
+  const { data: graphInfo } = useAuction(auctionIdentifier?.auctionId)
   const auctionStarted = React.useMemo(
     () => auctionState !== undefined && auctionState !== AuctionState.NOT_YET_STARTED,
     [auctionState],

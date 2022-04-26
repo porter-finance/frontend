@@ -12,11 +12,7 @@ import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../constants/config'
 import { useActiveWeb3React } from '../../hooks'
 import { Order, decodeOrder } from '../../hooks/Order'
 import { useTokenByAddressAndAutomaticallyAdd } from '../../hooks/Tokens'
-import {
-  AuctionGraphDetail,
-  AuctionInfoDetail,
-  useAuctionDetails,
-} from '../../hooks/useAuctionDetails'
+import { AuctionInfoDetail, useAuctionDetails } from '../../hooks/useAuctionDetails'
 import { ClaimState } from '../../hooks/useClaimOrderCallback'
 import { useContract } from '../../hooks/useContract'
 import { useClearingPriceInfo } from '../../hooks/useCurrentClearingOrderAndVolumeCallback'
@@ -387,14 +383,13 @@ export interface DerivedAuctionInfo {
   minBiddingAmountPerOrder: string | undefined
   orderCancellationEndDate: number | undefined
   auctionState: AuctionState | null | undefined
-  graphInfo: Maybe<AuctionGraphDetail>
 }
 
 export function useDerivedAuctionInfo(
   auctionIdentifier: AuctionIdentifier,
 ): Maybe<DerivedAuctionInfo> | undefined {
   const { chainId } = auctionIdentifier
-  const { auctionDetails, auctionInfoLoading, graphInfo } = useAuctionDetails(auctionIdentifier)
+  const { auctionDetails, auctionInfoLoading } = useAuctionDetails(auctionIdentifier)
   const { clearingPriceInfo, loadingClearingPrice } = useClearingPriceInfo(auctionIdentifier)
   const auctionState = useDeriveAuctionState(auctionDetails)
 
@@ -481,7 +476,6 @@ export function useDerivedAuctionInfo(
   }
 
   return {
-    graphInfo,
     auctioningToken,
     biddingToken,
     clearingPriceSellOrder,
