@@ -7,7 +7,7 @@ const logger = getLogger('useAllAuctionInfo')
 
 export interface AuctionInfo {
   id: string
-  size: number
+  offeringSize: number
   live: boolean
   end: number
   clearing: string
@@ -31,7 +31,7 @@ const auctionsQuery = gql`
   query AllAuctions {
     auctions(first: 100) {
       id
-      size
+      offeringSize
       end
       live
       clearing

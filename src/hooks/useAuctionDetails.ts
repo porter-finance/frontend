@@ -51,7 +51,7 @@ export interface AuctionGraphDetail {
   }
   bidding: Token
   minimum: number
-  size: number
+  offeringSize: number
   start: number
   end: number
   filled: number

@@ -72,7 +72,9 @@ const AuctionDetails = (props: Props) => {
     {
       title: 'Offering size',
       value: `${
-        graphInfo?.size ? abbreviation(formatUnits(graphInfo.size, graphInfo.bond.decimals)) : 0
+        graphInfo?.offeringSize
+          ? abbreviation(formatUnits(graphInfo.offeringSize, graphInfo.bond.decimals))
+          : 0
       } bonds`,
       tooltip: 'Total number of bonds to be auctioned',
     },
