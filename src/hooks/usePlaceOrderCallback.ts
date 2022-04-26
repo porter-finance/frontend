@@ -14,7 +14,6 @@ import { useOrderPlacementState } from '../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../state/orderPlacement/reducer'
 import { useOrderbookActionHandlers } from '../state/orderbook/hooks'
 import { useOrderActionHandlers } from '../state/orders/hooks'
-import { OrderStatus } from '../state/orders/reducer'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import {
   ChainId,
@@ -31,7 +30,6 @@ import {
 import { getLogger } from '../utils/logger'
 import { abbreviation } from '../utils/numeral'
 import { convertPriceIntoBuyAndSellAmount, getInverse } from '../utils/prices'
-import { encodeOrder } from './Order'
 import { useActiveWeb3React } from './index'
 import { useContract } from './useContract'
 import { useGasPrice } from './useGasPrice'
@@ -137,36 +135,22 @@ export function usePlaceOrderCallback(
           }),
         )
         .then((response) => {
-          addTransaction(response, {
-            summary:
-              'Sell ' +
-              abbreviation(sellAmount) +
-              ' ' +
-              biddingTokenDisplay +
-              ' for ' +
-              abbreviation((parseFloat(sellAmount) / parseFloat(price)).toPrecision(4)) +
-              ' ' +
-              auctioningTokenDisplay,
-          })
-          const order = {
-            buyAmount: buyAmountScaled,
-            sellAmount: sellAmountScaled,
-            userId: BigNumber.from(parseInt(userId.toString())), // If many people are placing orders, this might be incorrect
+          try {
+            addTransaction(response, {
+              summary:
+                'Buy ' +
+                abbreviation(sellAmount) +
+                ' ' +
+                auctioningTokenDisplay +
+                ' for ' +
+                abbreviation(parseFloat(price).toPrecision(4)) +
+                ' ' +
+                biddingTokenDisplay,
+            })
+          } catch (e) {
+            console.log(e)
           }
-          onNewOrder([
-            {
-              id: encodeOrder(order),
-              sellAmount: parseFloat(sellAmount).toString(),
-              price: price.toString(),
-              status: OrderStatus.PENDING,
-              chainId,
-            },
-          ])
-          onNewBid({
-            volume: parseFloat(sellAmount),
-            price: parseFloat(price),
-          })
-          return response.hash
+          return response
         })
         .catch((error) => {
           logger.error(`Swap or gas estimate failed`, error)
@@ -182,8 +166,6 @@ export function usePlaceOrderCallback(
     chainId,
     gasPrice,
     library,
-    onNewBid,
-    onNewOrder,
     price,
     sellAmount,
     signature,
