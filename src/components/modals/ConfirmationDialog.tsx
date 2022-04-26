@@ -144,7 +144,7 @@ const WarningText = ({ cancelCutoff, orderPlacingOnly }) =>
 const ReviewInfo = ({ amount, amountToken, cancelCutoff, data, orderPlacingOnly, priceToken }) => (
   <div className="space-y-6 mt-10">
     <div className="text-xs text-[12px] text-[#696969] space-y-2 border-b border-b-[#D5D5D519] pb-4">
-      <TokenInfo token={priceToken} value={amount} />
+      <TokenInfo token={priceToken} value={data.pay} />
       <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
         <span>Amount you pay</span>
         <Tooltip text="Tooltip" />
