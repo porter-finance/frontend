@@ -87,7 +87,7 @@ const InterestRateInputPanel = ({
           {!account || !price || !amount ? '-' : `${data.interest} ${priceToken}`}
         </div>
         <div className="space-x-1 flex items-center">
-          <FieldRowLabelStyledText>Interest rate</FieldRowLabelStyledText>
+          <FieldRowLabelStyledText>You pay</FieldRowLabelStyledText>
           <Tooltip text="Tooltip" />
         </div>
       </div>
