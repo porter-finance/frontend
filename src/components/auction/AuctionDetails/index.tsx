@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { formatUnits } from '@ethersproject/units'
 import { TokenAmount } from '@josojo/honeyswap-sdk'
 
+import { useAuction } from '../../../hooks/useAuction'
 import { useAuctionBidVolume } from '../../../hooks/useAuctionBidVolume'
 import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
 import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
@@ -53,7 +54,8 @@ interface Props {
 const AuctionDetails = (props: Props) => {
   const { auctionIdentifier, derivedAuctionInfo } = props
 
-  const { auctionDetails, graphInfo } = useAuctionDetails(auctionIdentifier)
+  const { auctionDetails } = useAuctionDetails(auctionIdentifier)
+  const { data: graphInfo } = useAuction(auctionIdentifier?.auctionId)
   const { totalBidVolume } = useAuctionBidVolume()
   const { orderbookPrice: auctionCurrentPrice } = useOrderbookState()
 
@@ -104,7 +106,10 @@ const AuctionDetails = (props: Props) => {
     {
       title: 'Minimum bid size',
       value: auctionDetails
-        ? `${formatUnits(graphInfo?.minimum, graphInfo?.bidding.decimals)} ${biddingTokenDisplay}`
+        ? `${formatUnits(
+            graphInfo?.minimumBidSize,
+            graphInfo?.bidding.decimals,
+          )} ${biddingTokenDisplay}`
         : '-',
       tooltip: 'Each order must at least bid this amount',
     },
