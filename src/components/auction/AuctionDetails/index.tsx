@@ -60,12 +60,12 @@ const AuctionDetails = (props: Props) => {
 
   const clearingPriceDisplay = (
     <TokenValue>
-      {abbreviation(graphInfo.minimumBondPrice)} {`${getDisplay(graphInfo?.bidding)}`}
+      {abbreviation(graphInfo?.minimumBondPrice)} {`${getDisplay(graphInfo?.bidding)}`}
     </TokenValue>
   )
   const minimumBondPrice = (
     <TokenValue>
-      {abbreviation(graphInfo.minimumBondPrice)} {`${getDisplay(graphInfo?.bidding)}`}
+      {abbreviation(graphInfo?.minimumBondPrice)} {`${getDisplay(graphInfo?.bidding)}`}
     </TokenValue>
   )
   const initialPriceToDisplay = derivedAuctionInfo?.initialPrice
@@ -83,7 +83,7 @@ const AuctionDetails = (props: Props) => {
     {
       title: 'Total bid volume',
       value: `${
-        graphInfo.totalBidVolume
+        graphInfo?.totalBidVolume
           ? abbreviation(formatUnits(`${graphInfo.totalBidVolume}`, graphInfo?.bidding?.decimals))
           : 0
       } ${biddingTokenDisplay}`,
@@ -145,9 +145,9 @@ const AuctionDetails = (props: Props) => {
         <AuctionTimer
           auctionState={derivedAuctionInfo?.auctionState}
           color="blue"
-          endDate={derivedAuctionInfo?.auctionEndDate}
+          endDate={graphInfo?.end}
           endText="End date"
-          startDate={derivedAuctionInfo?.auctionStartDate}
+          startDate={graphInfo?.start}
           startText="Start date"
           text="Ends in"
         />
