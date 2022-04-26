@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 
+import { formatUnits } from '@ethersproject/units'
 import { Fraction, TokenAmount } from '@josojo/honeyswap-sdk'
+import { useTokenBalance } from '@usedapp/core'
 import dayjs from 'dayjs'
 import useGeoLocation from 'react-ipgeolocation'
 
@@ -25,7 +27,6 @@ import {
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderState } from '../../../state/orders/hooks'
 import { OrderState } from '../../../state/orders/reducer'
-import { useTokenBalancesTreatWETHAsETH } from '../../../state/wallet/hooks'
 import {
   ChainId,
   EASY_AUCTION_NETWORKS,
@@ -129,10 +130,12 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     chainIdFromWeb3 as ChainId,
   )
 
-  const relevantTokenBalances = useTokenBalancesTreatWETHAsETH(account ?? undefined, [biddingToken])
-  const biddingTokenBalance = relevantTokenBalances?.[biddingToken?.address ?? '']
+  const biddingTokenBalance = useTokenBalance(biddingToken.address, account, { chainId })
+  const balanceString = biddingTokenBalance
+    ? formatUnits(biddingTokenBalance, biddingToken.decimals)
+    : '0'
 
-  const maxAmountInput: TokenAmount = biddingTokenBalance ? biddingTokenBalance : undefined
+  const maxAmountInput = biddingTokenBalance ? biddingTokenBalance : undefined
 
   useEffect(() => {
     onUserPriceInput(price)
@@ -192,12 +195,8 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const signatureAvailable = React.useMemo(() => signature && signature.length > 10, [signature])
 
   const onMaxInput = React.useCallback(() => {
-    maxAmountInput && onUserSellAmountInput(maxAmountInput.toExact())
+    maxAmountInput && onUserSellAmountInput(maxAmountInput.toString())
   }, [maxAmountInput, onUserSellAmountInput])
-
-  const balanceString = React.useMemo(() => {
-    return biddingTokenBalance?.toSignificant(6)
-  }, [biddingTokenBalance])
 
   const amountInfo = React.useMemo(
     () =>
@@ -235,7 +234,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
 
   const isWrappable =
     biddingTokenBalance &&
-    biddingTokenBalance.greaterThan('0') &&
+    biddingTokenBalance.gt('0') &&
     (isTokenXDAI(biddingToken.address, chainId) ||
       isTokenWETH(biddingToken.address, chainId) ||
       isTokenWMATIC(biddingToken.address, chainId)) &&
@@ -372,10 +371,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                   <div className="flex flex-row justify-between items-center text-xs text-[#9F9F9F] mt-4 mb-3">
                     <div>{biddingTokenDisplay} Balance</div>
                     <div>
-                      <button
-                        className="btn btn-xs btn-link text-[#9F9F9F] font-normal text-xs"
-                        disabled={!onMaxInput || !account}
-                      >
+                      <button className="btn btn-xs btn-link text-[#9F9F9F] font-normal text-xs">
                         {!balanceString ||
                         balanceString === '0' ||
                         !Number(balanceString) ||
