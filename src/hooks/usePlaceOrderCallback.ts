@@ -14,6 +14,7 @@ import { useOrderPlacementState } from '../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../state/orderPlacement/reducer'
 import { useOrderbookActionHandlers } from '../state/orderbook/hooks'
 import { useOrderActionHandlers } from '../state/orders/hooks'
+import { OrderStatus } from '../state/orders/reducer'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import {
   ChainId,
@@ -30,6 +31,7 @@ import {
 import { getLogger } from '../utils/logger'
 import { abbreviation } from '../utils/numeral'
 import { convertPriceIntoBuyAndSellAmount, getInverse } from '../utils/prices'
+import { encodeOrder } from './Order'
 import { useActiveWeb3React } from './index'
 import { useContract } from './useContract'
 import { useGasPrice } from './useGasPrice'
@@ -147,6 +149,25 @@ export function usePlaceOrderCallback(
                 ' ' +
                 biddingTokenDisplay,
             })
+
+            const order = {
+              buyAmount: buyAmountScaled,
+              sellAmount: sellAmountScaled,
+              userId: BigNumber.from(parseInt(userId.toString())), // If many people are placing orders, this might be incorrect
+            }
+            onNewOrder([
+              {
+                id: encodeOrder(order),
+                sellAmount: parseFloat(sellAmount).toString(),
+                price: price.toString(),
+                status: OrderStatus.PENDING,
+                chainId,
+              },
+            ])
+            onNewBid({
+              volume: parseFloat(sellAmount),
+              price: parseFloat(price),
+            })
           } catch (e) {
             console.log(e)
           }
@@ -159,6 +180,8 @@ export function usePlaceOrderCallback(
     }
   }, [
     account,
+    onNewBid,
+    onNewOrder,
     addTransaction,
     auctionId,
     auctioningToken,
