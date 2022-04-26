@@ -111,7 +111,7 @@ const VolumeLabel = styled.div`
 
 const OrderBookChart: React.FC<Props> = (props) => {
   const { baseToken, chainId, data, quoteToken } = props
-  const quoteTokenLabel = getTokenDisplay(quoteToken, chainId)
+  const quoteTokenLabel = getTokenDisplay(quoteToken)
   const volumeTitle = ` Volume (${quoteTokenLabel})`
 
   const { loading, mountPoint } = useChart({
