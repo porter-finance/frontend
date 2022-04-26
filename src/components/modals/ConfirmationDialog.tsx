@@ -89,7 +89,6 @@ const StyledDescription = styled(DialogPrimitive.Content, {
 export const Dialog = DialogPrimitive.Root
 export const DialogContent = Content
 export const DialogTitle = StyledTitle
-export const DialogDescription = StyledDescription
 export const DialogClose = DialogPrimitive.Close
 
 const IconButton = styled('button', {
@@ -172,7 +171,7 @@ const BodyPanel = ({ after, before, during }) => (
   <>
     {before.show && before.display}
     {during.show && (
-      <div className="flex items-center flex-col mt-20">
+      <div className="flex items-center flex-col mt-20 animate-pulse">
         <PorterIcon />
         {during.display}
       </div>
@@ -236,7 +235,7 @@ const TokenApproval = ({
   return (
     <>
       {!showTokenTransactionComplete && <DialogTitle>Review order</DialogTitle>}
-      <DialogDescription>
+      <div>
         <BodyPanel
           after={{
             show: !isUnlocking && showTokenTransactionComplete,
@@ -259,8 +258,6 @@ const TokenApproval = ({
             display: <span>Approving {unlock.token}</span>,
           }}
         />
-      </DialogDescription>
-      <div>
         {!showTokenTransactionComplete && unlock?.isLocked && (
           <div className="mt-10">
             <ActionButton
@@ -391,7 +388,7 @@ const ConfirmationDialog = ({
               />
             )}
 
-            <DialogDescription>
+            <div>
               <BodyPanel
                 after={{
                   show: orderComplete && showOrderTransactionComplete,
@@ -405,53 +402,53 @@ const ConfirmationDialog = ({
                   display: <span>Placing order</span>,
                 }}
               />
-            </DialogDescription>
 
-            {!orderComplete &&
-              !showTokenTransactionComplete &&
-              !showOrderTransactionComplete &&
-              !unlock?.isLocked && (
-                <div className="mt-10">
-                  <ActionButton
-                    aria-label="Place order"
-                    className={pendingOrderTransaction ? 'loading' : ''}
-                    onClick={() => {
-                      setPendingOrderTransaction(true)
-                      placeOrder()
-                        .then((response) => {
-                          setPendingOrderTransaction(false)
-                          setShowOrderTransactionComplete(response?.hash)
-                        })
-                        .catch((e) => {
-                          setTransactionError(e?.message || e)
-                          setPendingOrderTransaction(false)
-                        })
-                    }}
-                  >
-                    {pendingOrderTransaction && 'Confirm order in wallet'}
-                    {!pendingOrderTransaction && 'Place order'}
-                  </ActionButton>
-                </div>
-              )}
-
-            {(orderComplete || showOrderTransactionComplete) && (
-              <div className="flex flex-col items-center justify-center space-y-4 mt-20">
-                <GhostTransactionLink chainId={chainId} hash={showOrderTransactionComplete} />
-
-                {orderComplete && (
-                  <DialogClose asChild>
+              {!orderComplete &&
+                !showTokenTransactionComplete &&
+                !showOrderTransactionComplete &&
+                !unlock?.isLocked && (
+                  <div className="mt-10 mb-0">
                     <ActionButton
-                      aria-label="Done"
+                      aria-label="Place order"
+                      className={pendingOrderTransaction ? 'loading' : ''}
                       onClick={() => {
-                        setOrderComplete(false)
-                        setShowOrderTransactionComplete('')
+                        setPendingOrderTransaction(true)
+                        placeOrder()
+                          .then((response) => {
+                            setPendingOrderTransaction(false)
+                            setShowOrderTransactionComplete(response?.hash)
+                          })
+                          .catch((e) => {
+                            setTransactionError(e?.message || e)
+                            setPendingOrderTransaction(false)
+                          })
                       }}
                     >
-                      Done
+                      {pendingOrderTransaction && 'Confirm order in wallet'}
+                      {!pendingOrderTransaction && 'Place order'}
                     </ActionButton>
-                  </DialogClose>
+                  </div>
                 )}
+            </div>
+
+            {showOrderTransactionComplete && (
+              <div className="flex flex-col items-center justify-center space-y-4 mt-20">
+                <GhostTransactionLink chainId={chainId} hash={showOrderTransactionComplete} />
               </div>
+            )}
+
+            {orderComplete && (
+              <DialogClose asChild>
+                <ActionButton
+                  aria-label="Done"
+                  onClick={() => {
+                    setOrderComplete(false)
+                    setShowOrderTransactionComplete('')
+                  }}
+                >
+                  Done
+                </ActionButton>
+              </DialogClose>
             )}
           </>
         )}
