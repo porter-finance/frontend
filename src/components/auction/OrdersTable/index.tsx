@@ -3,10 +3,9 @@ import React, { useCallback, useMemo, useState } from 'react'
 import { round } from 'lodash'
 
 import { useActiveWeb3React } from '../../../hooks'
-import { useAuctionBids } from '../../../hooks/useAuctionBids'
 import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
 import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
-import { BidInfo } from '../../../hooks/useParticipatingAuctionBids'
+import { useParticipatingAuctionBids } from '../../../hooks/useParticipatingAuctionBids'
 import {
   AuctionState,
   DerivedAuctionInfo,
@@ -24,7 +23,6 @@ import { BidTransactionLink, OverflowWrap, TableDesign } from '../OrderbookTable
 interface OrdersTableProps {
   auctionIdentifier: AuctionIdentifier
   derivedAuctionInfo: DerivedAuctionInfo
-  bids: BidInfo[]
 }
 
 const pendingText = `Cancelling Order`
@@ -41,7 +39,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
   } = props
   const { chainId } = useActiveWeb3React()
   const maturityDate = useBondMaturityForAuction()
-  const orders = useAuctionBids()
+  const { bids } = useParticipatingAuctionBids()
   const cancelOrderCallback = useCancelOrderCallback(
     auctionIdentifier,
     derivedAuctionInfo?.biddingToken,
@@ -68,6 +66,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
         setPendingConfirmation(false)
       })
       .catch((err) => {
+        console.log(err)
         setOrderError(err.message)
         setShowConfirm(false)
         setPendingConfirmation(false)
@@ -81,7 +80,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
   const orderCancellationEndMilliseconds = derivedAuctionInfo?.orderCancellationEndDate * 1000
 
   const now = Math.trunc(Date.now())
-  const ordersEmpty = !orders.bids || orders.bids.length == 0
+  const ordersEmpty = !bids || bids.length == 0
 
   // the array is frozen in strict mode, we will need to copy the array before sorting it
   const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
@@ -124,7 +123,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
   const data = []
 
   !ordersEmpty &&
-    orders.bids.forEach((order, i) => {
+    bids.forEach((order, i) => {
       let statusText = ''
       if (order.createtx) statusText = orderStatusText[OrderStatus.PLACED]
       if (!order.createtx) statusText = orderStatusText[OrderStatus.PENDING]
@@ -156,7 +155,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
           <BidTransactionLink bid={order} />
           {!hideCancelButton && (
             <button
-              className="btn btn-outline btn-error normal-case btn-xs font-normal opacity-50 px-3"
+              className="btn btn-outline btn-error normal-case btn-xs font-normal px-3 !text-[#D25453] !bg-transparent"
               disabled={isOrderCancellationExpired}
               onClick={() => {
                 setOrderId(order.id)
