@@ -89,10 +89,11 @@ Balance.defaultProps = {
   disabled: false,
 }
 
-interface unlockProps {
+export interface unlockProps {
   isLocked: boolean
-  onUnlock: () => void
+  onUnlock: () => Promise<any>
   unlockState: ApprovalState
+  token?: string
 }
 
 interface wrapProps {
@@ -108,7 +109,7 @@ interface Props {
   onMax?: () => void
   onUserSellAmountInput: (val: string) => void
   token: Maybe<Token>
-  unlock: unlockProps
+  unlock?: unlockProps
   amountText?: string
   amountTooltip?: string
   wrap: wrapProps
@@ -138,7 +139,7 @@ const AmountInputPanel: React.FC<Props> = (props) => {
     ...restProps
   } = props
   const { account } = useActiveWeb3React()
-  const isUnlocking = unlock.unlockState === ApprovalState.PENDING
+  const isUnlocking = unlock?.unlockState === ApprovalState.PENDING
   const error = info?.type === InfoType.error
   const dataTip = unwrapMessage[chainId]
   const isDisabled = disabled === true
@@ -164,8 +165,8 @@ const AmountInputPanel: React.FC<Props> = (props) => {
             value={!account ? '-' : value}
           />
           <Wrap>
-            {token && <TokenPill chainId={chainId} token={token} />}
-            {unlock.isLocked && (
+            {token && <TokenPill token={token} />}
+            {unlock?.isLocked && (
               <UnlockButton
                 disabled={isUnlocking}
                 onClick={unlock.onUnlock}

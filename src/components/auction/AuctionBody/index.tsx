@@ -112,7 +112,7 @@ const AuctionBody = (props: AuctionBodyProps) => {
     derivedAuctionInfo,
   } = props
   const location = useGeoLocation()
-  const disabledCountry = location?.country === 'US'
+  const disabledCountry = process.env.NODE_ENV !== 'development' && location?.country === 'US'
   const { graphInfo } = useAuctionDetails(auctionIdentifier)
   const auctionStarted = React.useMemo(
     () => auctionState !== undefined && auctionState !== AuctionState.NOT_YET_STARTED,
