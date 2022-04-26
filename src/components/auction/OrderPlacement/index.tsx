@@ -9,6 +9,7 @@ import kycLinks from '../../../assets/links/kycLinks.json'
 import { ReactComponent as PrivateIcon } from '../../../assets/svg/private.svg'
 import { useActiveWeb3React } from '../../../hooks'
 import { ApprovalState, useApproveCallback } from '../../../hooks/useApproveCallback'
+import { useAuction } from '../../../hooks/useAuction'
 import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
 import { usePlaceOrderCallback } from '../../../hooks/usePlaceOrderCallback'
 import { useSignature } from '../../../hooks/useSignature'
@@ -90,6 +91,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     derivedAuctionInfo: { auctionState },
     derivedAuctionInfo,
   } = props
+  const { data: graphInfo } = useAuction(auctionIdentifier?.auctionId)
   const location = useGeoLocation()
   const disabledCountry = process.env.NODE_ENV !== 'development' && location?.country === 'US'
   const { chainId } = auctionIdentifier
@@ -355,7 +357,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                     amount={Number(sellAmount)}
                     amountToken={auctioningToken}
                     cancelCutoff={cancelCutoff}
-                    maturityDate={derivedAuctionInfo?.graphInfo?.bond?.maturityDate}
+                    maturityDate={graphInfo?.bond?.maturityDate}
                     onOpenChange={setShowConfirm}
                     open={showConfirm}
                     orderPlacingOnly={orderPlacingOnly}
