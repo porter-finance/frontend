@@ -101,11 +101,12 @@ const AuctionDetails = (props: Props) => {
     },
     {
       title: 'Minimum bid size',
-      value: auctionDetails
+      value: graphInfo
         ? `${formatUnits(
-            graphInfo?.minimumBidSize,
-            graphInfo?.bidding.decimals,
+            graphInfo.minimumBidSize,
+            graphInfo.bidding.decimals,
           )} ${biddingTokenDisplay} `
+
         : '-',
       tooltip: 'Each order must at least bid this amount',
     },
