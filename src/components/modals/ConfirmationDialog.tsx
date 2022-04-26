@@ -76,7 +76,7 @@ const StyledTitle = styled(DialogPrimitive.Title, {
   color: '#E0E0E0',
 })
 
-const StyledDescription = styled(DialogPrimitive.Description, {
+const StyledDescription = styled(DialogPrimitive.Content, {
   margin: '10px 0 20px',
   color: '#D6D6D6',
   fontSize: 16,
@@ -141,7 +141,7 @@ const WarningText = ({ cancelCutoff, orderPlacingOnly }) =>
     </div>
   ) : null
 
-const ReviewInfo = ({ amount, amountToken, cancelCutoff, data, orderPlacingOnly, priceToken }) => (
+const ReviewInfo = ({ amountToken, cancelCutoff, data, orderPlacingOnly, priceToken }) => (
   <div className="space-y-6 mt-10">
     <div className="text-xs text-[12px] text-[#696969] space-y-2 border-b border-b-[#D5D5D519] pb-4">
       <TokenInfo token={priceToken} value={data.pay} />
@@ -246,7 +246,6 @@ const TokenApproval = ({
             show: !isUnlocking && !showTokenTransactionComplete,
             display: (
               <ReviewInfo
-                amount={amount}
                 amountToken={amountToken}
                 cancelCutoff={cancelCutoff}
                 data={data}
