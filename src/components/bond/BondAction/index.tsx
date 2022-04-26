@@ -31,7 +31,7 @@ const ActionButton = styled(Button)`
   height: 41px;
 `
 
-export const TokenPill = ({ chainId, token }) => {
+export const TokenPill = ({ token }) => {
   return token ? (
     <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#2C2C2C] rounded-full p-1 px-2 pl-1">
       {token.address && (
@@ -43,21 +43,31 @@ export const TokenPill = ({ chainId, token }) => {
           }}
         />
       )}
-      {token.symbol && <FieldRowTokenSymbol>{getTokenDisplay(token, chainId)}</FieldRowTokenSymbol>}
+      {token.symbol && <FieldRowTokenSymbol>{getTokenDisplay(token)}</FieldRowTokenSymbol>}
     </FieldRowToken>
   ) : null
 }
 
-const TokenInfo = ({ chainId, disabled = false, token, value }) => (
-  <div
-    className={`text-base text-white ${
-      disabled ? 'text-[#696969]' : 'text-white'
-    } flex justify-between`}
-  >
-    <div>{Number(value) ? parseFloat(value).toFixed(2) : '-'}</div>
-    <TokenPill chainId={chainId} token={token} />
-  </div>
-)
+export const TokenInfo = ({ disabled = false, extra = '', plus = false, token, value }) => {
+  return (
+    <div
+      className={`text-base text-white ${
+        disabled ? 'text-[#696969]' : 'text-white'
+      } flex justify-between`}
+    >
+      <div className="space-x-2">
+        <span>
+          {Number(`${value}`.replaceAll(',', ''))
+            ? parseFloat(`${value}`.replaceAll(',', '')).toLocaleString()
+            : '-'}
+          {plus ? '+' : ''}
+        </span>
+        <span className="text-[#696969]">{extra}</span>
+      </div>
+      <TokenPill token={token} />
+    </div>
+  )
+}
 
 const getActionText = (componentType) => {
   if (componentType === BondActions.Redeem) return 'Redeem'
@@ -340,7 +350,6 @@ const BondAction = ({
                 <div className="space-y-2">
                   {isDefaulted ? (
                     <TokenInfo
-                      chainId={chainId}
                       disabled={!account}
                       token={bondInfo?.collateralToken}
                       // array of previewRedeemVal is [paymentTokens, collateralTokens]
@@ -350,7 +359,6 @@ const BondAction = ({
                     <>
                       {isPartiallyPaid && (
                         <TokenInfo
-                          chainId={chainId}
                           disabled={!account}
                           token={bondInfo?.collateralToken}
                           // array of previewRedeemVal is [paymentTokens, collateralTokens]
@@ -358,7 +366,6 @@ const BondAction = ({
                         />
                       )}
                       <TokenInfo
-                        chainId={chainId}
                         disabled={!account}
                         token={bondInfo?.paymentToken}
                         // array of previewRedeemVal is [paymentTokens, collateralTokens]

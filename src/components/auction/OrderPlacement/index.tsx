@@ -34,16 +34,14 @@ import {
   isTokenWMATIC,
   isTokenXDAI,
 } from '../../../utils'
-import { convertPriceIntoBuyAndSellAmount } from '../../../utils/prices'
 import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
 import { Tooltip } from '../../common/Tooltip'
 import AmountInputPanel from '../../form/AmountInputPanel'
 import InterestRateInputPanel from '../../form/InterestRateInputPanel'
 import PriceInputPanel from '../../form/PriceInputPanel'
-import ConfirmationModal from '../../modals/ConfirmationModal'
+import ConfirmationDialog from '../../modals/ConfirmationDialog'
 import WarningModal from '../../modals/WarningModal'
-import SwapModalFooter from '../../modals/common/PlaceOrderModalFooter'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { EmptyContentText } from '../../pureStyledComponents/EmptyContent'
 import { InfoType } from '../../pureStyledComponents/FieldRow'
@@ -93,7 +91,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     derivedAuctionInfo,
   } = props
   const location = useGeoLocation()
-  const disabledCountry = location?.country === 'US'
+  const disabledCountry = process.env.NODE_ENV !== 'development' && location?.country === 'US'
   const { chainId } = auctionIdentifier
   const { account, chainId: chainIdFromWeb3 } = useActiveWeb3React()
   const orders: OrderState | undefined = useOrderState()
@@ -112,9 +110,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [showWarning, setShowWarning] = useState<boolean>(false)
   const [showWarningWrongChainId, setShowWarningWrongChainId] = useState<boolean>(false)
-  const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirmed
-  const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true) // waiting for user confirmation
-  const [txHash, setTxHash] = useState<string>('')
 
   const auctioningToken = React.useMemo(
     () => derivedAuctionInfo.auctioningToken,
@@ -148,14 +143,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     }
   }, [onUserPriceInput, price, derivedAuctionInfo])
 
-  const resetModal = () => {
-    if (!pendingConfirmation) {
-      onUserSellAmountInput('')
-    }
-    setPendingConfirmation(true)
-    setAttemptingTxn(false)
-  }
-
   const placeOrderCallback = usePlaceOrderCallback(
     auctionIdentifier,
     signature,
@@ -164,21 +151,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     biddingToken,
   )
 
-  const onPlaceOrder = () => {
-    setAttemptingTxn(true)
-
-    placeOrderCallback()
-      .then((hash) => {
-        setTxHash(hash)
-        setPendingConfirmation(false)
-      })
-      .catch(() => {
-        resetModal()
-        setShowConfirm(false)
-      })
-  }
-
-  const pendingText = `Placing order`
   const biddingTokenDisplay = useMemo(
     () => getFullTokenDisplay(biddingToken, chainId),
     [biddingToken, chainId],
@@ -188,23 +160,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     [auctioningToken, chainId],
   )
   const notApproved = approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING
-  const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
-  const coversClearingPrice = (price: string | undefined): boolean => {
-    const { buyAmountScaled, sellAmountScaled } = convertPriceIntoBuyAndSellAmount(
-      derivedAuctionInfo?.auctioningToken,
-      derivedAuctionInfo?.biddingToken,
-      price == '-' ? '1' : price,
-      sellAmount,
-    )
-
-    return sellAmountScaled
-      ?.mul(derivedAuctionInfo?.clearingPriceSellOrder?.buyAmount.raw.toString())
-      .lte(
-        buyAmountScaled?.mul(derivedAuctionInfo?.clearingPriceSellOrder?.sellAmount.raw.toString()),
-      )
-  }
-  const hasRiskNotCoveringClearingPrice =
-    auctionState === AuctionState.ORDER_PLACING_AND_CANCELING && coversClearingPrice(price)
 
   const handleShowConfirm = () => {
     if (chainId !== chainIdFromWeb3) {
@@ -229,7 +184,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
         : undefined,
     [derivedAuctionInfo?.auctionEndDate, derivedAuctionInfo?.orderCancellationEndDate],
   )
-
+  const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
   const isPrivate = React.useMemo(
     () => auctionDetails && auctionDetails.isPrivateAuction,
     [auctionDetails],
@@ -246,18 +201,13 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
 
   const amountInfo = React.useMemo(
     () =>
-      approval !== ApprovalState.APPROVED && notApproved && approval !== ApprovalState.PENDING
-        ? {
-            text: `You need to unlock ${biddingTokenDisplay} to allow the smart contract to interact with it.`,
-            type: InfoType.info,
-          }
-        : errorAmount
+      errorAmount
         ? {
             text: errorAmount,
             type: InfoType.error,
           }
         : null,
-    [approval, errorAmount, notApproved, biddingTokenDisplay],
+    [errorAmount],
   )
 
   const priceInfo = React.useMemo(
@@ -276,7 +226,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     ((errorAmount ||
       errorPrice ||
       errorInterestRate ||
-      notApproved ||
       showWarning ||
       showWarningWrongChainId ||
       showConfirm ||
@@ -327,18 +276,20 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     )
   }
 
+  const cancelCutoff =
+    derivedAuctionInfo?.orderCancellationEndDate &&
+    dayjs(derivedAuctionInfo?.orderCancellationEndDate * 1000)
+      .utc()
+      .format('MMM DD, YYYY HH:mm UTC')
+
   return (
     <div className="card place-order-color">
       <div className="card-body">
-        <h2 className="card-title">Place Order</h2>
+        <h2 className="card-title">Place order</h2>
 
         {cancelDate && derivedAuctionInfo && (
           <div className="space-y-1">
-            <div className="text-[#EEEFEB] text-sm">
-              {dayjs(derivedAuctionInfo.orderCancellationEndDate * 1000)
-                .utc()
-                .format('MMM DD, YYYY HH:mm UTC')}
-            </div>
+            <div className="text-[#EEEFEB] text-sm">{cancelCutoff}</div>
             <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
               <span>Order cancellation cutoff date</span>
               <Tooltip text="Order cutoff date tooltip" />
@@ -354,7 +305,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                 info={amountInfo}
                 onUserSellAmountInput={onUserSellAmountInput}
                 token={auctioningToken}
-                unlock={{ isLocked: notApproved, onUnlock: approveCallback, unlockState: approval }}
                 value={sellAmount}
                 wrap={{
                   isWrappable,
@@ -399,8 +349,26 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
               ) : (
                 <>
                   <ActionButton disabled={disablePlaceOrder} onClick={handleShowConfirm}>
-                    Place order
+                    Review order
                   </ActionButton>
+                  <ConfirmationDialog
+                    amount={Number(sellAmount)}
+                    amountToken={auctioningToken}
+                    cancelCutoff={cancelCutoff}
+                    maturityDate={derivedAuctionInfo?.graphInfo?.bond?.maturityDate}
+                    onOpenChange={setShowConfirm}
+                    open={showConfirm}
+                    orderPlacingOnly={orderPlacingOnly}
+                    placeOrder={placeOrderCallback}
+                    price={price}
+                    priceToken={biddingToken}
+                    unlock={{
+                      token: biddingTokenDisplay,
+                      isLocked: notApproved,
+                      onUnlock: approveCallback,
+                      unlockState: approval,
+                    }}
+                  />
                   <div className="flex flex-row justify-between items-center text-xs text-[#9F9F9F] mt-4 mb-3">
                     <div>{biddingTokenDisplay} Balance</div>
                     <div>
@@ -440,34 +408,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
             setShowWarningWrongChainId(false)
           }}
           title="Warning!"
-        />
-        <ConfirmationModal
-          attemptingTxn={attemptingTxn}
-          content={
-            <SwapModalFooter
-              auctioningToken={auctioningToken}
-              biddingToken={biddingToken}
-              cancelDate={cancelDate}
-              chainId={chainId}
-              confirmText={'Confirm'}
-              hasRiskNotCoveringClearingPrice={hasRiskNotCoveringClearingPrice}
-              isPriceInverted={showPriceInverted}
-              onPlaceOrder={onPlaceOrder}
-              orderPlacingOnly={orderPlacingOnly}
-              price={price}
-              sellAmount={sellAmount}
-            />
-          }
-          hash={txHash}
-          isOpen={showConfirm}
-          onDismiss={() => {
-            resetModal()
-            setShowConfirm(false)
-          }}
-          pendingConfirmation={pendingConfirmation}
-          pendingText={pendingText}
-          title="Confirm Order"
-          width={504}
         />
       </div>
     </div>
