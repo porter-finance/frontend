@@ -66,6 +66,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
         setPendingConfirmation(false)
       })
       .catch((err) => {
+        console.log(err)
         setOrderError(err.message)
         setShowConfirm(false)
         setPendingConfirmation(false)
@@ -154,7 +155,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
           <BidTransactionLink bid={order} />
           {!hideCancelButton && (
             <button
-              className="btn btn-outline btn-error normal-case btn-xs font-normal opacity-50 px-3"
+              className="btn btn-outline btn-error normal-case btn-xs font-normal px-3 !text-[#D25453] !bg-transparent"
               disabled={isOrderCancellationExpired}
               onClick={() => {
                 setOrderId(order.id)
