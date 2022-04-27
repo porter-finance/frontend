@@ -233,8 +233,12 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({ bids, derivedAuc
         accessor: 'interest',
       },
       {
-        Header: 'Amount',
+        Header: 'Total Cost',
         accessor: 'amount',
+      },
+      {
+        Header: 'Bonds',
+        accessor: 'bonds',
       },
       {
         Header: 'Transaction',
@@ -258,15 +262,19 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({ bids, derivedAuc
       if (!row.createtx) statusText = orderStatusText[OrderStatus.PENDING]
       if (row.canceltx) statusText = 'Cancelled'
       const status = <ActiveStatusPill title={statusText} />
-      const price = `${round(row.payable / row.size, 6).toLocaleString()} ${paymentToken}`
+      const price = `${round(row.payable / row.size, 18).toLocaleString()} ${paymentToken}`
       const interest = `${calculateInterestRate(row.payable, maturityDate)} `
       const amount = `${round(
         Number(formatUnits(row.payable, derivedAuctionInfo.biddingToken.decimals)),
         2,
       ).toLocaleString()} ${paymentToken} `
+      const bonds = `${round(
+        Number(formatUnits(row.size, derivedAuctionInfo.auctioningToken.decimals)),
+        2,
+      ).toLocaleString()}+ ${'Bonds'}`
       const transaction = <BidTransactionLink bid={row} />
 
-      data.push({ status, price, interest, amount, transaction })
+      data.push({ status, price, interest, amount, bonds, transaction })
     })
 
   return (
