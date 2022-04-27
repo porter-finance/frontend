@@ -8,7 +8,6 @@ import { Token } from '@josojo/honeyswap-sdk'
 import { additionalServiceApi } from '../api'
 import depositAndPlaceOrderABI from '../constants/abis/easyAuction/depositAndPlaceOrder.json'
 import easyAuctionABI from '../constants/abis/easyAuction/easyAuction.json'
-import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../constants/config'
 import { Result, useSingleCallResult } from '../state/multicall/hooks'
 import { useOrderPlacementState } from '../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../state/orderPlacement/reducer'
@@ -30,7 +29,7 @@ import {
 } from '../utils'
 import { getLogger } from '../utils/logger'
 import { abbreviation } from '../utils/numeral'
-import { convertPriceIntoBuyAndSellAmount, getInverse } from '../utils/prices'
+import { convertPriceIntoBuyAndSellAmount } from '../utils/prices'
 import { encodeOrder } from './Order'
 import { useActiveWeb3React } from './index'
 import { useContract } from './useContract'
@@ -53,7 +52,6 @@ type EstimateAndParams = {
 export function usePlaceOrderCallback(
   auctionIdentifer: AuctionIdentifier,
   signature: string | null,
-  isPriceInverted: boolean,
   auctioningToken: Token,
   biddingToken: Token,
 ): null | (() => Promise<string>) {
@@ -66,11 +64,7 @@ export function usePlaceOrderCallback(
   const { onNewBid } = useOrderbookActionHandlers()
   const gasPrice = useGasPrice(chainId)
 
-  const price = (
-    isPriceInverted
-      ? getInverse(priceFromSwapState, NUMBER_OF_DIGITS_FOR_INVERSION)
-      : priceFromSwapState
-  ).toString()
+  const price = priceFromSwapState.toString()
 
   const easyAuctionInstance: Maybe<Contract> = useContract(
     EASY_AUCTION_NETWORKS[chainId as ChainId],
