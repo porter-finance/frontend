@@ -5,7 +5,6 @@ import { formatUnits } from '@ethersproject/units'
 import dayjs from 'dayjs'
 import { round } from 'lodash'
 
-import { ReactComponent as AuctionsIcon } from '../../assets/svg/auctions.svg'
 import { ReactComponent as ConvertIcon } from '../../assets/svg/convert.svg'
 import { ReactComponent as DividerIcon } from '../../assets/svg/divider.svg'
 import { ReactComponent as SimpleIcon } from '../../assets/svg/simple.svg'
@@ -113,7 +112,7 @@ export const createTable = (data: BondInfo[]) => {
           <div className="flex flex-col text-[#EEEFEB] text-lg">
             <div className="flex items-center space-x-2 capitalize">
               <span>{name.toLowerCase()} Bond</span>
-              {type === 'convert' ? <ConvertIcon width={15} /> : <AuctionsIcon width={15} />}
+              {type === 'convert' ? <ConvertIcon width={15} /> : <SimpleIcon width={15} />}
             </div>
             <p className="text-[#9F9F9F] text-sm uppercase">{symbol}</p>
           </div>
