@@ -1,7 +1,7 @@
 import React from 'react'
 
 // Disable the dev data and state changes
-export const forceDevData = true
+export const forceDevData = process.env.NODE_ENV === 'development'
 
 const Dev = ({ children }) =>
   !forceDevData ? null : (
