@@ -201,24 +201,14 @@ const BondAction = ({
 
     if (!account) return { error: 'Not logged in' }
 
-    const validInput = parseUnits(bondsToRedeem, bondInfo?.collateralToken?.decimals).gt(0)
+    const validInput = parseUnits(bondsToRedeem, bondInfo?.decimals).gt(0)
     if (!validInput) return { error: 'Input must be > 0' }
 
-    const notEnoughBalance = parseUnits(bondsToRedeem, bondInfo?.collateralToken?.decimals).gt(
-      bondTokenBalance,
-    )
-    console.log(bondsToRedeem, bondTokenBalance)
+    const notEnoughBalance = parseUnits(bondsToRedeem, bondInfo?.decimals).gt(bondTokenBalance)
     if (notEnoughBalance) return { error: 'Bonds to convert exceeds balance' }
 
     return true
-  }, [
-    componentType,
-    account,
-    bondTokenBalance,
-    bondInfo?.collateralToken?.decimals,
-    bondsToRedeem,
-    isMatured,
-  ])
+  }, [componentType, account, bondTokenBalance, bondInfo?.decimals, bondsToRedeem, isMatured])
 
   const isRedeemable = useMemo(() => {
     if (componentType !== BondActions.Redeem) return false
