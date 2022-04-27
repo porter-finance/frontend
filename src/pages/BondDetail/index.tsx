@@ -5,18 +5,15 @@ import { createGlobalStyle } from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 
 import { ReactComponent as ConnectIcon } from '../../assets/svg/connect.svg'
-import Dev, { isDev } from '../../components/Dev'
+import Dev, { forceDevData } from '../../components/Dev'
 import { AuctionTimer } from '../../components/auction/AuctionTimer'
 import { ExtraDetailsItem } from '../../components/auction/ExtraDetailsItem'
 import { ActiveStatusPill, TableDesign } from '../../components/auction/OrderbookTable'
 import BondAction from '../../components/bond/BondAction'
 import WarningModal from '../../components/modals/WarningModal'
 import TokenLogo from '../../components/token/TokenLogo'
-import { useBond } from '../../hooks/useBond'
+import { BondInfo, useBond } from '../../hooks/useBond'
 import { useBondExtraDetails } from '../../hooks/useBondExtraDetails'
-import { useIsBondDefaulted } from '../../hooks/useIsBondDefaulted'
-import { useIsBondFullyPaid } from '../../hooks/useIsBondFullyPaid'
-import { useIsBondPartiallyPaid } from '../../hooks/useIsBondPartiallyPaid'
 import { useHistoricTokenPrice } from '../../hooks/useTokenPrice'
 import { ConvertButtonOutline, LoadingTwoGrid, SimpleButtonOutline, TwoGridPage } from '../Auction'
 
@@ -127,6 +124,22 @@ const PositionPanel = ({ positions }) => {
   )
 }
 
+export const getBondStates = (bond: BondInfo) => {
+  const isMatured = forceDevData ? true : new Date() > new Date(bond?.maturityDate * 1000)
+  const isConvertBond = forceDevData ? false : bond?.type === 'convert'
+  const isPartiallyPaid = forceDevData ? true : false // TODO ADD THIS TO THE GRAPH
+  const isDefaulted = forceDevData ? false : bond?.state === 'defaulted'
+  const isPaid = forceDevData ? false : bond?.state === 'paidEarly' || bond?.state === 'paid'
+
+  return {
+    isMatured,
+    isConvertBond,
+    isPartiallyPaid,
+    isDefaulted,
+    isPaid,
+  }
+}
+
 const BondDetail: React.FC = () => {
   const { account } = useWeb3React()
   const navigate = useNavigate()
@@ -135,12 +148,9 @@ const BondDetail: React.FC = () => {
   const extraDetails = useBondExtraDetails(bondIdentifier?.bondId)
   const { data: bond, loading: isLoading } = useBond(bondIdentifier?.bondId)
   const invalidBond = React.useMemo(() => !bondIdentifier || !bond, [bondIdentifier, bond])
-  const isMatured = new Date() > new Date(bond?.maturityDate * 1000)
-  const isFullyPaid = !!useIsBondFullyPaid(bondIdentifier?.bondId)
-  const isConvertBond = isDev ? false : bond?.type === 'convert'
-  const isPartiallyPaid = useIsBondPartiallyPaid(bondIdentifier?.bondId)
-  const isDefaulted = useIsBondDefaulted(bondIdentifier?.bondId)
-  // TODO write the grpah using this data
+  const { isConvertBond, isDefaulted, isMatured, isPaid, isPartiallyPaid } = getBondStates(bond)
+
+  // TODO write the graph using this data
   const graphData = useHistoricTokenPrice(bond?.collateralToken.id, 30)
   if (isLoading) {
     return (
@@ -245,13 +255,13 @@ const BondDetail: React.FC = () => {
         rightChildren={
           <>
             {/* prettier-ignore */}
-            <Dev>{JSON.stringify({ isConvertBond, beforeMaturity: !isMatured, afterMaturity: isMatured, isRepaid: isFullyPaid, isDefaulted, isPartiallyPaid, isWalletConnected: !!account }, null, 2)}</Dev>
+            <Dev>{JSON.stringify({ isConvertBond, beforeMaturity: !isMatured, afterMaturity: isMatured, isRepaid: isPaid, isDefaulted, isPartiallyPaid, isWalletConnected: !!account }, null, 2)}</Dev>
             {isConvertBond && isMatured && <ConvertError />}
             {isConvertBond && !isMatured && <BondAction componentType={BondActions.Convert} />}
-            {(isPartiallyPaid || isFullyPaid || isDefaulted) && (
+            {(isPartiallyPaid || isPaid || isDefaulted || isMatured) && (
               <BondAction componentType={BondActions.Redeem} />
             )}
-            {!isMatured && !isFullyPaid && !isDefaulted && <RedeemError />}
+            {!isMatured && !isPaid && !isDefaulted && <RedeemError />}
           </>
         }
       />
