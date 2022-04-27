@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
 
 import { useActiveWeb3React } from '../../../hooks'
+import { useAuction } from '../../../hooks/useAuction'
 import {
   ClaimState,
   useClaimOrderCallback,
@@ -85,6 +86,7 @@ const ClaimDisabled = () => {
 
 const Claimer: React.FC<Props> = (props) => {
   const { auctionIdentifier, derivedAuctionInfo } = props
+  const { data: graphInfo } = useAuction(auctionIdentifier?.auctionId)
   const { chainId } = auctionIdentifier
   const { account, chainId: Web3ChainId } = useActiveWeb3React()
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
@@ -182,7 +184,7 @@ const Claimer: React.FC<Props> = (props) => {
               </FieldRowToken>
             </TokenItem>
 
-            {derivedAuctionInfo?.graphInfo?.filled > 0 && (
+            {graphInfo?.bondsSold > 0 && (
               <TokenItem>
                 <div className="text-base text-white">
                   {claimableBonds ? `${claimableBonds.toSignificant(6)}` : `-`}
