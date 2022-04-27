@@ -115,10 +115,10 @@ const Offerings = () => {
           </div>
           <div className="flex flex-col text-[#EEEFEB] text-lg">
             <div className="flex items-center space-x-2 capitalize">
-              <span>{auction?.bond?.name.toLowerCase()} Bond</span>
+              <span>{auction?.bond.name.toLowerCase()}</span>
               <AuctionsIcon width={15} />
             </div>
-            <p className="text-[#9F9F9F] text-sm uppercase">{auction?.bidding?.symbol}</p>
+            <p className="text-[#9F9F9F] text-sm uppercase">{auction?.bond.symbol}</p>
           </div>
         </div>
       ),
