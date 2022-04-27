@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 
+import { formatUnits } from '@ethersproject/units'
 import { round } from 'lodash'
 import { usePagination, useTable } from 'react-table'
 
@@ -246,10 +247,7 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({ bids, derivedAuc
   const { chainId } = useOrderbookState()
   const data = []
 
-  const auctioningTokenDisplay = useMemo(
-    () => getTokenDisplay(derivedAuctionInfo?.auctioningToken, chainId),
-    [derivedAuctionInfo?.auctioningToken, chainId],
-  )
+  const paymentToken = getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId)
 
   const noBids = !Array.isArray(bids) || bids.length === 0
 
@@ -261,10 +259,15 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({ bids, derivedAuc
       if (row.canceltx) statusText = 'Cancelled'
       const status = <ActiveStatusPill title={statusText} />
 
-      const price = `${round(row.payable, 6)} ${auctioningTokenDisplay}`
-
-      const interest = `${calculateInterestRate(row.payable, maturityDate)}`
-      const amount = `${round(row.size, 6)} ${auctioningTokenDisplay}`
+      const price = `${round(
+        Number(formatUnits(row.payable, derivedAuctionInfo.biddingToken.decimals)),
+        6,
+      ).toLocaleString()} ${paymentToken}`
+      const interest = `${calculateInterestRate(row.payable, maturityDate)} `
+      const amount = `${round(
+        row.size,
+        derivedAuctionInfo.biddingToken.decimals,
+      ).toLocaleString()} ${paymentToken} `
       const transaction = <BidTransactionLink bid={row} />
 
       data.push({ status, price, interest, amount, transaction })
