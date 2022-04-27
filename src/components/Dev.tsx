@@ -1,11 +1,10 @@
 import React from 'react'
 
-// export const isDev = process.env.NODE_ENV === 'development'
 // Disable the dev data and state changes
-export const isDev = false
+export const forceDevData = true
 
 const Dev = ({ children }) =>
-  !isDev ? null : (
+  !forceDevData ? null : (
     <div className="mt-8 mockup-code bg-primary text-primary-content">
       <pre>
         <code>{children}</code>
