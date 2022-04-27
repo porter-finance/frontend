@@ -169,7 +169,7 @@ export const ReviewOrder = ({ amountToken, cancelCutoff, data, orderPlacingOnly,
   </div>
 )
 
-export const ReviewConvert = ({ amount, amountToken, price, priceToken }) => (
+export const ReviewConvert = ({ amount, amountToken, assetsToReceive }) => (
   <div className="space-y-6 mt-10">
     <div className="text-xs text-[12px] text-[#696969] space-y-2 border-b border-b-[#D5D5D519] pb-4">
       <TokenInfo token={amountToken} value={amount} />
@@ -179,7 +179,9 @@ export const ReviewConvert = ({ amount, amountToken, price, priceToken }) => (
       </div>
     </div>
     <div className="text-xs text-[12px] text-[#696969] space-y-2 border-b border-b-[#D5D5D519] pb-4">
-      <TokenInfo plus token={priceToken} value={price} />
+      {assetsToReceive.map(({ token, value }, index) => (
+        <TokenInfo key={index} plus token={token} value={value} />
+      ))}
       <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
         <span>Amount of assets to receive</span>
         <Tooltip text="Tooltip" />
