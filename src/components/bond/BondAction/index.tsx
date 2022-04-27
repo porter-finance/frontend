@@ -10,10 +10,9 @@ import { useBond } from '../../../hooks/useBond'
 import { useConvertBond } from '../../../hooks/useConvertBond'
 import { usePreviewBond } from '../../../hooks/usePreviewBond'
 import { useRedeemBond } from '../../../hooks/useRedeemBond'
-import { BondActions } from '../../../pages/BondDetail'
+import { BondActions, getBondStates } from '../../../pages/BondDetail'
 import { useActivePopups, useWalletModalToggle } from '../../../state/application/hooks'
 import { getTokenDisplay } from '../../../utils'
-import { forceDevData } from '../../Dev'
 import { ActionButton } from '../../auction/Claimer'
 import { ActiveStatusPill } from '../../auction/OrderbookTable'
 import { Tooltip } from '../../common/Tooltip'
@@ -78,26 +77,17 @@ const BondAction = ({
 
   const bondId = overwriteBondId || params?.bondId
   const { data: bondInfo, loading: isLoading } = useBond(bondId, account)
-
   const bondTokenBalance = bondInfo?.tokenBalances?.[0]?.amount || 0
 
-  const isMatured = bondInfo && new Date() > new Date(bondInfo.maturityDate * 1000)
-
   const [bondsToRedeem, setBondsToRedeem] = useState('0.00')
-  const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false)
   const [openReviewModal, setOpenReviewModal] = useState<boolean>(false)
-  const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true)
-  const [txHash, setTxHash] = useState<string>('')
   const [previewRedeemVal, setPreviewRedeemVal] = useState<string[]>(['0', '0'])
   const [previewConvertVal, setPreviewConvertVal] = useState<string>('0')
   const isConvertComponent = componentType === BondActions.Convert
 
   const [tokenDetails, setTokenDetails] = useState({ BondAmount: null, payTok: null, tok: null })
 
-  // TODO ADD THIS TO THE GRAPH
-  const isPartiallyPaid = false
-  const isDefaulted = forceDevData ? true : bondInfo?.state === 'defaulted'
-  const isPaid = bondInfo?.state === 'paidEarly' || bondInfo?.state === 'paid'
+  const { isConvertBond, isDefaulted, isMatured, isPaid, isPartiallyPaid } = getBondStates(bondInfo)
 
   useEffect(() => {
     let BondAmount = null
@@ -156,21 +146,11 @@ const BondAction = ({
     BondAmount,
   ])
 
-  const resetModal = () => {
-    if (!pendingConfirmation) {
-      setBondsToRedeem('')
-    }
-    setPendingConfirmation(true)
-    setAttemptingTxn(false)
-  }
-
   useEffect(() => {
-    if (txHash && activePopups.length) {
+    if (activePopups.length) {
       setBondsToRedeem('')
-      setPendingConfirmation(false)
-      setAttemptingTxn(false)
     }
-  }, [activePopups, txHash])
+  }, [activePopups])
 
   const isConvertable = useMemo(() => {
     if (componentType !== BondActions.Convert) return false
@@ -337,8 +317,7 @@ const BondAction = ({
               <ReviewConvert
                 amount={Number(bondsToRedeem)}
                 amountToken={tok}
-                price={isConvertComponent ? previewConvertVal : previewRedeemVal[0]}
-                priceToken={payTok}
+                assetsToReceive={assetsToReceive}
               />
             }
             finishedText="Bonds converted"
