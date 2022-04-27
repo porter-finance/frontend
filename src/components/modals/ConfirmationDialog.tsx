@@ -328,6 +328,8 @@ const ConfirmationDialog = ({
   amountToken,
   beforeDisplay,
   cancelCutoff,
+  finishedText,
+  loadingText,
   maturityDate,
   onOpenChange,
   open,
@@ -345,6 +347,8 @@ const ConfirmationDialog = ({
   actionText: string
   pendingText: string
   title: string
+  loadingText: string
+  finishedText: string
   amountToken: Token
   maturityDate?: number
   beforeDisplay: ReactElement
@@ -419,7 +423,7 @@ const ConfirmationDialog = ({
               <BodyPanel
                 after={{
                   show: orderComplete && showOrderTransactionComplete,
-                  display: <span>Order placed</span>,
+                  display: <span>{finishedText}</span>,
                 }}
                 before={{
                   show: !unlock && !showOrderTransactionComplete && !orderComplete,
@@ -427,7 +431,7 @@ const ConfirmationDialog = ({
                 }}
                 during={{
                   show: showOrderTransactionComplete && !orderComplete,
-                  display: <span>Placing order</span>,
+                  display: <span>{loadingText}</span>,
                 }}
               />
 
