@@ -382,6 +382,8 @@ const BondAction = ({
                 priceToken={payTok}
               />
             }
+            finishedText="Bonds converted"
+            loadingText="Converting bonds"
             onOpenChange={setOpenReviewModal}
             open={openReviewModal}
             pendingText="Confirm conversion in wallet"
