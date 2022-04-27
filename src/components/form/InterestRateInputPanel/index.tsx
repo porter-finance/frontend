@@ -40,15 +40,15 @@ interface Props {
 // Interest rate = (1-Price) / Price / (years to maturity)
 export const calculateInterestRate = (
   price: number | string,
-  auctionEndDate: number,
+  maturityDate: number,
   display = true,
 ): string | number => {
-  if (!auctionEndDate) return '-'
+  if (!maturityDate) return '-'
   if (!price) return '-'
   const years = Math.abs(
     dayjs()
       .utc()
-      .diff(auctionEndDate * 1000, 'year', true),
+      .diff(maturityDate * 1000, 'year', true),
   )
   let interestRate = (1 - Number(price)) / Number(price) / years
   interestRate = isNaN(interestRate) || interestRate === Infinity ? 0 : interestRate
