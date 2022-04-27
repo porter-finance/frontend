@@ -27,7 +27,7 @@ export interface BidInfo {
   // Quantity of bonds
   size: number
 
-  // Total amount of collateral paid by bidder
+  // Total amount of paymentToken paid by bidder
   payable: number
 
   // Encoding of user ID, bid buy amount and bid sell amount
