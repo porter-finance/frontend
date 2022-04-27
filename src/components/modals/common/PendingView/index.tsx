@@ -5,6 +5,7 @@ import { AbstractConnector } from '@web3-react/abstract-connector'
 
 import { Button } from '../../../buttons/Button'
 import { InlineLoading } from '../../../common/InlineLoading'
+import { SpinnerSize } from '../../../common/Spinner'
 import { AlertIcon } from '../../../icons/AlertIcon'
 import { IconWrapper } from '../../common/pureStyledComponents/IconWrapper'
 import { Text } from '../../common/pureStyledComponents/Text'
@@ -54,7 +55,7 @@ const PendingView: React.FC<Props> = (props) => {
           </button>
         </>
       )}
-      {!error && <LoadingWrapper message={'Connecting...'} />}
+      {!error && <LoadingWrapper message={'Connecting...'} size={SpinnerSize.large} />}
     </Wrapper>
   )
 }
