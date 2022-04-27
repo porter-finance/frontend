@@ -140,7 +140,7 @@ const BondDetail: React.FC = () => {
   const isConvertBond = forceDevData ? false : bond?.type === 'convert'
   const isPartiallyPaid = useIsBondPartiallyPaid(bondIdentifier?.bondId)
   const isDefaulted = useIsBondDefaulted(bondIdentifier?.bondId)
-  // TODO write the grpah using this data
+  // TODO write the graph using this data
   const graphData = useHistoricTokenPrice(bond?.collateralToken.id, 30)
   if (isLoading) {
     return (
