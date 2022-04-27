@@ -16,20 +16,26 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
   const WADDecimals = 18
 
   const collateralPerBond = bond
-    ? Number(
-        formatUnits(
-          bond.collateralRatio,
-          WADDecimals + bond.collateralToken.decimals - bond.paymentToken.decimals,
+    ? round(
+        Number(
+          formatUnits(
+            bond.collateralRatio,
+            WADDecimals + bond.collateralToken.decimals - bond.paymentToken.decimals,
+          ),
         ),
+        2,
       )
     : 0
 
   const convertiblePerBond = bond
-    ? Number(
-        formatUnits(
-          bond.convertibleRatio,
-          WADDecimals + bond.collateralToken.decimals - bond.paymentToken.decimals,
+    ? round(
+        Number(
+          formatUnits(
+            bond.convertibleRatio,
+            WADDecimals + bond.collateralToken.decimals - bond.paymentToken.decimals,
+          ),
         ),
+        2,
       )
     : 0
   const collateralValue = round(collateralPerBond * collateralTokenPrice, 2)
