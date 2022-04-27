@@ -37,12 +37,7 @@ const AuctionDetails = (props: Props) => {
 
   const biddingTokenDisplay = getDisplay(graphInfo?.bidding)
 
-  let offeringSize = '-'
-  let totalBidVolume = '-'
-  let minimumFundingThreshold = '-'
-  let minimumBidSize = '-'
-  let currentBondAPR = '-'
-  let maxBondAPR = '-'
+  let totalBidVolume = offeringSize = totalBidVolume = minimumFundingThreshold = minimumBidSize = currentBondAPR = maxBondAPR = '-'
 
   if (graphInfo) {
     offeringSize = `${abbreviation(
