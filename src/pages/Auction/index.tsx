@@ -140,8 +140,7 @@ const Auction: React.FC = () => {
     [auctionIdentifier, derivedAuctionInfo],
   )
 
-  const auctionSymbolAuctioningToken = derivedAuctionInfo?.auctioningToken.symbol.slice(0, 7)
-
+  const auctionSymbolAuctioningToken = graphInfo?.bond.collateralToken.name
   if (isLoading) {
     return <LoadingTwoGrid />
   }
@@ -173,7 +172,8 @@ const Auction: React.FC = () => {
           </div>
           <div>
             <h1 className="text-3xl text-white capitalize">
-              {auctionSymbolAuctioningToken.toLowerCase()} Auction
+              {auctionSymbolAuctioningToken}{' '}
+              {graphInfo?.bond.type == 'simple' ? 'Simple' : 'Convertible'} Bond Auction
             </h1>
             <p className="text-blue-100 text-sm font-medium">{graphInfo?.bond.symbol}</p>
           </div>
