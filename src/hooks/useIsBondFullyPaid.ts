@@ -1,7 +1,7 @@
 import { Contract } from '@ethersproject/contracts'
 import { useCall } from '@usedapp/core'
 
-import { isDev } from '../components/Dev'
+import { forceDevData } from '../components/Dev'
 import Bond_ABI from '../constants/abis/bond.json'
 import { getLogger } from '../utils/logger'
 
@@ -10,7 +10,7 @@ const logger = getLogger('useIsBondFullyPaid')
 export function useIsBondFullyPaid(address: string | undefined): boolean | undefined {
   const { error, value } =
     useCall(
-      !isDev &&
+      !forceDevData &&
         address && {
           contract: new Contract(address, Bond_ABI),
           method: 'isFullyPaid',
@@ -22,5 +22,5 @@ export function useIsBondFullyPaid(address: string | undefined): boolean | undef
     logger.error(error.message)
     return undefined
   }
-  return isDev ? false : value?.[0]
+  return forceDevData ? false : value?.[0]
 }
