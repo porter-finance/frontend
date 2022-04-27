@@ -284,7 +284,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
       .format('MMM DD, YYYY HH:mm UTC')
   const reviewData = getReviewData({
     amount: Number(sellAmount),
-    maturityDate: derivedAuctionInfo?.graphInfo?.bond?.maturityDate,
+    maturityDate: graphInfo?.bond?.maturityDate,
     price,
   })
 
