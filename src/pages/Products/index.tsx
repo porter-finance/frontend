@@ -111,7 +111,7 @@ export const createTable = (data: BondInfo[]) => {
           </div>
           <div className="flex flex-col text-[#EEEFEB] text-lg">
             <div className="flex items-center space-x-2 capitalize">
-              <span>{name.toLowerCase()} Bond</span>
+              <span>{name.toLowerCase()} </span>
               {type === 'convert' ? <ConvertIcon width={15} /> : <SimpleIcon width={15} />}
             </div>
             <p className="text-[#9F9F9F] text-sm uppercase">{symbol}</p>
