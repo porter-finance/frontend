@@ -99,12 +99,11 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const { account, chainId: chainIdFromWeb3 } = useActiveWeb3React()
   const orders: OrderState | undefined = useOrderState()
   const toggleWalletModal = useWalletModalToggle()
-  const { price, sellAmount, showPriceInverted } = useOrderPlacementState()
+  const { price, sellAmount } = useOrderPlacementState()
   const { errorAmount, errorInterestRate, errorPrice } = useGetOrderPlacementError(
     derivedAuctionInfo,
     auctionState,
     auctionIdentifier,
-    showPriceInverted,
   )
   const { onUserPriceInput, onUserSellAmountInput } = useSwapActionHandlers()
   const { auctionDetails, auctionInfoLoading } = useAuctionDetails(auctionIdentifier)
@@ -151,7 +150,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const placeOrderCallback = usePlaceOrderCallback(
     auctionIdentifier,
     signature,
-    showPriceInverted,
     auctioningToken,
     biddingToken,
   )
