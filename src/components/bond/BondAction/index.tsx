@@ -48,9 +48,8 @@ export const TokenInfo = ({ disabled = false, extra = '', plus = false, token, v
       <div className="space-x-2">
         <span>
           {Number(`${value}`.replaceAll(',', ''))
-            ? parseFloat(`${value}`.replaceAll(',', '')).toLocaleString()
+            ? `${parseFloat(`${value}`.replaceAll(',', '')).toLocaleString()}${plus ? '+' : ''}`
             : '-'}
-          {plus ? '+' : ''}
         </span>
         <span className="text-[#696969]">{extra}</span>
       </div>
@@ -139,6 +138,7 @@ const BondAction = ({
 
     if (isConvertComponent) {
       previewConvert(BondAmount).then((r) => {
+        console.log(r, 'geczy')
         setPreviewConvertVal(formatUnits(r, bondInfo?.collateralToken?.decimals))
       })
     }
@@ -241,7 +241,6 @@ const BondAction = ({
 
   const isActionDisabled = useMemo(() => {
     if (isConvertComponent) {
-      console.log(isConvertable)
       return isConvertable !== true
     }
     if (componentType === BondActions.Redeem) {
