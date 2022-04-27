@@ -14,9 +14,6 @@ import WarningModal from '../../components/modals/WarningModal'
 import TokenLogo from '../../components/token/TokenLogo'
 import { useBond } from '../../hooks/useBond'
 import { useBondExtraDetails } from '../../hooks/useBondExtraDetails'
-import { useIsBondDefaulted } from '../../hooks/useIsBondDefaulted'
-import { useIsBondFullyPaid } from '../../hooks/useIsBondFullyPaid'
-import { useIsBondPartiallyPaid } from '../../hooks/useIsBondPartiallyPaid'
 import { useHistoricTokenPrice } from '../../hooks/useTokenPrice'
 import { ConvertButtonOutline, LoadingTwoGrid, SimpleButtonOutline, TwoGridPage } from '../Auction'
 
@@ -136,10 +133,13 @@ const BondDetail: React.FC = () => {
   const { data: bond, loading: isLoading } = useBond(bondIdentifier?.bondId)
   const invalidBond = React.useMemo(() => !bondIdentifier || !bond, [bondIdentifier, bond])
   const isMatured = new Date() > new Date(bond?.maturityDate * 1000)
-  const isFullyPaid = !!useIsBondFullyPaid(bondIdentifier?.bondId)
   const isConvertBond = forceDevData ? false : bond?.type === 'convert'
-  const isPartiallyPaid = useIsBondPartiallyPaid(bondIdentifier?.bondId)
-  const isDefaulted = useIsBondDefaulted(bondIdentifier?.bondId)
+
+  // TODO ADD THIS TO THE GRAPH
+  const isPartiallyPaid = false
+  const isDefaulted = forceDevData ? true : bond?.state === 'defaulted'
+  const isPaid = bond?.state === 'paidEarly' || bond?.state === 'paid'
+
   // TODO write the graph using this data
   const graphData = useHistoricTokenPrice(bond?.collateralToken.id, 30)
   if (isLoading) {
@@ -245,13 +245,13 @@ const BondDetail: React.FC = () => {
         rightChildren={
           <>
             {/* prettier-ignore */}
-            <Dev>{JSON.stringify({ isConvertBond, beforeMaturity: !isMatured, afterMaturity: isMatured, isRepaid: isFullyPaid, isDefaulted, isPartiallyPaid, isWalletConnected: !!account }, null, 2)}</Dev>
+            <Dev>{JSON.stringify({ isConvertBond, beforeMaturity: !isMatured, afterMaturity: isMatured, isRepaid: isPaid, isDefaulted, isPartiallyPaid, isWalletConnected: !!account }, null, 2)}</Dev>
             {isConvertBond && isMatured && <ConvertError />}
             {isConvertBond && !isMatured && <BondAction componentType={BondActions.Convert} />}
-            {(isPartiallyPaid || isFullyPaid || isDefaulted) && (
+            {(isPartiallyPaid || isPaid || isDefaulted) && (
               <BondAction componentType={BondActions.Redeem} />
             )}
-            {!isMatured && !isFullyPaid && !isDefaulted && <RedeemError />}
+            {!isMatured && !isPaid && !isDefaulted && <RedeemError />}
           </>
         }
       />
