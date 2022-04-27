@@ -1,7 +1,7 @@
 import React, { HTMLAttributes } from 'react'
 import styled, { keyframes } from 'styled-components'
 
-import { Spinner as SpinnerSVG } from '../../icons/Spinner'
+import { ReactComponent as PorterIcon } from '../../../assets/svg/porter.svg'
 
 const rotate = keyframes`
   from {
@@ -13,7 +13,6 @@ const rotate = keyframes`
 `
 
 const Wrapper = styled.div<{ size?: SpinnerSize | string | undefined }>`
-  animation: ${rotate} 2s linear infinite;
   flex-grow: 0;
   flex-shrink: 0;
   height: ${(props) => props.size};
@@ -44,8 +43,10 @@ export const Spinner: React.FC<Props> = (props: Props) => {
   const { size, ...restProps } = props
 
   return (
-    <Wrapper size={size} {...restProps}>
-      <SpinnerSVG />
+    <Wrapper size={size}>
+      <div className="animate-pulse" {...restProps}>
+        <PorterIcon />
+      </div>
     </Wrapper>
   )
 }

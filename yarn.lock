@@ -2864,11 +2864,6 @@
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha1-p3c2C1s5oaLlEG+OhY8v0tBgxXA=
 
-"@radix-ui/colors@^0.1.8":
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/@radix-ui/colors/-/colors-0.1.8.tgz#b08c62536fc462a87632165fb28e9b18f9bd047e"
-  integrity sha512-jwRMXYwC0hUo0mv6wGpuw254Pd9p/R6Td5xsRpOmaWkUHlooNWqVcadgyzlRumMq3xfOTXwJReU0Jv+EIy4Jbw==
-
 "@radix-ui/primitive@0.1.0":
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/@radix-ui/primitive/-/primitive-0.1.0.tgz#6206b97d379994f0d1929809db035733b337e543"

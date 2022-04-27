@@ -5,15 +5,14 @@ import { useActiveWeb3React } from '../../../hooks'
 import { useAllTransactions } from '../../../state/transactions/hooks'
 import { ExternalLink } from '../../../theme'
 import { getExplorerLink } from '../../../utils'
-import { Spinner, SpinnerSize } from '../../common/Spinner'
 import { AlertIcon } from '../../icons/AlertIcon'
 import { OrderPlaced } from '../../icons/OrderPlaced'
+import { Spinner } from '../Spinner'
 
 const Wrapper = styled(ExternalLink)`
   align-items: center;
   border-radius: 12px;
   border: solid 1px ${({ theme }) => theme.primary2};
-  background-color: ${({ theme }) => theme.bg2};
   color: ${({ theme }) => theme.text1};
   cursor: pointer;
   display: flex;
@@ -69,15 +68,7 @@ const Transaction = ({ hash }: { hash: string }) => {
 
   return (
     <Wrapper href={getExplorerLink(chainId, hash, 'transaction')}>
-      <IconWrapper>
-        {pending ? (
-          <Spinner size={SpinnerSize.extraSmall} />
-        ) : success ? (
-          <OrderPlaced />
-        ) : (
-          <Alert />
-        )}
-      </IconWrapper>
+      <IconWrapper>{pending ? <Spinner /> : success ? <OrderPlaced /> : <Alert />}</IconWrapper>
       <Text>{summary ? summary : hash}</Text>
     </Wrapper>
   )
