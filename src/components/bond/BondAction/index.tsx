@@ -7,21 +7,19 @@ import { Token, TokenAmount } from '@josojo/honeyswap-sdk'
 import { useWeb3React } from '@web3-react/core'
 import dayjs from 'dayjs'
 
-import { ApprovalState, useApproveCallback } from '../../../hooks/useApproveCallback'
 import { useBond } from '../../../hooks/useBond'
-import { useBondContract } from '../../../hooks/useContract'
 import { useConvertBond } from '../../../hooks/useConvertBond'
 import { usePreviewBond } from '../../../hooks/usePreviewBond'
 import { useRedeemBond } from '../../../hooks/useRedeemBond'
 import { BondActions } from '../../../pages/BondDetail'
 import { useActivePopups, useWalletModalToggle } from '../../../state/application/hooks'
-import { ChainId, EASY_AUCTION_NETWORKS, getTokenDisplay } from '../../../utils'
+import { getTokenDisplay } from '../../../utils'
 import { ActiveStatusPill } from '../../auction/OrderbookTable'
 import { Button } from '../../buttons/Button'
 import { Tooltip } from '../../common/Tooltip'
 import AmountInputPanel from '../../form/AmountInputPanel'
-import ConfirmationModal from '../../modals/ConfirmationModal'
-import { FieldRowToken, FieldRowTokenSymbol, InfoType } from '../../pureStyledComponents/FieldRow'
+import ConfirmationDialog, { ReviewConvert } from '../../modals/ConfirmationDialog'
+import { FieldRowToken, FieldRowTokenSymbol } from '../../pureStyledComponents/FieldRow'
 import TokenLogo from '../../token/TokenLogo'
 
 const ActionButton = styled(Button)`
@@ -95,6 +93,7 @@ const BondAction = ({
 
   const [bondsToRedeem, setBondsToRedeem] = useState('0.00')
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false)
+  const [openReviewModal, setOpenReviewModal] = useState<boolean>(false)
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true)
   const [txHash, setTxHash] = useState<string>('')
   const [previewRedeemVal, setPreviewRedeemVal] = useState<string[]>(['0', '0'])
@@ -109,26 +108,24 @@ const BondAction = ({
 
   let BondAmount = null
   let tok = null
+  let payTok = null
   if (bondInfo) {
     const bondsToRedeemBigNumber = parseUnits(bondsToRedeem, bondInfo.decimals)
     tok = new Token(chainId, bondInfo.id, bondInfo.decimals, bondInfo.symbol, bondInfo.name)
+    payTok = new Token(
+      chainId,
+      bondInfo?.paymentToken?.id,
+      bondInfo?.paymentToken?.decimals,
+      bondInfo?.paymentToken?.symbol,
+      bondInfo?.paymentToken?.name,
+    )
     BondAmount = new TokenAmount(tok, bondsToRedeemBigNumber.toString())
   }
-
-  const [approval, approveCallback] = useApproveCallback(
-    BondAmount,
-    EASY_AUCTION_NETWORKS[chainId as ChainId],
-    chainId as ChainId,
-  )
-
-  const isOwner = bondInfo?.owner.toLowerCase() === account?.toLowerCase()
 
   const { redeem } = useRedeemBond(BondAmount, bondId)
   const { convert } = useConvertBond(BondAmount, bondId)
   const { previewConvert, previewMint, previewRedeem } = usePreviewBond(bondId)
   const toggleWalletModal = useWalletModalToggle()
-
-  const isApproved = approval !== ApprovalState.NOT_APPROVED && approval !== ApprovalState.PENDING
 
   const onUserSellAmountInput = (theInput) => {
     setBondsToRedeem(theInput || '0')
@@ -211,7 +208,6 @@ const BondAction = ({
     }
 
     if (!account) return { error: 'Not logged in' }
-    if (!isApproved) return { error: 'Not approved' }
 
     const validInput = parseUnits(bondsToRedeem, bondInfo?.collateralToken?.decimals).gt(0)
     if (!validInput) return { error: 'Input must be > 0' }
@@ -228,14 +224,12 @@ const BondAction = ({
     bondTokenBalance,
     bondInfo?.collateralToken?.decimals,
     bondsToRedeem,
-    isApproved,
     isMatured,
   ])
 
   const isRedeemable = useMemo(() => {
     if (componentType !== BondActions.Redeem) return false
     if (!account) return { error: 'Not logged in' }
-    if (!isApproved) return { error: 'Not approved' }
     if (!isPaid && !isMatured) {
       return { error: 'Must be fully paid or matured' }
     }
@@ -253,7 +247,6 @@ const BondAction = ({
     bondTokenBalance,
     bondInfo?.decimals,
     bondsToRedeem,
-    isApproved,
     isMatured,
     isPaid,
   ])
@@ -309,8 +302,6 @@ const BondAction = ({
           </div>
         )}
         <div>
-          {console.log(bondTokenBalance)}
-
           <div className="space-y-6">
             {account && !bondTokenBalance ? (
               <div className="flex justify-center text-[12px] text-[#696969] border border-[#2C2C2C] p-12 rounded-lg">
@@ -323,24 +314,12 @@ const BondAction = ({
                 balanceString={componentType === BondActions.Mint && 'Available'}
                 chainId={chainId}
                 disabled={!account}
-                info={
-                  account &&
-                  !isOwner && {
-                    text: 'You do not own this bond',
-                    type: InfoType.error,
-                  }
-                }
                 maxTitle={isConvertComponent ? 'Convert all' : 'Redeem all'}
                 onMax={() => {
                   setBondsToRedeem(formatUnits(bondTokenBalance, bondInfo?.decimals))
                 }}
                 onUserSellAmountInput={onUserSellAmountInput}
                 token={tok}
-                unlock={{
-                  isLocked: isOwner && !isApproved,
-                  onUnlock: approveCallback,
-                  unlockState: approval,
-                }}
                 value={bondsToRedeem}
                 wrap={{ isWrappable: false, onClick: null }}
               />
@@ -384,25 +363,34 @@ const BondAction = ({
               {!account ? (
                 <ActionButton onClick={toggleWalletModal}>Connect wallet</ActionButton>
               ) : (
-                <ActionButton disabled={isActionDisabled} onClick={doTheAction}>
+                <ActionButton
+                  disabled={isActionDisabled}
+                  onClick={() => {
+                    setOpenReviewModal(true)
+                  }}
+                >
                   {getActionText(componentType)}
                 </ActionButton>
               )}
             </div>
           </div>
-
-          <ConfirmationModal
-            attemptingTxn={attemptingTxn}
-            content={null}
-            hash={txHash}
-            isOpen={attemptingTxn}
-            onDismiss={() => {
-              resetModal()
-            }}
-            pendingConfirmation={pendingConfirmation}
-            pendingText={pendingText}
-            title="Confirm Order"
-            width={504}
+          <ConfirmationDialog
+            amount={Number(bondsToRedeem)}
+            amountToken={tok}
+            beforeDisplay={
+              <ReviewConvert
+                amount={Number(bondsToRedeem)}
+                amountToken={tok}
+                price={isConvertComponent ? previewConvertVal : previewRedeemVal[0]}
+                priceToken={payTok}
+              />
+            }
+            onOpenChange={setOpenReviewModal}
+            open={openReviewModal}
+            placeOrder={isConvertComponent ? convert : redeem}
+            price={isConvertComponent ? previewConvertVal : previewRedeemVal[0]}
+            priceToken={payTok}
+            title="Review convert"
           />
         </div>
       </div>
