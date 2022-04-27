@@ -5,7 +5,7 @@ import { createGlobalStyle } from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 
 import { ReactComponent as ConnectIcon } from '../../assets/svg/connect.svg'
-import Dev, { isDev } from '../../components/Dev'
+import Dev, { forceDevData } from '../../components/Dev'
 import { AuctionTimer } from '../../components/auction/AuctionTimer'
 import { ExtraDetailsItem } from '../../components/auction/ExtraDetailsItem'
 import { ActiveStatusPill, TableDesign } from '../../components/auction/OrderbookTable'
@@ -137,7 +137,7 @@ const BondDetail: React.FC = () => {
   const invalidBond = React.useMemo(() => !bondIdentifier || !bond, [bondIdentifier, bond])
   const isMatured = new Date() > new Date(bond?.maturityDate * 1000)
   const isFullyPaid = !!useIsBondFullyPaid(bondIdentifier?.bondId)
-  const isConvertBond = isDev ? false : bond?.type === 'convert'
+  const isConvertBond = forceDevData ? false : bond?.type === 'convert'
   const isPartiallyPaid = useIsBondPartiallyPaid(bondIdentifier?.bondId)
   const isDefaulted = useIsBondDefaulted(bondIdentifier?.bondId)
   // TODO write the grpah using this data
