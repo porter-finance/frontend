@@ -1,8 +1,7 @@
 import React from 'react'
 
 import { AlertIcon } from '../../icons/AlertIcon'
-import Modal from '../common/Modal'
-import { ModalTitle } from '../common/ModalTitle'
+import Modal, { DialogTitle } from '../common/Modal'
 import { IconWrapper } from '../common/pureStyledComponents/IconWrapper'
 import { Text } from '../common/pureStyledComponents/Text'
 
@@ -17,8 +16,8 @@ const WarningModal: React.FC<Props> = (props) => {
   const { content, isOpen, onDismiss, title = '' } = props
 
   return (
-    <Modal isOpen={isOpen} onDismiss={onDismiss} width={350}>
-      <ModalTitle onClose={onDismiss} title={title} />
+    <Modal isOpen={isOpen} onDismiss={onDismiss}>
+      <DialogTitle>{title}</DialogTitle>
       <IconWrapper>
         <AlertIcon />
       </IconWrapper>
