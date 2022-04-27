@@ -323,6 +323,8 @@ enum OrderState {
 }
 
 const ConfirmationDialog = ({
+  actionColor = 'blue',
+  actionText,
   amount,
   amountToken,
   beforeDisplay,
@@ -331,6 +333,7 @@ const ConfirmationDialog = ({
   onOpenChange,
   open,
   orderPlacingOnly,
+  pendingText,
   placeOrder,
   price,
   priceToken,
@@ -339,6 +342,9 @@ const ConfirmationDialog = ({
 }: {
   placeOrder: () => Promise<any>
   amount: number
+  actionColor?: string
+  actionText: string
+  pendingText: string
   title: string
   amountToken: Token
   maturityDate?: number
@@ -431,8 +437,9 @@ const ConfirmationDialog = ({
                 !unlock?.isLocked && (
                   <div className="mt-10 mb-0">
                     <ActionButton
-                      aria-label="Place order"
+                      aria-label={actionText}
                       className={pendingOrderTransaction ? 'loading' : ''}
+                      color={actionColor}
                       onClick={() => {
                         setPendingOrderTransaction(true)
                         placeOrder()
@@ -446,8 +453,8 @@ const ConfirmationDialog = ({
                           })
                       }}
                     >
-                      {pendingOrderTransaction && 'Confirm order in wallet'}
-                      {!pendingOrderTransaction && 'Place order'}
+                      {pendingOrderTransaction && pendingText}
+                      {!pendingOrderTransaction && actionText}
                     </ActionButton>
                   </div>
                 )}
@@ -463,6 +470,7 @@ const ConfirmationDialog = ({
               <DialogClose asChild>
                 <ActionButton
                   aria-label="Done"
+                  color={actionColor}
                   onClick={() => {
                     setOrderComplete(false)
                     setShowOrderTransactionComplete('')
@@ -486,6 +494,7 @@ const ConfirmationDialog = ({
             <ActionButton
               aria-label="Try again"
               className="!mt-20"
+              color={actionColor}
               onClick={() => {
                 setTransactionError(null)
               }}

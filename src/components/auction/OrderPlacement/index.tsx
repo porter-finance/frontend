@@ -356,6 +356,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                     Review order
                   </ActionButton>
                   <ConfirmationDialog
+                    actionText="Place order"
                     amount={Number(sellAmount)}
                     amountToken={auctioningToken}
                     beforeDisplay={
@@ -372,6 +373,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                     onOpenChange={setShowConfirm}
                     open={showConfirm}
                     orderPlacingOnly={orderPlacingOnly}
+                    pendingText="Confirm order in wallet"
                     placeOrder={placeOrderCallback}
                     price={price}
                     priceToken={biddingToken}

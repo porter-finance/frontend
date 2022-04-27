@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import styled from 'styled-components'
 
 import { formatUnits, parseUnits } from '@ethersproject/units'
 import { Token, TokenAmount } from '@josojo/honeyswap-sdk'
@@ -14,20 +13,13 @@ import { useRedeemBond } from '../../../hooks/useRedeemBond'
 import { BondActions } from '../../../pages/BondDetail'
 import { useActivePopups, useWalletModalToggle } from '../../../state/application/hooks'
 import { getTokenDisplay } from '../../../utils'
+import { ActionButton } from '../../auction/Claimer'
 import { ActiveStatusPill } from '../../auction/OrderbookTable'
-import { Button } from '../../buttons/Button'
 import { Tooltip } from '../../common/Tooltip'
 import AmountInputPanel from '../../form/AmountInputPanel'
 import ConfirmationDialog, { ReviewConvert } from '../../modals/ConfirmationDialog'
 import { FieldRowToken, FieldRowTokenSymbol } from '../../pureStyledComponents/FieldRow'
 import TokenLogo from '../../token/TokenLogo'
-
-const ActionButton = styled(Button)`
-  flex-shrink: 0;
-  width: 100%;
-  background-color: #532dbe !important;
-  height: 41px;
-`
 
 export const TokenPill = ({ token }) => {
   return token ? (
@@ -361,9 +353,12 @@ const BondAction = ({
               )}
 
               {!account ? (
-                <ActionButton onClick={toggleWalletModal}>Connect wallet</ActionButton>
+                <ActionButton color="purple" onClick={toggleWalletModal}>
+                  Connect wallet
+                </ActionButton>
               ) : (
                 <ActionButton
+                  color="purple"
                   disabled={isActionDisabled}
                   onClick={() => {
                     setOpenReviewModal(true)
@@ -375,6 +370,8 @@ const BondAction = ({
             </div>
           </div>
           <ConfirmationDialog
+            actionColor="purple"
+            actionText="Convert bonds"
             amount={Number(bondsToRedeem)}
             amountToken={tok}
             beforeDisplay={
@@ -387,6 +384,7 @@ const BondAction = ({
             }
             onOpenChange={setOpenReviewModal}
             open={openReviewModal}
+            pendingText="Confirm conversion in wallet"
             placeOrder={isConvertComponent ? convert : redeem}
             price={isConvertComponent ? previewConvertVal : previewRedeemVal[0]}
             priceToken={payTok}
