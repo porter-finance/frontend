@@ -24,11 +24,11 @@ import TokenLogo from '../../token/TokenLogo'
 export const TokenPill = ({ token }) => {
   return token ? (
     <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#2C2C2C] rounded-full p-1 px-2 pl-1">
-      {token.address && (
+      {(token.address || token.id) && (
         <TokenLogo
           size={'16px'}
           token={{
-            address: token.address,
+            address: token.address || token.id,
             symbol: token.symbol,
           }}
         />
