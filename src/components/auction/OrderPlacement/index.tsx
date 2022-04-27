@@ -369,6 +369,8 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                       />
                     }
                     cancelCutoff={cancelCutoff}
+                    finishedText="Order placed"
+                    loadingText="Placing order"
                     maturityDate={derivedAuctionInfo?.graphInfo?.bond?.maturityDate}
                     onOpenChange={setShowConfirm}
                     open={showConfirm}
