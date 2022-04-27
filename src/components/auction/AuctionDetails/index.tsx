@@ -78,7 +78,6 @@ const AuctionDetails = (props: Props) => {
       {abbreviation(auctionCurrentPrice)} {`${getDisplay(graphInfo?.bidding)}`}
     </TokenValue>
   )
-  console.log({ auctionCurrentPrice })
 
   const extraDetails: Array<ExtraDetailsItemProps> = [
     {
