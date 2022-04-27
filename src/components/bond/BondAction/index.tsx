@@ -207,7 +207,8 @@ const BondAction = ({
     const notEnoughBalance = parseUnits(bondsToRedeem, bondInfo?.collateralToken?.decimals).gt(
       bondTokenBalance,
     )
-    if (notEnoughBalance) return { error: 'Bonds to redeem exceeds balance' }
+    console.log(bondsToRedeem, bondTokenBalance)
+    if (notEnoughBalance) return { error: 'Bonds to convert exceeds balance' }
 
     return true
   }, [
@@ -295,20 +296,20 @@ const BondAction = ({
         )}
         <div>
           <div className="space-y-6">
-            {account && !bondTokenBalance ? (
+            {account && !Number(bondTokenBalance) ? (
               <div className="flex justify-center text-[12px] text-[#696969] border border-[#2C2C2C] p-12 rounded-lg">
                 <span>No bonds to {getActionText(componentType).toLowerCase()}</span>
               </div>
             ) : (
               <AmountInputPanel
                 amountText={`Amount of bonds to ${getActionText(componentType).toLowerCase()}`}
-                balance={formatUnits(bondTokenBalance || 0, bondInfo?.decimals)}
+                balance={formatUnits(Number(bondTokenBalance) || 0, bondInfo?.decimals)}
                 balanceString={componentType === BondActions.Mint && 'Available'}
                 chainId={chainId}
                 disabled={!account}
                 maxTitle={isConvertComponent ? 'Convert all' : 'Redeem all'}
                 onMax={() => {
-                  setBondsToRedeem(formatUnits(bondTokenBalance, bondInfo?.decimals))
+                  setBondsToRedeem(formatUnits(Number(bondTokenBalance), bondInfo?.decimals))
                 }}
                 onUserSellAmountInput={onUserSellAmountInput}
                 token={tok}
