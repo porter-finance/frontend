@@ -13,6 +13,7 @@ import { useRedeemBond } from '../../../hooks/useRedeemBond'
 import { BondActions } from '../../../pages/BondDetail'
 import { useActivePopups, useWalletModalToggle } from '../../../state/application/hooks'
 import { getTokenDisplay } from '../../../utils'
+import { forceDevData } from '../../Dev'
 import { ActionButton } from '../../auction/Claimer'
 import { ActiveStatusPill } from '../../auction/OrderbookTable'
 import { Tooltip } from '../../common/Tooltip'
@@ -91,36 +92,40 @@ const BondAction = ({
   const [previewConvertVal, setPreviewConvertVal] = useState<string>('0')
   const isConvertComponent = componentType === BondActions.Convert
 
+  const [tokenDetails, setTokenDetails] = useState({ BondAmount: null, payTok: null, tok: null })
+
   // TODO ADD THIS TO THE GRAPH
   const isPartiallyPaid = false
-
-  const isDefaulted = bondInfo?.state === 'defaulted'
+  const isDefaulted = forceDevData ? true : bondInfo?.state === 'defaulted'
   const isPaid = bondInfo?.state === 'paidEarly' || bondInfo?.state === 'paid'
 
-  let BondAmount = null
-  let tok = null
-  let payTok = null
-  if (bondInfo) {
-    const bondsToRedeemBigNumber = parseUnits(bondsToRedeem, bondInfo.decimals)
-    tok = new Token(chainId, bondInfo.id, bondInfo.decimals, bondInfo.symbol, bondInfo.name)
-    payTok = new Token(
-      chainId,
-      bondInfo?.paymentToken?.id,
-      bondInfo?.paymentToken?.decimals,
-      bondInfo?.paymentToken?.symbol,
-      bondInfo?.paymentToken?.name,
-    )
-    BondAmount = new TokenAmount(tok, bondsToRedeemBigNumber.toString())
-  }
+  useEffect(() => {
+    let BondAmount = null
+    let tok = null
+    let payTok = null
+
+    if (bondInfo) {
+      const bondsToRedeemBigNumber = parseUnits(bondsToRedeem, bondInfo.decimals)
+      tok = new Token(chainId, bondInfo.id, bondInfo.decimals, bondInfo.symbol, bondInfo.name)
+      payTok = new Token(
+        chainId,
+        bondInfo?.paymentToken?.id,
+        bondInfo?.paymentToken?.decimals,
+        bondInfo?.paymentToken?.symbol,
+        bondInfo?.paymentToken?.name,
+      )
+      BondAmount = new TokenAmount(tok, bondsToRedeemBigNumber.toString())
+      setTokenDetails({ BondAmount, tok, payTok })
+    }
+  }, [chainId, bondsToRedeem, bondInfo])
+
+  // these names r so bad
+  const { BondAmount, payTok, tok } = tokenDetails
 
   const { redeem } = useRedeemBond(BondAmount, bondId)
   const { convert } = useConvertBond(BondAmount, bondId)
-  const { previewConvert, previewMint, previewRedeem } = usePreviewBond(bondId)
+  const { previewConvert, previewRedeem } = usePreviewBond(bondId)
   const toggleWalletModal = useWalletModalToggle()
-
-  const onUserSellAmountInput = (theInput) => {
-    setBondsToRedeem(theInput || '0')
-  }
 
   useEffect(() => {
     if (!BondAmount) return
@@ -138,7 +143,6 @@ const BondAction = ({
 
     if (isConvertComponent) {
       previewConvert(BondAmount).then((r) => {
-        console.log(r, 'geczy')
         setPreviewConvertVal(formatUnits(r, bondInfo?.collateralToken?.decimals))
       })
     }
@@ -149,13 +153,12 @@ const BondAction = ({
     bondInfo?.collateralToken?.decimals,
     previewRedeem,
     previewConvert,
-    previewMint,
     BondAmount,
   ])
 
   const resetModal = () => {
     if (!pendingConfirmation) {
-      onUserSellAmountInput('')
+      setBondsToRedeem('')
     }
     setPendingConfirmation(true)
     setAttemptingTxn(false)
@@ -163,34 +166,11 @@ const BondAction = ({
 
   useEffect(() => {
     if (txHash && activePopups.length) {
-      onUserSellAmountInput('')
+      setBondsToRedeem('')
       setPendingConfirmation(false)
       setAttemptingTxn(false)
     }
   }, [activePopups, txHash])
-
-  const doTheAction = async () => {
-    let hash
-
-    setAttemptingTxn(true)
-
-    if (isConvertComponent) {
-      hash = await convert().catch(() => {
-        resetModal()
-      })
-    }
-
-    if (componentType === BondActions.Redeem) {
-      hash = await redeem().catch(() => {
-        resetModal()
-      })
-    }
-
-    if (hash) {
-      setTxHash(hash)
-      setPendingConfirmation(false)
-    }
-  }
 
   const isConvertable = useMemo(() => {
     if (componentType !== BondActions.Convert) return false
@@ -213,8 +193,8 @@ const BondAction = ({
   const isRedeemable = useMemo(() => {
     if (componentType !== BondActions.Redeem) return false
     if (!account) return { error: 'Not logged in' }
-    if (!isPaid && !isMatured) {
-      return { error: 'Must be fully paid or matured' }
+    if (!isPaid && !isMatured && !isDefaulted) {
+      return { error: 'Must be fully paid, matured, or defaulted' }
     }
 
     const validInput = parseUnits(bondsToRedeem, bondInfo?.decimals).gt(0)
@@ -232,18 +212,16 @@ const BondAction = ({
     bondsToRedeem,
     isMatured,
     isPaid,
+    isDefaulted,
   ])
-
-  const pendingText = useMemo(
-    () => `Placing ${getActionText(componentType).toLowerCase()} order`,
-    [componentType],
-  )
 
   const isActionDisabled = useMemo(() => {
     if (isConvertComponent) {
+      console.log(isConvertable)
       return isConvertable !== true
     }
     if (componentType === BondActions.Redeem) {
+      console.log(isRedeemable)
       return isRedeemable !== true
     }
   }, [isConvertComponent, componentType, isConvertable, isRedeemable])
@@ -293,14 +271,13 @@ const BondAction = ({
               <AmountInputPanel
                 amountText={`Amount of bonds to ${getActionText(componentType).toLowerCase()}`}
                 balance={formatUnits(Number(bondTokenBalance) || 0, bondInfo?.decimals)}
-                balanceString={componentType === BondActions.Mint && 'Available'}
                 chainId={chainId}
                 disabled={!account}
                 maxTitle={isConvertComponent ? 'Convert all' : 'Redeem all'}
                 onMax={() => {
                   setBondsToRedeem(formatUnits(Number(bondTokenBalance), bondInfo?.decimals))
                 }}
-                onUserSellAmountInput={onUserSellAmountInput}
+                onUserSellAmountInput={setBondsToRedeem}
                 token={tok}
                 value={bondsToRedeem}
                 wrap={{ isWrappable: false, onClick: null }}
