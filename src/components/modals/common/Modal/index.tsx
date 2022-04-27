@@ -1,77 +1,113 @@
 import React from 'react'
-import styled from 'styled-components'
 
-import {
-  DialogContent,
-  DialogContentProps,
-  DialogOverlay,
-  DialogOverlayProps,
-  DialogProps,
-} from '@reach/dialog'
+import * as DialogPrimitive from '@radix-ui/react-dialog'
+import { Cross2Icon } from '@radix-ui/react-icons'
+import { keyframes, styled } from '@stitches/react'
 
-const StyledDialogOverlay = styled(DialogOverlay)`
-  align-items: center;
-  background-color: ${({ theme }) => theme.modal.overlay.backgroundColor};
-  display: flex;
-  height: 100vh;
-  justify-content: center;
-  left: 0;
-  position: fixed;
-  top: 0;
-  width: 100vw;
-  z-index: 100000;
-`
+const overlayShow = keyframes({
+  '0%': { opacity: 0 },
+  '100%': { opacity: 1 },
+})
 
-const StyledDialogContent = styled(DialogContent)`
-  background-color: ${({ theme }) => theme.modal.body.backgroundColor};
-  border-radius: ${({ theme }) => theme.modal.body.borderRadius};
-  border-color: ${({ theme }) => theme.modal.body.borderColor};
-  border-style: solid;
-  border-width: 1px;
-  box-shadow: ${({ theme }) => theme.modal.body.boxShadow};
-  outline: none;
-  padding-bottom: ${({ theme }) => theme.modal.body.paddingVertical};
-  padding-left: ${({ theme }) => theme.modal.body.paddingHorizontal};
-  padding-right: ${({ theme }) => theme.modal.body.paddingHorizontal};
-  padding-top: ${({ theme }) => theme.modal.body.paddingVertical};
-`
-export const ModalBodyWrapper = styled.div``
+const contentShow = keyframes({
+  '0%': { opacity: 0, transform: 'translate(-50%, -48%) scale(.96)' },
+  '100%': { opacity: 1, transform: 'translate(-50%, -50%) scale(1)' },
+})
 
-export const DEFAULT_MODAL_OPTIONS = {
-  animated: true,
-  centered: true,
-  closeButton: true,
-}
+const StyledOverlay = styled(DialogPrimitive.Overlay, {
+  zIndex: 1,
+  backgroundColor: '#131415AC',
+  position: 'fixed',
+  inset: 0,
+  '@media (prefers-reduced-motion: no-preference)': {
+    animation: `${overlayShow} 150ms cubic-bezier(0.16, 1, 0.3, 1) forwards`,
+  },
+})
 
-interface Props extends DialogOverlayProps, DialogContentProps, DialogProps {
-  maxHeight?: number | string | undefined
-  minHeight?: number | undefined
-  width?: number | undefined
-}
+const StyledContent = styled(DialogPrimitive.Content, {
+  zIndex: 2,
+  backgroundColor: '#181A1C',
+  borderRadius: 8,
+  border: '1px solid #2c2c2c',
+  boxShadow: 'hsl(206 22% 7% / 35%) 0px 10px 38px -10px, hsl(206 22% 7% / 20%) 0px 10px 20px -15px',
+  position: 'fixed',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: '90vw',
+  maxWidth: '425px',
+  maxHeight: '85vh',
+  padding: 25,
+  '@media (prefers-reduced-motion: no-preference)': {
+    animation: `${contentShow} 150ms cubic-bezier(0.16, 1, 0.3, 1) forwards`,
+  },
+  '&:focus': { outline: 'none' },
+})
 
-const Modal: React.FC<Props> = (props) => {
-  const {
-    children,
-    initialFocusRef = null,
-    isOpen,
-    maxHeight = 'none',
-    minHeight = 0,
-    onDismiss,
-    width = 468,
-  } = props
+function Content({ children, ...props }) {
   return (
-    <StyledDialogOverlay initialFocusRef={initialFocusRef} isOpen={isOpen} onDismiss={onDismiss}>
-      <StyledDialogContent
-        aria-label="dialog"
-        style={{
-          maxHeight: `${Number(maxHeight)}px`,
-          minHeight: `${Number(minHeight)}px`,
-          width: `${width}px`,
-        }}
-      >
+    <DialogPrimitive.Portal>
+      <StyledOverlay />
+      <StyledContent {...props}>{children}</StyledContent>
+    </DialogPrimitive.Portal>
+  )
+}
+
+const StyledTitle = styled(DialogPrimitive.Title, {
+  margin: 0,
+  marginBottom: '20px',
+  fontWeight: 400,
+  fontSize: '24px',
+  lineHeight: '27px',
+  letterSpacing: '0.01em',
+  color: '#E0E0E0',
+})
+
+const StyledDescription = styled(DialogPrimitive.Content, {
+  margin: '10px 0 20px',
+  color: '#D6D6D6',
+  fontSize: 16,
+  fontWeight: 400,
+  letterSpacing: '0.03em',
+  lineHeight: 1.5,
+})
+
+// Exports
+export const Dialog = DialogPrimitive.Root
+export const DialogContent = Content
+export const DialogTitle = StyledTitle
+export const DialogClose = DialogPrimitive.Close
+
+export const IconButton = styled('button', {
+  all: 'unset',
+  fontFamily: 'inherit',
+  borderRadius: '100%',
+  height: 25,
+  width: 25,
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: '#696969',
+  position: 'absolute',
+  top: 10,
+  right: 10,
+
+  '&:hover': { backgroundColor: '#ececec' },
+})
+
+const Modal = ({ children, isOpen: open, onDismiss: onOpenChange }) => {
+  return (
+    <Dialog onOpenChange={onOpenChange} open={open}>
+      <DialogContent>
         {children}
-      </StyledDialogContent>
-    </StyledDialogOverlay>
+
+        <DialogClose asChild>
+          <IconButton>
+            <Cross2Icon />
+          </IconButton>
+        </DialogClose>
+      </DialogContent>
+    </Dialog>
   )
 }
 

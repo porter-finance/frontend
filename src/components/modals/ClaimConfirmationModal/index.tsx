@@ -10,7 +10,6 @@ import { SpinnerSize } from '../../common/Spinner'
 import { ArrowUp } from '../../icons/ArrowUp'
 import { LinkIcon } from '../../icons/LinkIcon'
 import Modal from '../common/Modal'
-import { ModalTitle } from '../common/ModalTitle'
 import { Content } from '../common/pureStyledComponents/Content'
 import { IconWrapper } from '../common/pureStyledComponents/IconWrapper'
 import { Text } from '../common/pureStyledComponents/Text'
@@ -49,8 +48,7 @@ const ClaimConfirmationModal: React.FC<Props> = (props) => {
   const { chainId } = useActiveWeb3React()
 
   return (
-    <Modal isOpen={isOpen} onDismiss={onDismiss} width={394} {...restProps}>
-      <ModalTitle onClose={onDismiss} />
+    <Modal isOpen={isOpen} onDismiss={onDismiss} {...restProps}>
       <Content>
         {pendingConfirmation && (
           <>
