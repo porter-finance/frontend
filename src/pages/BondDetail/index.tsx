@@ -258,7 +258,7 @@ const BondDetail: React.FC = () => {
             <Dev>{JSON.stringify({ isConvertBond, beforeMaturity: !isMatured, afterMaturity: isMatured, isRepaid: isPaid, isDefaulted, isPartiallyPaid, isWalletConnected: !!account }, null, 2)}</Dev>
             {isConvertBond && isMatured && <ConvertError />}
             {isConvertBond && !isMatured && <BondAction componentType={BondActions.Convert} />}
-            {(isPartiallyPaid || isPaid || isDefaulted) && (
+            {(isPartiallyPaid || isPaid || isDefaulted || (!isConvertBond && isMatured)) && (
               <BondAction componentType={BondActions.Redeem} />
             )}
             {!isMatured && !isPaid && !isDefaulted && <RedeemError />}
