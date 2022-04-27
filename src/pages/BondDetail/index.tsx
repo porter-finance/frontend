@@ -164,9 +164,6 @@ const BondDetail: React.FC = () => {
       </>
     )
 
-  const days = 86400000 // number of ms in a day
-  const issuanceDate = new Date(bond?.maturityDate * 1000 - 2000 * days).getTime()
-
   return (
     <>
       <GlobalStyle />
@@ -208,7 +205,7 @@ const BondDetail: React.FC = () => {
                   color="purple"
                   endDate={bond?.maturityDate}
                   endText="Maturity date"
-                  startDate={issuanceDate / 1000}
+                  startDate={bond?.createdAt}
                   startText="Issuance date"
                   text="Time until maturity"
                 />

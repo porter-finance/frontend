@@ -1,12 +1,9 @@
 import { useEffect, useState } from 'react'
 
-import { gql, useQuery } from '@apollo/client'
-
 import { additionalServiceApi } from '../api'
 import { PricePoint } from '../api/AdditionalServicesApi'
 import { AuctionIdentifier } from '../state/orderPlacement/reducer'
 import { getLogger } from '../utils/logger'
-import { Token } from './useBond'
 
 const logger = getLogger('useAuctionDetails')
 
@@ -33,88 +30,13 @@ export interface AuctionInfoDetail {
   allowListSigner: string
 }
 
-export interface AuctionGraphDetail {
-  id: string
-  bond: {
-    id: string
-    name: string
-    symbol: string
-    decimals: number
-    owner: string
-    maturityDate: number
-    paymentToken: Token
-    collateralToken: Token
-    collateralRatio: number
-    convertibleRatio: number
-    maxSupply: number
-    type: 'simple' | 'convert'
-  }
-  bidding: Token
-  minimum: number
-  size: number
-  start: number
-  end: number
-  filled: number
-  clearing: string
-  live: boolean
-}
-
-const auctionsQuery = gql`
-  query Auction($auctionID: ID!) {
-    auction(id: $auctionID) {
-      id
-      bond {
-        id
-        name
-        symbol
-        decimals
-        owner
-        maturityDate
-        paymentToken {
-          id
-          symbol
-        }
-        collateralToken {
-          id
-          symbol
-        }
-        collateralRatio
-        convertibleRatio
-        maxSupply
-        type
-      }
-      bidding {
-        symbol
-        decimals
-      }
-      minimum
-      size
-      start
-      end
-      filled
-      clearing
-      live
-    }
-  }
-`
-
 export const useAuctionDetails = (
   auctionIdentifier: AuctionIdentifier,
 ): {
   auctionDetails: Maybe<AuctionInfoDetail>
   auctionInfoLoading: boolean
-  graphInfo: Maybe<AuctionGraphDetail>
 } => {
   const { auctionId, chainId } = auctionIdentifier
-  const { data, error, loading } = useQuery(auctionsQuery, {
-    variables: { auctionID: `${auctionId}` },
-  })
-
-  if (error) {
-    logger.error('Error getting useBond info', error)
-  }
-
-  const graphInfo = data?.auction
 
   const [auctionInfo, setAuctionInfo] = useState<Maybe<AuctionInfoDetail>>(null)
   const [auctionInfoLoading, setLoading] = useState<boolean>(true)
@@ -155,5 +77,5 @@ export const useAuctionDetails = (
     }
   }, [setAuctionInfo, auctionId, chainId])
 
-  return { auctionDetails: auctionInfo, auctionInfoLoading, graphInfo }
+  return { auctionDetails: auctionInfo, auctionInfoLoading }
 }

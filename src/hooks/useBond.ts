@@ -14,6 +14,7 @@ export interface BondInfo {
   amount?: number
   state: 'active' | 'paidEarly' | 'defaulted' | 'paid'
   maturityDate: number
+  createdAt: number
   paymentToken: Token
   collateralToken: Token
   collateralRatio: number
@@ -37,6 +38,7 @@ const singleBondQuery = gql`
       type
       owner
       maturityDate
+      createdAt
       collateralRatio
       decimals
       paymentToken {
