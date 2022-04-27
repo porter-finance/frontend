@@ -1,6 +1,5 @@
 import React from 'react'
 
-import { violet } from '@radix-ui/colors'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { Cross2Icon } from '@radix-ui/react-icons'
 import { keyframes, styled } from '@stitches/react'
@@ -93,8 +92,7 @@ export const IconButton = styled('button', {
   top: 10,
   right: 10,
 
-  '&:hover': { backgroundColor: violet.violet4 },
-  '&:focus': { boxShadow: `0 0 0 2px ${violet.violet7}` },
+  '&:hover': { backgroundColor: '#ececec' },
 })
 
 const Modal = ({ children, isOpen: open, onDismiss: onOpenChange }) => {
