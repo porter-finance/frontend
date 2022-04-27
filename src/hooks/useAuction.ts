@@ -55,6 +55,7 @@ const auctionQuery = gql`
         collateralToken {
           id
           symbol
+          name
         }
         collateralRatio
         convertibleRatio
