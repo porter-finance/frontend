@@ -494,7 +494,7 @@ const ConfirmationDialog = ({
               This is text explaining to the users how sometimes things go wrong and they shouldn’t
               worry. They should just try the transaction again because giving up is unacceptable.
             </p>
-            <p className="">{transactionError}</p>
+            <p className="overflow-hidden">{transactionError}</p>
             <ActionButton
               aria-label="Try again"
               className="!mt-20"
