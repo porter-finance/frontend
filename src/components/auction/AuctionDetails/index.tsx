@@ -2,13 +2,11 @@ import React from 'react'
 import styled from 'styled-components'
 
 import { formatUnits } from '@ethersproject/units'
-import { TokenAmount } from '@josojo/honeyswap-sdk'
 
-import { useAuctionBidVolume } from '../../../hooks/useAuctionBidVolume'
+import { useAuction } from '../../../hooks/useAuction'
 import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
 import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
-import { useOrderbookState } from '../../../state/orderbook/hooks'
 import { getDisplay } from '../../../utils'
 import { abbreviation } from '../../../utils/numeral'
 import { AuctionTimer } from '../AuctionTimer'
@@ -52,34 +50,41 @@ interface Props {
 const AuctionDetails = (props: Props) => {
   const { auctionIdentifier, derivedAuctionInfo } = props
 
-  const { auctionDetails, graphInfo } = useAuctionDetails(auctionIdentifier)
-  const { totalBidVolume } = useAuctionBidVolume()
-  const { orderbookPrice: auctionCurrentPrice } = useOrderbookState()
+  const { auctionDetails } = useAuctionDetails(auctionIdentifier)
+  const { data: graphInfo } = useAuction(auctionIdentifier?.auctionId)
+  // TODO See how this value was calculated??
+  // const { orderbookPrice: auctionCurrentPrice } = useOrderbookState()
 
   const biddingTokenDisplay = getDisplay(graphInfo?.bidding)
-  const auctioningTokenDisplay = getDisplay(graphInfo?.bond)
+  // const auctioningTokenDisplay = getDisplay(graphInfo?.bond)
 
   const clearingPriceDisplay = (
     <TokenValue>
-      {abbreviation(auctionCurrentPrice)} {`${getDisplay(graphInfo?.bidding)}`}
+      {abbreviation(graphInfo?.minimumBondPrice)} {`${getDisplay(graphInfo?.bidding)}`}
     </TokenValue>
   )
-
+  const minimumBondPrice = (
+    <TokenValue>
+      {abbreviation(graphInfo?.minimumBondPrice)} {`${getDisplay(graphInfo?.bidding)}`}
+    </TokenValue>
+  )
   const initialPriceToDisplay = derivedAuctionInfo?.initialPrice
 
   const extraDetails: Array<ExtraDetailsItemProps> = [
     {
       title: 'Offering size',
       value: `${
-        graphInfo?.size ? abbreviation(formatUnits(graphInfo.size, graphInfo.bond.decimals)) : 0
+        graphInfo?.offeringSize
+          ? abbreviation(formatUnits(graphInfo.offeringSize, graphInfo.bond.decimals))
+          : 0
       } bonds`,
       tooltip: 'Total number of bonds to be auctioned',
     },
     {
       title: 'Total bid volume',
       value: `${
-        totalBidVolume
-          ? abbreviation(formatUnits(`${totalBidVolume}`, graphInfo?.bidding?.decimals))
+        graphInfo?.totalBidVolume
+          ? abbreviation(formatUnits(`${graphInfo.totalBidVolume}`, graphInfo?.bidding?.decimals))
           : 0
       } ${biddingTokenDisplay}`,
       tooltip: 'Total bid volume',
@@ -88,21 +93,19 @@ const AuctionDetails = (props: Props) => {
       // TODO look at this closer
       title: 'Minimum funding threshold',
       tooltip: 'Auction will not be executed, unless this minimum funding threshold is met',
-      value:
-        auctionDetails == null || auctionDetails.minFundingThreshold == '0x0'
-          ? '0'
-          : `${abbreviation(
-              new TokenAmount(
-                derivedAuctionInfo.biddingToken,
-                auctionDetails.minFundingThreshold,
-              ).toSignificant(2),
-            )} ${biddingTokenDisplay}`,
+      value: `${
+        graphInfo?.minimumFundingThreshold
+          ? abbreviation(formatUnits(graphInfo.minimumFundingThreshold, graphInfo.bidding.decimals))
+          : 0
+      } ${biddingTokenDisplay}`,
     },
     {
       title: 'Minimum bid size',
-      value: auctionDetails
-        ? graphInfo?.minimum &&
-          `${formatUnits(graphInfo?.minimum, graphInfo?.bidding.decimals)} ${biddingTokenDisplay}`
+      value: graphInfo
+        ? `${formatUnits(
+            graphInfo.minimumBidSize,
+            graphInfo.bidding.decimals,
+          )} ${biddingTokenDisplay} `
         : '-',
       tooltip: 'Each order must at least bid this amount',
     },
@@ -120,16 +123,7 @@ const AuctionDetails = (props: Props) => {
     {
       title: 'Minimum price',
       tooltip: 'Min price',
-      value: (
-        <div className="flex items-center">
-          <TokenValue>
-            {initialPriceToDisplay ? abbreviation(initialPriceToDisplay?.toSignificant(2)) : ' - '}
-          </TokenValue>
-          <TokenSymbol>
-            {initialPriceToDisplay && auctioningTokenDisplay ? ` ${biddingTokenDisplay}` : '-'}
-          </TokenSymbol>
-        </div>
-      ),
+      value: minimumBondPrice ? minimumBondPrice : '-',
     },
     {
       title: 'Maximum APR',
@@ -151,9 +145,9 @@ const AuctionDetails = (props: Props) => {
         <AuctionTimer
           auctionState={derivedAuctionInfo?.auctionState}
           color="blue"
-          endDate={derivedAuctionInfo?.auctionEndDate}
+          endDate={graphInfo?.end}
           endText="End date"
-          startDate={derivedAuctionInfo?.auctionStartDate}
+          startDate={graphInfo?.start}
           startText="Start date"
           text="Ends in"
         />

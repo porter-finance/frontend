@@ -4,7 +4,7 @@ import styled, { css, keyframes } from 'styled-components'
 
 import { HashLink } from 'react-router-hash-link'
 
-import { AuctionInfo } from '../../../hooks/useAllAuctionInfos'
+import { Auction } from '../../../hooks/useAuction'
 import { abbreviation } from '../../../utils/numeral'
 import { calculateTimeLeft, getDays, getHours, getMinutes, getSeconds } from '../../../utils/tools'
 import { NetworkIcon } from '../../icons/NetworkIcon'
@@ -180,7 +180,7 @@ const formatSeconds = (seconds: number): React.ReactNode => {
 }
 
 interface Props {
-  auctionInfo: AuctionInfo
+  auctionInfo: Auction
 }
 
 const AuctionInfoCard: React.FC<Props> = (props) => {
@@ -219,8 +219,8 @@ const AuctionInfoCard: React.FC<Props> = (props) => {
         />
         <Selling>
           Selling{' '}
-          <span title={auctionInfo.size + ' ' + auctionInfo.bond.collateralToken}>
-            {abbreviation(auctionInfo.size.toFixed(2)) + ` `}
+          <span title={auctionInfo.offeringSize + ' ' + auctionInfo.bond.collateralToken}>
+            {abbreviation(auctionInfo.offeringSize.toFixed(2)) + ` `}
           </span>
           {auctionSymbolAuctioningToken}
         </Selling>
