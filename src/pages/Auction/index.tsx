@@ -8,6 +8,7 @@ import { ReactComponent as SimpleIcon } from '../../assets/svg/simple.svg'
 import AuctionBody from '../../components/auction/AuctionBody'
 import WarningModal from '../../components/modals/WarningModal'
 import TokenLogo from '../../components/token/TokenLogo'
+import { useAuction } from '../../hooks/useAuction'
 import useShowTopWarning from '../../hooks/useShowTopWarning'
 import { useDerivedAuctionInfo } from '../../state/orderPlacement/hooks'
 import { RouteAuctionIdentifier, parseURL } from '../../state/orderPlacement/reducer'
@@ -96,6 +97,8 @@ const Auction: React.FC = () => {
 
   const auctionIdentifier = parseURL(useParams<RouteAuctionIdentifier>())
   const derivedAuctionInfo = useDerivedAuctionInfo(auctionIdentifier)
+  const { data: graphInfo } = useAuction(auctionIdentifier?.auctionId)
+
   const { tokens } = useTokenListState()
 
   const biddingTokenAddress = derivedAuctionInfo?.biddingToken?.address
@@ -163,8 +166,8 @@ const Auction: React.FC = () => {
               size="60px"
               square
               token={{
-                address: derivedAuctionInfo?.graphInfo?.bond?.collateralToken.id,
-                symbol: derivedAuctionInfo?.graphInfo?.bond?.symbol,
+                address: graphInfo?.bond.collateralToken.id,
+                symbol: graphInfo?.bond.symbol,
               }}
             />
           </div>
@@ -172,9 +175,7 @@ const Auction: React.FC = () => {
             <h1 className="text-3xl text-white capitalize">
               {auctionSymbolAuctioningToken.toLowerCase()} Auction
             </h1>
-            <p className="text-blue-100 text-sm font-medium">
-              {derivedAuctionInfo?.graphInfo?.bond?.symbol}
-            </p>
+            <p className="text-blue-100 text-sm font-medium">{graphInfo?.bond.symbol}</p>
           </div>
         </div>
         <AuctionButtonOutline />

@@ -10,7 +10,7 @@ import Table from '../../components/auctions/Table'
 import { calculateInterestRate } from '../../components/form/InterestRateInputPanel'
 import TokenLogo from '../../components/token/TokenLogo'
 import { useActiveWeb3React } from '../../hooks'
-import { useAllAuctionInfo } from '../../hooks/useAllAuctionInfos'
+import { useAuctions } from '../../hooks/useAuction'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import { AuctionButtonOutline, OTCButtonOutline } from '../Auction'
 
@@ -74,7 +74,7 @@ const columns = [
 
 const Offerings = () => {
   const { chainId } = useActiveWeb3React()
-  const allAuctions = useAllAuctionInfo()
+  const { data: allAuctions } = useAuctions()
   const tableData = []
 
   useSetNoDefaultNetworkId()
