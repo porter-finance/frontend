@@ -40,9 +40,9 @@ import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
 import { Tooltip } from '../../common/Tooltip'
 import AmountInputPanel from '../../form/AmountInputPanel'
-import InterestRateInputPanel from '../../form/InterestRateInputPanel'
+import InterestRateInputPanel, { getReviewData } from '../../form/InterestRateInputPanel'
 import PriceInputPanel from '../../form/PriceInputPanel'
-import ConfirmationDialog from '../../modals/ConfirmationDialog'
+import ConfirmationDialog, { ReviewOrder } from '../../modals/ConfirmationDialog'
 import WarningModal from '../../modals/WarningModal'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { EmptyContentText } from '../../pureStyledComponents/EmptyContent'
@@ -282,6 +282,11 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     dayjs(derivedAuctionInfo?.orderCancellationEndDate * 1000)
       .utc()
       .format('MMM DD, YYYY HH:mm UTC')
+  const reviewData = getReviewData({
+    amount: Number(sellAmount),
+    maturityDate: graphInfo?.bond?.maturityDate,
+    price,
+  })
 
   return (
     <div className="card place-order-color">
@@ -353,16 +358,30 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                     Review order
                   </ActionButton>
                   <ConfirmationDialog
+                    actionText="Place order"
                     amount={Number(sellAmount)}
                     amountToken={auctioningToken}
+                    beforeDisplay={
+                      <ReviewOrder
+                        amountToken={auctioningToken}
+                        cancelCutoff={cancelCutoff}
+                        data={reviewData}
+                        orderPlacingOnly={orderPlacingOnly}
+                        priceToken={biddingToken}
+                      />
+                    }
                     cancelCutoff={cancelCutoff}
+                    finishedText="Order placed"
+                    loadingText="Placing order"
                     maturityDate={graphInfo?.bond?.maturityDate}
                     onOpenChange={setShowConfirm}
                     open={showConfirm}
                     orderPlacingOnly={orderPlacingOnly}
+                    pendingText="Confirm order in wallet"
                     placeOrder={placeOrderCallback}
                     price={price}
                     priceToken={biddingToken}
+                    title="Review order"
                     unlock={{
                       token: biddingTokenDisplay,
                       isLocked: notApproved,
