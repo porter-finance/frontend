@@ -169,12 +169,12 @@ export const ReviewOrder = ({ amountToken, cancelCutoff, data, orderPlacingOnly,
   </div>
 )
 
-export const ReviewConvert = ({ amount, amountToken, assetsToReceive }) => (
+export const ReviewConvert = ({ amount, amountToken, assetsToReceive, type = 'convert' }) => (
   <div className="space-y-6 mt-10">
     <div className="text-xs text-[12px] text-[#696969] space-y-2 border-b border-b-[#D5D5D519] pb-4">
       <TokenInfo token={amountToken} value={amount} />
       <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
-        <span>Amount of bonds to convert</span>
+        <span>Amount of bonds to {type}</span>
         <Tooltip text="Tooltip" />
       </div>
     </div>
