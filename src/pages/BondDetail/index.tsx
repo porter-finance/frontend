@@ -12,7 +12,7 @@ import { ActiveStatusPill, TableDesign } from '../../components/auction/Orderboo
 import BondAction from '../../components/bond/BondAction'
 import WarningModal from '../../components/modals/WarningModal'
 import TokenLogo from '../../components/token/TokenLogo'
-import { useBond } from '../../hooks/useBond'
+import { BondInfo, useBond } from '../../hooks/useBond'
 import { useBondExtraDetails } from '../../hooks/useBondExtraDetails'
 import { useHistoricTokenPrice } from '../../hooks/useTokenPrice'
 import { ConvertButtonOutline, LoadingTwoGrid, SimpleButtonOutline, TwoGridPage } from '../Auction'
@@ -124,6 +124,22 @@ const PositionPanel = ({ positions }) => {
   )
 }
 
+export const getBondStates = (bond: BondInfo) => {
+  const isMatured = forceDevData ? true : new Date() > new Date(bond?.maturityDate * 1000)
+  const isConvertBond = forceDevData ? false : bond?.type === 'convert'
+  const isPartiallyPaid = forceDevData ? true : false // TODO ADD THIS TO THE GRAPH
+  const isDefaulted = forceDevData ? false : bond?.state === 'defaulted'
+  const isPaid = forceDevData ? false : bond?.state === 'paidEarly' || bond?.state === 'paid'
+
+  return {
+    isMatured,
+    isConvertBond,
+    isPartiallyPaid,
+    isDefaulted,
+    isPaid,
+  }
+}
+
 const BondDetail: React.FC = () => {
   const { account } = useWeb3React()
   const navigate = useNavigate()
@@ -132,13 +148,7 @@ const BondDetail: React.FC = () => {
   const extraDetails = useBondExtraDetails(bondIdentifier?.bondId)
   const { data: bond, loading: isLoading } = useBond(bondIdentifier?.bondId)
   const invalidBond = React.useMemo(() => !bondIdentifier || !bond, [bondIdentifier, bond])
-  const isMatured = new Date() > new Date(bond?.maturityDate * 1000)
-  const isConvertBond = forceDevData ? false : bond?.type === 'convert'
-
-  // TODO ADD THIS TO THE GRAPH
-  const isPartiallyPaid = false
-  const isDefaulted = forceDevData ? true : bond?.state === 'defaulted'
-  const isPaid = bond?.state === 'paidEarly' || bond?.state === 'paid'
+  const { isConvertBond, isDefaulted, isMatured, isPaid, isPartiallyPaid } = getBondStates(bond)
 
   // TODO write the graph using this data
   const graphData = useHistoricTokenPrice(bond?.collateralToken.id, 30)
