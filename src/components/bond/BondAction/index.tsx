@@ -241,6 +241,20 @@ const BondAction = ({
     return null
   }
 
+  const assetsToReceive = []
+  if (isDefaulted) {
+    const value = isConvertComponent ? previewConvertVal : previewRedeemVal[1]
+    assetsToReceive.push({ token: bondInfo?.collateralToken, value: value })
+  } else {
+    if (isPartiallyPaid) {
+      const partiallyPaidValue = isConvertComponent ? previewConvertVal : previewRedeemVal[1]
+      assetsToReceive.push({ token: bondInfo?.collateralToken, value: partiallyPaidValue })
+    }
+
+    const value = isConvertComponent ? previewConvertVal : previewRedeemVal[0]
+    assetsToReceive.push({ token: bondInfo?.paymentToken, value })
+  }
+
   return (
     <div className="card bond-card-color">
       <div className="card-body">
@@ -286,31 +300,9 @@ const BondAction = ({
             <div className="text-xs text-[12px] text-[#696969] space-y-6">
               {(isConvertComponent || componentType === BondActions.Redeem) && (
                 <div className="space-y-2">
-                  {isDefaulted ? (
-                    <TokenInfo
-                      disabled={!account}
-                      token={bondInfo?.collateralToken}
-                      // array of previewRedeemVal is [paymentTokens, collateralTokens]
-                      value={isConvertComponent ? previewConvertVal : previewRedeemVal[1]}
-                    />
-                  ) : (
-                    <>
-                      {isPartiallyPaid && (
-                        <TokenInfo
-                          disabled={!account}
-                          token={bondInfo?.collateralToken}
-                          // array of previewRedeemVal is [paymentTokens, collateralTokens]
-                          value={isConvertComponent ? previewConvertVal : previewRedeemVal[1]}
-                        />
-                      )}
-                      <TokenInfo
-                        disabled={!account}
-                        token={bondInfo?.paymentToken}
-                        // array of previewRedeemVal is [paymentTokens, collateralTokens]
-                        value={isConvertComponent ? previewConvertVal : previewRedeemVal[0]}
-                      />
-                    </>
-                  )}
+                  {assetsToReceive.map(({ token, value }, index) => (
+                    <TokenInfo disabled={!account} key={index} token={token} value={value} />
+                  ))}
 
                   <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
                     <span>Amount of assets to receive</span>
