@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 
 import { Order, decodeOrder, encodeOrder } from '../hooks/Order'
-import { AuctionInfo } from '../hooks/useAllAuctionInfos'
+import { Auction } from '../hooks/useAuction'
 import { AuctionInfoDetail } from '../hooks/useAuctionDetails'
 import { getLogger } from '../utils/logger'
 
@@ -18,13 +18,13 @@ export interface AdditionalServicesApi {
   getAllUserOrders(params: UserOrderParams): Promise<string[]>
   getMostInterestingAuctionDetailsUrl(params: InterestingAuctionParams): string
   getMostInterestingClosedAuctionDetailsUrl(params: InterestingAuctionParams): string
-  getMostInterestingAuctionDetails(closedAuctions?: boolean): Promise<AuctionInfo[]>
+  getMostInterestingAuctionDetails(closedAuctions?: boolean): Promise<Auction[]>
   getAllAuctionDetailsUrl(networkId: number): string
-  getAllAuctionDetails(): Promise<AuctionInfo[]>
+  getAllAuctionDetails(): Promise<Auction[]>
   getAllAuctionDetailsWithUserParticipationUrl(
     params: AuctionDetailWithUserParticipationParams,
   ): string
-  getAllAuctionDetailsWithUserParticipation(account: string): Promise<AuctionInfo[]>
+  getAllAuctionDetailsWithUserParticipation(account: string): Promise<Auction[]>
   getClearingPriceOrderAndVolumeUrl(params: OrderBookParams): string
   getClearingPriceOrderAndVolume(params: OrderBookParams): Promise<ClearingPriceAndVolumeData>
   getAuctionDetails(params: AuctionDetailParams): Promise<AuctionInfoDetail>
@@ -197,7 +197,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
 
   public async getAllAuctionDetailsWithUserParticipation(
     account: string,
-  ): Promise<Maybe<AuctionInfo[]>> {
+  ): Promise<Maybe<Auction[]>> {
     try {
       const promises: Promise<Response>[] = []
       for (const networkId in this.urlsByNetwork) {
@@ -248,7 +248,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
     return url
   }
 
-  public async getAllAuctionDetails(): Promise<Maybe<AuctionInfo[]>> {
+  public async getAllAuctionDetails(): Promise<Maybe<Auction[]>> {
     try {
       const promises: Promise<Response>[] = []
       for (const networkId in this.urlsByNetwork) {
@@ -306,9 +306,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
     }
   }
 
-  public async getMostInterestingAuctionDetails(
-    closedAuctions = false,
-  ): Promise<Maybe<AuctionInfo[]>> {
+  public async getMostInterestingAuctionDetails(closedAuctions = false): Promise<Maybe<Auction[]>> {
     try {
       const promises: Promise<Response>[] = []
       for (const networkId in this.urlsByNetwork) {
