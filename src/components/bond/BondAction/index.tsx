@@ -267,7 +267,7 @@ const BondAction = ({
                 balance={formatUnits(Number(bondTokenBalance) || 0, bondInfo?.decimals)}
                 chainId={chainId}
                 disabled={!account}
-                maxTitle={isConvertComponent ? 'Convert all' : 'Redeem all'}
+                maxTitle={`${getActionText(componentType)} all`}
                 onMax={() => {
                   setBondsToRedeem(formatUnits(Number(bondTokenBalance), bondInfo?.decimals))
                 }}
@@ -310,7 +310,7 @@ const BondAction = ({
           </div>
           <ConfirmationDialog
             actionColor="purple"
-            actionText="Convert bonds"
+            actionText={`${getActionText(componentType)} bonds`}
             amount={Number(bondsToRedeem)}
             amountToken={tok}
             beforeDisplay={
@@ -318,17 +318,18 @@ const BondAction = ({
                 amount={Number(bondsToRedeem)}
                 amountToken={tok}
                 assetsToReceive={assetsToReceive}
+                type={getActionText(componentType).toLowerCase()}
               />
             }
             finishedText="Bonds converted"
             loadingText="Converting bonds"
             onOpenChange={setOpenReviewModal}
             open={openReviewModal}
-            pendingText="Confirm conversion in wallet"
+            pendingText={`Confirm ${isConvertComponent ? 'conversion' : 'redemption'} in wallet`}
             placeOrder={isConvertComponent ? convert : redeem}
             price={isConvertComponent ? previewConvertVal : previewRedeemVal[0]}
             priceToken={payTok}
-            title="Review convert"
+            title={`Review ${getActionText(componentType).toLowerCase()}`}
           />
         </div>
       </div>
