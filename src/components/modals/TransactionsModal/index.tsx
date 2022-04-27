@@ -4,8 +4,7 @@ import { isTransactionRecent, useAllTransactions } from '../../../state/transact
 import { TransactionDetails } from '../../../state/transactions/reducer'
 import Transaction from '../../common/Transaction'
 import { InfoIcon } from '../../icons/InfoIcon'
-import Modal from '../common/Modal'
-import { ModalTitle } from '../common/ModalTitle'
+import Modal, { DialogTitle } from '../common/Modal'
 import { Content } from '../common/pureStyledComponents/Content'
 import { IconWrapper } from '../common/pureStyledComponents/IconWrapper'
 import { Text } from '../common/pureStyledComponents/Text'
@@ -44,14 +43,9 @@ export const TransactionsModal: React.FC<Props> = (props) => {
   const noTransactions = pending.length === 0 && confirmed.length === 0
 
   return (
-    <Modal
-      isOpen={isOpen}
-      minHeight={300}
-      onDismiss={onDismiss}
-      width={noTransactions ? 350 : undefined}
-    >
+    <Modal isOpen={isOpen} onDismiss={onDismiss}>
       <Content>
-        <ModalTitle onClose={onDismiss} title="Transactions" />
+        <DialogTitle>Transactions</DialogTitle>
         {pending.length > 0 && renderTransactions(pending)}
         {confirmed.length > 0 && renderTransactions(confirmed)}
         {noTransactions && (
