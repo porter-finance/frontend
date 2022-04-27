@@ -321,8 +321,8 @@ const BondAction = ({
                 type={getActionText(componentType).toLowerCase()}
               />
             }
-            finishedText="Bonds converted"
-            loadingText="Converting bonds"
+            finishedText={`Bonds ${getActionText(componentType)}ed`}
+            loadingText={`${getActionText(componentType)}ing bonds`}
             onOpenChange={setOpenReviewModal}
             open={openReviewModal}
             pendingText={`Confirm ${isConvertComponent ? 'conversion' : 'redemption'} in wallet`}
