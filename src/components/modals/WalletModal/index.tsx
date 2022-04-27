@@ -245,11 +245,7 @@ const WalletModal: React.FC = () => {
       : 'Error connecting. Try refreshing the page.'
 
   return (
-    <Modal
-      isOpen={walletModalOpen}
-      onDismiss={toggleWalletModal}
-      width={error || connectingToWallet ? 400 : undefined}
-    >
+    <Modal isOpen={walletModalOpen} onDismiss={toggleWalletModal}>
       <div>
         <div className="flex justify-between items-start rounded-t">
           <h5 className="mb-3 text-base font-semibold text-gray-900 lg:text-xl dark:text-white">

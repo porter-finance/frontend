@@ -9,8 +9,7 @@ import { InlineLoading } from '../../common/InlineLoading'
 import { SpinnerSize } from '../../common/Spinner'
 import { ArrowUp } from '../../icons/ArrowUp'
 import { LinkIcon } from '../../icons/LinkIcon'
-import Modal from '../common/Modal'
-import { ModalTitle } from '../common/ModalTitle'
+import Modal, { DialogTitle } from '../common/Modal'
 import { Content } from '../common/pureStyledComponents/Content'
 import { IconWrapper } from '../common/pureStyledComponents/IconWrapper'
 import { Text } from '../common/pureStyledComponents/Text'
@@ -66,13 +65,8 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = (props) => {
   const isFinished = attemptingTxn && !pendingConfirmation
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onDismiss={onDismiss}
-      width={isWorking || isFinished ? 394 : width ? width : undefined}
-      {...restProps}
-    >
-      <ModalTitle onClose={onDismiss} title={isWorking || isFinished ? '' : title} />
+    <Modal isOpen={isOpen} onDismiss={onDismiss} {...restProps}>
+      <DialogTitle>{isWorking || isFinished ? '' : title}</DialogTitle>
       <Content>
         {!attemptingTxn && <>{content}</>}
         {isWorking && (

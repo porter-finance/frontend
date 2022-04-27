@@ -13,7 +13,6 @@ const Wrapper = styled(ExternalLink)`
   align-items: center;
   border-radius: 12px;
   border: solid 1px ${({ theme }) => theme.primary2};
-  background-color: ${({ theme }) => theme.bg2};
   color: ${({ theme }) => theme.text1};
   cursor: pointer;
   display: flex;
