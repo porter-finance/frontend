@@ -10,7 +10,7 @@ import { useBond } from '../../../hooks/useBond'
 import { useConvertBond } from '../../../hooks/useConvertBond'
 import { usePreviewBond } from '../../../hooks/usePreviewBond'
 import { useRedeemBond } from '../../../hooks/useRedeemBond'
-import { BondActions } from '../../../pages/BondDetail'
+import { BondActions, getBondStates } from '../../../pages/BondDetail'
 import { useActivePopups, useWalletModalToggle } from '../../../state/application/hooks'
 import { getTokenDisplay } from '../../../utils'
 import { ActionButton } from '../../auction/Claimer'
@@ -24,11 +24,11 @@ import TokenLogo from '../../token/TokenLogo'
 export const TokenPill = ({ token }) => {
   return token ? (
     <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#2C2C2C] rounded-full p-1 px-2 pl-1">
-      {token.address && (
+      {(token.address || token.id) && (
         <TokenLogo
           size={'16px'}
           token={{
-            address: token.address,
+            address: token.address || token.id,
             symbol: token.symbol,
           }}
         />
@@ -77,50 +77,45 @@ const BondAction = ({
 
   const bondId = overwriteBondId || params?.bondId
   const { data: bondInfo, loading: isLoading } = useBond(bondId, account)
-
   const bondTokenBalance = bondInfo?.tokenBalances?.[0]?.amount || 0
 
-  const isMatured = bondInfo && new Date() > new Date(bondInfo.maturityDate * 1000)
-
   const [bondsToRedeem, setBondsToRedeem] = useState('0.00')
-  const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false)
   const [openReviewModal, setOpenReviewModal] = useState<boolean>(false)
-  const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true)
-  const [txHash, setTxHash] = useState<string>('')
   const [previewRedeemVal, setPreviewRedeemVal] = useState<string[]>(['0', '0'])
   const [previewConvertVal, setPreviewConvertVal] = useState<string>('0')
   const isConvertComponent = componentType === BondActions.Convert
 
-  // TODO ADD THIS TO THE GRAPH
-  const isPartiallyPaid = false
+  const [tokenDetails, setTokenDetails] = useState({ BondAmount: null, payTok: null, tok: null })
 
-  const isDefaulted = bondInfo?.state === 'defaulted'
-  const isPaid = bondInfo?.state === 'paidEarly' || bondInfo?.state === 'paid'
+  const { isConvertBond, isDefaulted, isMatured, isPaid, isPartiallyPaid } = getBondStates(bondInfo)
 
-  let BondAmount = null
-  let tok = null
-  let payTok = null
-  if (bondInfo) {
-    const bondsToRedeemBigNumber = parseUnits(bondsToRedeem, bondInfo.decimals)
-    tok = new Token(chainId, bondInfo.id, bondInfo.decimals, bondInfo.symbol, bondInfo.name)
-    payTok = new Token(
-      chainId,
-      bondInfo?.paymentToken?.id,
-      bondInfo?.paymentToken?.decimals,
-      bondInfo?.paymentToken?.symbol,
-      bondInfo?.paymentToken?.name,
-    )
-    BondAmount = new TokenAmount(tok, bondsToRedeemBigNumber.toString())
-  }
+  useEffect(() => {
+    let BondAmount = null
+    let tok = null
+    let payTok = null
+
+    if (bondInfo) {
+      const bondsToRedeemBigNumber = parseUnits(bondsToRedeem, bondInfo.decimals)
+      tok = new Token(chainId, bondInfo.id, bondInfo.decimals, bondInfo.symbol, bondInfo.name)
+      payTok = new Token(
+        chainId,
+        bondInfo?.paymentToken?.id,
+        bondInfo?.paymentToken?.decimals,
+        bondInfo?.paymentToken?.symbol,
+        bondInfo?.paymentToken?.name,
+      )
+      BondAmount = new TokenAmount(tok, bondsToRedeemBigNumber.toString())
+      setTokenDetails({ BondAmount, tok, payTok })
+    }
+  }, [chainId, bondsToRedeem, bondInfo])
+
+  // these names r so bad
+  const { BondAmount, payTok, tok } = tokenDetails
 
   const { redeem } = useRedeemBond(BondAmount, bondId)
   const { convert } = useConvertBond(BondAmount, bondId)
-  const { previewConvert, previewMint, previewRedeem } = usePreviewBond(bondId)
+  const { previewConvert, previewRedeem } = usePreviewBond(bondId)
   const toggleWalletModal = useWalletModalToggle()
-
-  const onUserSellAmountInput = (theInput) => {
-    setBondsToRedeem(theInput || '0')
-  }
 
   useEffect(() => {
     if (!BondAmount) return
@@ -138,7 +133,6 @@ const BondAction = ({
 
     if (isConvertComponent) {
       previewConvert(BondAmount).then((r) => {
-        console.log(r, 'geczy')
         setPreviewConvertVal(formatUnits(r, bondInfo?.collateralToken?.decimals))
       })
     }
@@ -149,48 +143,14 @@ const BondAction = ({
     bondInfo?.collateralToken?.decimals,
     previewRedeem,
     previewConvert,
-    previewMint,
     BondAmount,
   ])
 
-  const resetModal = () => {
-    if (!pendingConfirmation) {
-      onUserSellAmountInput('')
-    }
-    setPendingConfirmation(true)
-    setAttemptingTxn(false)
-  }
-
   useEffect(() => {
-    if (txHash && activePopups.length) {
-      onUserSellAmountInput('')
-      setPendingConfirmation(false)
-      setAttemptingTxn(false)
+    if (activePopups.length) {
+      setBondsToRedeem('')
     }
-  }, [activePopups, txHash])
-
-  const doTheAction = async () => {
-    let hash
-
-    setAttemptingTxn(true)
-
-    if (isConvertComponent) {
-      hash = await convert().catch(() => {
-        resetModal()
-      })
-    }
-
-    if (componentType === BondActions.Redeem) {
-      hash = await redeem().catch(() => {
-        resetModal()
-      })
-    }
-
-    if (hash) {
-      setTxHash(hash)
-      setPendingConfirmation(false)
-    }
-  }
+  }, [activePopups])
 
   const isConvertable = useMemo(() => {
     if (componentType !== BondActions.Convert) return false
@@ -213,8 +173,8 @@ const BondAction = ({
   const isRedeemable = useMemo(() => {
     if (componentType !== BondActions.Redeem) return false
     if (!account) return { error: 'Not logged in' }
-    if (!isPaid && !isMatured) {
-      return { error: 'Must be fully paid or matured' }
+    if (!isPaid && !isMatured && !isDefaulted) {
+      return { error: 'Must be fully paid, matured, or defaulted' }
     }
 
     const validInput = parseUnits(bondsToRedeem, bondInfo?.decimals).gt(0)
@@ -232,18 +192,16 @@ const BondAction = ({
     bondsToRedeem,
     isMatured,
     isPaid,
+    isDefaulted,
   ])
-
-  const pendingText = useMemo(
-    () => `Placing ${getActionText(componentType).toLowerCase()} order`,
-    [componentType],
-  )
 
   const isActionDisabled = useMemo(() => {
     if (isConvertComponent) {
+      console.log(isConvertable)
       return isConvertable !== true
     }
     if (componentType === BondActions.Redeem) {
+      console.log(isRedeemable)
       return isRedeemable !== true
     }
   }, [isConvertComponent, componentType, isConvertable, isRedeemable])
@@ -261,6 +219,20 @@ const BondAction = ({
     }
 
     return null
+  }
+
+  const assetsToReceive = []
+  if (isDefaulted) {
+    const value = isConvertComponent ? previewConvertVal : previewRedeemVal[1]
+    assetsToReceive.push({ token: bondInfo?.collateralToken, value: value })
+  } else {
+    if (isPartiallyPaid) {
+      const partiallyPaidValue = isConvertComponent ? previewConvertVal : previewRedeemVal[1]
+      assetsToReceive.push({ token: bondInfo?.collateralToken, value: partiallyPaidValue })
+    }
+
+    const value = isConvertComponent ? previewConvertVal : previewRedeemVal[0]
+    assetsToReceive.push({ token: bondInfo?.paymentToken, value })
   }
 
   return (
@@ -293,14 +265,13 @@ const BondAction = ({
               <AmountInputPanel
                 amountText={`Amount of bonds to ${getActionText(componentType).toLowerCase()}`}
                 balance={formatUnits(Number(bondTokenBalance) || 0, bondInfo?.decimals)}
-                balanceString={componentType === BondActions.Mint && 'Available'}
                 chainId={chainId}
                 disabled={!account}
-                maxTitle={isConvertComponent ? 'Convert all' : 'Redeem all'}
+                maxTitle={`${getActionText(componentType)} all`}
                 onMax={() => {
                   setBondsToRedeem(formatUnits(Number(bondTokenBalance), bondInfo?.decimals))
                 }}
-                onUserSellAmountInput={onUserSellAmountInput}
+                onUserSellAmountInput={setBondsToRedeem}
                 token={tok}
                 value={bondsToRedeem}
                 wrap={{ isWrappable: false, onClick: null }}
@@ -309,31 +280,9 @@ const BondAction = ({
             <div className="text-xs text-[12px] text-[#696969] space-y-6">
               {(isConvertComponent || componentType === BondActions.Redeem) && (
                 <div className="space-y-2">
-                  {isDefaulted ? (
-                    <TokenInfo
-                      disabled={!account}
-                      token={bondInfo?.collateralToken}
-                      // array of previewRedeemVal is [paymentTokens, collateralTokens]
-                      value={isConvertComponent ? previewConvertVal : previewRedeemVal[1]}
-                    />
-                  ) : (
-                    <>
-                      {isPartiallyPaid && (
-                        <TokenInfo
-                          disabled={!account}
-                          token={bondInfo?.collateralToken}
-                          // array of previewRedeemVal is [paymentTokens, collateralTokens]
-                          value={isConvertComponent ? previewConvertVal : previewRedeemVal[1]}
-                        />
-                      )}
-                      <TokenInfo
-                        disabled={!account}
-                        token={bondInfo?.paymentToken}
-                        // array of previewRedeemVal is [paymentTokens, collateralTokens]
-                        value={isConvertComponent ? previewConvertVal : previewRedeemVal[0]}
-                      />
-                    </>
-                  )}
+                  {assetsToReceive.map(({ token, value }, index) => (
+                    <TokenInfo disabled={!account} key={index} token={token} value={value} />
+                  ))}
 
                   <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
                     <span>Amount of assets to receive</span>
@@ -354,33 +303,33 @@ const BondAction = ({
                     setOpenReviewModal(true)
                   }}
                 >
-                  {getActionText(componentType)}
+                  Review {getActionText(componentType).toLowerCase()}
                 </ActionButton>
               )}
             </div>
           </div>
           <ConfirmationDialog
             actionColor="purple"
-            actionText="Convert bonds"
+            actionText={`${getActionText(componentType)} bonds`}
             amount={Number(bondsToRedeem)}
             amountToken={tok}
             beforeDisplay={
               <ReviewConvert
                 amount={Number(bondsToRedeem)}
                 amountToken={tok}
-                price={isConvertComponent ? previewConvertVal : previewRedeemVal[0]}
-                priceToken={payTok}
+                assetsToReceive={assetsToReceive}
+                type={getActionText(componentType).toLowerCase()}
               />
             }
-            finishedText="Bonds converted"
-            loadingText="Converting bonds"
+            finishedText={`Bonds ${getActionText(componentType)}ed`}
+            loadingText={`${getActionText(componentType)}ing bonds`}
             onOpenChange={setOpenReviewModal}
             open={openReviewModal}
-            pendingText="Confirm conversion in wallet"
+            pendingText={`Confirm ${isConvertComponent ? 'conversion' : 'redemption'} in wallet`}
             placeOrder={isConvertComponent ? convert : redeem}
             price={isConvertComponent ? previewConvertVal : previewRedeemVal[0]}
             priceToken={payTok}
-            title="Review convert"
+            title={`Review ${getActionText(componentType).toLowerCase()}`}
           />
         </div>
       </div>
