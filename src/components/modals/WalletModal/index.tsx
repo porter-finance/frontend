@@ -17,7 +17,7 @@ import { setupNetwork } from '../../../utils/setupNetwork'
 import { AlertIcon } from '../../icons/AlertIcon'
 import { Checkbox } from '../../pureStyledComponents/Checkbox'
 import { NetworkError, useNetworkCheck } from '../../web3/Web3Status'
-import Modal from '../common/Modal'
+import Modal, { DialogTitle } from '../common/Modal'
 import Option from '../common/Option'
 import PendingView from '../common/PendingView'
 import { Content } from '../common/pureStyledComponents/Content'
@@ -247,29 +247,7 @@ const WalletModal: React.FC = () => {
   return (
     <Modal isOpen={walletModalOpen} onDismiss={toggleWalletModal}>
       <div>
-        <div className="flex justify-between items-start rounded-t">
-          <h5 className="mb-3 text-base font-semibold text-gray-900 lg:text-xl dark:text-white">
-            {title}
-          </h5>
-          <button
-            className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
-            onClick={toggleWalletModal}
-            type="button"
-          >
-            <svg
-              className="w-5 h-5"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                clipRule="evenodd"
-                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                fillRule="evenodd"
-              ></path>
-            </svg>
-          </button>
-        </div>
+        <DialogTitle>{title}</DialogTitle>
 
         <p className="text-sm font-normal text-gray-500 dark:text-gray-400">
           Connect with one of our available wallet providers or create a new one.
