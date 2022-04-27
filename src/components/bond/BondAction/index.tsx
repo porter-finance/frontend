@@ -303,7 +303,7 @@ const BondAction = ({
                     setOpenReviewModal(true)
                   }}
                 >
-                  {getActionText(componentType)}
+                  Review {getActionText(componentType).toLowerCase()}
                 </ActionButton>
               )}
             </div>
