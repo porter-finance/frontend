@@ -236,7 +236,6 @@ const TokenApproval = ({
   showTokenTransactionComplete,
   unlock,
 }: {
-  placeOrder: () => Promise<any>
   beforeDisplay: ReactElement
   amount: number
   amountToken: Token
@@ -283,7 +282,7 @@ const TokenApproval = ({
                   .onUnlock()
                   .then((response) => {
                     setPendingTokenTransaction(false)
-                    setShowTokenTransactionComplete(response?.hash)
+                    setShowTokenTransactionComplete(response?.hash || response)
                   })
                   .catch(() => {
                     setPendingTokenTransaction(false)
@@ -394,7 +393,9 @@ const ConfirmationDialog = ({
       <DialogContent>
         {!transactionError && (
           <>
-            {!showTokenTransactionComplete && <DialogTitle className="mb-5">{title}</DialogTitle>}
+            {!showOrderTransactionComplete && !orderComplete && !showTokenTransactionComplete && (
+              <DialogTitle className="mb-5">{title}</DialogTitle>
+            )}
 
             {unlock && !showOrderTransactionComplete && !orderComplete && (
               <TokenApproval
@@ -406,7 +407,6 @@ const ConfirmationDialog = ({
                 onOpenChange={onOpenChange}
                 open={open}
                 orderPlacingOnly={orderPlacingOnly}
-                placeOrder={placeOrder}
                 price={price}
                 priceToken={priceToken}
                 setShowTokenTransactionComplete={setShowTokenTransactionComplete}
@@ -422,7 +422,7 @@ const ConfirmationDialog = ({
                   display: <span>Order placed</span>,
                 }}
                 before={{
-                  show: !unlock,
+                  show: !unlock && !showOrderTransactionComplete && !orderComplete,
                   display: beforeDisplay,
                 }}
                 during={{
@@ -445,7 +445,7 @@ const ConfirmationDialog = ({
                         placeOrder()
                           .then((response) => {
                             setPendingOrderTransaction(false)
-                            setShowOrderTransactionComplete(response?.hash)
+                            setShowOrderTransactionComplete(response?.hash || response)
                           })
                           .catch((e) => {
                             setTransactionError(e?.message || e)
