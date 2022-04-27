@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { ReactElement, useEffect, useState } from 'react'
 
 import { Token } from '@josojo/honeyswap-sdk'
 import { violet } from '@radix-ui/colors'
@@ -16,7 +16,6 @@ import { ActionButton, GhostActionLink } from '../auction/Claimer'
 import { TokenInfo } from '../bond/BondAction'
 import { Tooltip } from '../common/Tooltip'
 import { unlockProps } from '../form/AmountInputPanel'
-import { getReviewData } from '../form/InterestRateInputPanel'
 
 const overlayShow = keyframes({
   '0%': { opacity: 0 },
@@ -109,38 +108,41 @@ const IconButton = styled('button', {
   '&:focus': { boxShadow: `0 0 0 2px ${violet.violet7}` },
 })
 
-const WarningText = ({ cancelCutoff, orderPlacingOnly }) =>
-  orderPlacingOnly || cancelCutoff ? (
-    <div className="space-y-3">
-      <div className="flex flex-row items-center space-x-2">
-        <svg
-          fill="none"
-          height="15"
-          viewBox="0 0 15 15"
-          width="15"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            clipRule="evenodd"
-            d="M7.21424 14.5C11.1834 14.5 14.4011 11.366 14.4011 7.5C14.4011 3.63401 11.1834 0.5 7.21424 0.5C3.24503 0.5 0.0273438 3.63401 0.0273438 7.5C0.0273438 11.366 3.24503 14.5 7.21424 14.5ZM6.21449 4.02497C6.19983 3.73938 6.43361 3.5 6.7272 3.5H7.70128C7.99486 3.5 8.22865 3.73938 8.21399 4.02497L8.00865 8.02497C7.99499 8.29107 7.76949 8.5 7.49594 8.5H6.93254C6.65899 8.5 6.43349 8.29107 6.41983 8.02497L6.21449 4.02497ZM6.18754 10.5C6.18754 9.94772 6.64721 9.5 7.21424 9.5C7.78127 9.5 8.24094 9.94772 8.24094 10.5C8.24094 11.0523 7.78127 11.5 7.21424 11.5C6.64721 11.5 6.18754 11.0523 6.18754 10.5Z"
-            fill="#EDA651"
-            fillRule="evenodd"
-          />
-        </svg>
-        <span className="text-[#EDA651]">Warning</span>
-      </div>
-      {orderPlacingOnly && !cancelCutoff && (
-        <div className="text-sm text-[#D6D6D6]">Orders cannot be cancelled once placed.</div>
-      )}
-      {cancelCutoff && (
-        <div className="text-sm text-[#D6D6D6]">
-          Orders cannot be cancelled after {cancelCutoff}.
-        </div>
-      )}
+const GeneralWarning = ({ text }) => (
+  <div className="space-y-3">
+    <div className="flex flex-row items-center space-x-2">
+      <svg
+        fill="none"
+        height="15"
+        viewBox="0 0 15 15"
+        width="15"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          clipRule="evenodd"
+          d="M7.21424 14.5C11.1834 14.5 14.4011 11.366 14.4011 7.5C14.4011 3.63401 11.1834 0.5 7.21424 0.5C3.24503 0.5 0.0273438 3.63401 0.0273438 7.5C0.0273438 11.366 3.24503 14.5 7.21424 14.5ZM6.21449 4.02497C6.19983 3.73938 6.43361 3.5 6.7272 3.5H7.70128C7.99486 3.5 8.22865 3.73938 8.21399 4.02497L8.00865 8.02497C7.99499 8.29107 7.76949 8.5 7.49594 8.5H6.93254C6.65899 8.5 6.43349 8.29107 6.41983 8.02497L6.21449 4.02497ZM6.18754 10.5C6.18754 9.94772 6.64721 9.5 7.21424 9.5C7.78127 9.5 8.24094 9.94772 8.24094 10.5C8.24094 11.0523 7.78127 11.5 7.21424 11.5C6.64721 11.5 6.18754 11.0523 6.18754 10.5Z"
+          fill="#EDA651"
+          fillRule="evenodd"
+        />
+      </svg>
+      <span className="text-[#EDA651]">Warning</span>
     </div>
-  ) : null
+    <div className="text-sm text-[#D6D6D6]">{text}</div>
+  </div>
+)
 
-const ReviewInfo = ({ amountToken, cancelCutoff, data, orderPlacingOnly, priceToken }) => (
+const WarningText = ({ cancelCutoff, orderPlacingOnly }) => {
+  if (orderPlacingOnly && !cancelCutoff) {
+    return <GeneralWarning text="Orders cannot be cancelled once placed." />
+  }
+  if (cancelCutoff) {
+    return <GeneralWarning text={`Orders cannot be cancelled after ${cancelCutoff}.`} />
+  }
+
+  return null
+}
+
+export const ReviewOrder = ({ amountToken, cancelCutoff, data, orderPlacingOnly, priceToken }) => (
   <div className="space-y-6 mt-10">
     <div className="text-xs text-[12px] text-[#696969] space-y-2 border-b border-b-[#D5D5D519] pb-4">
       <TokenInfo token={priceToken} value={data.pay} />
@@ -164,6 +166,26 @@ const ReviewInfo = ({ amountToken, cancelCutoff, data, orderPlacingOnly, priceTo
       </div>
     </div>
     <WarningText cancelCutoff={cancelCutoff} orderPlacingOnly={orderPlacingOnly} />
+  </div>
+)
+
+export const ReviewConvert = ({ amount, amountToken, price, priceToken }) => (
+  <div className="space-y-6 mt-10">
+    <div className="text-xs text-[12px] text-[#696969] space-y-2 border-b border-b-[#D5D5D519] pb-4">
+      <TokenInfo token={amountToken} value={amount} />
+      <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
+        <span>Amount of bonds to convert</span>
+        <Tooltip text="Tooltip" />
+      </div>
+    </div>
+    <div className="text-xs text-[12px] text-[#696969] space-y-2 border-b border-b-[#D5D5D519] pb-4">
+      <TokenInfo plus token={priceToken} value={price} />
+      <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
+        <span>Amount of assets to receive</span>
+        <Tooltip text="Tooltip" />
+      </div>
+    </div>
+    <GeneralWarning text="This is a one-way transaction and can't be reversed." />
   </div>
 )
 
@@ -204,6 +226,7 @@ const GhostTransactionLink = ({ chainId, hash }) => (
 const TokenApproval = ({
   amount,
   amountToken,
+  beforeDisplay,
   cancelCutoff,
   maturityDate,
   orderPlacingOnly,
@@ -214,9 +237,10 @@ const TokenApproval = ({
   unlock,
 }: {
   placeOrder: () => Promise<any>
+  beforeDisplay: ReactElement
   amount: number
   amountToken: Token
-  maturityDate: number
+  maturityDate?: number
   cancelCutoff: string
   orderPlacingOnly: boolean
   price: string
@@ -230,11 +254,9 @@ const TokenApproval = ({
   const { chainId } = useActiveWeb3React()
   const [pendingTokenTransaction, setPendingTokenTransaction] = useState(false)
   const isUnlocking = unlock?.unlockState === ApprovalState.PENDING
-  const data = getReviewData({ amount, maturityDate, price })
 
   return (
     <>
-      {!showTokenTransactionComplete && <DialogTitle>Review order</DialogTitle>}
       <div>
         <BodyPanel
           after={{
@@ -243,15 +265,7 @@ const TokenApproval = ({
           }}
           before={{
             show: !isUnlocking && !showTokenTransactionComplete,
-            display: (
-              <ReviewInfo
-                amountToken={amountToken}
-                cancelCutoff={cancelCutoff}
-                data={data}
-                orderPlacingOnly={orderPlacingOnly}
-                priceToken={priceToken}
-              />
-            ),
+            display: beforeDisplay,
           }}
           during={{
             show: isUnlocking,
@@ -311,6 +325,7 @@ enum OrderState {
 const ConfirmationDialog = ({
   amount,
   amountToken,
+  beforeDisplay,
   cancelCutoff,
   maturityDate,
   onOpenChange,
@@ -319,17 +334,20 @@ const ConfirmationDialog = ({
   placeOrder,
   price,
   priceToken,
+  title,
   unlock,
 }: {
   placeOrder: () => Promise<any>
   amount: number
+  title: string
   amountToken: Token
-  maturityDate: number
-  orderPlacingOnly: boolean
-  cancelCutoff: string
+  maturityDate?: number
+  beforeDisplay: ReactElement
+  orderPlacingOnly?: boolean
+  cancelCutoff?: string
   price: string
   priceToken: Token
-  unlock: unlockProps
+  unlock?: unlockProps
   onOpenChange: (open: boolean) => void
   open: boolean
 }) => {
@@ -370,10 +388,13 @@ const ConfirmationDialog = ({
       <DialogContent>
         {!transactionError && (
           <>
-            {!showOrderTransactionComplete && !orderComplete && (
+            {!showTokenTransactionComplete && <DialogTitle className="mb-5">{title}</DialogTitle>}
+
+            {unlock && !showOrderTransactionComplete && !orderComplete && (
               <TokenApproval
                 amount={amount}
                 amountToken={amountToken}
+                beforeDisplay={beforeDisplay}
                 cancelCutoff={cancelCutoff}
                 maturityDate={maturityDate}
                 onOpenChange={onOpenChange}
@@ -395,7 +416,8 @@ const ConfirmationDialog = ({
                   display: <span>Order placed</span>,
                 }}
                 before={{
-                  show: false,
+                  show: !unlock,
+                  display: beforeDisplay,
                 }}
                 during={{
                   show: showOrderTransactionComplete && !orderComplete,
