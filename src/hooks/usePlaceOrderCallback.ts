@@ -3,11 +3,12 @@ import { useMemo } from 'react'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract, ContractFunction } from '@ethersproject/contracts'
 import { Web3Provider } from '@ethersproject/providers'
-import { Token } from '@josojo/honeyswap-sdk'
+import { JSBI, Token } from '@josojo/honeyswap-sdk'
 
 import { additionalServiceApi } from '../api'
 import depositAndPlaceOrderABI from '../constants/abis/easyAuction/depositAndPlaceOrder.json'
 import easyAuctionABI from '../constants/abis/easyAuction/easyAuction.json'
+import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../constants/config'
 import { Result, useSingleCallResult } from '../state/multicall/hooks'
 import { useOrderPlacementState } from '../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../state/orderPlacement/reducer'
@@ -60,7 +61,8 @@ export function usePlaceOrderCallback(
 
   const addTransaction = useTransactionAdder()
   const { onNewOrder } = useOrderActionHandlers()
-  const { price: priceFromSwapState, sellAmount } = useOrderPlacementState()
+  const { price: priceFromSwapState, sellAmount: bondsToPurchase } = useOrderPlacementState()
+  const sellAmount = (Number(bondsToPurchase) * Number(priceFromSwapState)).toString()
   const { onNewBid } = useOrderbookActionHandlers()
   const gasPrice = useGasPrice(chainId)
 
