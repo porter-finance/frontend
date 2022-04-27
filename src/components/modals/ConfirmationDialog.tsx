@@ -1,7 +1,6 @@
 import React, { ReactElement, useEffect, useState } from 'react'
 
 import { Token } from '@josojo/honeyswap-sdk'
-import { Cross2Icon } from '@radix-ui/react-icons'
 
 import { ReactComponent as GreenCheckIcon } from '../../assets/svg/greencheck.svg'
 import { ReactComponent as PorterIcon } from '../../assets/svg/porter.svg'
@@ -13,7 +12,7 @@ import { ActionButton, GhostActionLink } from '../auction/Claimer'
 import { TokenInfo } from '../bond/BondAction'
 import { Tooltip } from '../common/Tooltip'
 import { unlockProps } from '../form/AmountInputPanel'
-import { Dialog, DialogClose, DialogContent, DialogTitle, IconButton } from './common/Modal'
+import Modal, { DialogClose, DialogTitle } from './common/Modal'
 
 const GeneralWarning = ({ text }) => (
   <div className="space-y-3">
@@ -302,128 +301,120 @@ const ConfirmationDialog = ({
   }, [showOrderTransactionComplete, allTransactions])
 
   return (
-    <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent>
-        {!transactionError && (
-          <>
-            {!showOrderTransactionComplete && !orderComplete && !showTokenTransactionComplete && (
-              <DialogTitle>{title}</DialogTitle>
-            )}
+    <Modal isOpen={open} onDismiss={onOpenChange}>
+      {!transactionError && (
+        <>
+          {!showOrderTransactionComplete && !orderComplete && !showTokenTransactionComplete && (
+            <DialogTitle>{title}</DialogTitle>
+          )}
 
-            {unlock && !showOrderTransactionComplete && !orderComplete && (
-              <TokenApproval
-                amount={amount}
-                amountToken={amountToken}
-                beforeDisplay={beforeDisplay}
-                cancelCutoff={cancelCutoff}
-                maturityDate={maturityDate}
-                onOpenChange={onOpenChange}
-                open={open}
-                orderPlacingOnly={orderPlacingOnly}
-                price={price}
-                priceToken={priceToken}
-                setShowTokenTransactionComplete={setShowTokenTransactionComplete}
-                showTokenTransactionComplete={showTokenTransactionComplete}
-                unlock={unlock}
-              />
-            )}
+          {unlock && !showOrderTransactionComplete && !orderComplete && (
+            <TokenApproval
+              amount={amount}
+              amountToken={amountToken}
+              beforeDisplay={beforeDisplay}
+              cancelCutoff={cancelCutoff}
+              maturityDate={maturityDate}
+              onOpenChange={onOpenChange}
+              open={open}
+              orderPlacingOnly={orderPlacingOnly}
+              price={price}
+              priceToken={priceToken}
+              setShowTokenTransactionComplete={setShowTokenTransactionComplete}
+              showTokenTransactionComplete={showTokenTransactionComplete}
+              unlock={unlock}
+            />
+          )}
 
-            <div>
-              <BodyPanel
-                after={{
-                  show: orderComplete && showOrderTransactionComplete,
-                  display: <span>{finishedText}</span>,
-                }}
-                before={{
-                  show: !unlock && !showOrderTransactionComplete && !orderComplete,
-                  display: beforeDisplay,
-                }}
-                during={{
-                  show: showOrderTransactionComplete && !orderComplete,
-                  display: <span>{loadingText}</span>,
-                }}
-              />
-
-              {!orderComplete &&
-                !showTokenTransactionComplete &&
-                !showOrderTransactionComplete &&
-                !unlock?.isLocked && (
-                  <div className="mt-10 mb-0">
-                    <ActionButton
-                      aria-label={actionText}
-                      className={pendingOrderTransaction ? 'loading' : ''}
-                      color={actionColor}
-                      onClick={() => {
-                        setPendingOrderTransaction(true)
-                        placeOrder()
-                          .then((response) => {
-                            setPendingOrderTransaction(false)
-                            setShowOrderTransactionComplete(response?.hash || response)
-                          })
-                          .catch((e) => {
-                            setTransactionError(e?.message || e)
-                            setPendingOrderTransaction(false)
-                          })
-                      }}
-                    >
-                      {pendingOrderTransaction && pendingText}
-                      {!pendingOrderTransaction && actionText}
-                    </ActionButton>
-                  </div>
-                )}
-            </div>
-
-            {showOrderTransactionComplete && (
-              <div className="flex flex-col items-center justify-center space-y-4 mt-20">
-                <GhostTransactionLink chainId={chainId} hash={showOrderTransactionComplete} />
-              </div>
-            )}
-
-            {orderComplete && (
-              <DialogClose asChild>
-                <ActionButton
-                  aria-label="Done"
-                  color={actionColor}
-                  onClick={() => {
-                    setOrderComplete(false)
-                    setShowOrderTransactionComplete('')
-                  }}
-                >
-                  Done
-                </ActionButton>
-              </DialogClose>
-            )}
-          </>
-        )}
-
-        {transactionError && (
-          <div className="text-center space-y-6 mt-10">
-            <h1 className="text-xl text-[#E0E0E0]">Oops, something went wrong!</h1>
-            <p className="text-[#D6D6D6]">
-              This is text explaining to the users how sometimes things go wrong and they shouldn’t
-              worry. They should just try the transaction again because giving up is unacceptable.
-            </p>
-            <p className="overflow-hidden">{transactionError}</p>
-            <ActionButton
-              aria-label="Try again"
-              className="!mt-20"
-              color={actionColor}
-              onClick={() => {
-                setTransactionError(null)
+          <div>
+            <BodyPanel
+              after={{
+                show: orderComplete && showOrderTransactionComplete,
+                display: <span>{finishedText}</span>,
               }}
-            >
-              Try again
-            </ActionButton>
-          </div>
-        )}
+              before={{
+                show: !unlock && !showOrderTransactionComplete && !orderComplete,
+                display: beforeDisplay,
+              }}
+              during={{
+                show: showOrderTransactionComplete && !orderComplete,
+                display: <span>{loadingText}</span>,
+              }}
+            />
 
-        <DialogClose asChild>
-          <IconButton>
-            <Cross2Icon />
-          </IconButton>
-        </DialogClose>
-      </DialogContent>
-    </Dialog>
+            {!orderComplete &&
+              !showTokenTransactionComplete &&
+              !showOrderTransactionComplete &&
+              !unlock?.isLocked && (
+                <div className="mt-10 mb-0">
+                  <ActionButton
+                    aria-label={actionText}
+                    className={pendingOrderTransaction ? 'loading' : ''}
+                    color={actionColor}
+                    onClick={() => {
+                      setPendingOrderTransaction(true)
+                      placeOrder()
+                        .then((response) => {
+                          setPendingOrderTransaction(false)
+                          setShowOrderTransactionComplete(response?.hash || response)
+                        })
+                        .catch((e) => {
+                          setTransactionError(e?.message || e)
+                          setPendingOrderTransaction(false)
+                        })
+                    }}
+                  >
+                    {pendingOrderTransaction && pendingText}
+                    {!pendingOrderTransaction && actionText}
+                  </ActionButton>
+                </div>
+              )}
+          </div>
+
+          {showOrderTransactionComplete && (
+            <div className="flex flex-col items-center justify-center space-y-4 mt-20">
+              <GhostTransactionLink chainId={chainId} hash={showOrderTransactionComplete} />
+            </div>
+          )}
+
+          {orderComplete && (
+            <DialogClose asChild>
+              <ActionButton
+                aria-label="Done"
+                color={actionColor}
+                onClick={() => {
+                  setOrderComplete(false)
+                  setShowOrderTransactionComplete('')
+                }}
+              >
+                Done
+              </ActionButton>
+            </DialogClose>
+          )}
+        </>
+      )}
+
+      {transactionError && (
+        <div className="text-center space-y-6 mt-10">
+          <h1 className="text-xl text-[#E0E0E0]">Oops, something went wrong!</h1>
+          <p className="text-[#D6D6D6]">
+            This is text explaining to the users how sometimes things go wrong and they shouldn’t
+            worry. They should just try the transaction again because giving up is unacceptable.
+          </p>
+          <p className="overflow-hidden">{transactionError}</p>
+          <ActionButton
+            aria-label="Try again"
+            className="!mt-20"
+            color={actionColor}
+            onClick={() => {
+              setTransactionError(null)
+            }}
+          >
+            Try again
+          </ActionButton>
+        </div>
+      )}
+    </Modal>
   )
 }
 
