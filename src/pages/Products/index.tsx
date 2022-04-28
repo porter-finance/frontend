@@ -10,6 +10,7 @@ import { ReactComponent as DividerIcon } from '../../assets/svg/divider.svg'
 import { ReactComponent as SimpleIcon } from '../../assets/svg/simple.svg'
 import { ActiveStatusPill } from '../../components/auction/OrderbookTable'
 import Table from '../../components/auctions/Table'
+import { Tooltip } from '../../components/common/Tooltip'
 import TokenLogo from '../../components/token/TokenLogo'
 import { BondInfo, useBonds } from '../../hooks/useBond'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
@@ -23,8 +24,8 @@ const GlobalStyle = createGlobalStyle`
 
 export const columns = (showAmount = false) => [
   {
-    Header: 'Issuer',
-    accessor: 'issuer',
+    Header: 'Bond',
+    accessor: 'bond',
     align: 'flex-start',
     show: true,
     style: { height: '100%', justifyContent: 'center' },
@@ -97,7 +98,7 @@ export const createTable = (data: BondInfo[]) => {
     return {
       id,
       search: JSON.stringify(bond),
-      issuer: (
+      bond: (
         <div className="flex flex-row items-center space-x-4">
           <div className="flex">
             <TokenLogo
@@ -118,10 +119,12 @@ export const createTable = (data: BondInfo[]) => {
           </div>
         </div>
       ),
-      amount: amount ? round(Number(formatUnits(amount, decimals)), decimals) : '-',
+      amount: amount ? Number(formatUnits(amount, decimals)).toLocaleString() : '-',
       // TODO graphql should return clearing decimal so i can calculate interest rate correctly
       fixedAPY: '-',
-      maturityValue: `1 ${paymentToken.symbol}`,
+      maturityValue: amount
+        ? `${Number(formatUnits(amount, decimals)).toLocaleString()} ${paymentToken.symbol}`
+        : `1 ${paymentToken.symbol}`,
 
       status:
         new Date() > new Date(maturityDate * 1000) ? (
