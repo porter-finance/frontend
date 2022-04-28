@@ -73,7 +73,7 @@ export const Tooltip = ({
   tip: ReactElement | string
   left?: ReactElement | string
 }) => {
-  const tipEl = (
+  const tipEl = tip && (
     <Provider delayDuration={100} skipDelayDuration={500}>
       <TooltipRoot>
         <TooltipTrigger asChild>
