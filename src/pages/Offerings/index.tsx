@@ -150,6 +150,7 @@ const Offerings = () => {
         </>
       }
       loading={isLoading}
+      name={'offerings'}
       title="Offerings"
     />
   )
