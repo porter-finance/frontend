@@ -38,8 +38,8 @@ export const columns = (showAmount = false) => [
     filter: 'searchInTags',
   },
   {
-    Header: 'Fixed APY',
-    accessor: 'fixedAPY',
+    Header: 'Fixed APR',
+    accessor: 'fixedAPR',
     align: 'flex-start',
     show: true,
     style: {},
@@ -117,8 +117,8 @@ export const createTable = (data: BondInfo[]) => {
           </div>
         </div>
       ),
+
       amount: amount ? Number(formatUnits(amount, decimals)).toLocaleString() : '-',
-      // TODO graphql should return clearing decimal so i can calculate interest rate correctly
       fixedAPY: '-',
       maturityValue: amount
         ? `${Number(formatUnits(amount, decimals)).toLocaleString()} ${paymentToken.symbol}`
