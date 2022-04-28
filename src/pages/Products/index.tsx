@@ -39,8 +39,8 @@ export const columns = (showAmount = false) => [
     filter: 'searchInTags',
   },
   {
-    Header: 'Fixed APY',
-    accessor: 'fixedAPY',
+    Header: 'Fixed APR',
+    accessor: 'fixedAPR',
     align: 'flex-start',
     show: true,
     style: {},
@@ -119,7 +119,7 @@ export const createTable = (data: BondInfo[]) => {
         </div>
       ),
       amount: amount ? round(Number(formatUnits(amount, decimals)), decimals) : '-',
-      fixedAPY: '-',
+      fixedAPR: '-',
       maturityValue: `1 ${paymentToken.symbol}`,
 
       status:
