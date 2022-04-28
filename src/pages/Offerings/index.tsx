@@ -74,7 +74,7 @@ const columns = [
 
 const Offerings = () => {
   const { chainId } = useActiveWeb3React()
-  const { data: allAuctions } = useAuctions()
+  const { data: allAuctions, loading } = useAuctions()
   const tableData = []
 
   useSetNoDefaultNetworkId()
@@ -125,11 +125,6 @@ const Offerings = () => {
     })
   })
 
-  const isLoading = React.useMemo(
-    () => allAuctions === undefined || allAuctions === null,
-    [allAuctions],
-  )
-
   return (
     <Table
       columns={columns}
@@ -149,7 +144,7 @@ const Offerings = () => {
           <OTCButtonOutline />
         </>
       }
-      loading={isLoading}
+      loading={loading}
       name={'offerings'}
       title="Offerings"
     />
