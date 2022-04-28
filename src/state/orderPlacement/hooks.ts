@@ -214,14 +214,11 @@ export const useGetOrderPlacementError = (
   derivedAuctionInfo: AuctionInfoDefined,
   auctionState: AuctionState,
   auctionIdentifier: AuctionIdentifier,
-  showPricesInverted: boolean,
 ): Errors => {
   const { account } = useActiveWeb3React()
   const { chainId } = auctionIdentifier
   const { price: priceFromState, sellAmount } = useOrderPlacementState()
-  const price = showPricesInverted
-    ? getInverse(priceFromState, NUMBER_OF_DIGITS_FOR_INVERSION)
-    : priceFromState
+  const price = priceFromState
   const relevantTokenBalances = useTokenBalancesTreatWETHAsETH(account ?? undefined, [
     derivedAuctionInfo?.biddingToken,
   ])
@@ -266,9 +263,7 @@ export const useGetOrderPlacementError = (
     5,
   )}`
   const messageMinimunPrice = () =>
-    showPricesInverted
-      ? `Price must be higher than 0`
-      : auctionState === AuctionState.ORDER_PLACING
+    auctionState === AuctionState.ORDER_PLACING
       ? messageHigherClearingPrice
       : messageHigherInitialPrice
 
@@ -292,9 +287,7 @@ export const useGetOrderPlacementError = (
       .lte(
         buyAmountScaled.mul(derivedAuctionInfo?.clearingPriceSellOrder?.sellAmount.raw.toString()),
       )
-      ? showPricesInverted
-        ? `Price must be lower than ${derivedAuctionInfo?.clearingPrice?.invert().toSignificant(5)}`
-        : messageHigherClearingPrice
+      ? messageHigherClearingPrice
       : undefined
 
   const outOfBoundsPrice =
@@ -307,9 +300,7 @@ export const useGetOrderPlacementError = (
     sellAmountScaled
       ?.mul(derivedAuctionInfo?.initialAuctionOrder?.sellAmount.raw.toString())
       .lte(buyAmountScaled.mul(derivedAuctionInfo?.initialAuctionOrder?.buyAmount.raw.toString()))
-      ? showPricesInverted
-        ? `Price must be lower than ${derivedAuctionInfo?.initialPrice?.invert().toSignificant(5)}`
-        : messageHigherInitialPrice
+      ? messageHigherInitialPrice
       : undefined
 
   const errorAmount = amountMustBeBigger || insufficientBalance || invalidAmount || undefined
