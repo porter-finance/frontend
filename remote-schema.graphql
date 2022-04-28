@@ -29,24 +29,33 @@ type Auction {
     "Object reference to an ERC20 Token"
     bidding: Token!
     "Object reference to a Bond"
-    bond: Bond
-    "Price that each bond was sold at denominated in the bidding token"
-    clearing: Bytes!
+    bond: Bond!
+    "Quantity of bonds sold"
+    bondsSold: BigInt!
+    "Price that each bond was sold at denominated in paymentToken tokens"
+    clearing: BigDecimal
     "Auction end timestamp"
     end: BigInt!
-    "Quantity of bonds sold"
-    filled: BigInt!
     "Gnosis Auction ID"
     id: ID!
-    isSellingPorterBond: Boolean!
     "If the auction is currently ongoing, or if it has ended"
     live: Boolean!
-    "Minimum amount of bidding tokens to buy full size"
-    minimum: BigInt!
+    "Minimum amount of payment tokens in a single bid"
+    minimumBidSize: BigInt!
+    "Minimum paymentToken per bond"
+    minimumBondPrice: BigDecimal!
+    "Minimum amount of payment tokens to buy full size"
+    minimumFundingThreshold: BigInt!
     "Total number of bonds to be auctioned"
-    size: BigInt!
+    offeringSize: BigInt!
+    "Final date that bids can be canceled"
+    orderCancellationEndDate: BigInt!
     "Auction start timestamp"
     start: BigInt!
+    "Total number of current bids"
+    totalBidVolume: BigInt!
+    "Quantity of bonds sold"
+    totalPaid: BigInt
 }
 
 type Bid {
@@ -74,11 +83,13 @@ type Bid {
 
 type Bond {
     amountUnpaid: BigInt!
+    auctionPrice: BigInt
     collateralRatio: BigInt!
     collateralToken: Token!
     collateralTokenAmount: BigInt!
     convertibleRatio: BigInt!
     convertibleTokenAmount: BigInt!
+    createdAt: BigInt!
     decimals: Int!
     id: ID!
     maturityDate: BigInt!
@@ -86,10 +97,10 @@ type Bond {
     name: String!
     owner: Bytes!
     paymentToken: Token!
-    state: BondState
+    state: BondState!
     symbol: String!
     tokenBalances(first: Int = 100, orderBy: TokenBalance_orderBy, orderDirection: OrderDirection, skip: Int = 0, where: TokenBalance_filter): [TokenBalance!]!
-    type: BondType
+    type: BondType!
 }
 
 type BondFactory {
@@ -413,15 +424,19 @@ enum Account_orderBy {
 enum Auction_orderBy {
     bidding
     bond
+    bondsSold
     clearing
     end
-    filled
     id
-    isSellingPorterBond
     live
-    minimum
-    size
+    minimumBidSize
+    minimumBondPrice
+    minimumFundingThreshold
+    offeringSize
+    orderCancellationEndDate
     start
+    totalBidVolume
+    totalPaid
 }
 
 enum Bid_orderBy {
@@ -459,11 +474,13 @@ enum BondType {
 
 enum Bond_orderBy {
     amountUnpaid
+    auctionPrice
     collateralRatio
     collateralToken
     collateralTokenAmount
     convertibleRatio
     convertibleTokenAmount
+    createdAt
     decimals
     id
     maturityDate
@@ -586,12 +603,22 @@ input Auction_filter {
     bond_not_starts_with_nocase: String
     bond_starts_with: String
     bond_starts_with_nocase: String
-    clearing: Bytes
-    clearing_contains: Bytes
-    clearing_in: [Bytes!]
-    clearing_not: Bytes
-    clearing_not_contains: Bytes
-    clearing_not_in: [Bytes!]
+    bondsSold: BigInt
+    bondsSold_gt: BigInt
+    bondsSold_gte: BigInt
+    bondsSold_in: [BigInt!]
+    bondsSold_lt: BigInt
+    bondsSold_lte: BigInt
+    bondsSold_not: BigInt
+    bondsSold_not_in: [BigInt!]
+    clearing: BigDecimal
+    clearing_gt: BigDecimal
+    clearing_gte: BigDecimal
+    clearing_in: [BigDecimal!]
+    clearing_lt: BigDecimal
+    clearing_lte: BigDecimal
+    clearing_not: BigDecimal
+    clearing_not_in: [BigDecimal!]
     end: BigInt
     end_gt: BigInt
     end_gte: BigInt
@@ -600,14 +627,6 @@ input Auction_filter {
     end_lte: BigInt
     end_not: BigInt
     end_not_in: [BigInt!]
-    filled: BigInt
-    filled_gt: BigInt
-    filled_gte: BigInt
-    filled_in: [BigInt!]
-    filled_lt: BigInt
-    filled_lte: BigInt
-    filled_not: BigInt
-    filled_not_in: [BigInt!]
     id: ID
     id_gt: ID
     id_gte: ID
@@ -616,30 +635,50 @@ input Auction_filter {
     id_lte: ID
     id_not: ID
     id_not_in: [ID!]
-    isSellingPorterBond: Boolean
-    isSellingPorterBond_in: [Boolean!]
-    isSellingPorterBond_not: Boolean
-    isSellingPorterBond_not_in: [Boolean!]
     live: Boolean
     live_in: [Boolean!]
     live_not: Boolean
     live_not_in: [Boolean!]
-    minimum: BigInt
-    minimum_gt: BigInt
-    minimum_gte: BigInt
-    minimum_in: [BigInt!]
-    minimum_lt: BigInt
-    minimum_lte: BigInt
-    minimum_not: BigInt
-    minimum_not_in: [BigInt!]
-    size: BigInt
-    size_gt: BigInt
-    size_gte: BigInt
-    size_in: [BigInt!]
-    size_lt: BigInt
-    size_lte: BigInt
-    size_not: BigInt
-    size_not_in: [BigInt!]
+    minimumBidSize: BigInt
+    minimumBidSize_gt: BigInt
+    minimumBidSize_gte: BigInt
+    minimumBidSize_in: [BigInt!]
+    minimumBidSize_lt: BigInt
+    minimumBidSize_lte: BigInt
+    minimumBidSize_not: BigInt
+    minimumBidSize_not_in: [BigInt!]
+    minimumBondPrice: BigDecimal
+    minimumBondPrice_gt: BigDecimal
+    minimumBondPrice_gte: BigDecimal
+    minimumBondPrice_in: [BigDecimal!]
+    minimumBondPrice_lt: BigDecimal
+    minimumBondPrice_lte: BigDecimal
+    minimumBondPrice_not: BigDecimal
+    minimumBondPrice_not_in: [BigDecimal!]
+    minimumFundingThreshold: BigInt
+    minimumFundingThreshold_gt: BigInt
+    minimumFundingThreshold_gte: BigInt
+    minimumFundingThreshold_in: [BigInt!]
+    minimumFundingThreshold_lt: BigInt
+    minimumFundingThreshold_lte: BigInt
+    minimumFundingThreshold_not: BigInt
+    minimumFundingThreshold_not_in: [BigInt!]
+    offeringSize: BigInt
+    offeringSize_gt: BigInt
+    offeringSize_gte: BigInt
+    offeringSize_in: [BigInt!]
+    offeringSize_lt: BigInt
+    offeringSize_lte: BigInt
+    offeringSize_not: BigInt
+    offeringSize_not_in: [BigInt!]
+    orderCancellationEndDate: BigInt
+    orderCancellationEndDate_gt: BigInt
+    orderCancellationEndDate_gte: BigInt
+    orderCancellationEndDate_in: [BigInt!]
+    orderCancellationEndDate_lt: BigInt
+    orderCancellationEndDate_lte: BigInt
+    orderCancellationEndDate_not: BigInt
+    orderCancellationEndDate_not_in: [BigInt!]
     start: BigInt
     start_gt: BigInt
     start_gte: BigInt
@@ -648,6 +687,22 @@ input Auction_filter {
     start_lte: BigInt
     start_not: BigInt
     start_not_in: [BigInt!]
+    totalBidVolume: BigInt
+    totalBidVolume_gt: BigInt
+    totalBidVolume_gte: BigInt
+    totalBidVolume_in: [BigInt!]
+    totalBidVolume_lt: BigInt
+    totalBidVolume_lte: BigInt
+    totalBidVolume_not: BigInt
+    totalBidVolume_not_in: [BigInt!]
+    totalPaid: BigInt
+    totalPaid_gt: BigInt
+    totalPaid_gte: BigInt
+    totalPaid_in: [BigInt!]
+    totalPaid_lt: BigInt
+    totalPaid_lte: BigInt
+    totalPaid_not: BigInt
+    totalPaid_not_in: [BigInt!]
 }
 
 input Bid_filter {
@@ -809,6 +864,14 @@ input Bond_filter {
     amountUnpaid_lte: BigInt
     amountUnpaid_not: BigInt
     amountUnpaid_not_in: [BigInt!]
+    auctionPrice: BigInt
+    auctionPrice_gt: BigInt
+    auctionPrice_gte: BigInt
+    auctionPrice_in: [BigInt!]
+    auctionPrice_lt: BigInt
+    auctionPrice_lte: BigInt
+    auctionPrice_not: BigInt
+    auctionPrice_not_in: [BigInt!]
     collateralRatio: BigInt
     collateralRatio_gt: BigInt
     collateralRatio_gte: BigInt
@@ -861,6 +924,14 @@ input Bond_filter {
     convertibleTokenAmount_lte: BigInt
     convertibleTokenAmount_not: BigInt
     convertibleTokenAmount_not_in: [BigInt!]
+    createdAt: BigInt
+    createdAt_gt: BigInt
+    createdAt_gte: BigInt
+    createdAt_in: [BigInt!]
+    createdAt_lt: BigInt
+    createdAt_lte: BigInt
+    createdAt_not: BigInt
+    createdAt_not_in: [BigInt!]
     decimals: Int
     decimals_gt: Int
     decimals_gte: Int
