@@ -321,7 +321,7 @@ const Table = ({
                         {...column.getHeaderProps()}
                       >
                         {column.tooltip ? (
-                          <Tooltip left={column.Header} text={column.tooltip} />
+                          <Tooltip left={column.Header} tip={column.tooltip} />
                         ) : (
                           column.render('Header')
                         )}

@@ -53,7 +53,7 @@ export const ReviewOrder = ({ amountToken, cancelCutoff, data, orderPlacingOnly,
     <div className="text-xs text-[12px] text-[#696969] space-y-2 border-b border-b-[#D5D5D519] pb-4">
       <TokenInfo token={priceToken} value={data.pay} />
       <div className="text-[#696969] text-xs">
-        <Tooltip left="Amount you pay" text="This is your bid size. You will pay this much." />
+        <Tooltip left="Amount you pay" tip="This is your bid size. You will pay this much." />
       </div>
     </div>
     <div className="text-xs text-[12px] text-[#696969] space-y-2 border-b border-b-[#D5D5D519] pb-4">
@@ -61,7 +61,7 @@ export const ReviewOrder = ({ amountToken, cancelCutoff, data, orderPlacingOnly,
       <div className="text-[#696969] text-xs">
         <Tooltip
           left="Amount of bonds you receive"
-          text="This is the amount of bonds you will receive. If the final auction price is lower than your bid price, you will receive more bonds than were ordered at that lower price."
+          tip="This is the amount of bonds you will receive. If the final auction price is lower than your bid price, you will receive more bonds than were ordered at that lower price."
         />
       </div>
     </div>
@@ -70,7 +70,7 @@ export const ReviewOrder = ({ amountToken, cancelCutoff, data, orderPlacingOnly,
       <div className="text-[#696969] text-xs">
         <Tooltip
           left="Amount of interest you earn"
-          text="This is the amount of bonds you will receive. If the final auction price is lower than your bid price, you will receive more bonds than were ordered at that lower price. This is also the amount you will earn assuming no default. If the final price is lower than your bid price, you will receive more bonds than ordered and, therefore, earn more."
+          tip="This is the amount of bonds you will receive. If the final auction price is lower than your bid price, you will receive more bonds than were ordered at that lower price. This is also the amount you will earn assuming no default. If the final price is lower than your bid price, you will receive more bonds than ordered and, therefore, earn more."
         />
       </div>
     </div>
@@ -85,7 +85,7 @@ export const ReviewConvert = ({ amount, amountToken, assetsToReceive, type = 'co
       <div className="text-[#696969] text-xs">
         <Tooltip
           left={`Amount of bonds to ${type}`}
-          text={
+          tip={
             type === 'convert'
               ? 'This is the amount of bonds you are exchanging for convertible tokens.'
               : 'This is the amount of bonds you are redeeming.'
@@ -100,7 +100,7 @@ export const ReviewConvert = ({ amount, amountToken, assetsToReceive, type = 'co
       <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
         <Tooltip
           left="Amount of assets to receive"
-          text={
+          tip={
             type === 'convert'
               ? 'This is the amount of convertible tokens you will receive in exchange for your bonds.'
               : 'This is the amount of assets you are receiving for your bonds.'
