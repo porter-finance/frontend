@@ -68,12 +68,12 @@ export const TooltipContent = StyledContent
 
 export const Tooltip = ({
   left,
-  text,
+  tip,
 }: {
-  text: ReactElement | string
+  tip: ReactElement | string
   left?: ReactElement | string
 }) => {
-  const tip = (
+  const tipEl = (
     <Provider delayDuration={100} skipDelayDuration={500}>
       <TooltipRoot>
         <TooltipTrigger asChild>
@@ -82,7 +82,7 @@ export const Tooltip = ({
           </IconButton>
         </TooltipTrigger>
         <StyledContent sideOffset={5}>
-          {text}
+          {tip}
           <StyledArrow />
         </StyledContent>
       </TooltipRoot>
@@ -93,12 +93,12 @@ export const Tooltip = ({
     return (
       <div className="flex flex-row items-center space-x-2">
         <div className="flex">{left}</div>
-        <div className="flex">{tip}</div>
+        <div className="flex">{tipEl}</div>
       </div>
     )
   }
 
-  return tip
+  return tipEl
 }
 
 export default Tooltip
