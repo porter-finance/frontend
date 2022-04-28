@@ -69,7 +69,8 @@ const AuctionDetails = (props: Props) => {
 
   const minimumBondPrice = (
     <TokenValue>
-      {abbreviation(graphInfo?.minimumBondPrice)} {`${getDisplay(graphInfo?.bidding)}`}
+      {abbreviation(graphInfo?.minimumBondPrice).toLocaleString()}{' '}
+      {`${getDisplay(graphInfo?.bidding)}`}
     </TokenValue>
   )
 
