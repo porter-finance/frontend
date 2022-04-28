@@ -88,8 +88,8 @@ export interface Props {
   disabled?: boolean
   bordered?: string
   url?: string
-  hint?: string | number | ReactElement | Element
-  value: string | number | ReactElement | Element
+  hint?: string | number | ReactElement
+  value: string | number | ReactElement
 }
 
 export const ExtraDetailsItem: React.FC<Props> = ({
