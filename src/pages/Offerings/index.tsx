@@ -82,11 +82,11 @@ const Offerings = () => {
   allAuctions?.forEach((auction) => {
     tableData.push({
       id: auction.id,
-      currentPrice: '-', // TODO use grpahql to get decimal & symbol and convert this
+      currentPrice: auction.clearingPrice ? auction.clearingPrice : '-',
       search: JSON.stringify(auction),
       auctionId: `#${auction.id}`,
       price: `1 ${auction?.bidding?.symbol}`,
-      fixedAPY: calculateInterestRate(auction.clearing, auction.end),
+      fixedAPY: calculateInterestRate(auction.clearingPrice, auction.end),
       status: auction.live ? (
         <ActiveStatusPill title="Ongoing" />
       ) : (
