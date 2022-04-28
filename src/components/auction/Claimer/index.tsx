@@ -205,9 +205,11 @@ const Claimer: React.FC<Props> = (props) => {
               </TokenItem>
             )}
 
-            <FieldRowLabelStyled className="space-x-1">
-              <span>Amount of assets to receive</span>
-              <Tooltip text="Unfilled bids / bonds purchased tooltip" />
+            <FieldRowLabelStyled>
+              <Tooltip
+                left="Amount of assets to receive"
+                tip="Amount of assets can claim. If there are no bonds claimable, your order price was not competitive."
+              />
             </FieldRowLabelStyled>
           </div>
           {!account ? (

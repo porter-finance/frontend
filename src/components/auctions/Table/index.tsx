@@ -6,6 +6,7 @@ import { useGlobalFilter, usePagination, useTable } from 'react-table'
 
 import { ActionButton } from '../../auction/Claimer'
 import { Dropdown } from '../../common/Dropdown'
+import Tooltip from '../../common/Tooltip'
 import { ChevronRight } from '../../icons/ChevronRight'
 import { Delete } from '../../icons/Delete'
 import { Magnifier } from '../../icons/Magnifier'
@@ -319,7 +320,11 @@ const Table = ({
                         key={i}
                         {...column.getHeaderProps()}
                       >
-                        {column.render('Header')}
+                        {column.tooltip ? (
+                          <Tooltip left={column.Header} tip={column.tooltip} />
+                        ) : (
+                          column.render('Header')
+                        )}
                       </th>
                     ),
                 )}

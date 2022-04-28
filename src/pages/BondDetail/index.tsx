@@ -100,6 +100,7 @@ const positionColumns = [
   },
   {
     Header: 'Fixed APR',
+    tooltip: 'This APR is calculated using the closing price of the initial offering.',
     accessor: 'fixedAPR',
   },
   {
@@ -231,8 +232,10 @@ const BondDetail: React.FC = () => {
                   color="purple"
                   endDate={bond?.maturityDate}
                   endText="Maturity date"
+                  endTip="Date each bond can be redeemed for $1 assuming no default. Convertible bonds cannot be converted after this date."
                   startDate={bond?.createdAt}
                   startText="Issuance date"
+                  startTip="Time the bonds were minted."
                   text="Time until maturity"
                 />
 
