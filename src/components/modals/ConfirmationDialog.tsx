@@ -52,16 +52,17 @@ export const ReviewOrder = ({ amountToken, cancelCutoff, data, orderPlacingOnly,
   <div className="space-y-6 mt-10">
     <div className="text-xs text-[12px] text-[#696969] space-y-2 border-b border-b-[#D5D5D519] pb-4">
       <TokenInfo name={priceToken.symbol} token={priceToken} value={data.pay} />
-      <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
-        <span>Amount you pay</span>
-        <Tooltip text="Tooltip" />
+      <div className="text-[#696969] text-xs">
+        <Tooltip left="Amount you pay" tip="This is your bid size. You will pay this much." />
       </div>
     </div>
     <div className="text-xs text-[12px] text-[#696969] space-y-2 border-b border-b-[#D5D5D519] pb-4">
       <TokenInfo name={amountToken.symbol} plus token={amountToken} value={data.receive} />
-      <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
-        <span>Amount of bonds you receive</span>
-        <Tooltip text="Tooltip" />
+      <div className="text-[#696969] text-xs">
+        <Tooltip
+          left="Amount of bonds you receive"
+          tip="Amount of bonds you will receive. If the final auction price is lower than your bid price, you will receive more bonds than were ordered at that lower price."
+        />
       </div>
     </div>
     <div className="text-xs text-[12px] text-[#696969] space-y-2 border-b border-b-[#D5D5D519] pb-4">
@@ -72,9 +73,11 @@ export const ReviewOrder = ({ amountToken, cancelCutoff, data, orderPlacingOnly,
         token={priceToken}
         value={data.earn}
       />
-      <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
-        <span>Amount of interest you earn</span>
-        <Tooltip text="Tooltip" />
+      <div className="text-[#696969] text-xs">
+        <Tooltip
+          left="Amount of interest you earn"
+          tip="Amount of bonds you will receive. If the final auction price is lower than your bid price, you will receive more bonds than were ordered at that lower price. This is also the amount you will earn assuming no default. If the final price is lower than your bid price, you will receive more bonds than ordered and, therefore, earn more."
+        />
       </div>
     </div>
     <WarningText cancelCutoff={cancelCutoff} orderPlacingOnly={orderPlacingOnly} />
@@ -85,9 +88,15 @@ export const ReviewConvert = ({ amount, amountToken, assetsToReceive, type = 'co
   <div className="space-y-6 mt-10">
     <div className="text-xs text-[12px] text-[#696969] space-y-2 border-b border-b-[#D5D5D519] pb-4">
       <TokenInfo name={amountToken.symbol} token={amountToken} value={amount} />
-      <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
-        <span>Amount of bonds to {type}</span>
-        <Tooltip text="Tooltip" />
+      <div className="text-[#696969] text-xs">
+        <Tooltip
+          left={`Amount of bonds to ${type}`}
+          tip={
+            type === 'convert'
+              ? 'Amount of bonds you are exchanging for convertible tokens.'
+              : 'Amount of bonds you are redeeming.'
+          }
+        />
       </div>
     </div>
     <div className="text-xs text-[12px] text-[#696969] space-y-2 border-b border-b-[#D5D5D519] pb-4">
@@ -95,8 +104,14 @@ export const ReviewConvert = ({ amount, amountToken, assetsToReceive, type = 'co
         <TokenInfo key={index} name={token.symbol} plus token={token} value={value} />
       ))}
       <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
-        <span>Amount of assets to receive</span>
-        <Tooltip text="Tooltip" />
+        <Tooltip
+          left="Amount of assets to receive"
+          tip={
+            type === 'convert'
+              ? 'Amount of convertible tokens you will receive in exchange for your bonds.'
+              : 'Amount of assets you are receiving for your bonds.'
+          }
+        />
       </div>
     </div>
     <GeneralWarning text="This is a one-way transaction and can't be reversed." />

@@ -88,8 +88,8 @@ export interface Props {
   disabled?: boolean
   bordered?: string
   url?: string
-  hint?: string | number | ReactElement | Element
-  value: string | number | ReactElement | Element
+  hint?: string | number | ReactElement
+  value: string | number | ReactElement
 }
 
 export const ExtraDetailsItem: React.FC<Props> = ({
@@ -113,7 +113,7 @@ export const ExtraDetailsItem: React.FC<Props> = ({
         </Value>
         <Title>
           <TitleText className="text">{title}</TitleText>
-          {tooltip && <Tooltip text={tooltip} />}
+          {tooltip && <Tooltip tip={tooltip} />}
         </Title>
       </div>
 
