@@ -123,7 +123,7 @@ const AmountInputPanel: React.FC<Props> = (props) => {
   const {
     amountDescription,
     amountText = 'Amount',
-    amountTooltip = 'This is the number of bonds you would like to purchase.',
+    amountTooltip = 'Number of bonds you would like to purchase.',
     balance,
     balanceString,
     chainId,

@@ -115,15 +115,14 @@ const AuctionDetails = (props: Props) => {
     },
     {
       title: 'Minimum bond price',
-      tooltip:
-        'This is the minimum price a bond can be sold for. Bids below this price will not be accepted.',
+      tooltip: 'Minimum price a bond can be sold for. Bids below this price will not be accepted.',
       value: minimumBondPrice ? minimumBondPrice : '-',
     },
     {
       title: 'Maximum bond APR',
       value: maxBondAPR,
       tooltip:
-        'This is the maximum APR the issuer is willing to pay. This is calculated using the minimum bond price.',
+        'Maximum APR the issuer is willing to pay. This is calculated using the minimum bond price.',
     },
   ]
 

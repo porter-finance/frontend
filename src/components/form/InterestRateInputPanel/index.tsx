@@ -107,7 +107,7 @@ const InterestRateInputPanel = ({
 
         <Tooltip
           left={<FieldRowLabelStyledText>You receive</FieldRowLabelStyledText>}
-          tip="This is the amount of bonds you will receive. If the final auction price is lower than your bid price, you will receive more bonds than were ordered at that lower price."
+          tip="Amount of bonds you will receive. If the final auction price is lower than your bid price, you will receive more bonds than were ordered at that lower price."
         />
       </div>
       <div className="flex flex-row justify-between">
@@ -117,14 +117,14 @@ const InterestRateInputPanel = ({
 
         <Tooltip
           left={<FieldRowLabelStyledText>You earn</FieldRowLabelStyledText>}
-          tip="This is the amount you will earn assuming no default. If the final price is lower than your bid price, you will receive more bonds than ordered and, therefore, earn more."
+          tip="Amount you will earn assuming no default. If the final price is lower than your bid price, you will receive more bonds than ordered and, therefore, earn more."
         />
       </div>
       <div className="flex flex-row justify-between">
         <div className="text-sm text-[#E0E0E0]">{!account ? '-' : data.apr}</div>
         <Tooltip
           left={<FieldRowLabelStyledText>Your APR</FieldRowLabelStyledText>}
-          tip="This is the APR you will earn assuming no default. If the final price is lower than your bid price, you will receive more bonds than ordered and, therefore, earn a higher APR."
+          tip="APR you will earn assuming no default. If the final price is lower than your bid price, you will receive more bonds than ordered and, therefore, earn a higher APR."
         />
       </div>
     </FieldRowWrapper>
