@@ -169,7 +169,7 @@ export const Component = (props) => {
           {isConnected && chainMismatch && (
             <Error>
               <ErrorText>Connect to the {getChainName(chainId)} network</ErrorText>
-              <Tooltip text={`Supported networks are: ${chainNamesFormatted}`} />
+              <Tooltip tip={`Supported networks are: ${chainNamesFormatted}`} />
             </Error>
           )}
           {isConnected && !chainMismatch && <UserDropdownStyled disabled={mobileMenuVisible} />}
