@@ -86,9 +86,11 @@ const PriceInputPanel = (props: Props) => {
               <FieldRowInfo infoType={info?.type}>{info.text}</FieldRowInfo>
             </FieldRowLabelStyled>
           ) : (
-            <FieldRowLabelStyled className="space-x-1">
-              <span>Maximum price</span>
-              <Tooltip text="Bidding price tooltip" />
+            <FieldRowLabelStyled>
+              <Tooltip
+                left="Maximum price"
+                tip="Maximum price per bond you are willing to pay. The actual settlement price may be lower which will result in you getting a higher APR."
+              />
             </FieldRowLabelStyled>
           )}
         </FieldRowBottom>

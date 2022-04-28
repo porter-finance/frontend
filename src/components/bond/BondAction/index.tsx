@@ -249,9 +249,11 @@ const BondAction = ({
                 .utc()
                 .format('MMM DD, YYYY HH:mm UTC')}
             </div>
-            <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
-              <span>Active until</span>
-              <Tooltip text="Tooltip" />
+            <div className="text-[#696969] text-xs">
+              <Tooltip
+                left="Active until"
+                tip="Date each bond is no longer convertible into the convertible tokens and will only be redeemable for its face value (assuming no default)."
+              />
             </div>
           </div>
         )}
@@ -264,6 +266,11 @@ const BondAction = ({
             ) : (
               <AmountInputPanel
                 amountText={`Amount of bonds to ${getActionText(componentType).toLowerCase()}`}
+                amountTooltip={
+                  isConvertComponent
+                    ? 'Amount of bonds you are exchanging for convertible tokens.'
+                    : 'Amount of bonds you are redeeming.'
+                }
                 balance={formatUnits(Number(bondTokenBalance) || 0, bondInfo?.decimals)}
                 chainId={chainId}
                 disabled={!account}
@@ -290,9 +297,15 @@ const BondAction = ({
                     />
                   ))}
 
-                  <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
-                    <span>Amount of assets to receive</span>
-                    <Tooltip text="Tooltip" />
+                  <div className="text-[#696969] text-xs">
+                    <Tooltip
+                      left="Amount of assets to receive"
+                      tip={
+                        isConvertComponent
+                          ? 'Amount of convertible tokens you will receive in exchange for your bonds.'
+                          : 'Amount of assets you are receiving for your bonds.'
+                      }
+                    />
                   </div>
                 </div>
               )}
@@ -309,7 +322,7 @@ const BondAction = ({
                     setOpenReviewModal(true)
                   }}
                 >
-                  Review {getActionText(componentType).toLowerCase()}
+                  Review {isConvertComponent ? 'conversion' : 'redemption'}
                 </ActionButton>
               )}
             </div>
@@ -335,7 +348,7 @@ const BondAction = ({
             placeOrder={isConvertComponent ? convert : redeem}
             price={isConvertComponent ? previewConvertVal : previewRedeemVal[0]}
             priceToken={payTok}
-            title={`Review ${getActionText(componentType).toLowerCase()}`}
+            title={`Review ${isConvertComponent ? 'conversion' : 'redemption'}`}
           />
         </div>
       </div>

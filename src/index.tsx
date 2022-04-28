@@ -1,11 +1,11 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
 import { BrowserRouter, HashRouter } from 'react-router-dom'
 
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { Web3Provider } from '@ethersproject/providers'
 import { DAppProvider, Mainnet, Rinkeby } from '@usedapp/core'
 import { Web3ReactProvider, createWeb3ReactRoot } from '@web3-react/core'
+import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 
 import { NetworkContextName } from './constants'
@@ -56,9 +56,11 @@ const Updaters = () => {
     </>
   )
 }
-const Router: React.ComponentType = PUBLIC_URL === '.' ? HashRouter : BrowserRouter
+const Router = PUBLIC_URL === '.' ? HashRouter : BrowserRouter
 
-ReactDOM.render(
+const container = document.getElementById('root')
+const root = createRoot(container!)
+root.render(
   <>
     <Web3ReactProvider getLibrary={getLibrary}>
       <Web3ProviderNetwork getLibrary={getLibrary}>
@@ -78,5 +80,4 @@ ReactDOM.render(
       </Web3ProviderNetwork>
     </Web3ReactProvider>
   </>,
-  document.getElementById('root'),
 )
