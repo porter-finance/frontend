@@ -108,7 +108,7 @@ interface Props {
   info?: FieldRowInfoProps
   onMax?: () => void
   onUserSellAmountInput: (val: string) => void
-  token: Maybe<Token>
+  token: any
   unlock?: unlockProps
   amountText?: string
   amountTooltip?: string
@@ -165,7 +165,7 @@ const AmountInputPanel: React.FC<Props> = (props) => {
             value={!account ? '-' : value}
           />
           <Wrap>
-            {token && <TokenPill token={token} />}
+            {token && <TokenPill name={token.name} token={token.collateralToken} />}
             {unlock?.isLocked && (
               <UnlockButton
                 disabled={isUnlocking}
