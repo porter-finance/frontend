@@ -174,6 +174,7 @@ const Products = () => {
           </>
         }
         loading={loading}
+        name="products"
         title="Products"
       />
     </>
