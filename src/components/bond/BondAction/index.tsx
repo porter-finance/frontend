@@ -76,7 +76,7 @@ const BondAction = ({
   const params = useParams()
 
   const bondId = overwriteBondId || params?.bondId
-  const { data: bondInfo, loading: isLoading } = useBond(bondId, account)
+  const { data: bondInfo, loading: isLoading } = useBond(bondId)
   const bondTokenBalance = bondInfo?.tokenBalances?.[0]?.amount || 0
 
   const [bondsToRedeem, setBondsToRedeem] = useState('0.00')
