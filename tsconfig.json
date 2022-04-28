@@ -20,7 +20,6 @@
     "downlevelIteration": true,
     "allowSyntheticDefaultImports": true,
     "types": [
-      "react-spring",
       "jest"
     ],
     "noFallthroughCasesInSwitch": true
