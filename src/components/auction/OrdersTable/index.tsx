@@ -1,5 +1,6 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 
+import { formatUnits } from '@ethersproject/units'
 import { round } from 'lodash'
 
 import { useActiveWeb3React } from '../../../hooks'
@@ -18,7 +19,7 @@ import { calculateInterestRate } from '../../form/InterestRateInputPanel'
 import ConfirmationModal from '../../modals/ConfirmationModal'
 import WarningModal from '../../modals/WarningModal'
 import CancelModalFooter from '../../modals/common/CancelModalFooter'
-import { BidTransactionLink, OverflowWrap, TableDesign } from '../OrderbookTable'
+import { ActiveStatusPill, BidTransactionLink, OverflowWrap, TableDesign } from '../OrderbookTable'
 
 interface OrdersTableProps {
   auctionIdentifier: AuctionIdentifier
@@ -89,10 +90,6 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
   const orderSubmissionFinished =
     auctionState === AuctionState.CLAIMING || auctionState === AuctionState.PRICE_SUBMISSION
   const hideCancelButton = orderPlacingOnly || orderSubmissionFinished
-  const auctioningTokenDisplay = useMemo(
-    () => getTokenDisplay(derivedAuctionInfo?.auctioningToken, chainId),
-    [derivedAuctionInfo?.auctioningToken, chainId],
-  )
 
   useAllUserOrders(auctionIdentifier, derivedAuctionInfo)
   const columns = React.useMemo(
@@ -110,8 +107,12 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
         accessor: 'interest',
       },
       {
-        Header: 'Amount',
+        Header: 'Total cost',
         accessor: 'amount',
+      },
+      {
+        Header: 'Bonds',
+        accessor: 'bonds',
       },
       {
         Header: 'Transaction',
@@ -121,44 +122,35 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
     [],
   )
   const data = []
+  const paymentToken = getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId)
 
   !ordersEmpty &&
-    bids.forEach((order, i) => {
+    bids.forEach((row) => {
       let statusText = ''
-      if (order.createtx) statusText = orderStatusText[OrderStatus.PLACED]
-      if (!order.createtx) statusText = orderStatusText[OrderStatus.PENDING]
-      if (order.canceltx) statusText = 'Cancelled'
-      const status = (
-        <div className="pointer-events-none space-x-2 inline-flex items-center px-2 border py-1 border-transparent rounded-full shadow-sm bg-[#5BCD88] hover:none focus:outline-none focus:none">
-          <svg
-            fill="none"
-            height="7"
-            viewBox="0 0 7 7"
-            width="7"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <circle cx="3.5" cy="3.5" fill="#1E1E1E" opacity="0.5" r="3" />
-          </svg>
-
-          <span className="text-xs uppercase font-normal !text-[#1E1E1E]">{statusText}</span>
-        </div>
-      )
-
-      const price = `${round(order.payable, 6)} ${auctioningTokenDisplay}`
-
-      const interest = `${calculateInterestRate(order.payable, maturityDate)}`
-      const amount = `${round(order.size, 6)} ${auctioningTokenDisplay}`
-
+      if (row.createtx) statusText = orderStatusText[OrderStatus.PLACED]
+      if (!row.createtx) statusText = orderStatusText[OrderStatus.PENDING]
+      if (row.canceltx) statusText = 'Cancelled'
+      const status = <ActiveStatusPill title={statusText} />
+      const price = `${round(row.payable / row.size, 18).toLocaleString()} ${paymentToken}`
+      const interest = `${calculateInterestRate(row.payable / row.size, maturityDate)} `
+      const amount = `${round(
+        Number(formatUnits(row.payable, derivedAuctionInfo.biddingToken.decimals)),
+        2,
+      ).toLocaleString()} ${paymentToken} `
+      const bonds = `${round(
+        Number(formatUnits(row.size, derivedAuctionInfo.auctioningToken.decimals)),
+        2,
+      ).toLocaleString()}+ ${'Bonds'}`
       //  TODO: add way to check pending cancellations when they click cancel button
       const transaction = (
         <div className="flex flex-row items-center space-x-5">
-          <BidTransactionLink bid={order} />
+          <BidTransactionLink bid={row} />
           {!hideCancelButton && (
             <button
               className="btn btn-outline btn-error normal-case btn-xs font-normal px-3 !text-[#D25453] !bg-transparent"
               disabled={isOrderCancellationExpired}
               onClick={() => {
-                setOrderId(order.id)
+                setOrderId(row.id)
                 setShowConfirm(true)
               }}
             >
@@ -168,7 +160,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
         </div>
       )
 
-      data.push({ status, price, interest, amount, transaction })
+      data.push({ status, price, interest, amount, bonds, transaction })
     })
 
   return (
