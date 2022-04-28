@@ -99,8 +99,8 @@ const positionColumns = [
     accessor: 'price',
   },
   {
-    Header: 'Fixed APY',
-    accessor: 'fixedAPY',
+    Header: 'Fixed APR',
+    accessor: 'fixedAPR',
   },
   {
     Header: 'Maturity Date',
@@ -155,12 +155,12 @@ const BondDetail: React.FC = () => {
     const amount = Number(
       formatUnits(bond?.tokenBalances[0].amount, bond.decimals),
     ).toLocaleString()
-    const fixedAPY = calculateInterestRate(bond.clearingPrice, bond.maturityDate)
+    const fixedAPR = calculateInterestRate(bond.clearingPrice, bond.maturityDate)
     positionData = [
       {
         amount,
         price: bond?.clearingPrice ? bond?.clearingPrice : '-',
-        fixedAPY,
+        fixedAPR,
         maturityDate: dayjs(bond.maturityDate * 1000)
           .utc()
           .format('DD MMM YYYY'),
