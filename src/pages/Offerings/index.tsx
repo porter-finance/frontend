@@ -146,7 +146,7 @@ const Offerings = () => {
         </>
       }
       loading={loading}
-      name={'offerings'}
+      name="offerings"
       title="Offerings"
     />
   )

@@ -58,7 +58,7 @@ const Portfolio = () => {
           </>
         }
         loading={loading}
-        name={'products'}
+        name="products"
         title="Portfolio"
       />
     </>
