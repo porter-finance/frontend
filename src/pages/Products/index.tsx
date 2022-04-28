@@ -3,7 +3,6 @@ import { createGlobalStyle } from 'styled-components'
 
 import { formatUnits } from '@ethersproject/units'
 import dayjs from 'dayjs'
-import { round } from 'lodash'
 
 import { ReactComponent as ConvertIcon } from '../../assets/svg/convert.svg'
 import { ReactComponent as DividerIcon } from '../../assets/svg/divider.svg'
