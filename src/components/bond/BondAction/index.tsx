@@ -316,7 +316,7 @@ const BondAction = ({
                     setOpenReviewModal(true)
                   }}
                 >
-                  Review {getActionText(componentType).toLowerCase()}
+                  Review {isConvertComponent ? 'conversion' : 'redemption'}
                 </ActionButton>
               )}
             </div>
