@@ -143,10 +143,10 @@ export const AuctionTimer = ({
       </div>
       <div className="flex justify-between mb-3">
         <DateTitle>
-          <Tooltip left={startText} text={startTip} />
+          <Tooltip left={startText} tip={startTip} />
         </DateTitle>
         <DateTitle>
-          <Tooltip left={endText} text={endTip} />
+          <Tooltip left={endText} tip={endTip} />
         </DateTitle>
       </div>
       <div className="flex w-full flex-col space-y-3">

@@ -298,7 +298,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
             <div className="text-[#696969] text-xs">
               <Tooltip
                 left="Order cancellation cutoff date"
-                text="Orders cannot be cancelled after this date."
+                tip="Orders cannot be cancelled after this date."
               />
             </div>
           </div>
