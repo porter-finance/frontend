@@ -91,7 +91,7 @@ const AuctionDetails = (props: Props) => {
       tooltip: 'Total bid volume',
     },
     {
-      title: 'Minimum funding threshold',
+      title: 'Min funding threshold',
       tooltip: 'Auction will not be executed, unless this minimum funding threshold is met',
       value: minimumFundingThreshold,
     },
