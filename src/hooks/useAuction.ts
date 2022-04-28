@@ -63,6 +63,8 @@ const auctionQuery = gql`
         type
       }
       bidding {
+        name
+        id
         symbol
         decimals
       }

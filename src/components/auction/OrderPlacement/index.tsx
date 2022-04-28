@@ -309,7 +309,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                 chainId={chainId}
                 info={amountInfo}
                 onUserSellAmountInput={onUserSellAmountInput}
-                token={auctioningToken}
+                token={graphInfo?.bond}
                 value={sellAmount}
                 wrap={{
                   isWrappable,
@@ -329,11 +329,11 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
               />
               <PriceInputPanel
                 account={account}
+                auctionId={auctionIdentifier?.auctionId}
                 chainId={chainId}
                 disabled={!account}
                 info={priceInfo}
                 onUserPriceInput={onUserPriceInput}
-                token={{ biddingToken: biddingToken }}
                 value={price}
               />
 
