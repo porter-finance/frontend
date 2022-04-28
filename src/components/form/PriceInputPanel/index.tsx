@@ -1,9 +1,7 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 
-import { Token } from '@josojo/honeyswap-sdk'
-
-import { getTokenDisplay } from '../../../utils'
+import { useAuction } from '../../../hooks/useAuction'
 import { Tooltip } from '../../common/Tooltip'
 import {
   FieldRowBottom,
@@ -29,38 +27,22 @@ export const FieldRowLabelStyled = styled(FieldRowLabel)`
 `
 
 interface Props {
+  auctionId?: number
   account: string
   chainId: number
   disabled?: boolean
   info?: FieldRowInfoProps
   onUserPriceInput: (val: string) => void
-  token: { biddingToken: Maybe<Token> } | null
   value: string
 }
 
 const PriceInputPanel = (props: Props) => {
-  const {
-    account,
-    chainId,
-    disabled,
-    info,
-    onUserPriceInput,
-    token = null,
-    value,
-    ...restProps
-  } = props
+  const { account, auctionId, chainId, disabled, info, onUserPriceInput, value, ...restProps } =
+    props
+
+  const { data: graphInfo } = useAuction(auctionId)
 
   const error = info?.type === InfoType.error
-
-  const { biddingTokenDisplay } = useMemo(() => {
-    if (token && chainId && token.biddingToken) {
-      return {
-        biddingTokenDisplay: getTokenDisplay(token.biddingToken, chainId),
-      }
-    } else {
-      return { biddingTokenDisplay: '-' }
-    }
-  }, [chainId, token])
 
   return (
     <>
@@ -82,17 +64,17 @@ const PriceInputPanel = (props: Props) => {
             readOnly={!account}
             value={value}
           />
-          {token && (
+          {graphInfo && (
             <>
               <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#2C2C2C] rounded-full p-1 px-2">
                 <TokenLogo
                   size="16px"
                   token={{
-                    address: token.biddingToken.address,
-                    symbol: token.biddingToken.symbol,
+                    address: graphInfo.bidding.id,
+                    symbol: graphInfo.bidding.symbol,
                   }}
                 />
-                <FieldRowTokenSymbol>{biddingTokenDisplay}</FieldRowTokenSymbol>
+                <FieldRowTokenSymbol>{graphInfo.bidding.name}</FieldRowTokenSymbol>
               </FieldRowToken>
             </>
           )}

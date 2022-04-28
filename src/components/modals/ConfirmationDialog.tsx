@@ -51,21 +51,27 @@ const WarningText = ({ cancelCutoff, orderPlacingOnly }) => {
 export const ReviewOrder = ({ amountToken, cancelCutoff, data, orderPlacingOnly, priceToken }) => (
   <div className="space-y-6 mt-10">
     <div className="text-xs text-[12px] text-[#696969] space-y-2 border-b border-b-[#D5D5D519] pb-4">
-      <TokenInfo token={priceToken} value={data.pay} />
+      <TokenInfo name={priceToken.symbol} token={priceToken} value={data.pay} />
       <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
         <span>Amount you pay</span>
         <Tooltip text="Tooltip" />
       </div>
     </div>
     <div className="text-xs text-[12px] text-[#696969] space-y-2 border-b border-b-[#D5D5D519] pb-4">
-      <TokenInfo plus token={amountToken} value={data.receive} />
+      <TokenInfo name={amountToken.symbol} plus token={amountToken} value={data.receive} />
       <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
         <span>Amount of bonds you receive</span>
         <Tooltip text="Tooltip" />
       </div>
     </div>
     <div className="text-xs text-[12px] text-[#696969] space-y-2 border-b border-b-[#D5D5D519] pb-4">
-      <TokenInfo extra={`(${data.apr}+)`} plus token={priceToken} value={data.earn} />
+      <TokenInfo
+        extra={`(${data.apr}+)`}
+        name={priceToken.symbol}
+        plus
+        token={priceToken}
+        value={data.earn}
+      />
       <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
         <span>Amount of interest you earn</span>
         <Tooltip text="Tooltip" />
@@ -78,7 +84,7 @@ export const ReviewOrder = ({ amountToken, cancelCutoff, data, orderPlacingOnly,
 export const ReviewConvert = ({ amount, amountToken, assetsToReceive, type = 'convert' }) => (
   <div className="space-y-6 mt-10">
     <div className="text-xs text-[12px] text-[#696969] space-y-2 border-b border-b-[#D5D5D519] pb-4">
-      <TokenInfo token={amountToken} value={amount} />
+      <TokenInfo name={amountToken.symbol} token={amountToken} value={amount} />
       <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
         <span>Amount of bonds to {type}</span>
         <Tooltip text="Tooltip" />
@@ -86,7 +92,7 @@ export const ReviewConvert = ({ amount, amountToken, assetsToReceive, type = 'co
     </div>
     <div className="text-xs text-[12px] text-[#696969] space-y-2 border-b border-b-[#D5D5D519] pb-4">
       {assetsToReceive.map(({ token, value }, index) => (
-        <TokenInfo key={index} plus token={token} value={value} />
+        <TokenInfo key={index} name={token.symbol} plus token={token} value={value} />
       ))}
       <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
         <span>Amount of assets to receive</span>

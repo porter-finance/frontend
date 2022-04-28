@@ -21,7 +21,7 @@ import ConfirmationDialog, { ReviewConvert } from '../../modals/ConfirmationDial
 import { FieldRowToken, FieldRowTokenSymbol } from '../../pureStyledComponents/FieldRow'
 import TokenLogo from '../../token/TokenLogo'
 
-export const TokenPill = ({ token }) => {
+export const TokenPill = ({ name, token }) => {
   return token ? (
     <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#2C2C2C] rounded-full p-1 px-2 pl-1">
       {(token.address || token.id) && (
@@ -33,12 +33,12 @@ export const TokenPill = ({ token }) => {
           }}
         />
       )}
-      {token.symbol && <FieldRowTokenSymbol>{getTokenDisplay(token)}</FieldRowTokenSymbol>}
+      {name && <FieldRowTokenSymbol>{name}</FieldRowTokenSymbol>}
     </FieldRowToken>
   ) : null
 }
 
-export const TokenInfo = ({ disabled = false, extra = '', plus = false, token, value }) => {
+export const TokenInfo = ({ disabled = false, extra = '', name, plus = false, token, value }) => {
   return (
     <div
       className={`text-base text-white ${
@@ -53,7 +53,7 @@ export const TokenInfo = ({ disabled = false, extra = '', plus = false, token, v
         </span>
         <span className="text-[#696969]">{extra}</span>
       </div>
-      <TokenPill token={token} />
+      <TokenPill name={name} token={token} />
     </div>
   )
 }
@@ -281,7 +281,13 @@ const BondAction = ({
               {(isConvertComponent || componentType === BondActions.Redeem) && (
                 <div className="space-y-2">
                   {assetsToReceive.map(({ token, value }, index) => (
-                    <TokenInfo disabled={!account} key={index} token={token} value={value} />
+                    <TokenInfo
+                      disabled={!account}
+                      key={index}
+                      name={bondInfo?.name}
+                      token={token}
+                      value={value}
+                    />
                   ))}
 
                   <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
