@@ -113,14 +113,6 @@ const positionColumns = [
   },
 ]
 
-const PositionPanel = ({ positions }) => {
-  return (
-    <div>
-      <TableDesign columns={positionColumns} data={positions} showConnect />
-    </div>
-  )
-}
-
 export const getBondStates = (bond: BondInfo) => {
   const isMatured = forceDevData ? true : new Date() > new Date(bond?.maturityDate * 1000)
   const isConvertBond = forceDevData ? false : bond?.type === 'convert'
@@ -152,7 +144,7 @@ const BondDetail: React.FC = () => {
 
   let positionData
 
-  if (bond) {
+  if (bond && Array.isArray(bond.tokenBalances) && bond.tokenBalances.length) {
     const amount = Number(
       formatUnits(bond?.tokenBalances[0].amount, bond.decimals),
     ).toLocaleString()
@@ -265,7 +257,13 @@ const BondDetail: React.FC = () => {
                 {!account && <EmptyConnectWallet />}
                 {account && !positionData?.length ? <EmptyConnected bondName={bond?.name} /> : null}
                 {account && positionData?.length ? (
-                  <PositionPanel positions={positionData} />
+                  <TableDesign
+                    className="min-h-full"
+                    columns={positionColumns}
+                    data={positionData}
+                    hidePagination
+                    showConnect
+                  />
                 ) : null}
               </div>
             </div>
