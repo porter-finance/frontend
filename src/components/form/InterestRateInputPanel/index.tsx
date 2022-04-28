@@ -31,9 +31,9 @@ const FieldRowWrapper = styled.div<{ error?: boolean }>`
 interface Props {
   account: string
   amountToken: string
-  priceToken: string
+  errorBidSize: string
+  priceTokenDisplay: string
   amount: number
-  chainId: number
   price: number
 }
 
@@ -75,8 +75,9 @@ const InterestRateInputPanel = ({
   account,
   amount,
   amountToken,
+  errorBidSize,
   price,
-  priceToken,
+  priceTokenDisplay,
   ...restProps
 }: Props) => {
   const maturityDate = useBondMaturityForAuction()
@@ -86,10 +87,13 @@ const InterestRateInputPanel = ({
     <FieldRowWrapper className="my-4 space-y-3 py-1" {...restProps}>
       <div className="flex flex-row justify-between">
         <div className="text-sm text-[#E0E0E0]">
-          {!account || !price || !amount ? '-' : `${data.pay} ${priceToken}`}
+          <p>{!account || !price || !amount ? '-' : `${data.pay} ${priceTokenDisplay}`}</p>
+          <p className="text-[#EDA651]">{account && errorBidSize ? errorBidSize : ''}</p>
         </div>
         <div className="space-x-1 flex items-center">
-          <FieldRowLabelStyledText>You pay</FieldRowLabelStyledText>
+          <FieldRowLabelStyledText className={account && errorBidSize ? '!text-[#EDA651]' : ''}>
+            You pay
+          </FieldRowLabelStyledText>
           <Tooltip text="Tooltip" />
         </div>
       </div>
@@ -104,7 +108,7 @@ const InterestRateInputPanel = ({
       </div>
       <div className="flex flex-row justify-between">
         <div className="text-sm text-[#E0E0E0]">
-          {!account || !price || !amount ? '-' : `${data.earn} ${priceToken}`}
+          {!account || !price || !amount ? '-' : `${data.earn} ${priceTokenDisplay}`}
         </div>
         <div className="space-x-1 flex items-center">
           <FieldRowLabelStyledText>You earn</FieldRowLabelStyledText>
