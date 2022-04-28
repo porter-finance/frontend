@@ -2,7 +2,9 @@ import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createGlobalStyle } from 'styled-components'
 
+import { formatUnits } from '@ethersproject/units'
 import { useWeb3React } from '@web3-react/core'
+import dayjs from 'dayjs'
 
 import { ReactComponent as ConnectIcon } from '../../assets/svg/connect.svg'
 import Dev, { forceDevData } from '../../components/Dev'
@@ -10,6 +12,7 @@ import { AuctionTimer } from '../../components/auction/AuctionTimer'
 import { ExtraDetailsItem } from '../../components/auction/ExtraDetailsItem'
 import { ActiveStatusPill, TableDesign } from '../../components/auction/OrderbookTable'
 import BondAction from '../../components/bond/BondAction'
+import { calculateInterestRate } from '../../components/form/InterestRateInputPanel'
 import WarningModal from '../../components/modals/WarningModal'
 import TokenLogo from '../../components/token/TokenLogo'
 import { BondInfo, useBond } from '../../hooks/useBond'
@@ -96,8 +99,8 @@ const positionColumns = [
     accessor: 'price',
   },
   {
-    Header: 'Fixed APY',
-    accessor: 'fixedAPY',
+    Header: 'Fixed APR',
+    accessor: 'fixedAPR',
   },
   {
     Header: 'Maturity Date',
@@ -108,14 +111,7 @@ const positionColumns = [
     accessor: 'maturityValue',
   },
 ]
-// TODO Do mapping of positions from gql to the following data structure
-const positionData = Array(10).fill({
-  amount: '750,000',
-  price: '0.875 USDC',
-  fixedAPY: '13%',
-  maturityDate: '22 AUG 2022',
-  maturityValue: '750,000 USDC',
-})
+
 const PositionPanel = ({ positions }) => {
   return (
     <div>
@@ -152,6 +148,26 @@ const BondDetail: React.FC = () => {
 
   // TODO write the graph using this data
   const graphData = useHistoricTokenPrice(bond?.collateralToken.id, 30)
+
+  let positionData
+
+  if (bond) {
+    const amount = Number(
+      formatUnits(bond?.tokenBalances[0].amount, bond.decimals),
+    ).toLocaleString()
+    const fixedAPR = calculateInterestRate(bond.clearingPrice, bond.maturityDate)
+    positionData = [
+      {
+        amount,
+        price: bond?.clearingPrice ? bond?.clearingPrice : '-',
+        fixedAPR,
+        maturityDate: dayjs(bond.maturityDate * 1000)
+          .utc()
+          .format('DD MMM YYYY'),
+        maturityValue: amount,
+      },
+    ]
+  }
   if (isLoading) {
     return (
       <>

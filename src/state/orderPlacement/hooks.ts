@@ -2,13 +2,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
-import { parseUnits } from '@ethersproject/units'
+import { formatUnits, parseUnits } from '@ethersproject/units'
 import { Fraction, JSBI, Token, TokenAmount } from '@josojo/honeyswap-sdk'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { additionalServiceApi } from '../../api'
 import easyAuctionABI from '../../constants/abis/easyAuction/easyAuction.json'
-import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../constants/config'
 import { useActiveWeb3React } from '../../hooks'
 import { Order, decodeOrder } from '../../hooks/Order'
 import { useTokenByAddressAndAutomaticallyAdd } from '../../hooks/Tokens'
@@ -18,7 +17,7 @@ import { useContract } from '../../hooks/useContract'
 import { useClearingPriceInfo } from '../../hooks/useCurrentClearingOrderAndVolumeCallback'
 import { ChainId, EASY_AUCTION_NETWORKS, getFullTokenDisplay, isTimeout } from '../../utils'
 import { getLogger } from '../../utils/logger'
-import { convertPriceIntoBuyAndSellAmount, getInverse } from '../../utils/prices'
+import { convertPriceIntoBuyAndSellAmount } from '../../utils/prices'
 import { calculateTimeLeft } from '../../utils/tools'
 import { AppDispatch, AppState } from '../index'
 import { useSingleCallResult } from '../multicall/hooks'
@@ -202,7 +201,7 @@ export function tryParseAmount(value?: string, token?: Token): TokenAmount | und
 interface Errors {
   errorAmount: string | undefined
   errorPrice: string | undefined
-  errorInterestRate: string | undefined
+  errorBidSize: string | undefined
 }
 interface AuctionInfoDefined
   extends Omit<DerivedAuctionInfo, 'minBiddingAmountPerOrder' | 'biddingToken'> {
@@ -214,6 +213,7 @@ export const useGetOrderPlacementError = (
   derivedAuctionInfo: AuctionInfoDefined,
   auctionState: AuctionState,
   auctionIdentifier: AuctionIdentifier,
+  minimumBidSize: number,
 ): Errors => {
   const { account } = useActiveWeb3React()
   const { chainId } = auctionIdentifier
@@ -232,22 +232,10 @@ export const useGetOrderPlacementError = (
     sellAmount,
   )
   const [balanceIn, amountIn] = [biddingTokenBalance, parsedBiddingAmount]
-
-  const amountMustBeBigger =
-    amountIn &&
-    price &&
-    price !== '0' &&
-    price !== '.' &&
-    price !== 'Infinity' &&
-    sellAmount &&
-    ((sellAmountScaled &&
-      BigNumber.from(derivedAuctionInfo?.minBiddingAmountPerOrder).gte(sellAmountScaled)) ||
-      parseFloat(sellAmount) == 0) &&
-    `Amount must be bigger than
-      ${new Fraction(
-        derivedAuctionInfo?.minBiddingAmountPerOrder,
-        BigNumber.from(10).pow(derivedAuctionInfo?.biddingToken.decimals).toString(),
-      ).toSignificant(2)}`
+  const minBidSize =
+    minimumBidSize &&
+    derivedAuctionInfo &&
+    Number(formatUnits(minimumBidSize, derivedAuctionInfo?.biddingToken?.decimals))
 
   const invalidAmount = sellAmount && !amountIn && `Invalid Amount`
   const insufficientBalance =
@@ -303,7 +291,7 @@ export const useGetOrderPlacementError = (
       ? messageHigherInitialPrice
       : undefined
 
-  const errorAmount = amountMustBeBigger || insufficientBalance || invalidAmount || undefined
+  const errorAmount = insufficientBalance || invalidAmount || undefined
   const errorPrice =
     priceEqualsZero ||
     outOfBoundsPricePlacingOrder ||
@@ -311,13 +299,15 @@ export const useGetOrderPlacementError = (
     invalidSellAmount ||
     undefined
 
-  // TODO: add error checking to interest rate input
-  const errorInterestRate = undefined
+  const errorBidSize =
+    sellAmount && price && Number(sellAmount) * Number(price) < minBidSize
+      ? `Bid size must be higher than ${minBidSize}`
+      : undefined
 
   return {
     errorAmount,
     errorPrice,
-    errorInterestRate,
+    errorBidSize,
   }
 }
 
