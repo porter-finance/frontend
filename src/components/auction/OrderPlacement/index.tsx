@@ -100,10 +100,11 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const orders: OrderState | undefined = useOrderState()
   const toggleWalletModal = useWalletModalToggle()
   const { price, sellAmount } = useOrderPlacementState()
-  const { errorAmount, errorInterestRate, errorPrice } = useGetOrderPlacementError(
+  const { errorAmount, errorBidSize, errorPrice } = useGetOrderPlacementError(
     derivedAuctionInfo,
     auctionState,
     auctionIdentifier,
+    graphInfo?.minimumBidSize,
   )
   const { onUserPriceInput, onUserSellAmountInput } = useSwapActionHandlers()
   const { auctionDetails, auctionInfoLoading } = useAuctionDetails(auctionIdentifier)
@@ -224,7 +225,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     disabledCountry ||
     ((errorAmount ||
       errorPrice ||
-      errorInterestRate ||
+      errorBidSize ||
       showWarning ||
       showWarningWrongChainId ||
       showConfirm ||
@@ -342,9 +343,9 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                 account={account}
                 amount={Number(sellAmount)}
                 amountToken={auctioningTokenDisplay}
-                chainId={chainId}
+                errorBidSize={errorBidSize}
                 price={Number(price)}
-                priceToken={biddingTokenDisplay}
+                priceTokenDisplay={biddingTokenDisplay}
               />
 
               {!account ? (

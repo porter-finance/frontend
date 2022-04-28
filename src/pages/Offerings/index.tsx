@@ -32,8 +32,8 @@ const columns = [
     filter: 'searchInTags',
   },
   {
-    Header: 'Fixed APY',
-    accessor: 'fixedAPY',
+    Header: 'Fixed APR',
+    accessor: 'fixedAPR',
     align: 'flex-start',
     show: true,
     style: {},
@@ -82,12 +82,11 @@ const Offerings = () => {
   allAuctions?.forEach((auction) => {
     tableData.push({
       id: auction.id,
-      currentPrice: '-', // TODO use grpahql to get decimal & symbol and convert this
+      currentPrice: auction.clearingPrice ? auction.clearingPrice : '-',
       search: JSON.stringify(auction),
       auctionId: `#${auction.id}`,
       price: `1 ${auction?.bidding?.symbol}`,
-      // TODO graphql should return clearing decimal so i can caclulate interest rate correctly
-      fixedAPY: calculateInterestRate(auction.clearing, auction.end),
+      fixedAPR: calculateInterestRate(auction.clearingPrice, auction.end),
       status: auction.live ? (
         <ActiveStatusPill title="Ongoing" />
       ) : (
