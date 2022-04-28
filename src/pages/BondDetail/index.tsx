@@ -3,6 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { createGlobalStyle } from 'styled-components'
 
 import { useWeb3React } from '@web3-react/core'
+import { formatUnits } from '@ethersproject/units'
+import dayjs from 'dayjs'
 
 import { ReactComponent as ConnectIcon } from '../../assets/svg/connect.svg'
 import Dev, { forceDevData } from '../../components/Dev'
@@ -16,6 +18,7 @@ import { BondInfo, useBond } from '../../hooks/useBond'
 import { useBondExtraDetails } from '../../hooks/useBondExtraDetails'
 import { useHistoricTokenPrice } from '../../hooks/useTokenPrice'
 import { ConvertButtonOutline, LoadingTwoGrid, SimpleButtonOutline, TwoGridPage } from '../Auction'
+import { calculateInterestRate } from '../../components/form/InterestRateInputPanel'
 
 export enum BondActions {
   Redeem,
@@ -108,14 +111,8 @@ const positionColumns = [
     accessor: 'maturityValue',
   },
 ]
-// TODO Do mapping of positions from gql to the following data structure
-const positionData = Array(10).fill({
-  amount: '750,000',
-  price: '0.875 USDC',
-  fixedAPY: '13%',
-  maturityDate: '22 AUG 2022',
-  maturityValue: '750,000 USDC',
-})
+
+
 const PositionPanel = ({ positions }) => {
   return (
     <div>
@@ -146,12 +143,30 @@ const BondDetail: React.FC = () => {
   const bondIdentifier = useParams()
 
   const extraDetails = useBondExtraDetails(bondIdentifier?.bondId)
-  const { data: bond, loading: isLoading } = useBond(bondIdentifier?.bondId)
+  const { data: bond, loading: isLoading } = useBond(bondIdentifier?.bondId, account)
   const invalidBond = React.useMemo(() => !bondIdentifier || !bond, [bondIdentifier, bond])
   const { isConvertBond, isDefaulted, isMatured, isPaid, isPartiallyPaid } = getBondStates(bond)
 
   // TODO write the graph using this data
   const graphData = useHistoricTokenPrice(bond?.collateralToken.id, 30)
+
+  let positionData;
+
+  if (bond) {
+    const amount = Number(formatUnits(bond?.tokenBalances[0].amount, bond.decimals)).toLocaleString()
+    const fixedAPY = calculateInterestRate(bond.clearingPrice, bond.maturityDate)
+    positionData = [{
+      amount,
+      price: bond?.clearingPrice ? bond?.clearingPrice : "-",
+      fixedAPY,
+      maturityDate: dayjs(bond.maturityDate * 1000)
+        .utc()
+        .format('DD MMM YYYY')
+      ,
+      maturityValue: amount
+    }]
+
+  }
   if (isLoading) {
     return (
       <>
@@ -221,9 +236,8 @@ const BondDetail: React.FC = () => {
                 />
 
                 <div
-                  className={`grid gap-x-12 gap-y-8 grid-cols-1 pt-12 ${
-                    isConvertBond ? 'md:grid-cols-3' : 'md:grid-cols-4'
-                  }`}
+                  className={`grid gap-x-12 gap-y-8 grid-cols-1 pt-12 ${isConvertBond ? 'md:grid-cols-3' : 'md:grid-cols-4'
+                    }`}
                 >
                   {extraDetails.map((item, index) => (
                     <ExtraDetailsItem key={index} {...item} />

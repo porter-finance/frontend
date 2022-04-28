@@ -86,7 +86,6 @@ const Offerings = () => {
       search: JSON.stringify(auction),
       auctionId: `#${auction.id}`,
       price: `1 ${auction?.bidding?.symbol}`,
-      // TODO graphql should return clearing decimal so i can caclulate interest rate correctly
       fixedAPY: calculateInterestRate(auction.clearing, auction.end),
       status: auction.live ? (
         <ActiveStatusPill title="Ongoing" />
