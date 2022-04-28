@@ -123,7 +123,7 @@ const AmountInputPanel: React.FC<Props> = (props) => {
   const {
     amountDescription,
     amountText = 'Amount',
-    amountTooltip = 'Amount tooltip',
+    amountTooltip = 'This is the number of bonds you would like to purchase.',
     balance,
     balanceString,
     chainId,
@@ -235,9 +235,8 @@ const AmountInputPanel: React.FC<Props> = (props) => {
             </div>
           ) : (
             <div className="flex justify-between">
-              <FieldRowLabelStyled className="space-x-1">
-                <span>{amountText}</span>
-                <Tooltip text={amountTooltip} />
+              <FieldRowLabelStyled>
+                <Tooltip left={amountText} text={amountTooltip} />
               </FieldRowLabelStyled>
               <button
                 className="btn btn-xs normal-case !text-[#E0E0E0] font-normal !border-[#2A2B2C] px-3"

@@ -7,7 +7,7 @@ import utc from 'dayjs/plugin/utc'
 
 import { AuctionState } from '../../../state/orderPlacement/hooks'
 import { calculateTimeLeft, calculateTimeProgress } from '../../../utils/tools'
-import { Tooltip } from '../../common/Tooltip'
+import Tooltip from '../../common/Tooltip'
 
 dayjs.extend(utc)
 dayjs.extend(relativeTime)
@@ -74,6 +74,8 @@ const Blink = styled.span`
 interface AuctionTimerProps {
   startDate: number
   endDate: number
+  startTip?: string
+  endTip?: string
   auctionState?: AuctionState
   loading?: boolean
   text: string
@@ -87,8 +89,10 @@ export const AuctionTimer = ({
   color,
   endDate,
   endText,
+  endTip,
   startDate,
   startText,
+  startTip,
   text,
   ...restProps
 }: AuctionTimerProps) => {
@@ -138,13 +142,11 @@ export const AuctionTimer = ({
         </DateValue>
       </div>
       <div className="flex justify-between mb-3">
-        <DateTitle className="flex flex-row items-center space-x-2">
-          <span>{startText}</span>
-          <Tooltip text="Tooltip text" />
+        <DateTitle>
+          <Tooltip left={startText} text={startTip} />
         </DateTitle>
-        <DateTitle className="flex flex-row items-center space-x-2">
-          <span>{endText}</span>
-          <Tooltip text="Tooltip text" />
+        <DateTitle>
+          <Tooltip left={endText} text={endTip} />
         </DateTitle>
       </div>
       <div className="flex w-full flex-col space-y-3">
