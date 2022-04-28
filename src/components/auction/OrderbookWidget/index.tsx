@@ -346,7 +346,7 @@ export const processOrderbookData = ({
   try {
     const clearingPrice = findClearingPrice(data.bids, userOrder, data.asks[0])
     const min_value = Math.min(clearingPrice * 2, data.asks[0]?.price ?? 0)
-    let max_value = Math.max(clearingPrice * 2, Math.max(...data.asks.map((i) => i.price)) ?? 0)
+    let max_value = 1
     const minFundThreshold = minFundingThreshold && Number(minFundingThreshold.toSignificant(2))
 
     const bids = processData(
@@ -359,7 +359,7 @@ export const processOrderbookData = ({
       minFundThreshold,
     )
     bids.sort((lhs, rhs) => -(lhs.price - rhs.price))
-    max_value = Math.min(clearingPrice * 2, bids[0].price ?? 0)
+    max_value = 1
     const asks = processData(
       data.asks,
       null,

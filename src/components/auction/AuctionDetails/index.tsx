@@ -110,6 +110,7 @@ const AuctionDetails = (props: Props) => {
       title: 'Current bond APR',
       value: currentBondAPR,
       tooltip: 'Tooltip',
+      bordered: 'blue',
     },
     {
       title: 'Minimum price',
