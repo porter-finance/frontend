@@ -33,6 +33,7 @@ const columns = [
   },
   {
     Header: 'Fixed APR',
+    tooltip: 'This APR is calculated using the current price of the bond offering.',
     accessor: 'fixedAPR',
     align: 'flex-start',
     show: true,
