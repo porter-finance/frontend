@@ -208,7 +208,7 @@ const Claimer: React.FC<Props> = (props) => {
             <FieldRowLabelStyled>
               <Tooltip
                 left="Amount of assets to receive"
-                tip="This is the amount of assets can claim. If there are no bonds claimable, your order price was not competitive."
+                tip="Amount of assets can claim. If there are no bonds claimable, your order price was not competitive."
               />
             </FieldRowLabelStyled>
           </div>
