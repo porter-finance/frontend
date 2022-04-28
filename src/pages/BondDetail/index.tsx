@@ -100,6 +100,7 @@ const positionColumns = [
   },
   {
     Header: 'Fixed APR',
+    tooltip: 'This APR is calculated using the closing price of the initial offering.',
     accessor: 'fixedAPR',
   },
   {
