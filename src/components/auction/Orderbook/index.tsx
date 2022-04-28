@@ -10,7 +10,6 @@ import { LoadingBox } from '../../../pages/Auction'
 import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { parseURL } from '../../../state/orderPlacement/reducer'
 import { useOrderbookState } from '../../../state/orderbook/hooks'
-import { getInverse, showChartsInverted } from '../../../utils/prices'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import OrderBookChart, { OrderBookError } from '../OrderbookChart'
 import { processOrderbookData } from '../OrderbookWidget'
@@ -61,13 +60,6 @@ export const OrderBook: React.FC<OrderbookProps> = (props) => {
       minFundingThreshold: minFundingThresholdAmount,
     })
   }, [asks, baseToken, bids, quoteToken, userOrderPrice, userOrderVolume, auctionDetails])
-
-  if (showChartsInverted(baseToken)) {
-    for (const p of processedOrderbook) {
-      p.priceNumber = Number(getInverse(p.price.toString(), NUMBER_OF_DIGITS_FOR_INVERSION))
-      p.priceFormatted = getInverse(p.price.toString(), NUMBER_OF_DIGITS_FOR_INVERSION)
-    }
-  }
 
   const isLoading = orderbookAuctionId != auctionId || chainId != orderbookChainId
   const hasError = error || !asks || asks.length === 0
