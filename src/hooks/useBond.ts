@@ -1,4 +1,5 @@
 import { gql, useQuery } from '@apollo/client'
+import { useWeb3React } from '@web3-react/core'
 
 import { getLogger } from '../utils/logger'
 
@@ -95,9 +96,11 @@ interface SingleBond {
   data: BondInfo
   loading: boolean
 }
-export const useBond = (bondId: string, accountId = ''): SingleBond => {
+export const useBond = (bondId: string): SingleBond => {
+  const { account } = useWeb3React()
+
   const { data, error, loading } = useQuery(singleBondQuery, {
-    variables: { bondId: bondId.toLowerCase(), accountId: accountId.toLowerCase() },
+    variables: { bondId: bondId.toLowerCase(), accountId: account?.toLowerCase() },
   })
 
   if (error) {
