@@ -32,8 +32,8 @@ const columns = [
     filter: 'searchInTags',
   },
   {
-    Header: 'Fixed APY',
-    accessor: 'fixedAPY',
+    Header: 'Fixed APR',
+    accessor: 'fixedAPR',
     align: 'flex-start',
     show: true,
     style: {},
@@ -86,7 +86,7 @@ const Offerings = () => {
       search: JSON.stringify(auction),
       auctionId: `#${auction.id}`,
       price: `1 ${auction?.bidding?.symbol}`,
-      fixedAPY: calculateInterestRate(auction.clearingPrice, auction.end),
+      fixedAPR: calculateInterestRate(auction.clearingPrice, auction.end),
       status: auction.live ? (
         <ActiveStatusPill title="Ongoing" />
       ) : (
