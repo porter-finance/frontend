@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 
 import { formatUnits } from '@ethersproject/units'
@@ -23,7 +23,13 @@ export const OverflowWrap = styled.div`
   overflow-y: auto;
 `
 
-export const TableDesign = ({ columns, data, showConnect = false }) => {
+export const TableDesign = ({
+  columns,
+  data,
+  hidePagination = false,
+  showConnect = false,
+  ...restProps
+}) => {
   const { account } = useActiveWeb3React()
 
   // Use the state and functions returned from useTable to build your UI
@@ -51,7 +57,7 @@ export const TableDesign = ({ columns, data, showConnect = false }) => {
   )
 
   return (
-    <div className="min-h-[385px]">
+    <div className="min-h-[385px]" {...restProps}>
       <table className="table w-full h-full" {...getTableProps()}>
         <thead>
           {headerGroups.map((headerGroup, i) => (
@@ -141,7 +147,7 @@ export const TableDesign = ({ columns, data, showConnect = false }) => {
           })}
         </tbody>
       </table>
-      {pageOptions.length > 0 && (
+      {!hidePagination && pageOptions.length > 0 && (
         <div className="btn-group !border-none text-[#696969]">
           <button
             className="btn btn-lg !text-lg"
