@@ -113,7 +113,7 @@ export const ExtraDetailsItem: React.FC<Props> = ({
         </Value>
         <Title>
           <TitleText className="text">{title}</TitleText>
-          {tooltip && <Tooltip text={tooltip} />}
+          {tooltip && <Tooltip tip={tooltip} />}
         </Title>
       </div>
 

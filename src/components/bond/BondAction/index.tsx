@@ -252,7 +252,7 @@ const BondAction = ({
             <div className="text-[#696969] text-xs">
               <Tooltip
                 left="Active until"
-                text="This is the date each bond is no longer convertible into the convertible tokens and will only be redeemable for its face value (assuming no default)."
+                tip="This is the date each bond is no longer convertible into the convertible tokens and will only be redeemable for its face value (assuming no default)."
               />
             </div>
           </div>
@@ -294,7 +294,7 @@ const BondAction = ({
                   <div className="text-[#696969] text-xs">
                     <Tooltip
                       left="Amount of assets to receive"
-                      text={
+                      tip={
                         isConvertComponent
                           ? 'This is the amount of convertible tokens you will receive in exchange for your bonds.'
                           : 'This is the amount of assets you are receiving for your bonds.'
