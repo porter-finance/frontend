@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 
 import { formatUnits } from '@ethersproject/units'
@@ -77,7 +77,7 @@ export const TableDesign = ({ columns, data, showConnect = false }) => {
             <tr className="bg-transparent text-[#D2D2D2] text-sm">
               <td
                 className="bg-transparent text-center py-[100px] text-[#696969] space-y-4"
-                colSpan={5}
+                colSpan={columns.length}
               >
                 {(account || !showConnect) && (
                   <svg

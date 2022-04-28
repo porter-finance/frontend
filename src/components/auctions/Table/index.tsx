@@ -347,7 +347,7 @@ const Table = ({
               <tr className="bg-transparent text-[#D2D2D2] text-sm">
                 <td
                   className="bg-transparent text-center py-[100px] text-[#696969] space-y-7"
-                  colSpan={columns.length - 1}
+                  colSpan={columns.length}
                 >
                   <div className="flex justify-center space-x-4 opacity-60">{emptyLogo}</div>
                   <div className="text-base text-[#696969]">{emptyDescription}</div>
