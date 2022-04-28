@@ -142,7 +142,7 @@ const BondDetail: React.FC = () => {
   const bondIdentifier = useParams()
 
   const extraDetails = useBondExtraDetails(bondIdentifier?.bondId)
-  const { data: bond, loading: isLoading } = useBond(bondIdentifier?.bondId, account)
+  const { data: bond, loading: isLoading } = useBond(bondIdentifier?.bondId)
   const invalidBond = React.useMemo(() => !bondIdentifier || !bond, [bondIdentifier, bond])
   const { isConvertBond, isDefaulted, isMatured, isPaid, isPartiallyPaid } = getBondStates(bond)
 
