@@ -173,7 +173,7 @@ const Products = () => {
           </>
         }
         loading={loading}
-        name={'products'}
+        name="products"
         title="Products"
       />
     </>

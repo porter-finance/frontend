@@ -270,7 +270,7 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({ bids, derivedAuc
       const bonds = `${formatUnits(
         row.size,
         derivedAuctionInfo.auctioningToken.decimals,
-      ).toLocaleString()} + ${'Bonds'} `
+      ).toLocaleString()}  Bonds`
       const transaction = <BidTransactionLink bid={row} />
 
       data.push({ status, price, interest, amount, bonds, transaction })
