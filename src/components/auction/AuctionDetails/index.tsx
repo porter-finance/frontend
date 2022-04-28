@@ -4,7 +4,6 @@ import styled from 'styled-components'
 import { formatUnits } from '@ethersproject/units'
 
 import { useAuction } from '../../../hooks/useAuction'
-import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
 import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderbookState } from '../../../state/orderbook/hooks'
@@ -83,44 +82,48 @@ const AuctionDetails = (props: Props) => {
     {
       title: 'Offering size',
       value: offeringSize,
-      tooltip: 'Total number of bonds to be auctioned',
+      tooltip: 'Number of bonds being sold.',
     },
     {
       title: 'Total bid volume',
       value: totalBidVolume,
-      tooltip: 'Total bid volume',
+      tooltip: 'Sum of all bid volume.',
     },
     {
       title: 'Minimum funding threshold',
-      tooltip: 'Auction will not be executed, unless this minimum funding threshold is met',
+      tooltip:
+        'Minimum bid volume required for auction to close. If this value is not reached, all funds will be returned and no bonds will be sold.',
       value: minimumFundingThreshold,
     },
     {
       title: 'Minimum bid size',
       value: minimumBidSize,
-      tooltip: 'Each order must at least bid this amount',
+      tooltip: 'Minimum size for a single bid. Bids below this size cannot be placed.',
     },
     {
       title: 'Current bond price',
-      tooltip: `This will be the auction's Closing Price if no more bids are submitted or cancelled, OR it will be the auction's Clearing Price if the auction concludes without additional bids.`,
+      tooltip: `Current auction clearing price for a single bond. If the auction ended now, this would be the price set.`,
       value: currentBondPrice ? currentBondPrice : '-',
       bordered: 'blue',
     },
     {
       title: 'Current bond APR',
       value: currentBondAPR,
-      tooltip: 'Tooltip',
+      tooltip:
+        'Current bond APR calculated from the current bond price. If the auction ended now, this is the return bond purchasers would receive assuming no default.',
       bordered: 'blue',
     },
     {
-      title: 'Minimum price',
-      tooltip: 'Min price',
+      title: 'Minimum bond price',
+      tooltip:
+        'This is the minimum price a bond can be sold for. Bids below this price will not be accepted.',
       value: minimumBondPrice ? minimumBondPrice : '-',
     },
     {
-      title: 'Maximum APR',
+      title: 'Maximum bond APR',
       value: maxBondAPR,
-      tooltip: 'Tooltip',
+      tooltip:
+        'This is the maximum APR the issuer is willing to pay. This is calculated using the minimum bond price.',
     },
   ]
 

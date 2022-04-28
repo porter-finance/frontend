@@ -294,9 +294,11 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
         {cancelDate && derivedAuctionInfo && (
           <div className="space-y-1">
             <div className="text-[#EEEFEB] text-sm">{cancelCutoff}</div>
-            <div className="text-[#696969] text-xs flex flex-row items-center space-x-2">
-              <span>Order cancellation cutoff date</span>
-              <Tooltip text="Order cutoff date tooltip" />
+            <div className="text-[#696969] text-xs">
+              <Tooltip
+                left="Order cancellation cutoff date"
+                text="Orders cannot be cancelled after this date."
+              />
             </div>
           </div>
         )}
