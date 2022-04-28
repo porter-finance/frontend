@@ -119,7 +119,7 @@ export const createTable = (data: BondInfo[]) => {
         </div>
       ),
       amount: amount ? round(Number(formatUnits(amount, decimals)), decimals) : '-',
-      // TODO graphql should return clearing decimal so i can caclulate interest rate correctly
+      // TODO graphql should return clearing decimal so i can calculate interest rate correctly
       fixedAPY: '-',
       maturityValue: `1 ${paymentToken.symbol}`,
 
