@@ -236,7 +236,7 @@ const AmountInputPanel: React.FC<Props> = (props) => {
           ) : (
             <div className="flex justify-between">
               <FieldRowLabelStyled>
-                <Tooltip left={amountText} text={amountTooltip} />
+                <Tooltip left={amountText} tip={amountTooltip} />
               </FieldRowLabelStyled>
               <button
                 className="btn btn-xs normal-case !text-[#E0E0E0] font-normal !border-[#2A2B2C] px-3"

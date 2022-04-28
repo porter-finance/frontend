@@ -107,7 +107,7 @@ const PriceInputPanel = (props: Props) => {
             <FieldRowLabelStyled>
               <Tooltip
                 left="Maximum price"
-                text="This is the maximum price per bond you are willing to pay. The actual settlement price may be lower which will result in you getting a higher APR."
+                tip="This is the maximum price per bond you are willing to pay. The actual settlement price may be lower which will result in you getting a higher APR."
               />
             </FieldRowLabelStyled>
           )}
