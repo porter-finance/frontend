@@ -209,6 +209,7 @@ interface Props {
   emptyActionClick?: () => void
   emptyLogo: ReactElement
   legendIcons: ReactElement
+  name: string
 }
 
 const Table = ({
@@ -221,6 +222,7 @@ const Table = ({
   emptyLogo,
   legendIcons,
   loading,
+  name,
   title,
   ...restProps
 }: Props) => {
@@ -409,7 +411,7 @@ const Table = ({
             <PaginationText>
               {pageIndex + 1 === 1 ? 1 : pageIndex * pageSize + 1} -{' '}
               {rows.length < (pageIndex + 1) * pageSize ? rows.length : (pageIndex + 1) * pageSize}{' '}
-              of {rows.length} auctions
+              of {rows.length} {name}
             </PaginationText>{' '}
             <PaginationButton disabled={!canPreviousPage} onClick={() => handlePrevPage()}>
               <ChevronLeft />
