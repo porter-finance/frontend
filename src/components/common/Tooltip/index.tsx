@@ -66,7 +66,13 @@ export const TooltipRoot = TooltipPrimitive.Root
 export const TooltipTrigger = TooltipPrimitive.Trigger
 export const TooltipContent = StyledContent
 
-export const Tooltip = ({ left, text }: { text: string; left?: ReactElement | string }) => {
+export const Tooltip = ({
+  left,
+  text,
+}: {
+  text: ReactElement | string
+  left?: ReactElement | string
+}) => {
   const tip = (
     <Provider delayDuration={100} skipDelayDuration={500}>
       <TooltipRoot>
