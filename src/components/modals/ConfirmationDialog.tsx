@@ -61,7 +61,7 @@ export const ReviewOrder = ({ amountToken, cancelCutoff, data, orderPlacingOnly,
       <div className="text-[#696969] text-xs">
         <Tooltip
           left="Amount of bonds you receive"
-          tip="This is the amount of bonds you will receive. If the final auction price is lower than your bid price, you will receive more bonds than were ordered at that lower price."
+          tip="Amount of bonds you will receive. If the final auction price is lower than your bid price, you will receive more bonds than were ordered at that lower price."
         />
       </div>
     </div>
@@ -70,7 +70,7 @@ export const ReviewOrder = ({ amountToken, cancelCutoff, data, orderPlacingOnly,
       <div className="text-[#696969] text-xs">
         <Tooltip
           left="Amount of interest you earn"
-          tip="This is the amount of bonds you will receive. If the final auction price is lower than your bid price, you will receive more bonds than were ordered at that lower price. This is also the amount you will earn assuming no default. If the final price is lower than your bid price, you will receive more bonds than ordered and, therefore, earn more."
+          tip="Amount of bonds you will receive. If the final auction price is lower than your bid price, you will receive more bonds than were ordered at that lower price. This is also the amount you will earn assuming no default. If the final price is lower than your bid price, you will receive more bonds than ordered and, therefore, earn more."
         />
       </div>
     </div>
@@ -87,8 +87,8 @@ export const ReviewConvert = ({ amount, amountToken, assetsToReceive, type = 'co
           left={`Amount of bonds to ${type}`}
           tip={
             type === 'convert'
-              ? 'This is the amount of bonds you are exchanging for convertible tokens.'
-              : 'This is the amount of bonds you are redeeming.'
+              ? 'Amount of bonds you are exchanging for convertible tokens.'
+              : 'Amount of bonds you are redeeming.'
           }
         />
       </div>
@@ -102,8 +102,8 @@ export const ReviewConvert = ({ amount, amountToken, assetsToReceive, type = 'co
           left="Amount of assets to receive"
           tip={
             type === 'convert'
-              ? 'This is the amount of convertible tokens you will receive in exchange for your bonds.'
-              : 'This is the amount of assets you are receiving for your bonds.'
+              ? 'Amount of convertible tokens you will receive in exchange for your bonds.'
+              : 'Amount of assets you are receiving for your bonds.'
           }
         />
       </div>

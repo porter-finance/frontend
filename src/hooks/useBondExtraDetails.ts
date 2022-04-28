@@ -49,28 +49,26 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
     {
       title: 'Face value',
       value: `1 ${bond?.paymentToken.symbol}`,
-      tooltip:
-        'This is the amount each bond is redeemable for at maturity assuming a default does not occur.',
+      tooltip: 'Amount each bond is redeemable for at maturity assuming a default does not occur.',
     },
     {
       title: 'Collateral tokens',
       value: `${collateralPerBond} ${bond?.collateralToken.symbol || ''}`,
       hint: `($${collateralValue})`,
       tooltip:
-        'This is the number of collateral tokens securing each bond. If a bond is defaulted on, the bondholder is able to exchange each bond for these collateral tokens.',
+        'Number of collateral tokens securing each bond. If a bond is defaulted on, the bondholder is able to exchange each bond for these collateral tokens.',
     },
     {
       title: 'Convertible tokens',
       value: `${convertiblePerBond} ${bond?.collateralToken.symbol || ''}`,
       hint: `($${convertibleValue})`,
-      tooltip:
-        'This is the number of tokens each bond is convertible into up until the maturity date.',
+      tooltip: 'Number of tokens each bond is convertible into up until the maturity date.',
       show: isConvertBond,
     },
     {
       title: 'Maturity date',
       tooltip:
-        'This is the date each bond can be redeemed for $1 assuming no default. Convertible bonds cannot be converted after this date.',
+        'Date each bond can be redeemed for $1 assuming no default. Convertible bonds cannot be converted after this date.',
       value: `${dayjs(bond?.maturityDate * 1000)
         .utc()
         .format('DD MMM YYYY')}`.toUpperCase(),
@@ -78,12 +76,11 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
     {
       title: 'Collateralization ratio',
       value: `${collateralizationRatio}%`,
-      tooltip: 'This is the value of the collateral tokens divided by the face value of a bond.',
+      tooltip: 'Value of the collateral tokens divided by the face value of a bond.',
     },
     {
       title: 'Call strike price',
-      tooltip:
-        'This is the price where the convertible tokens for a bond are equal to its face value.',
+      tooltip: 'Price where the convertible tokens for a bond are equal to its face value.',
       value: `${strikePrice} ${bond?.paymentToken.symbol || ''}/${
         bond?.collateralToken.symbol || ''
       }`,
