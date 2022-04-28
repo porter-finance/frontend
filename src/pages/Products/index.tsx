@@ -39,6 +39,7 @@ export const columns = (showAmount = false) => [
   },
   {
     Header: 'Fixed APR',
+    tooltip: 'This APR is calculated using the closing price of the initial offering.',
     accessor: 'fixedAPR',
     align: 'flex-start',
     show: true,
