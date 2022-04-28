@@ -90,37 +90,42 @@ const InterestRateInputPanel = ({
           <p>{!account || !price || !amount ? '-' : `${data.pay} ${priceTokenDisplay}`}</p>
           <p className="text-[#EDA651]">{account && errorBidSize ? errorBidSize : ''}</p>
         </div>
-        <div className="space-x-1 flex items-center">
-          <FieldRowLabelStyledText className={account && errorBidSize ? '!text-[#EDA651]' : ''}>
-            You pay
-          </FieldRowLabelStyledText>
-          <Tooltip text="Tooltip" />
-        </div>
+
+        <Tooltip
+          left={
+            <FieldRowLabelStyledText className={account && errorBidSize ? '!text-[#EDA651]' : ''}>
+              You pay
+            </FieldRowLabelStyledText>
+          }
+          tip="This is your bid size. You will pay this much."
+        />
       </div>
       <div className="flex flex-row justify-between">
         <div className="text-sm text-[#E0E0E0]">
           {!account || !amount ? '-' : `${data.receive} ${amountToken}`}
         </div>
-        <div className="space-x-1 flex items-center">
-          <FieldRowLabelStyledText>You receive</FieldRowLabelStyledText>
-          <Tooltip text="Tooltip" />
-        </div>
+
+        <Tooltip
+          left={<FieldRowLabelStyledText>You receive</FieldRowLabelStyledText>}
+          tip="Amount of bonds you will receive. If the final auction price is lower than your bid price, you will receive more bonds than were ordered at that lower price."
+        />
       </div>
       <div className="flex flex-row justify-between">
         <div className="text-sm text-[#E0E0E0]">
           {!account || !price || !amount ? '-' : `${data.earn} ${priceTokenDisplay}`}
         </div>
-        <div className="space-x-1 flex items-center">
-          <FieldRowLabelStyledText>You earn</FieldRowLabelStyledText>
-          <Tooltip text="Tooltip" />
-        </div>
+
+        <Tooltip
+          left={<FieldRowLabelStyledText>You earn</FieldRowLabelStyledText>}
+          tip="Amount you will earn assuming no default. If the final price is lower than your bid price, you will receive more bonds than ordered and, therefore, earn more."
+        />
       </div>
       <div className="flex flex-row justify-between">
         <div className="text-sm text-[#E0E0E0]">{!account ? '-' : data.apr}</div>
-        <div className="space-x-1 flex items-center">
-          <FieldRowLabelStyledText>Your APR</FieldRowLabelStyledText>
-          <Tooltip text="Tooltip" />
-        </div>
+        <Tooltip
+          left={<FieldRowLabelStyledText>Your APR</FieldRowLabelStyledText>}
+          tip="APR you will earn assuming no default. If the final price is lower than your bid price, you will receive more bonds than ordered and, therefore, earn a higher APR."
+        />
       </div>
     </FieldRowWrapper>
   )
