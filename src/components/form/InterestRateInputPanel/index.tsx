@@ -54,7 +54,7 @@ export const calculateInterestRate = (
   interestRate = isNaN(interestRate) || interestRate === Infinity ? 0 : interestRate
 
   if (display) {
-    return !interestRate ? '-' : `${round(interestRate * 100, 2)}%`
+    return !interestRate ? '-' : `${(interestRate * 100).toLocaleString()}%`
   }
 
   return interestRate

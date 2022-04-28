@@ -68,7 +68,8 @@ const AuctionDetails = (props: Props) => {
 
   const minimumBondPrice = (
     <TokenValue>
-      {abbreviation(graphInfo?.minimumBondPrice)} {`${getDisplay(graphInfo?.bidding)}`}
+      {abbreviation(graphInfo?.minimumBondPrice).toLocaleString()}{' '}
+      {`${getDisplay(graphInfo?.bidding)}`}
     </TokenValue>
   )
 
@@ -90,7 +91,7 @@ const AuctionDetails = (props: Props) => {
       tooltip: 'Sum of all bid volume.',
     },
     {
-      title: 'Minimum funding threshold',
+      title: 'Min funding threshold',
       tooltip:
         'Minimum bid volume required for auction to close. If this value is not reached, all funds will be returned and no bonds will be sold.',
       value: minimumFundingThreshold,
