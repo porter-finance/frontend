@@ -3,7 +3,6 @@ import { createGlobalStyle } from 'styled-components'
 
 import { formatUnits } from '@ethersproject/units'
 import dayjs from 'dayjs'
-import { round } from 'lodash'
 
 import { ReactComponent as ConvertIcon } from '../../assets/svg/convert.svg'
 import { ReactComponent as DividerIcon } from '../../assets/svg/divider.svg'
@@ -23,8 +22,8 @@ const GlobalStyle = createGlobalStyle`
 
 export const columns = (showAmount = false) => [
   {
-    Header: 'Issuer',
-    accessor: 'issuer',
+    Header: 'Bond',
+    accessor: 'bond',
     align: 'flex-start',
     show: true,
     style: { height: '100%', justifyContent: 'center' },
@@ -97,7 +96,7 @@ export const createTable = (data: BondInfo[]) => {
     return {
       id,
       search: JSON.stringify(bond),
-      issuer: (
+      bond: (
         <div className="flex flex-row items-center space-x-4">
           <div className="flex">
             <TokenLogo
@@ -118,10 +117,12 @@ export const createTable = (data: BondInfo[]) => {
           </div>
         </div>
       ),
-      amount: amount ? round(Number(formatUnits(amount, decimals)), decimals) : '-',
+      amount: amount ? Number(formatUnits(amount, decimals)).toLocaleString() : '-',
       // TODO graphql should return clearing decimal so i can calculate interest rate correctly
       fixedAPY: '-',
-      maturityValue: `1 ${paymentToken.symbol}`,
+      maturityValue: amount
+        ? `${Number(formatUnits(amount, decimals)).toLocaleString()} ${paymentToken.symbol}`
+        : `1 ${paymentToken.symbol}`,
 
       status:
         new Date() > new Date(maturityDate * 1000) ? (
