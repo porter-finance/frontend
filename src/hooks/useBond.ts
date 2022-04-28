@@ -21,7 +21,7 @@ export interface BondInfo {
   convertibleRatio: number
   maxSupply: number
   tokenBalances: any
-  clearingPrice: number
+  clearingPrice?: number
 }
 export interface Token {
   id: string
@@ -59,7 +59,7 @@ const singleBondQuery = gql`
       }
       collateralRatio
       convertibleRatio
-      # clearingPrice
+      clearingPrice
     }
   }
 `
