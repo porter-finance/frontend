@@ -227,7 +227,7 @@ const AuctionInfoCard: React.FC<Props> = (props) => {
         <CurrentPrice>
           Current price:{' '}
           {`${abbreviation(
-            auctionInfo.clearing.toString(),
+            auctionInfo.clearingPrice.toString(),
           )} ${auctionSymbolBiddingToken} per ${auctionSymbolAuctioningToken}`}
         </CurrentPrice>
       </Details>

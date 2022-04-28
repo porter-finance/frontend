@@ -11,7 +11,7 @@ export interface Auction {
   start: number
   end: number
   orderCancellationEndDate: number
-  clearing: string
+  clearingPrice: number
   bond: {
     id: string
     type: string
@@ -76,6 +76,7 @@ const auctionQuery = gql`
       minimumBidSize
       minimumBondPrice
       live
+      clearingPrice
     }
   }
 `
@@ -101,7 +102,7 @@ const auctionsQuery = gql`
       offeringSize
       end
       live
-      clearing
+      clearingPrice
       bond {
         paymentToken {
           id
