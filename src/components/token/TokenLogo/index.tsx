@@ -36,14 +36,8 @@ interface TokenLogoProps {
 const SquareHolder = ({ children, size }) => {
   const defaultSize = size === '24px'
   return (
-    <div className="avatar placeholder">
-      <div
-        className={`w-${defaultSize ? '14' : '10'} bg-[#e0e0e0] rounded-${
-          defaultSize ? 'xl' : 'md'
-        }`}
-      >
-        {children}
-      </div>
+    <div className={`avatar placeholder w-${defaultSize ? '14' : '10'} bg-[#e0e0e0] rounded-md`}>
+      {children}
     </div>
   )
 }
@@ -54,6 +48,7 @@ const TokenLogo: React.FC<TokenLogoProps> = (props) => {
   const { tokens } = useTokenListState()
   const validToken = isAddress(address) && tokens
   const imageURL = validToken && tokens[address.toLowerCase()]
+  const sizeToUse = square && size === '24px' ? '30px' : size
   let forceSvg = false
 
   // Example used in dev
@@ -61,17 +56,11 @@ const TokenLogo: React.FC<TokenLogoProps> = (props) => {
     forceSvg = true
   }
 
-  const UnTok = !imageURL && (
-    <UnregisteredToken
-      size={square && size === '24px' ? '30px' : size}
-      symbol={symbol}
-      {...restProps}
-    />
-  )
+  const UnTok = !imageURL && <UnregisteredToken size={sizeToUse} symbol={symbol} {...restProps} />
 
   const ImageToken = imageURL && (
-    <Wrapper className="tokenLogo" size={square && size === '24px' ? '30px' : size} {...restProps}>
-      {forceSvg && <UnicornSvg height={size} width={size} />}
+    <Wrapper className="tokenLogo" size={sizeToUse} {...restProps}>
+      {forceSvg && <UnicornSvg height={sizeToUse} width={sizeToUse} />}
       {!forceSvg && <Image src={imageURL} />}
     </Wrapper>
   )
