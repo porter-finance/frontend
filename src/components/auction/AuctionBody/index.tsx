@@ -6,6 +6,7 @@ import useGeoLocation from 'react-ipgeolocation'
 import { Auction, useAuction } from '../../../hooks/useAuction'
 import { useBondExtraDetails } from '../../../hooks/useBondExtraDetails'
 import { TwoGridPage } from '../../../pages/Auction'
+import { getBondStates } from '../../../pages/BondDetail'
 import { AuctionState, DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { forceDevData } from '../../Dev'
@@ -65,6 +66,7 @@ const DisabledCountryError = () => (
 const BondCard = ({ graphInfo }: { graphInfo: Auction }) => {
   const extraDetails = useBondExtraDetails(graphInfo?.bond.id)
   const navigate = useNavigate()
+  const { isConvertBond } = getBondStates(graphInfo?.bond)
 
   return (
     <div className="card card-bordered bond-card-color">
@@ -95,7 +97,11 @@ const BondCard = ({ graphInfo }: { graphInfo: Auction }) => {
           </div>
         </div>
 
-        <div className="grid gap-x-12 gap-y-8 grid-cols-1 pt-12 md:grid-cols-3">
+        <div
+          className={`grid gap-x-12 gap-y-8 grid-cols-1 pt-12 ${
+            isConvertBond ? 'md:grid-cols-3' : 'md:grid-cols-4'
+          }`}
+        >
           {extraDetails.map((item, index) => (
             <ExtraDetailsItem key={index} {...item} />
           ))}
