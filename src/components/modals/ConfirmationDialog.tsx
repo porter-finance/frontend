@@ -1,7 +1,5 @@
 import React, { ReactElement, useEffect, useState } from 'react'
 
-import { Token } from '@josojo/honeyswap-sdk'
-
 import { ReactComponent as GreenCheckIcon } from '../../assets/svg/greencheck.svg'
 import { ReactComponent as PorterIcon } from '../../assets/svg/porter.svg'
 import { useActiveWeb3React } from '../../hooks'
@@ -147,31 +145,15 @@ const GhostTransactionLink = ({ chainId, hash }) => (
   </GhostActionLink>
 )
 const TokenApproval = ({
-  amount,
-  amountToken,
   beforeDisplay,
-  cancelCutoff,
-  maturityDate,
-  orderPlacingOnly,
-  price,
-  priceToken,
   setShowTokenTransactionComplete,
   showTokenTransactionComplete,
   unlock,
 }: {
   beforeDisplay: ReactElement
-  amount: number
-  amountToken: Token
-  maturityDate?: number
-  cancelCutoff: string
-  orderPlacingOnly: boolean
-  price: string
-  priceToken: Token
   setShowTokenTransactionComplete: (hash: string) => void
   showTokenTransactionComplete: string
   unlock: unlockProps
-  onOpenChange: (open: boolean) => void
-  open: boolean
 }) => {
   const { chainId } = useActiveWeb3React()
   const [pendingTokenTransaction, setPendingTokenTransaction] = useState(false)
@@ -239,46 +221,27 @@ const TokenApproval = ({
   )
 }
 
-enum OrderState {
-  TOKEN_APPROVAL,
-  PLACE_ORDER,
-}
-
 const ConfirmationDialog = ({
   actionColor = 'blue',
   actionText,
-  amount,
-  amountToken,
   beforeDisplay,
-  cancelCutoff,
   finishedText,
   loadingText,
-  maturityDate,
   onOpenChange,
   open,
-  orderPlacingOnly,
   pendingText,
   placeOrder,
-  price,
-  priceToken,
   title,
   unlock,
 }: {
   placeOrder: () => Promise<any>
-  amount: number
   actionColor?: string
   actionText: string
   pendingText: string
   title: string
   loadingText: string
   finishedText: string
-  amountToken: Token
-  maturityDate?: number
   beforeDisplay: ReactElement
-  orderPlacingOnly?: boolean
-  cancelCutoff?: string
-  price: string
-  priceToken: Token
   unlock?: unlockProps
   onOpenChange: (open: boolean) => void
   open: boolean
@@ -325,16 +288,7 @@ const ConfirmationDialog = ({
 
           {unlock && !showOrderTransactionComplete && !orderComplete && (
             <TokenApproval
-              amount={amount}
-              amountToken={amountToken}
               beforeDisplay={beforeDisplay}
-              cancelCutoff={cancelCutoff}
-              maturityDate={maturityDate}
-              onOpenChange={onOpenChange}
-              open={open}
-              orderPlacingOnly={orderPlacingOnly}
-              price={price}
-              priceToken={priceToken}
               setShowTokenTransactionComplete={setShowTokenTransactionComplete}
               showTokenTransactionComplete={showTokenTransactionComplete}
               unlock={unlock}
