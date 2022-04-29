@@ -4,26 +4,46 @@ module.exports = {
   content: ['./src/**/*.{js,ts,jsx,tsx}', './public/index.html'],
   theme: {
     extend: {
+      colors: {
+        white: '#e0e0e0',
+      },
       maxWidth: {
         '8xl': '85rem',
       },
       fontSize: {
-        xs: [
-          '11px',
+        xxs: [
+          '10px',
           {
             letterSpacing: '0.1em',
+            fontWeight: 400,
+          },
+        ],
+        xs: [
+          '12px',
+          {
+            letterSpacing: '0.1em',
+            fontWeight: 400,
           },
         ],
         sm: [
+          '13px',
+          {
+            letterSpacing: '0.1em',
+            fontWeight: 400,
+          },
+        ],
+        '2sm': [
           '14px',
           {
-            letterSpacing: '0.05em',
+            letterSpacing: '0.1em',
+            fontWeight: 400,
           },
         ],
         base: [
           '16px',
           {
-            letterSpacing: '0.05em',
+            letterSpacing: '0.06em',
+            fontWeight: 400,
           },
         ],
         xl: [

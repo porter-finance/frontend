@@ -63,15 +63,6 @@ const StyledTitle = styled(DialogPrimitive.Title, {
   color: '#E0E0E0',
 })
 
-const StyledDescription = styled(DialogPrimitive.Content, {
-  margin: '10px 0 20px',
-  color: '#D6D6D6',
-  fontSize: 16,
-  fontWeight: 400,
-  letterSpacing: '0.03em',
-  lineHeight: 1.5,
-})
-
 // Exports
 export const Dialog = DialogPrimitive.Root
 export const DialogContent = Content

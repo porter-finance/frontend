@@ -15,13 +15,18 @@ import { useActivePopups, useWalletModalToggle } from '../../../state/applicatio
 import { getTokenDisplay } from '../../../utils'
 import { ActionButton } from '../../auction/Claimer'
 import { ActiveStatusPill } from '../../auction/OrderbookTable'
-import { Tooltip } from '../../common/Tooltip'
+import Tooltip from '../../common/Tooltip'
 import AmountInputPanel from '../../form/AmountInputPanel'
 import ConfirmationDialog, { ReviewConvert } from '../../modals/ConfirmationDialog'
 import { FieldRowToken, FieldRowTokenSymbol } from '../../pureStyledComponents/FieldRow'
 import TokenLogo from '../../token/TokenLogo'
 
-export const TokenPill = ({ name, token }) => {
+export const TokenPill = ({ token }) => {
+  let displayName = ''
+  if (token) {
+    displayName = getTokenDisplay(token)
+  }
+
   return token ? (
     <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#2C2C2C] rounded-full p-1 px-2 pl-1">
       {(token.address || token.id) && (
@@ -33,12 +38,12 @@ export const TokenPill = ({ name, token }) => {
           }}
         />
       )}
-      {name && <FieldRowTokenSymbol>{name}</FieldRowTokenSymbol>}
+      {displayName && <FieldRowTokenSymbol>{displayName}</FieldRowTokenSymbol>}
     </FieldRowToken>
   ) : null
 }
 
-export const TokenInfo = ({ disabled = false, extra = '', name, plus = false, token, value }) => {
+export const TokenInfo = ({ disabled = false, extra = '', plus = false, token, value }) => {
   return (
     <div
       className={`text-base text-white ${
@@ -53,7 +58,7 @@ export const TokenInfo = ({ disabled = false, extra = '', name, plus = false, to
         </span>
         <span className="text-[#696969]">{extra}</span>
       </div>
-      <TokenPill name={name} token={token} />
+      <TokenPill token={token} />
     </div>
   )
 }
@@ -76,7 +81,7 @@ const BondAction = ({
   const params = useParams()
 
   const bondId = overwriteBondId || params?.bondId
-  const { data: bondInfo, loading: isLoading } = useBond(bondId)
+  const { data: bondInfo } = useBond(bondId)
   const bondTokenBalance = bondInfo?.tokenBalances?.[0]?.amount || 0
 
   const [bondsToRedeem, setBondsToRedeem] = useState('0.00')
@@ -87,7 +92,7 @@ const BondAction = ({
 
   const [tokenDetails, setTokenDetails] = useState({ BondAmount: null, payTok: null, tok: null })
 
-  const { isConvertBond, isDefaulted, isMatured, isPaid, isPartiallyPaid } = getBondStates(bondInfo)
+  const { isDefaulted, isMatured, isPaid, isPartiallyPaid } = getBondStates(bondInfo)
 
   useEffect(() => {
     let BondAmount = null
@@ -110,7 +115,7 @@ const BondAction = ({
   }, [chainId, bondsToRedeem, bondInfo])
 
   // these names r so bad
-  const { BondAmount, payTok, tok } = tokenDetails
+  const { BondAmount, tok } = tokenDetails
 
   const { redeem } = useRedeemBond(BondAmount, bondId)
   const { convert } = useConvertBond(BondAmount, bondId)
@@ -271,7 +276,6 @@ const BondAction = ({
                     ? 'Amount of bonds you are exchanging for convertible tokens.'
                     : 'Amount of bonds you are redeeming.'
                 }
-                balance={formatUnits(Number(bondTokenBalance) || 0, bondInfo?.decimals)}
                 chainId={chainId}
                 disabled={!account}
                 maxTitle={`${getActionText(componentType)} all`}
@@ -288,13 +292,7 @@ const BondAction = ({
               {(isConvertComponent || componentType === BondActions.Redeem) && (
                 <div className="space-y-2">
                   {assetsToReceive.map(({ token, value }, index) => (
-                    <TokenInfo
-                      disabled={!account}
-                      key={index}
-                      name={bondInfo?.name}
-                      token={token}
-                      value={value}
-                    />
+                    <TokenInfo disabled={!account} key={index} token={token} value={value} />
                   ))}
 
                   <div className="text-[#696969] text-xs">
@@ -330,8 +328,6 @@ const BondAction = ({
           <ConfirmationDialog
             actionColor="purple"
             actionText={`${getActionText(componentType)} bonds`}
-            amount={Number(bondsToRedeem)}
-            amountToken={tok}
             beforeDisplay={
               <ReviewConvert
                 amount={Number(bondsToRedeem)}
@@ -346,8 +342,6 @@ const BondAction = ({
             open={openReviewModal}
             pendingText={`Confirm ${isConvertComponent ? 'conversion' : 'redemption'} in wallet`}
             placeOrder={isConvertComponent ? convert : redeem}
-            price={isConvertComponent ? previewConvertVal : previewRedeemVal[0]}
-            priceToken={payTok}
             title={`Review ${isConvertComponent ? 'conversion' : 'redemption'}`}
           />
         </div>

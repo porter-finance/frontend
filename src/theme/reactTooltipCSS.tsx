@@ -5,7 +5,7 @@ export const reactTooltipCSS = css`
     border-radius: 6px;
     filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
     font-size: 12px;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.06em;
     font-weight: normal;
     hyphens: auto;
     line-height: 1.2;

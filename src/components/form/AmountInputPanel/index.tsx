@@ -2,7 +2,6 @@ import { rgba } from 'polished'
 import React from 'react'
 import styled, { keyframes } from 'styled-components'
 
-import { Token } from '@josojo/honeyswap-sdk'
 import ReactTooltip from 'react-tooltip'
 
 import { unwrapMessage } from '../../../constants'
@@ -10,7 +9,7 @@ import { useActiveWeb3React } from '../../../hooks'
 import { ApprovalState } from '../../../hooks/useApproveCallback'
 import { ChainId } from '../../../utils'
 import { TokenPill } from '../../bond/BondAction'
-import { Tooltip } from '../../common/Tooltip'
+import Tooltip from '../../common/Tooltip'
 import { MiniLock } from '../../icons/MiniLock'
 import { MiniSpinner } from '../../icons/MiniSpinner'
 import {
@@ -102,8 +101,6 @@ interface wrapProps {
 }
 
 interface Props {
-  balance?: string
-  balanceString?: string
   chainId: ChainId
   info?: FieldRowInfoProps
   onMax?: () => void
@@ -124,8 +121,6 @@ const AmountInputPanel: React.FC<Props> = (props) => {
     amountDescription,
     amountText = 'Amount',
     amountTooltip = 'Number of bonds you would like to purchase.',
-    balance,
-    balanceString,
     chainId,
     disabled,
     info,
@@ -165,7 +160,7 @@ const AmountInputPanel: React.FC<Props> = (props) => {
             value={!account ? '-' : value}
           />
           <Wrap>
-            {token && <TokenPill name={token.name} token={token.collateralToken} />}
+            {token && <TokenPill token={token.collateralToken} />}
             {unlock?.isLocked && (
               <UnlockButton
                 disabled={isUnlocking}

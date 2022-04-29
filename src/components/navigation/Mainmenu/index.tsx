@@ -14,32 +14,30 @@ const Wrapper = styled.nav`
 
 const Item = styled(NavLink)`
   align-items: center;
-  color: #eeefeb;
+  color: #e0e0e0;
   opacity: 0.5;
   cursor: pointer;
   display: flex;
-  font-size: 16px;
-  font-weight: 500;
   height: 100%;
   justify-content: center;
   margin-right: 50px;
   text-decoration: none;
 
   &:hover {
-    color: #eeefeb;
+    color: #e0e0e0;
     opacity: 0.5;
 
     .fill {
-      fill: #eeefeb;
+      fill: #e0e0e0;
     }
   }
 
   &.active {
-    color: #ffffff;
+    color: #e0e0e0;
     opacity: 1;
 
     .fill {
-      fill: #eeefeb;
+      fill: #e0e0e0;
     }
   }
 `
