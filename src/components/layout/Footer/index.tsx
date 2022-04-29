@@ -8,7 +8,7 @@ const FooterLinks = styled.div`
   font-size: 13px;
   letter-spacing: 0.015em;
   text-transform: uppercase;
-  color: #ffffff;
+  color: #e0e0e0;
 `
 
 const FooterLogo = styled.div`

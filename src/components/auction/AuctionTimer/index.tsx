@@ -25,7 +25,7 @@ const DateValue = styled.span`
   font-size: 16px;
   line-height: 18px;
   letter-spacing: 0.06em;
-  color: #ffffff;
+  color: #e0e0e0;
 `
 
 const Time = styled.div`
