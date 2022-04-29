@@ -2,7 +2,6 @@ import { rgba } from 'polished'
 import React from 'react'
 import styled, { keyframes } from 'styled-components'
 
-import { Token } from '@josojo/honeyswap-sdk'
 import ReactTooltip from 'react-tooltip'
 
 import { unwrapMessage } from '../../../constants'
@@ -165,7 +164,7 @@ const AmountInputPanel: React.FC<Props> = (props) => {
             value={!account ? '-' : value}
           />
           <Wrap>
-            {token && <TokenPill name={token.name} token={token.collateralToken} />}
+            {token && <TokenPill token={token.collateralToken} />}
             {unlock?.isLocked && (
               <UnlockButton
                 disabled={isUnlocking}
