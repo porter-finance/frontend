@@ -208,10 +208,7 @@ export const drawInformation = (props: DrawInformation) => {
   const market = quoteTokenLabel + '-' + baseTokenLabel
 
   const priceTitle = ` Price (${quoteTokenLabel})`
-  const volumeTitle = ` Volume (${quoteTokenLabel})`
-
   const [xAxis] = chart.xAxes
-  const [yAxis] = chart.yAxes
 
   xAxis.title.text = priceTitle
   xAxis.title.align = 'left'

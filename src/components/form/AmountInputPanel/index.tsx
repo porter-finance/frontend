@@ -9,7 +9,7 @@ import { useActiveWeb3React } from '../../../hooks'
 import { ApprovalState } from '../../../hooks/useApproveCallback'
 import { ChainId } from '../../../utils'
 import { TokenPill } from '../../bond/BondAction'
-import { Tooltip } from '../../common/Tooltip'
+import Tooltip from '../../common/Tooltip'
 import { MiniLock } from '../../icons/MiniLock'
 import { MiniSpinner } from '../../icons/MiniSpinner'
 import {
@@ -101,8 +101,6 @@ interface wrapProps {
 }
 
 interface Props {
-  balance?: string
-  balanceString?: string
   chainId: ChainId
   info?: FieldRowInfoProps
   onMax?: () => void
@@ -123,8 +121,6 @@ const AmountInputPanel: React.FC<Props> = (props) => {
     amountDescription,
     amountText = 'Amount',
     amountTooltip = 'Number of bonds you would like to purchase.',
-    balance,
-    balanceString,
     chainId,
     disabled,
     info,

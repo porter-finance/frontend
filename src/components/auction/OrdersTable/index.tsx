@@ -3,7 +3,6 @@ import React, { useCallback, useState } from 'react'
 import { formatUnits } from '@ethersproject/units'
 import { round } from 'lodash'
 
-import { useActiveWeb3React } from '../../../hooks'
 import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
 import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
 import { useParticipatingAuctionBids } from '../../../hooks/useParticipatingAuctionBids'
@@ -38,7 +37,6 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
     derivedAuctionInfo,
     derivedAuctionInfo: { auctionState },
   } = props
-  const { chainId } = useActiveWeb3React()
   const maturityDate = useBondMaturityForAuction()
   const { bids } = useParticipatingAuctionBids()
   const cancelOrderCallback = useCancelOrderCallback(
@@ -180,7 +178,6 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
         pendingConfirmation={pendingConfirmation}
         pendingText={pendingText}
         title="Warning!"
-        width={394}
       />
       <WarningModal
         content={orderError}

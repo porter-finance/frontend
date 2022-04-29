@@ -3,7 +3,7 @@ import styled from 'styled-components'
 
 import { useAuction } from '../../../hooks/useAuction'
 import { TokenPill } from '../../bond/BondAction'
-import { Tooltip } from '../../common/Tooltip'
+import Tooltip from '../../common/Tooltip'
 import {
   FieldRowBottom,
   FieldRowInfo,
@@ -35,8 +35,7 @@ interface Props {
 }
 
 const PriceInputPanel = (props: Props) => {
-  const { account, auctionId, chainId, disabled, info, onUserPriceInput, value, ...restProps } =
-    props
+  const { account, auctionId, disabled, info, onUserPriceInput, value, ...restProps } = props
 
   const { data: graphInfo } = useAuction(auctionId)
 
