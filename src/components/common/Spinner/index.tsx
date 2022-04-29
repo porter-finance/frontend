@@ -1,16 +1,7 @@
 import React, { HTMLAttributes } from 'react'
-import styled, { keyframes } from 'styled-components'
+import styled from 'styled-components'
 
 import { ReactComponent as PorterIcon } from '../../../assets/svg/porter.svg'
-
-const rotate = keyframes`
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-`
 
 const Wrapper = styled.div<{ size?: SpinnerSize | string | undefined }>`
   flex-grow: 0;

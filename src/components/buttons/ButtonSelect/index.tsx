@@ -27,7 +27,7 @@ const Wrapper = styled.button`
   font-weight: 400;
   font-size: 12px;
   line-height: 14px;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: #eeefeb;
 `

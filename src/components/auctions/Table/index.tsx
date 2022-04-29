@@ -10,7 +10,6 @@ import Tooltip from '../../common/Tooltip'
 import { ChevronRight } from '../../icons/ChevronRight'
 import { Delete } from '../../icons/Delete'
 import { Magnifier } from '../../icons/Magnifier'
-import { Cell } from '../../pureStyledComponents/Cell'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
 
 const Wrapper = styled.div`
@@ -20,7 +19,7 @@ const Wrapper = styled.div`
 const SectionTitle = styled(PageTitle)`
   font-weight: 400;
   font-size: 42px;
-  color: #ffffff;
+  color: #e0e0e0;
   margin: 0;
 `
 
@@ -50,11 +49,11 @@ const SearchInput = styled.input`
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
-  letter-spacing: 0.1em;
-  color: white;
+  letter-spacing: 0.06em;
+  color: #d6d6d6;
   ::placeholder {
     text-transform: uppercase;
-    color: white;
+    color: #d6d6d6;
     opacity: 0.8;
   }
   flex-grow: 1;
@@ -318,7 +317,7 @@ const Table = ({
                   (column, i) =>
                     column.render('show') && (
                       <th
-                        className="bg-transparent text-[#696969] text-[10px] font-normal tracking-widest"
+                        className="bg-transparent text-[#696969] text-xs font-normal tracking-widest"
                         key={i}
                         {...column.getHeaderProps()}
                       >
@@ -369,7 +368,7 @@ const Table = ({
                 prepareRow(row)
                 return (
                   <tr
-                    className="bg-transparent text-[#D2D2D2] text-sm cursor-pointer hover"
+                    className="bg-transparent text-[#D2D2D2] text-2sm cursor-pointer hover"
                     key={i}
                     onClick={() => navigate(row.original.url)}
                     {...row.getRowProps()}
