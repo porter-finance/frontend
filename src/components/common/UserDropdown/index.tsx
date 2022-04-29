@@ -17,7 +17,7 @@ const Wrapper = styled(Dropdown)`
 `
 
 export const DropdownButton = styled.button`
-  background-color: white;
+  background-color: #e0e0e0;
   border-radius: 100px;
   color: #1e1e1e;
   font-size: 14px;
@@ -32,13 +32,7 @@ export const DropdownButton = styled.button`
   }
 
   &:hover {
-    color: #ffffff;
-
-    .chevronDown {
-      .fill {
-        fill: white;
-      }
-    }
+    background-color: #ffffff;
   }
 `
 
@@ -74,10 +68,6 @@ const Content = styled.div`
 const DropdownItemStyled = styled(DropdownItem)`
   cursor: default;
   padding: 0;
-
-  &:hover {
-    background-color: transparent;
-  }
 `
 
 const Item = styled.li<{ hasOnClick?: boolean; disabled?: boolean; hide?: boolean }>`

@@ -67,7 +67,7 @@ export const TableDesign = ({
             >
               {headerGroup.headers.map((column, i) => (
                 <th
-                  className="bg-transparent text-[#696969] text-[10px] font-normal tracking-widest"
+                  className="bg-transparent text-[#696969] text-xs font-normal tracking-widest"
                   key={i}
                   {...column.getHeaderProps()}
                 >
