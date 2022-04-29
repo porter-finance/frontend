@@ -270,7 +270,7 @@ const WalletModal: React.FC = () => {
             <Footer>
               <ExternalLink
                 className="inline-flex items-center text-xs font-normal text-gray-500 hover:underline dark:text-gray-400"
-                href="https://metamask.io/download.html"
+                href="https://metamask.io/download/"
               >
                 <svg
                   aria-hidden="true"
