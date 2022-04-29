@@ -36,7 +36,11 @@ interface TokenLogoProps {
 const SquareHolder = ({ children, size }) => {
   const defaultSize = size === '24px'
   return (
-    <div className={`avatar placeholder w-${defaultSize ? '14' : '10'} bg-[#e0e0e0] rounded-md`}>
+    <div
+      className={`avatar placeholder w-${defaultSize ? '14' : '10'} bg-[#e0e0e0] ${
+        Number(size.replace('px', '')) > 30 ? 'rounded-2xl' : 'rounded-md'
+      }`}
+    >
       {children}
     </div>
   )
