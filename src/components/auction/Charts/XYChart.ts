@@ -48,7 +48,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
     red: '#D25453',
     supply: '#1BBFE3',
     white: '#FFFFFF',
-    grey: '#9F9F9F',
+    grey: '#D6D6D6',
     cyan: '#1BBFE3',
     newOrder: '#D2D2D2',
     tooltipBg: '#001429',
@@ -207,7 +207,7 @@ export const drawInformation = (props: DrawInformation) => {
   const quoteTokenLabel = getTokenDisplay(quoteToken)
   const market = quoteTokenLabel + '-' + baseTokenLabel
 
-  const priceTitle = ` Price`
+  const priceTitle = ` Price (${quoteTokenLabel})`
   const volumeTitle = ` Volume (${quoteTokenLabel})`
 
   const [xAxis] = chart.xAxes
