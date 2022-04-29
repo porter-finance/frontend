@@ -8,7 +8,7 @@ import { useAllTransactions } from '../../state/transactions/hooks'
 import { getExplorerLink } from '../../utils'
 import { ActionButton, GhostActionLink } from '../auction/Claimer'
 import { TokenInfo } from '../bond/BondAction'
-import { Tooltip } from '../common/Tooltip'
+import Tooltip from '../common/Tooltip'
 import { unlockProps } from '../form/AmountInputPanel'
 import Modal, { DialogClose, DialogTitle } from './common/Modal'
 
