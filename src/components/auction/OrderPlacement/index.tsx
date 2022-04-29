@@ -360,8 +360,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                   </ActionButton>
                   <ConfirmationDialog
                     actionText="Place order"
-                    amount={Number(sellAmount)}
-                    amountToken={auctioningToken}
                     beforeDisplay={
                       <ReviewOrder
                         amountToken={auctioningToken}
@@ -371,17 +369,12 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                         priceToken={biddingToken}
                       />
                     }
-                    cancelCutoff={cancelCutoff}
                     finishedText="Order placed"
                     loadingText="Placing order"
-                    maturityDate={graphInfo?.bond?.maturityDate}
                     onOpenChange={setShowConfirm}
                     open={showConfirm}
-                    orderPlacingOnly={orderPlacingOnly}
                     pendingText="Confirm order in wallet"
                     placeOrder={placeOrderCallback}
-                    price={price}
-                    priceToken={biddingToken}
                     title="Review order"
                     unlock={{
                       token: biddingTokenDisplay,
