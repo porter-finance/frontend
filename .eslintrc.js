@@ -50,12 +50,7 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/ban-types': 'off',
     'react/prop-types': 'off',
-    'no-console': [
-      'warn',
-      {
-        allow: ['warn', 'error'],
-      },
-    ],
+    'no-console': 'off',
     'sort-imports': [
       'error',
       {

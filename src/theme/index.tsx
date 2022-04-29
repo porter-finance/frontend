@@ -34,7 +34,7 @@ const mediaWidthTemplates: {
 export function colors(darkMode: boolean): Colors {
   return {
     advancedBG: darkMode ? '#2B2D3F' : 'rgb(247 248 250)',
-    bg1: darkMode ? '#1E1F2C' : '#FFFFFF',
+    bg1: darkMode ? '#1E1F2C' : '#e0e0e0',
     bg2: darkMode ? '#001429' : '#F7F8FA',
     bg3: darkMode ? '#40444f' : '#EDEEF2',
     bg4: darkMode ? '#565A69' : '#CED0D9',
@@ -63,7 +63,7 @@ export function colors(darkMode: boolean): Colors {
     secondary1: darkMode ? '#2172E5' : '#3F77FF',
     secondary2: darkMode ? '#17000b26' : '#F6DDE8',
     secondary3: darkMode ? '#17000b26' : 'rgba(69,104,255,0.25)',
-    text1: darkMode ? '#FFFFFF' : '#001429',
+    text1: darkMode ? '#e0e0e0' : '#001429',
     text2: darkMode ? '#DCDCDC' : '#565A69',
     text3: darkMode ? '#001429' : '#001429',
     text4: darkMode ? '#565A69' : '#C3C5CB',
@@ -101,8 +101,8 @@ export const theme = (darkMode: boolean): DefaultTheme => ({
     backgroundColorHover: '#6972de',
     borderColor: '#404EED',
     borderColorHover: '#6972de',
-    color: '#FFFFFF',
-    colorHover: '#FFFFFF',
+    color: '#e0e0e0',
+    colorHover: '#e0e0e0',
   },
   buttonPrimaryInverted: {
     backgroundColor: 'transparent',
@@ -110,7 +110,7 @@ export const theme = (darkMode: boolean): DefaultTheme => ({
     borderColor: '#404EED',
     borderColorHover: '#404EED',
     color: '#404EED',
-    colorHover: '#FFFFFF',
+    colorHover: '#e0e0e0',
   },
   dropdown: {
     background: darkMode ? '#001429' : '#001429',

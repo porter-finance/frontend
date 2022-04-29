@@ -6,6 +6,12 @@ html {
     background-color: #131415;
 }
 
+@layer base {
+    html {
+        @apply text-base;
+    }
+}
+
 .fullPage {
     @apply max-w-3xl mx-auto px-4 sm:px-6 lg:max-w-7xl lg:px-8 xl:max-w-8xl xl:px-12;
 }
@@ -25,11 +31,13 @@ html {
 }
 
 .btn-group button {
-    @apply btn-sm;
-    @apply text-xs;
+    @apply btn-xs;
     @apply rounded-full;
-
-    height: 28px;
+    @apply m-0.5;
+    border: none;
+    font-weight: 400;
+    font-size: 10px;
+    letter-spacing: 0.1em;
 }
 
 .btn-group > .btn:not(:first-of-type) {
@@ -123,7 +131,7 @@ svg text tspan  {
     font-size: 10px;
     line-height: 11px;
     letter-spacing: 0.06em;
-    color: #9F9F9F;
+    color: #D6D6D6;
 }
 
 g[role="tooltip"] {

@@ -47,8 +47,8 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
     blue: '#404EED',
     red: '#D25453',
     supply: '#1BBFE3',
-    white: '#FFFFFF',
-    grey: '#9F9F9F',
+    white: '#e0e0e0',
+    grey: '#D6D6D6',
     cyan: '#1BBFE3',
     newOrder: '#D2D2D2',
     tooltipBg: '#001429',
@@ -169,7 +169,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   chart.zoomOutButton.background.cornerRadius(5, 5, 5, 5)
   chart.zoomOutButton.background.fill = am4core.color('#3f3f3f')
   chart.zoomOutButton.background.states.getKey('hover').properties.fill = am4core.color('#606271')
-  chart.zoomOutButton.icon.stroke = am4core.color('#ffffff')
+  chart.zoomOutButton.icon.stroke = am4core.color('#e0e0e0')
   chart.zoomOutButton.icon.strokeWidth = 2
   chart.zoomOutButton.tooltip.text = 'Zoom out'
 
@@ -207,11 +207,8 @@ export const drawInformation = (props: DrawInformation) => {
   const quoteTokenLabel = getTokenDisplay(quoteToken)
   const market = quoteTokenLabel + '-' + baseTokenLabel
 
-  const priceTitle = ` Price`
-  const volumeTitle = ` Volume (${quoteTokenLabel})`
-
+  const priceTitle = ` Price (${quoteTokenLabel})`
   const [xAxis] = chart.xAxes
-  const [yAxis] = chart.yAxes
 
   xAxis.title.text = priceTitle
   xAxis.title.align = 'left'

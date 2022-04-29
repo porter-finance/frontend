@@ -1,11 +1,10 @@
 import React from 'react'
-import styled, { keyframes } from 'styled-components'
+import styled from 'styled-components'
 
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import utc from 'dayjs/plugin/utc'
 
-import { AuctionState } from '../../../state/orderPlacement/hooks'
 import { calculateTimeLeft, calculateTimeProgress } from '../../../utils/tools'
 import Tooltip from '../../common/Tooltip'
 
@@ -25,7 +24,7 @@ const DateValue = styled.span`
   font-size: 16px;
   line-height: 18px;
   letter-spacing: 0.06em;
-  color: #ffffff;
+  color: #e0e0e0;
 `
 
 const Time = styled.div`
@@ -44,39 +43,11 @@ const Time = styled.div`
   }
 `
 
-const Blinker = keyframes`
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 1;
-  }
-  50.01% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 0;
-  }
-`
-
-const Blink = styled.span`
-  animation-direction: alternate;
-  animation-duration: 0.5s;
-  animation-iteration-count: infinite;
-  animation-name: ${Blinker};
-  animation-timing-function: linear;
-
-  &::before {
-    content: ':';
-  }
-`
-
 interface AuctionTimerProps {
   startDate: number
   endDate: number
   startTip?: string
   endTip?: string
-  auctionState?: AuctionState
   loading?: boolean
   text: string
   startText: string
@@ -85,7 +56,6 @@ interface AuctionTimerProps {
 }
 
 export const AuctionTimer = ({
-  auctionState,
   color,
   endDate,
   endText,
