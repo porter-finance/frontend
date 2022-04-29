@@ -8,22 +8,37 @@ module.exports = {
         '8xl': '85rem',
       },
       fontSize: {
+        xxs: [
+          '10px',
+          {
+            letterSpacing: '0.1em',
+          },
+        ],
         xs: [
-          '11px',
+          '12px',
           {
             letterSpacing: '0.1em',
           },
         ],
         sm: [
+          '13px',
+          {
+            letterSpacing: '0.1em',
+            fontWeight: 400,
+          },
+        ],
+        '2sm': [
           '14px',
           {
-            letterSpacing: '0.05em',
+            letterSpacing: '0.1em',
+            fontWeight: 400,
           },
         ],
         base: [
           '16px',
           {
-            letterSpacing: '0.05em',
+            letterSpacing: '0.06em',
+            fontWeight: 400,
           },
         ],
         xl: [
