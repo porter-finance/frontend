@@ -41,7 +41,7 @@ export const FieldRowLabel = styled.label`
   font-weight: 400;
   font-size: 12px;
   color: #696969;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.06em;
   margin-right: auto;
   text-align: left;
 `
@@ -49,7 +49,6 @@ export const FieldRowLabel = styled.label`
 export const FieldRowToken = styled.div`
   .tokenLogo {
     border-width: 1px;
-    margin-right: 6px;
   }
 `
 

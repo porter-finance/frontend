@@ -2,18 +2,15 @@ import React from 'react'
 import styled from 'styled-components'
 
 import { formatUnits } from '@ethersproject/units'
-import { round } from 'lodash'
 import { usePagination, useTable } from 'react-table'
 
 import { useActiveWeb3React } from '../../../hooks'
 import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
 import { BidInfo } from '../../../hooks/useParticipatingAuctionBids'
 import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
-import { useOrderbookState } from '../../../state/orderbook/hooks'
 import { OrderStatus } from '../../../state/orders/reducer'
 import { getExplorerLink, getTokenDisplay } from '../../../utils'
 import { calculateInterestRate } from '../../form/InterestRateInputPanel'
-import { Cell } from '../../pureStyledComponents/Cell'
 import { orderStatusText } from '../OrdersTable'
 
 export const OverflowWrap = styled.div`
@@ -41,12 +38,10 @@ export const TableDesign = ({
     headerGroups,
     nextPage,
     page,
-    pageCount,
     pageOptions,
     prepareRow,
     previousPage,
-    setPageSize,
-    state: { pageIndex, pageSize },
+    state: { pageIndex },
   } = useTable(
     {
       columns,
@@ -68,7 +63,7 @@ export const TableDesign = ({
             >
               {headerGroup.headers.map((column, i) => (
                 <th
-                  className="bg-transparent text-[#696969] text-[10px] font-normal tracking-widest"
+                  className="bg-transparent text-[#696969] text-xs font-normal tracking-widest"
                   key={i}
                   {...column.getHeaderProps()}
                 >
@@ -254,10 +249,9 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({ bids, derivedAuc
     [],
   )
 
-  const { chainId } = useOrderbookState()
   const data = []
 
-  const paymentToken = getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId)
+  const paymentToken = getTokenDisplay(derivedAuctionInfo?.biddingToken)
 
   const noBids = !Array.isArray(bids) || bids.length === 0
 

@@ -108,8 +108,8 @@ export function usePlaceOrderCallback(
         logger.error(`Error trying to get previous order for auctionId ${auctionId}`)
       }
 
-      const auctioningTokenDisplay = getTokenDisplay(auctioningToken, chainId)
-      const biddingTokenDisplay = getTokenDisplay(biddingToken, chainId)
+      const auctioningTokenDisplay = getTokenDisplay(auctioningToken)
+      const biddingTokenDisplay = getTokenDisplay(biddingToken)
 
       const { args, estimate, method, value } = getEstimateParams(
         biddingToken,

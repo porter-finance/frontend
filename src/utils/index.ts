@@ -237,10 +237,8 @@ export function escapeRegExp(string: string): string {
 }
 
 // Always return a non-undefined token display
-export function getTokenDisplay(token: Token, chainId = null): string {
-  return (
-    token?.symbol?.slice(0, 7) || token?.name?.slice(0, 7) || token?.address.slice(0, 7) || '🤔'
-  )
+export function getTokenDisplay(token: Token): string {
+  return token?.name || token?.symbol?.slice(0, 7) || token?.address.slice(0, 7) || '🤔'
 }
 
 export function getDisplay(token: GraphToken): string {

@@ -105,7 +105,7 @@ const VolumeLabel = styled.div`
   font-weight: 400;
   font-size: 10px;
   letter-spacing: 0.06em;
-  color: #9f9f9f;
+  color: #d6d6d6;
   margin-left: 8px;
 `
 

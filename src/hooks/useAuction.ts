@@ -1,7 +1,7 @@
 import { gql, useQuery } from '@apollo/client'
 
 import { getLogger } from '../utils/logger'
-import { Token } from './useBond'
+import { BondInfo } from './useBond'
 
 const logger = getLogger('useAuctions')
 
@@ -12,16 +12,7 @@ export interface Auction {
   end: number
   orderCancellationEndDate: number
   clearingPrice: number
-  bond: {
-    id: string
-    type: string
-    name: string
-    decimals: number
-    paymentToken: Token
-    collateralToken: Token
-    symbol: string
-    maturityDate: number
-  }
+  bond: BondInfo
   bidding: {
     id: string
     decimals: number
