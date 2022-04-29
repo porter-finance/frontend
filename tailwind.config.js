@@ -4,6 +4,9 @@ module.exports = {
   content: ['./src/**/*.{js,ts,jsx,tsx}', './public/index.html'],
   theme: {
     extend: {
+      colors: {
+        white: '#e0e0e0',
+      },
       maxWidth: {
         '8xl': '85rem',
       },
