@@ -15,7 +15,6 @@ import { useOrderPlacementState } from '../../../state/orderPlacement/hooks'
 import { ExternalLink } from '../../../theme'
 import { setupNetwork } from '../../../utils/setupNetwork'
 import { AlertIcon } from '../../icons/AlertIcon'
-import { Checkbox } from '../../pureStyledComponents/Checkbox'
 import { NetworkError, useNetworkCheck } from '../../web3/Web3Status'
 import Modal, { DialogTitle } from '../common/Modal'
 import Option from '../common/Option'
@@ -23,30 +22,6 @@ import PendingView from '../common/PendingView'
 import { Content } from '../common/pureStyledComponents/Content'
 import { IconWrapper } from '../common/pureStyledComponents/IconWrapper'
 import { Text } from '../common/pureStyledComponents/Text'
-
-const CheckboxWrapper = styled.div`
-  align-items: baseline;
-  display: flex;
-  margin-bottom: 40px;
-  margin-top: 12px;
-`
-
-const CheckboxText = styled.span`
-  color: ${({ theme }) => theme.text1};
-  font-size: 15px;
-  font-weight: normal;
-  line-height: 1.4;
-  margin-left: 12px;
-
-  a {
-    color: ${({ theme }) => theme.text1};
-    text-decoration: underline;
-
-    &:hover {
-      text-decoration: none;
-    }
-  }
-`
 
 const Footer = styled.div`
   color: ${({ theme }) => theme.text1};
@@ -244,14 +219,18 @@ const WalletModal: React.FC = () => {
       ? errorWrongNetwork
       : 'Error connecting. Try refreshing the page.'
 
+  const showError = !error && !walletConnectChainError && connectingToWallet && pendingError
+
   return (
     <Modal isOpen={walletModalOpen} onDismiss={toggleWalletModal}>
       <div>
-        <DialogTitle>{title}</DialogTitle>
+        <DialogTitle>{showError ? 'Uh oh' : title}</DialogTitle>
 
-        <p className="text-sm font-normal text-gray-500 dark:text-gray-400">
-          Connect with one of our available wallet providers or create a new one.
-        </p>
+        {!showError && (
+          <p className="text-sm font-normal text-gray-500 dark:text-gray-400">
+            Connect with one of our available wallet providers or create a new one.
+          </p>
+        )}
       </div>
       <Content>
         {(error || walletConnectChainError) && (
@@ -267,16 +246,27 @@ const WalletModal: React.FC = () => {
         {!error && !connectingToWallet && (
           <>
             <ul className="my-4 space-y-3">{getOptions()}</ul>
-            <CheckboxWrapper onClick={() => setTermsAccepted(!termsAccepted)}>
-              <Checkbox checked={termsAccepted} />
-              <CheckboxText>
-                I have read, understood and agree to the{' '}
-                <NavLink target="_blank" to="/terms-and-conditions">
-                  Terms &amp; Conditions
-                </NavLink>
-                .
-              </CheckboxText>
-            </CheckboxWrapper>
+
+            <>
+              <label className="cursor-pointer label space-x-4">
+                <input
+                  checked={termsAccepted}
+                  className="checkbox checkbox-sm"
+                  onChange={() => {
+                    setTermsAccepted(!termsAccepted)
+                  }}
+                  type="checkbox"
+                />
+                <span className="label-text">
+                  I have read, understood and agree to the{' '}
+                  <NavLink target="_blank" to="/terms-and-conditions">
+                    Terms &amp; Conditions
+                  </NavLink>
+                  .
+                </span>
+              </label>
+            </>
+
             <Footer>
               <ExternalLink
                 className="inline-flex items-center text-xs font-normal text-gray-500 hover:underline dark:text-gray-400"
@@ -302,7 +292,7 @@ const WalletModal: React.FC = () => {
             </Footer>
           </>
         )}
-        {!error && !walletConnectChainError && connectingToWallet && (
+        {showError && (
           <PendingView
             connector={pendingWallet}
             error={pendingError}
