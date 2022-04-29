@@ -1,16 +1,17 @@
 import React from 'react'
 import styled from 'styled-components'
 
+import { ReactComponent as UnicornSvg } from '../../../assets/svg/unicorn.svg'
 import { useTokenListState } from '../../../state/tokenList/hooks'
 import { isAddress } from '../../../utils'
 import { UnregisteredToken } from '../UnregisteredToken'
 
 const Wrapper = styled.div<{ size: string }>`
-  background-color: #606467;
+  background-color: #e0e0e0;
   border-radius: 50%;
   border-width: ${({ size }) => (parseInt(size, 10) < 20 ? '1px' : '3px')};
   border-style: solid;
-  border-color: #001429;
+  border-color: #e0e0e0;
   box-sizing: content-box;
   flex-shrink: 0;
   height: ${({ size }) => size};
@@ -19,7 +20,7 @@ const Wrapper = styled.div<{ size: string }>`
 `
 
 const Image = styled.img`
-  background: #fff;
+  background: #e0e0e0;
   border-radius: 50%;
   display: block;
   height: 100%;
@@ -35,12 +36,12 @@ interface TokenLogoProps {
 const SquareHolder = ({ children, size }) => {
   const defaultSize = size === '24px'
   return (
-    <div className="avatar placeholder">
-      <div
-        className={`w-${defaultSize ? '14' : '10'} bg-white rounded-${defaultSize ? 'xl' : 'md'}`}
-      >
-        {children}
-      </div>
+    <div
+      className={`avatar placeholder w-${defaultSize ? '14' : '10'} bg-[#e0e0e0] ${
+        Number(size.replace('px', '')) > 30 ? 'rounded-2xl' : 'rounded-md'
+      }`}
+    >
+      {children}
     </div>
   )
 }
@@ -51,18 +52,20 @@ const TokenLogo: React.FC<TokenLogoProps> = (props) => {
   const { tokens } = useTokenListState()
   const validToken = isAddress(address) && tokens
   const imageURL = validToken && tokens[address.toLowerCase()]
+  const sizeToUse = square && size === '24px' ? '30px' : size
+  let forceSvg = false
 
-  const UnTok = !imageURL && (
-    <UnregisteredToken
-      size={square && size === '24px' ? '30px' : size}
-      symbol={symbol}
-      {...restProps}
-    />
-  )
+  // Example used in dev
+  if (address === '0x314a07fbff5efa2e0bf98c8c96efe9adab1a50db') {
+    forceSvg = true
+  }
+
+  const UnTok = !imageURL && <UnregisteredToken size={sizeToUse} symbol={symbol} {...restProps} />
 
   const ImageToken = imageURL && (
-    <Wrapper className="tokenLogo" size={square && size === '24px' ? '30px' : size} {...restProps}>
-      <Image src={imageURL} />
+    <Wrapper className="tokenLogo" size={sizeToUse} {...restProps}>
+      {forceSvg && <UnicornSvg height={sizeToUse} width={sizeToUse} />}
+      {!forceSvg && <Image src={imageURL} />}
     </Wrapper>
   )
 
