@@ -10,7 +10,6 @@ import Tooltip from '../../common/Tooltip'
 import { ChevronRight } from '../../icons/ChevronRight'
 import { Delete } from '../../icons/Delete'
 import { Magnifier } from '../../icons/Magnifier'
-import { Cell } from '../../pureStyledComponents/Cell'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
 
 const Wrapper = styled.div`

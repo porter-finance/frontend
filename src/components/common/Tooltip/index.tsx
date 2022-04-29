@@ -66,7 +66,7 @@ export const TooltipRoot = TooltipPrimitive.Root
 export const TooltipTrigger = TooltipPrimitive.Trigger
 export const TooltipContent = StyledContent
 
-export const Tooltip = ({
+const TooltipElement = ({
   left,
   tip,
 }: {
@@ -101,4 +101,4 @@ export const Tooltip = ({
   return tipEl
 }
 
-export default Tooltip
+export default TooltipElement
