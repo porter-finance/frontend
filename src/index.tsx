@@ -59,7 +59,7 @@ const Updaters = () => {
 const Router = PUBLIC_URL === '.' ? HashRouter : BrowserRouter
 
 const container = document.getElementById('root')
-const root = createRoot(container!)
+const root = createRoot(container)
 root.render(
   <>
     <Web3ReactProvider getLibrary={getLibrary}>
