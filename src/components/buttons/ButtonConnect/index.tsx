@@ -1,16 +1,13 @@
 import React, { ButtonHTMLAttributes } from 'react'
 import styled from 'styled-components'
 
-import { getLogger } from '../../../utils/logger'
 import { DropdownButton } from '../../common/UserDropdown'
-
-const logger = getLogger('ButtonConnect')
 
 const Wrapper = styled.div`
   align-items: center;
   background: transparent;
   border: none;
-  color: white;
+  color: #e0e0e0;
   cursor: pointer;
   display: flex;
   font-weight: 400;
@@ -22,18 +19,6 @@ const Wrapper = styled.div`
   &[disabled] {
     cursor: not-allowed;
     opacity: 0.5;
-  }
-
-  .fill {
-    fill: white;
-  }
-
-  &:hover {
-    color: white;
-
-    .fill {
-      fill: white;
-    }
   }
 `
 
