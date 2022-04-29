@@ -122,7 +122,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
     [],
   )
   const data = []
-  const paymentToken = getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId)
+  const paymentToken = getTokenDisplay(derivedAuctionInfo?.biddingToken)
 
   !ordersEmpty &&
     bids.forEach((row) => {

@@ -188,7 +188,7 @@ const BondDetail: React.FC = () => {
           </div>
           <div>
             <h1 className="text-3xl text-white capitalize">{bond?.name.toLowerCase()} Bond</h1>
-            <p className="text-blue-100 text-sm font-medium">{bond?.symbol}</p>
+            <p className="text-blue-100 text-sm">{bond?.symbol}</p>
           </div>
         </div>
         <div>{isConvertBond ? <ConvertButtonOutline /> : <SimpleButtonOutline />}</div>

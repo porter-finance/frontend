@@ -18,8 +18,6 @@ const Item = styled(NavLink)`
   opacity: 0.5;
   cursor: pointer;
   display: flex;
-  font-size: 16px;
-  font-weight: 500;
   height: 100%;
   justify-content: center;
   margin-right: 50px;

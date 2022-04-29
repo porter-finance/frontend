@@ -2,7 +2,6 @@ import React from 'react'
 import styled from 'styled-components'
 
 import { formatUnits } from '@ethersproject/units'
-import { round } from 'lodash'
 import { usePagination, useTable } from 'react-table'
 
 import { useActiveWeb3React } from '../../../hooks'
@@ -257,7 +256,7 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({ bids, derivedAuc
   const { chainId } = useOrderbookState()
   const data = []
 
-  const paymentToken = getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId)
+  const paymentToken = getTokenDisplay(derivedAuctionInfo?.biddingToken)
 
   const noBids = !Array.isArray(bids) || bids.length === 0
 
