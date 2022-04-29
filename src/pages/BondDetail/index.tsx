@@ -18,7 +18,6 @@ import WarningModal from '../../components/modals/WarningModal'
 import TokenLogo from '../../components/token/TokenLogo'
 import { BondInfo, useBond } from '../../hooks/useBond'
 import { useBondExtraDetails } from '../../hooks/useBondExtraDetails'
-import { useHistoricTokenPrice } from '../../hooks/useTokenPrice'
 import { ConvertButtonOutline, LoadingTwoGrid, SimpleButtonOutline, TwoGridPage } from '../Auction'
 
 export enum BondActions {
@@ -128,7 +127,7 @@ const BondDetail: React.FC = () => {
   const { isConvertBond, isDefaulted, isMatured, isPaid, isPartiallyPaid } = getBondStates(bond)
 
   // TODO write the graph using this data
-  const graphData = useHistoricTokenPrice(bond?.collateralToken.id, 30)
+  // const graphData = useHistoricTokenPrice(bond?.collateralToken.id, 30)
 
   let positionData
 
