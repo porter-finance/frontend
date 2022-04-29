@@ -6,7 +6,6 @@ import { useWeb3React } from '@web3-react/core'
 
 import { useActiveWeb3React } from '../../../hooks'
 import { getChainName, truncateStringInTheMiddle } from '../../../utils/tools'
-import { Button } from '../../buttons/Button'
 import { Dropdown, DropdownItem, DropdownPosition } from '../../common/Dropdown'
 import { ChevronRight } from '../../icons/ChevronRight'
 import { TransactionsModal } from '../../modals/TransactionsModal'
@@ -62,9 +61,6 @@ const ConnectionText = styled.div`
   margin-bottom: -2px;
 `
 
-const Content = styled.div`
-  width: 245px;
-`
 const DropdownItemStyled = styled(DropdownItem)`
   cursor: default;
   padding: 0;
@@ -73,8 +69,6 @@ const DropdownItemStyled = styled(DropdownItem)`
 const Item = styled.li<{ hasOnClick?: boolean; disabled?: boolean; hide?: boolean }>`
   display: ${(props) => (props.hide ? 'none' : 'flex')};
 `
-
-const DisconnectButton = styled(Button)``
 
 const UserDropdownButton = () => {
   const { account } = useWeb3React()

@@ -138,7 +138,6 @@ const AuctionDetails = (props: Props) => {
           <ActiveStatusPill disabled={hasEnded} title={statusLabel} />
         </h2>
         <AuctionTimer
-          auctionState={derivedAuctionInfo?.auctionState}
           color="blue"
           endDate={graphInfo?.end}
           endText="End date"

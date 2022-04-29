@@ -13,9 +13,8 @@ import { LoadingBox } from '../../../pages/Auction'
 import { useWalletModalToggle } from '../../../state/application/hooks'
 import { DerivedAuctionInfo, useDerivedClaimInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
-import { getFullTokenDisplay } from '../../../utils'
 import { TokenPill } from '../../bond/BondAction'
-import { Tooltip } from '../../common/Tooltip'
+import Tooltip from '../../common/Tooltip'
 import { FieldRowLabelStyled } from '../../form/PriceInputPanel'
 import ClaimConfirmationModal from '../../modals/ClaimConfirmationModal'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
@@ -124,11 +123,6 @@ const Claimer: React.FC<Props> = (props) => {
         setShowConfirm(false)
         setUserConfirmedTx(false)
       })
-
-  const biddingTokenDisplay = useMemo(
-    () => getFullTokenDisplay(biddingToken, chainId),
-    [biddingToken, chainId],
-  )
 
   const isLoading = useMemo(
     () => (account && isDerivedClaimInfoLoading) || !claimableBidFunds || !claimableBonds,

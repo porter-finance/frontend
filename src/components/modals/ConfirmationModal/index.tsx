@@ -44,7 +44,6 @@ interface ConfirmationModalProps {
   pendingConfirmation: boolean
   pendingText: string
   title?: string
-  width?: number
 }
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = (props) => {
@@ -57,7 +56,6 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = (props) => {
     pendingConfirmation,
     pendingText,
     title = '',
-    width,
     ...restProps
   } = props
   const { chainId } = useActiveWeb3React()

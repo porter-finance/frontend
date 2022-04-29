@@ -8,11 +8,9 @@ import { useActiveWeb3React } from '../../../hooks'
 import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
 import { BidInfo } from '../../../hooks/useParticipatingAuctionBids'
 import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
-import { useOrderbookState } from '../../../state/orderbook/hooks'
 import { OrderStatus } from '../../../state/orders/reducer'
 import { getExplorerLink, getTokenDisplay } from '../../../utils'
 import { calculateInterestRate } from '../../form/InterestRateInputPanel'
-import { Cell } from '../../pureStyledComponents/Cell'
 import { orderStatusText } from '../OrdersTable'
 
 export const OverflowWrap = styled.div`
@@ -40,12 +38,10 @@ export const TableDesign = ({
     headerGroups,
     nextPage,
     page,
-    pageCount,
     pageOptions,
     prepareRow,
     previousPage,
-    setPageSize,
-    state: { pageIndex, pageSize },
+    state: { pageIndex },
   } = useTable(
     {
       columns,
@@ -253,7 +249,6 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({ bids, derivedAuc
     [],
   )
 
-  const { chainId } = useOrderbookState()
   const data = []
 
   const paymentToken = getTokenDisplay(derivedAuctionInfo?.biddingToken)
