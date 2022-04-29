@@ -329,8 +329,6 @@ const BondAction = ({
           <ConfirmationDialog
             actionColor="purple"
             actionText={`${getActionText(componentType)} bonds`}
-            amount={Number(bondsToRedeem)}
-            amountToken={tok}
             beforeDisplay={
               <ReviewConvert
                 amount={Number(bondsToRedeem)}
@@ -345,8 +343,6 @@ const BondAction = ({
             open={openReviewModal}
             pendingText={`Confirm ${isConvertComponent ? 'conversion' : 'redemption'} in wallet`}
             placeOrder={isConvertComponent ? convert : redeem}
-            price={isConvertComponent ? previewConvertVal : previewRedeemVal[0]}
-            priceToken={payTok}
             title={`Review ${isConvertComponent ? 'conversion' : 'redemption'}`}
           />
         </div>
