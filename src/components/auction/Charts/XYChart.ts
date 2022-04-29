@@ -185,10 +185,12 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   chart.legend.markers.template.width = 14
   // chart.legend.parent = legendContainer
   chart.tooltip.getFillFromObject = false
-  chart.tooltip.background.fill = am4core.color('#2C2C2C')
-  chart.tooltip.background.stroke = am4core.color('#2C2C2C')
+  chart.tooltip.background.fill = am4core.color('#181A1C')
+  chart.tooltip.background.filters.clear()
+  chart.tooltip.background.cornerRadius = 6
+  chart.tooltip.background.stroke = am4core.color('#2A2B2C')
   chart.legend.itemContainers.template.tooltipHTML =
-    '<div class="text-[12px] tracking-[.1em] rounded-md text-[#D2D2D2] bg-[#2C2C2C] border-none flex-wrap max-w-[200px] whitespace-normal">{dataContext.dummyData.description}</div>'
+    '<div class="text-xs text-[#D6D6D6] border-none flex-wrap max-w-[400px] p-1 whitespace-normal">{dataContext.dummyData.description}</div>'
 
   return chart
 }
@@ -222,10 +224,12 @@ export const drawInformation = (props: DrawInformation) => {
   } = chart.series
 
   askPricesSeries.tooltip.getFillFromObject = false
-  askPricesSeries.tooltip.background.fill = am4core.color('#2C2C2C')
-  askPricesSeries.tooltip.background.stroke = am4core.color('#2C2C2C')
+  askPricesSeries.tooltip.background.fill = am4core.color('#181A1C')
+  askPricesSeries.tooltip.background.filters.clear()
+  askPricesSeries.tooltip.background.cornerRadius = 6
+  askPricesSeries.tooltip.background.stroke = am4core.color('#2A2B2C')
   askPricesSeries.tooltipHTML =
-    '<div class="text-[12px] tracking-[.1em] rounded-md text-[#D2D2D2] drop-shadow-lg bg-[#2C2C2C] border-none flex-wrap max-w-[200px] whitespace-normal">{text}</div>'
+    '<div class="text-xs text-[#D6D6D6] border-none flex-wrap max-w-[400px] p-1 whitespace-normal">{text}</div>'
 
   askPricesSeries.adapter.add('tooltipText', (text, target) => {
     const valueX = target?.tooltipDataItem?.values?.valueX?.value ?? 0
@@ -243,10 +247,12 @@ Interest:  ${interest}
   })
 
   bidPricesSeries.tooltip.getFillFromObject = false
-  bidPricesSeries.tooltip.background.fill = am4core.color('#2C2C2C')
-  bidPricesSeries.tooltip.background.stroke = am4core.color('#2C2C2C')
+  bidPricesSeries.tooltip.background.fill = am4core.color('#181A1C')
+  bidPricesSeries.tooltip.background.filters.clear()
+  bidPricesSeries.tooltip.background.cornerRadius = 6
+  bidPricesSeries.tooltip.background.stroke = am4core.color('#2A2B2C')
   bidPricesSeries.tooltipHTML =
-    '<div class="text-[12px] tracking-[.1em] rounded-md text-[#D2D2D2] drop-shadow-lg bg-[#2C2C2C] border-none flex-wrap max-w-[200px] whitespace-normal">{text}</div>'
+    '<div class="text-xs text-[#D6D6D6] border-none flex-wrap max-w-[400px] p-1 whitespace-normal">{text}</div>'
   bidPricesSeries.adapter.add('tooltipText', (text, target) => {
     const valueX = target?.tooltipDataItem?.values?.valueX?.value ?? 0
     const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
