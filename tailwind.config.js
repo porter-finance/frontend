@@ -12,12 +12,14 @@ module.exports = {
           '10px',
           {
             letterSpacing: '0.1em',
+            fontWeight: 400,
           },
         ],
         xs: [
           '12px',
           {
             letterSpacing: '0.1em',
+            fontWeight: 400,
           },
         ],
         sm: [

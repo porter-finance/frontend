@@ -23,7 +23,6 @@ html {
 .btn-group {
     border: 1px solid #454545;
     @apply rounded-full;
-    height: 28px;
 }
 
 .btn-group .btn-active {
@@ -32,11 +31,13 @@ html {
 }
 
 .btn-group button {
-    @apply btn-sm;
-    @apply text-xxs;
+    @apply btn-xs;
     @apply rounded-full;
-    @apply m-1;
-    height: 22px;
+    @apply m-0.5;
+    border: none;
+    font-weight: 400;
+    font-size: 10px;
+    letter-spacing: 0.1em;
 }
 
 .btn-group > .btn:not(:first-of-type) {
