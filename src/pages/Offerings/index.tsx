@@ -130,7 +130,6 @@ const Offerings = () => {
     <Table
       columns={columns}
       data={tableData}
-      emptyActionText="Get notify"
       emptyDescription="There are no offerings at the moment"
       emptyLogo={
         <>
