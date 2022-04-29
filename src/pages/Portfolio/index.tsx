@@ -1,4 +1,5 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { createGlobalStyle } from 'styled-components'
 
 import { ReactComponent as ConnectIcon } from '../../assets/svg/connect.svg'
@@ -21,11 +22,13 @@ const GlobalStyle = createGlobalStyle`
 const Portfolio = () => {
   const { account } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
+  const navigate = useNavigate()
 
   const { data, loading } = useBondsPortfolio()
   const tableData = data ? createTable(data) : []
 
   const emptyActionText = account ? 'Go to offerings' : 'Connect wallet'
+  const emptyActionClick = account ? () => navigate('/offerings') : toggleWalletModal
   const emptyDescription = account
     ? 'Your portfolio is empty'
     : 'Connect your wallet to view your portfolio'
@@ -43,7 +46,7 @@ const Portfolio = () => {
       <Table
         columns={columns(true)}
         data={tableData}
-        emptyActionClick={toggleWalletModal}
+        emptyActionClick={emptyActionClick}
         emptyActionText={emptyActionText}
         emptyDescription={emptyDescription}
         emptyLogo={emptyLogo}

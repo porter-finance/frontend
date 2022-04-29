@@ -156,7 +156,6 @@ const Products = () => {
         columns={columns()}
         data={tableData}
         emptyActionClass="!bg-[#532DBE]"
-        emptyActionText="Get notify"
         emptyDescription="There are no products at the moment"
         emptyLogo={
           <>
