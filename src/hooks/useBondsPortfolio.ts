@@ -1,6 +1,5 @@
 import { gql, useQuery } from '@apollo/client'
 import { useWeb3React } from '@web3-react/core'
-import { Token } from 'graphql'
 
 import { getLogger } from '../utils/logger'
 import { BondInfo } from './useBond'

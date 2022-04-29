@@ -38,7 +38,7 @@ import {
 } from '../../../utils'
 import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
-import { Tooltip } from '../../common/Tooltip'
+import Tooltip from '../../common/Tooltip'
 import AmountInputPanel from '../../form/AmountInputPanel'
 import InterestRateInputPanel, { getReviewData } from '../../form/InterestRateInputPanel'
 import PriceInputPanel from '../../form/PriceInputPanel'
@@ -137,8 +137,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     ? formatUnits(biddingTokenBalance, biddingToken.decimals)
     : '0'
 
-  const maxAmountInput = biddingTokenBalance ? biddingTokenBalance : undefined
-
   useEffect(() => {
     onUserPriceInput(price)
     if (price == '-' && derivedAuctionInfo?.clearingPrice) {
@@ -194,10 +192,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     [auctionDetails],
   )
   const signatureAvailable = React.useMemo(() => signature && signature.length > 10, [signature])
-
-  const onMaxInput = React.useCallback(() => {
-    maxAmountInput && onUserSellAmountInput(maxAmountInput.toString())
-  }, [maxAmountInput, onUserSellAmountInput])
 
   const amountInfo = React.useMemo(
     () =>

@@ -15,7 +15,7 @@ import { useActivePopups, useWalletModalToggle } from '../../../state/applicatio
 import { getTokenDisplay } from '../../../utils'
 import { ActionButton } from '../../auction/Claimer'
 import { ActiveStatusPill } from '../../auction/OrderbookTable'
-import { Tooltip } from '../../common/Tooltip'
+import Tooltip from '../../common/Tooltip'
 import AmountInputPanel from '../../form/AmountInputPanel'
 import ConfirmationDialog, { ReviewConvert } from '../../modals/ConfirmationDialog'
 import { FieldRowToken, FieldRowTokenSymbol } from '../../pureStyledComponents/FieldRow'
@@ -81,7 +81,7 @@ const BondAction = ({
   const params = useParams()
 
   const bondId = overwriteBondId || params?.bondId
-  const { data: bondInfo, loading: isLoading } = useBond(bondId)
+  const { data: bondInfo } = useBond(bondId)
   const bondTokenBalance = bondInfo?.tokenBalances?.[0]?.amount || 0
 
   const [bondsToRedeem, setBondsToRedeem] = useState('0.00')
@@ -92,7 +92,7 @@ const BondAction = ({
 
   const [tokenDetails, setTokenDetails] = useState({ BondAmount: null, payTok: null, tok: null })
 
-  const { isConvertBond, isDefaulted, isMatured, isPaid, isPartiallyPaid } = getBondStates(bondInfo)
+  const { isDefaulted, isMatured, isPaid, isPartiallyPaid } = getBondStates(bondInfo)
 
   useEffect(() => {
     let BondAmount = null
@@ -115,7 +115,7 @@ const BondAction = ({
   }, [chainId, bondsToRedeem, bondInfo])
 
   // these names r so bad
-  const { BondAmount, payTok, tok } = tokenDetails
+  const { BondAmount, tok } = tokenDetails
 
   const { redeem } = useRedeemBond(BondAmount, bondId)
   const { convert } = useConvertBond(BondAmount, bondId)
@@ -276,7 +276,6 @@ const BondAction = ({
                     ? 'Amount of bonds you are exchanging for convertible tokens.'
                     : 'Amount of bonds you are redeeming.'
                 }
-                balance={formatUnits(Number(bondTokenBalance) || 0, bondInfo?.decimals)}
                 chainId={chainId}
                 disabled={!account}
                 maxTitle={`${getActionText(componentType)} all`}
