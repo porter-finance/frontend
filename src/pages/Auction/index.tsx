@@ -171,7 +171,7 @@ const Auction: React.FC = () => {
           </div>
           <div>
             <h1 className="text-3xl text-white capitalize">{graphInfo?.bond.name} Auction</h1>
-            <p className="text-blue-100 text-sm font-medium">{graphInfo?.bond.symbol}</p>
+            <p className="text-[#E0E0E0] text-2sm">{graphInfo?.bond.symbol}</p>
           </div>
         </div>
         <AuctionButtonOutline />

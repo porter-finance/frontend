@@ -50,7 +50,7 @@ const SearchInput = styled.input`
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.06em;
   color: white;
   ::placeholder {
     text-transform: uppercase;
