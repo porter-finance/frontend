@@ -13,13 +13,12 @@ import { LoadingBox } from '../../../pages/Auction'
 import { useWalletModalToggle } from '../../../state/application/hooks'
 import { DerivedAuctionInfo, useDerivedClaimInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
-import { getFullTokenDisplay, getTokenDisplay } from '../../../utils'
+import { getFullTokenDisplay } from '../../../utils'
+import { TokenPill } from '../../bond/BondAction'
 import { Tooltip } from '../../common/Tooltip'
 import { FieldRowLabelStyled } from '../../form/PriceInputPanel'
 import ClaimConfirmationModal from '../../modals/ClaimConfirmationModal'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
-import { FieldRowToken, FieldRowTokenSymbol } from '../../pureStyledComponents/FieldRow'
-import TokenLogo from '../../token/TokenLogo'
 
 const Wrapper = styled(BaseCard)`
   max-width: 100%;
@@ -169,19 +168,7 @@ const Claimer: React.FC<Props> = (props) => {
               <div className="text-base text-white">
                 {claimableBidFunds ? `${claimableBidFunds.toSignificant(6)}` : `-`}
               </div>
-              <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#2C2C2C] rounded-full p-1 px-2">
-                {biddingToken.address && (
-                  <TokenLogo
-                    size={'16px'}
-                    token={{ address: biddingToken.address, symbol: biddingToken.symbol }}
-                  />
-                )}
-                {biddingToken && biddingToken.symbol && (
-                  <FieldRowTokenSymbol>
-                    {getTokenDisplay(biddingToken, chainId)}
-                  </FieldRowTokenSymbol>
-                )}
-              </FieldRowToken>
+              <TokenPill token={biddingToken} />
             </TokenItem>
 
             {graphInfo?.bondsSold > 0 && (
@@ -189,19 +176,7 @@ const Claimer: React.FC<Props> = (props) => {
                 <div className="text-base text-white">
                   {claimableBonds ? `${claimableBonds.toSignificant(6)}` : `-`}
                 </div>
-                <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#2C2C2C] rounded-full p-1 px-2">
-                  {auctioningToken.address && (
-                    <TokenLogo
-                      size={'16px'}
-                      token={{ address: auctioningToken.address, symbol: auctioningToken.symbol }}
-                    />
-                  )}
-                  {auctioningToken && auctioningToken.symbol && (
-                    <FieldRowTokenSymbol>
-                      {getTokenDisplay(auctioningToken, chainId)}
-                    </FieldRowTokenSymbol>
-                  )}
-                </FieldRowToken>
+                <TokenPill token={auctioningToken} />
               </TokenItem>
             )}
 

@@ -6,6 +6,12 @@ html {
     background-color: #131415;
 }
 
+@layer base {
+    html {
+        @apply text-base;
+    }
+}
+
 .fullPage {
     @apply max-w-3xl mx-auto px-4 sm:px-6 lg:max-w-7xl lg:px-8 xl:max-w-8xl xl:px-12;
 }
@@ -17,6 +23,7 @@ html {
 .btn-group {
     border: 1px solid #454545;
     @apply rounded-full;
+    height: 28px;
 }
 
 .btn-group .btn-active {
@@ -26,10 +33,10 @@ html {
 
 .btn-group button {
     @apply btn-sm;
-    @apply text-xs;
+    @apply text-xxs;
     @apply rounded-full;
-
-    height: 28px;
+    @apply m-1;
+    height: 22px;
 }
 
 .btn-group > .btn:not(:first-of-type) {
