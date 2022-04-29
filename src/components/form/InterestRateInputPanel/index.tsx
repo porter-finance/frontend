@@ -2,10 +2,9 @@ import React from 'react'
 import styled from 'styled-components'
 
 import dayjs from 'dayjs'
-import { round } from 'lodash'
 
 import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
-import { Tooltip } from '../../common/Tooltip'
+import Tooltip from '../../common/Tooltip'
 
 const FieldRowLabelStyledText = styled.span`
   margin-right: 5px;

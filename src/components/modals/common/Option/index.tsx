@@ -21,7 +21,7 @@ interface Props {
 }
 
 const Option: React.FC<Props> = (props) => {
-  const { disabled = false, icon, onClick = null, subText = null, text, ...restProps } = props
+  const { disabled = false, icon, onClick = null, text, ...restProps } = props
 
   return (
     <Wrapper disabled={disabled} onClick={!disabled && onClick} {...restProps}>

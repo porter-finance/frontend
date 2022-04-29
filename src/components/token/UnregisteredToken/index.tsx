@@ -23,7 +23,7 @@ const Badge = styled.div<{ size: string }>`
   background-color: #ff0000;
   border-radius: ${(props) => `${parseInt(props.size, 10) * 0.07}px`};
   box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.4);
-  color: #fff;
+  color: #e0e0e0;
   display: flex;
   font-size: ${(props) => `${parseInt(props.size, 10) * 0.13}px`};
   font-weight: 600;
