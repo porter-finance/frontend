@@ -31,7 +31,6 @@ const StyledContent = styled(TooltipPrimitive.Content, {
   padding: '10px 15px',
   fontSize: 12,
   maxWidth: '400px',
-  letterSpacing: '0.06em',
   color: '#D6D6D6',
   backgroundColor: '#181A1C',
   boxShadow: 'hsl(206 22% 7% / 35%) 0px 10px 38px -10px, hsl(206 22% 7% / 20%) 0px 10px 20px -15px',
@@ -81,7 +80,7 @@ const TooltipElement = ({
             <TooltipIcon />
           </IconButton>
         </TooltipTrigger>
-        <StyledContent sideOffset={5}>
+        <StyledContent className="text-xs" sideOffset={5}>
           {tip}
           <StyledArrow />
         </StyledContent>
