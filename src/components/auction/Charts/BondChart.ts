@@ -1,17 +1,16 @@
 import * as am4charts from '@amcharts/amcharts4/charts'
 import * as am4core from '@amcharts/amcharts4/core'
 import am4themesSpiritedaway from '@amcharts/amcharts4/themes/spiritedaway'
-import { Token } from '@josojo/honeyswap-sdk'
 import { round } from 'lodash'
 
-import { ChainId, getTokenDisplay } from '../../../utils'
-import { calculateInterestRate } from '../../form/InterestRateInputPanel'
+import { Token } from '../../../hooks/useBond'
+import { getDisplay } from '../../../utils'
 
 // Recalculates very big and very small numbers by reducing their length according to rules and applying suffix/prefix.
 const numberFormatter = new am4core.NumberFormatter()
 am4core.addLicense('ch-custom-attribution')
 
-const createGradient = (color) => {
+export const createGradient = (color) => {
   const gradient = new am4core.LinearGradient()
   const opacityValues = [1, 0.7, 0.24, 0]
   opacityValues.forEach((opacity) => gradient.addColor(am4core.color(color), opacity))
@@ -32,11 +31,25 @@ numberFormatter.bigNumberPrefixes = [
   { number: 1e24, suffix: 'Y' }, // Septillion
 ]
 
-export interface XYChartProps {
+export interface XYBondChartProps {
   chartElement: HTMLElement
 }
 
-export const XYChart = (props: XYChartProps): am4charts.XYChart => {
+export const colors = {
+  blue: '#404EED',
+  red: '#D25453',
+  supply: '#EDA651',
+  white: '#e0e0e0',
+  green: '#5BCD88',
+  purple: '#532DBE',
+  grey: '#D6D6D6',
+  cyan: '#1BBFE3',
+  newOrder: '#D2D2D2',
+  tooltipBg: '#001429',
+  tooltipBorder: '#174172',
+}
+
+export const XYSimpleBondChart = (props: XYBondChartProps): am4charts.XYChart => {
   const { chartElement } = props
 
   am4core.useTheme(am4themesSpiritedaway)
@@ -50,111 +63,48 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   chart.paddingRight = 0
   chart.marginBottom = 0
 
-  // Colors
-  const colors = {
-    blue: '#404EED',
-    red: '#D25453',
-    supply: '#EDA651',
-    white: '#e0e0e0',
-    grey: '#D6D6D6',
-    cyan: '#1BBFE3',
-    newOrder: '#D2D2D2',
-    tooltipBg: '#001429',
-    tooltipBorder: '#174172',
-  }
-
   // Create axes
-  const priceAxis = chart.xAxes.push(new am4charts.ValueAxis())
+  const dateAxis = chart.xAxes.push(new am4charts.DateAxis())
   const volumeAxis = chart.yAxes.push(new am4charts.ValueAxis())
   volumeAxis.renderer.grid.template.stroke = am4core.color(colors.grey)
   volumeAxis.renderer.grid.template.strokeOpacity = 0
   volumeAxis.title.fill = am4core.color(colors.grey)
   volumeAxis.renderer.labels.template.fill = am4core.color(colors.grey)
 
-  priceAxis.renderer.grid.template.strokeOpacity = 0
-  priceAxis.title.fill = am4core.color(colors.grey)
-  priceAxis.renderer.labels.template.fill = am4core.color(colors.grey)
+  dateAxis.renderer.grid.template.strokeOpacity = 0
+  dateAxis.title.fill = am4core.color(colors.grey)
+  dateAxis.renderer.labels.template.fill = am4core.color(colors.grey)
 
   volumeAxis.numberFormatter = numberFormatter
-  //priceAxis.numberFormatter = numberFormatter
 
-  priceAxis.strictMinMax = true
-  priceAxis.extraMin = 0.02
-  priceAxis.extraMax = 0.02
+  const faceValue = chart.series.push(new am4charts.LineSeries())
+  faceValue.dataFields.dateX = 'date'
+  faceValue.dataFields.valueY = 'faceValueY'
+  faceValue.strokeWidth = 2
+  faceValue.stroke = am4core.color(colors.red)
+  faceValue.fill = faceValue.stroke
+  faceValue.name = 'FACE VALUE'
+  faceValue.dummyData = {
+    description: 'Auction will not be executed, unless this minimum funding threshold is met',
+  }
 
-  // background: linear-gradient(180deg, rgba(64, 78, 237, 0.24) 0%, rgba(64, 78, 237, 0) 100%);
-
-  // Create series, shows the price (x axis) and size (y axis) of the bids that have been placed, both expressed in the bid token
-  const bidSeries = chart.series.push(new am4charts.StepLineSeries())
-  bidSeries.dataFields.valueX = 'priceNumber'
-  bidSeries.dataFields.valueY = 'bidValueY'
-  bidSeries.strokeWidth = 2
-  bidSeries.stroke = am4core.color(colors.blue)
-  bidSeries.fill = createGradient(colors.blue)
-  bidSeries.fillOpacity = 0.25
-  bidSeries.startLocation = 0.5
-  bidSeries.name = 'BIDS'
-  bidSeries.dummyData = {
+  const collateralValue = chart.series.push(new am4charts.StepLineSeries())
+  collateralValue.dataFields.dateX = 'date'
+  collateralValue.dataFields.valueY = 'collateralValueY'
+  collateralValue.strokeWidth = 2
+  collateralValue.stroke = am4core.color(colors.green)
+  collateralValue.fill = createGradient(colors.green)
+  collateralValue.fillOpacity = 0.25
+  collateralValue.startLocation = 0.5
+  collateralValue.name = 'COLLATERAL VALUE'
+  collateralValue.dummyData = {
     description:
       'Shows the price (x axis) and size (y axis) of the bids that have been placed, both expressed in the bid token',
   }
 
-  // Create series, shows the minimum sell price (x axis) the auctioneer is willing to accept
-  const askSeries = chart.series.push(new am4charts.LineSeries())
-  askSeries.dataFields.valueX = 'priceNumber'
-  askSeries.dataFields.valueY = 'askValueY'
-  askSeries.strokeWidth = 2
-  askSeries.stroke = am4core.color(colors.supply)
-  askSeries.fill = createGradient(colors.supply)
-  askSeries.fillOpacity = 0.15
-  askSeries.name = 'SELL SUPPLY'
-  askSeries.dummyData = {
-    description:
-      'Shows sell supply of the auction based on the price and nominated in the bidding token',
-  }
-
-  // Create series, shows the minimum sell price (x axis) the auctioneer is willing to accept
-  const minFunding = chart.series.push(new am4charts.LineSeries())
-  minFunding.dataFields.valueX = 'priceNumber'
-  minFunding.dataFields.valueY = 'minFundY'
-  minFunding.strokeWidth = 2
-  minFunding.stroke = am4core.color(colors.red)
-  minFunding.fill = minFunding.stroke
-  minFunding.name = 'MIN. FUNDING THRESHOLD'
-  minFunding.dummyData = {
-    description: 'Auction will not be executed, unless this minimum funding threshold is met',
-  }
-
-  // Dotted white line -> shows the Current price, which is the closing price of the auction if
-  // no more bids are submitted or cancelled and the auction ends
-  const priceSeries = chart.series.push(new am4charts.LineSeries())
-  priceSeries.dataFields.valueX = 'priceNumber'
-  priceSeries.dataFields.valueY = 'clearingPriceValueY'
-  priceSeries.strokeWidth = 1
-  priceSeries.strokeDasharray = '6,6'
-  priceSeries.stroke = am4core.color(colors.grey)
-  priceSeries.name = 'CURRENT PRICE'
-  priceSeries.dummyData = {
-    description:
-      'Shows the current price. This price would be the closing price of the auction if no more bids are submitted or cancelled',
-  }
-
-  // New order to be placed
-  const inputSeries = chart.series.push(new am4charts.LineSeries())
-  inputSeries.dataFields.valueX = 'priceNumber'
-  inputSeries.dataFields.valueY = 'newOrderValueY'
-  inputSeries.strokeWidth = 2
-  inputSeries.stroke = am4core.color(colors.newOrder)
-  inputSeries.fill = inputSeries.stroke
-  inputSeries.name = 'NEW ORDER'
-  inputSeries.dummyData = {
-    description:
-      'Shows the new order that would be placed based on the current amount and price input',
-  }
-
   // Add cursor
   chart.cursor = new am4charts.XYCursor()
-  // chart.cursor.snapToSeries = [bidSeries, askSeries]
+  // chart.cursor.snapToSeries = [collateralValue, askSeries]
   chart.cursor.lineX.stroke = am4core.color(colors.grey)
   chart.cursor.lineX.strokeWidth = 1
   chart.cursor.lineX.strokeOpacity = 0.6
@@ -195,25 +145,47 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   return chart
 }
 
+export const XYConvertBondChart = (props: XYBondChartProps): am4charts.XYChart => {
+  const chart = XYSimpleBondChart(props)
+
+  const convertibleTokenValue = chart.series.push(new am4charts.StepLineSeries())
+  convertibleTokenValue.dataFields.dateX = 'date'
+  convertibleTokenValue.dataFields.valueY = 'convertibleValueY'
+  convertibleTokenValue.strokeWidth = 2
+  convertibleTokenValue.stroke = am4core.color(colors.purple)
+  convertibleTokenValue.fill = createGradient(colors.purple)
+  convertibleTokenValue.fillOpacity = 0.25
+  convertibleTokenValue.startLocation = 0.5
+  convertibleTokenValue.name = 'COONVERTIBLE TOKEN VALUE'
+  convertibleTokenValue.dummyData = {
+    description:
+      'Shows the price (x axis) and size (y axis) of the bids that have been placed, both expressed in the bid token',
+  }
+
+  return chart
+}
+
 interface DrawInformation {
   chart: am4charts.XYChart
-  baseToken: Token
-  quoteToken: Token
-  chainId: ChainId
-  maturityDate: Maybe<number>
+  collateralToken: Token
+  convertibleToken: Token
 }
 
 export const drawInformation = (props: DrawInformation) => {
-  const { baseToken, chart, maturityDate, quoteToken } = props
-  const baseTokenLabel = baseToken.symbol
-  const quoteTokenLabel = getTokenDisplay(quoteToken)
-  const market = quoteTokenLabel + '-' + baseTokenLabel
+  const { chart, collateralToken, convertibleToken } = props
+  const collateralTokenLabel = collateralToken.symbol
+  const convertibleTokenLabel = getDisplay(convertibleToken)
+  const market = convertibleTokenLabel + '-' + collateralTokenLabel
 
-  const priceTitle = ` Price (${quoteTokenLabel})`
+  const priceTitle = ` Price (${convertibleTokenLabel})`
   const [xAxis] = chart.xAxes
+  const [yAxis] = chart.yAxes
 
-  xAxis.title.text = priceTitle
+  xAxis.title.text = 'date'
   xAxis.title.align = 'left'
+
+  yAxis.title.text = priceTitle
+  yAxis.title.align = 'left'
 
   // this was moved to into the react component since i couldn't
   // move it to the top of the graph to match design mocks
@@ -232,17 +204,15 @@ export const drawInformation = (props: DrawInformation) => {
     '<div class="text-xs text-[#D6D6D6] border-none flex-wrap max-w-[400px] p-1 whitespace-normal">{text}</div>'
 
   askPricesSeries.adapter.add('tooltipText', (text, target) => {
-    const valueX = target?.tooltipDataItem?.values?.valueX?.value ?? 0
+    const dateX = target?.tooltipDataItem?.values?.dateX?.value ?? 0
     const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
 
-    const askPrice = round(valueX, 4)
+    const askPrice = round(dateX, 4)
     const volume = round(valueY, 4)
-    const interest = maturityDate && calculateInterestRate(valueX, maturityDate)
 
     return `${market}<br/>
-Ask Price:  ${askPrice} ${quoteTokenLabel}<br/>
-Volume:  ${volume} ${quoteTokenLabel}<br/>
-Interest:  ${interest}
+Ask Price:  ${askPrice} ${convertibleTokenLabel}<br/>
+Volume:  ${volume} ${convertibleTokenLabel}<br/>
 `
   })
 
@@ -254,17 +224,15 @@ Interest:  ${interest}
   bidPricesSeries.tooltipHTML =
     '<div class="text-xs text-[#D6D6D6] border-none flex-wrap max-w-[400px] p-1 whitespace-normal">{text}</div>'
   bidPricesSeries.adapter.add('tooltipText', (text, target) => {
-    const valueX = target?.tooltipDataItem?.values?.valueX?.value ?? 0
+    const dateX = target?.tooltipDataItem?.values?.dateX?.value ?? 0
     const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
 
-    const bidPrice = round(valueX, 4)
+    const bidPrice = round(dateX, 4)
     const volume = round(valueY, 4)
-    const interest = maturityDate && calculateInterestRate(valueX, maturityDate)
 
     return `${market}<br/>
-Bid Price:  ${bidPrice} ${quoteTokenLabel}<br/>
-Volume:  ${volume} ${quoteTokenLabel}<br/>
-Interest:  ${interest}
+Bid Price:  ${bidPrice} ${convertibleTokenLabel}<br/>
+Volume:  ${volume} ${convertibleTokenLabel}<br/>
 `
   })
 }
