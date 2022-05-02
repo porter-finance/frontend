@@ -34,7 +34,10 @@ export const useTokenPrice = (tokenContractAddress: string): { data: any; loadin
 export const useHistoricTokenPrice = (
   tokenContractAddress: string,
   days: number,
-): { data: any; loading: boolean } => {
+): {
+  data: [EpochTimeStamp, number]
+  loading: boolean
+} => {
   const { chainId } = useWeb3React()
   // The tokens used on the testnet will not exist so no price will be returned
   // this uses rocketpool token instead of the real tokens on any network
