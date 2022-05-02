@@ -247,7 +247,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     return (
       <div className="card card-bordered">
         <div className="card-body">
-          <h2 className="card-title !text-[#696969] space-x-2">
+          <h2 className="space-x-2 !text-[#696969] card-title">
             <span>Private auction</span>
             <PrivateIcon />
           </h2>
@@ -288,8 +288,8 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
 
         {cancelDate && derivedAuctionInfo && (
           <div className="space-y-1">
-            <div className="text-[#EEEFEB] text-sm">{cancelCutoff}</div>
-            <div className="text-[#696969] text-xs">
+            <div className="text-sm text-[#EEEFEB]">{cancelCutoff}</div>
+            <div className="text-xs text-[#696969]">
               <Tooltip
                 left="Order cancellation cutoff date"
                 tip="Orders cannot be cancelled after this date."
@@ -377,10 +377,10 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                       unlockState: approval,
                     }}
                   />
-                  <div className="flex flex-row justify-between items-center text-xs text-[#9F9F9F] mt-4 mb-3">
+                  <div className="flex flex-row justify-between items-center mt-4 mb-3 text-xs text-[#9F9F9F]">
                     <div>{biddingTokenDisplay} Balance</div>
                     <div>
-                      <button className="btn btn-xs btn-link text-[#9F9F9F] font-normal text-xs">
+                      <button className="text-xs font-normal text-[#9F9F9F] btn btn-xs btn-link">
                         {!balanceString ||
                         balanceString === '0' ||
                         !Number(balanceString) ||

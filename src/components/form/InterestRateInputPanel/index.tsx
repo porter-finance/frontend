@@ -83,7 +83,7 @@ const InterestRateInputPanel = ({
   const data = getReviewData({ price, amount, maturityDate })
 
   return (
-    <FieldRowWrapper className="my-4 space-y-3 py-1" {...restProps}>
+    <FieldRowWrapper className="py-1 my-4 space-y-3" {...restProps}>
       <div className="flex flex-row justify-between">
         <div className="text-sm text-[#E0E0E0]">
           <p>{!account || !price || !amount ? '-' : `${data.pay} ${priceTokenDisplay}`}</p>

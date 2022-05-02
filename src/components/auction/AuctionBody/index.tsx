@@ -49,9 +49,9 @@ const DisabledCountryError = () => (
         incorporated or have a registered agent in, the United States or a restricted territory.
         More details can be found in our Terms of Use
       </div>
-      <div className="card-actions mt-6">
+      <div className="mt-6 card-actions">
         <a
-          className="btn btn-sm btn-error normal-case text-sm font-normal"
+          className="text-sm font-normal normal-case btn btn-sm btn-error"
           href="https://docs.porter.finance/"
           rel="noreferrer"
           target="_blank"
@@ -73,7 +73,7 @@ const BondCard = ({ graphInfo }: { graphInfo: Auction }) => {
       <div className="card-body">
         <h2 className="card-title">Bond information</h2>
 
-        <div className="text-sm text-[#9F9F9F] flex justify-between items-end">
+        <div className="flex justify-between items-end text-sm text-[#9F9F9F]">
           <div
             className="flex items-center space-x-4 cursor-pointer"
             onClick={() => navigate(`/products/${graphInfo?.bond.id || ''}`)}
@@ -87,10 +87,10 @@ const BondCard = ({ graphInfo }: { graphInfo: Auction }) => {
             />
 
             <div className="space-y-2">
-              <h2 className="text-2xl text-white font-normal capitalize">
+              <h2 className="text-2xl font-normal text-white capitalize">
                 {graphInfo?.bond.name.toLowerCase() || 'Bond Name'} Bond
               </h2>
-              <p className="text-[#9F9F9F] text-xs font-normal uppercase">
+              <p className="text-xs font-normal text-[#9F9F9F] uppercase">
                 {graphInfo?.bond.symbol || 'Bond Symbol'}
               </p>
             </div>

@@ -133,7 +133,7 @@ const AuctionDetails = (props: Props) => {
   return (
     <div className="card">
       <div className="card-body">
-        <h2 className="card-title flex justify-between">
+        <h2 className="flex justify-between card-title">
           <span>Auction information</span>
           <ActiveStatusPill disabled={hasEnded} title={statusLabel} />
         </h2>
@@ -146,7 +146,7 @@ const AuctionDetails = (props: Props) => {
           text="Ends in"
         />
 
-        <div className="grid gap-x-12 gap-y-8 grid-cols-1 pt-12 md:grid-cols-4">
+        <div className="grid grid-cols-1 gap-x-12 gap-y-8 pt-12 md:grid-cols-4">
           {extraDetails.map((item, index) => (
             <ExtraDetailsItem key={index} {...item} />
           ))}

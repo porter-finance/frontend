@@ -50,7 +50,7 @@ const PendingView: React.FC<Props> = (props) => {
           >
             Try Again
           </ActionButton>
-          <button className="btn btn-link w-full" onClick={reset}>
+          <button className="w-full btn btn-link" onClick={reset}>
             Go back
           </button>
         </>
