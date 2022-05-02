@@ -63,7 +63,7 @@ export const TableDesign = ({
             >
               {headerGroup.headers.map((column, i) => (
                 <th
-                  className="bg-transparent text-[#696969] text-xs font-normal tracking-widest"
+                  className="text-xs font-normal tracking-widest text-[#696969] bg-transparent"
                   key={i}
                   {...column.getHeaderProps()}
                 >
@@ -75,9 +75,9 @@ export const TableDesign = ({
         </thead>
         <tbody {...getTableBodyProps()}>
           {!page.length && (
-            <tr className="bg-transparent text-[#D2D2D2] text-sm">
+            <tr className="text-sm text-[#D2D2D2] bg-transparent">
               <td
-                className="bg-transparent text-center py-[100px] text-[#696969] space-y-4"
+                className="py-[100px] space-y-4 text-center text-[#696969] bg-transparent"
                 colSpan={columns.length}
               >
                 {(account || !showConnect) && (
@@ -129,7 +129,7 @@ export const TableDesign = ({
           {page.map((row, i) => {
             prepareRow(row)
             return (
-              <tr className="bg-transparent text-[#D2D2D2] text-sm" key={i} {...row.getRowProps()}>
+              <tr className="text-sm text-[#D2D2D2] bg-transparent" key={i} {...row.getRowProps()}>
                 {row.cells.map((cell, i) => {
                   return (
                     <td className="bg-transparent" key={i} {...cell.getCellProps()}>
@@ -143,18 +143,18 @@ export const TableDesign = ({
         </tbody>
       </table>
       {!hidePagination && pageOptions.length > 0 && (
-        <div className="btn-group !border-none text-[#696969]">
+        <div className="text-[#696969] !border-none btn-group">
           <button
-            className="btn btn-lg !text-lg"
+            className="!text-lg btn btn-lg"
             disabled={!canPreviousPage}
             onClick={previousPage}
           >
             «
           </button>
-          <button className="btn btn-lg disabled:text-[#696969]" disabled>
+          <button className="disabled:text-[#696969] btn btn-lg" disabled>
             Page {pageIndex + 1} of {pageOptions.length}
           </button>
-          <button className="btn btn-lg !text-lg" disabled={!canNextPage} onClick={nextPage}>
+          <button className="!text-lg btn btn-lg" disabled={!canNextPage} onClick={nextPage}>
             »
           </button>
         </div>
