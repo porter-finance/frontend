@@ -85,7 +85,8 @@ export const XYSimpleBondChart = (props: XYBondChartProps): am4charts.XYChart =>
   faceValue.fill = faceValue.stroke
   faceValue.name = 'FACE VALUE'
   faceValue.dummyData = {
-    description: 'Auction will not be executed, unless this minimum funding threshold is met',
+    description:
+      'Amount each bond is redeemable for at maturity assuming a default does not occur.',
   }
 
   const collateralValue = chart.series.push(new am4charts.StepLineSeries())
@@ -99,7 +100,7 @@ export const XYSimpleBondChart = (props: XYBondChartProps): am4charts.XYChart =>
   collateralValue.name = 'COLLATERAL VALUE'
   collateralValue.dummyData = {
     description:
-      'Shows the price (x axis) and size (y axis) of the bids that have been placed, both expressed in the bid token',
+      'Number of collateral tokens securing each bond. If a bond is defaulted on, the bondholder is able to exchange each bond for these collateral tokens.',
   }
 
   // Add cursor
@@ -156,10 +157,9 @@ export const XYConvertBondChart = (props: XYBondChartProps): am4charts.XYChart =
   convertibleTokenValue.fill = createGradient(colors.purple)
   convertibleTokenValue.fillOpacity = 0.25
   convertibleTokenValue.startLocation = 0.5
-  convertibleTokenValue.name = 'COONVERTIBLE TOKEN VALUE'
+  convertibleTokenValue.name = 'CONVERTIBLE TOKEN VALUE'
   convertibleTokenValue.dummyData = {
-    description:
-      'Shows the price (x axis) and size (y axis) of the bids that have been placed, both expressed in the bid token',
+    description: 'Number of tokens each bond is convertible into up until the maturity date.',
   }
 
   return chart
@@ -173,9 +173,7 @@ interface DrawInformation {
 
 export const drawInformation = (props: DrawInformation) => {
   const { chart, collateralToken, convertibleToken } = props
-  const collateralTokenLabel = collateralToken.symbol
   const convertibleTokenLabel = getDisplay(convertibleToken)
-  const market = convertibleTokenLabel + '-' + collateralTokenLabel
 
   const priceTitle = ` Price (${convertibleTokenLabel})`
   const [xAxis] = chart.xAxes
@@ -187,52 +185,41 @@ export const drawInformation = (props: DrawInformation) => {
   yAxis.title.text = priceTitle
   yAxis.title.align = 'left'
 
-  // this was moved to into the react component since i couldn't
-  // move it to the top of the graph to match design mocks
-  // yAxis.title.text = volumeTitle
+  const collateralValueSeries = chart.series.values[1]
 
-  const {
-    values: [askPricesSeries, bidPricesSeries],
-  } = chart.series
-
-  askPricesSeries.tooltip.getFillFromObject = false
-  askPricesSeries.tooltip.background.fill = am4core.color('#181A1C')
-  askPricesSeries.tooltip.background.filters.clear()
-  askPricesSeries.tooltip.background.cornerRadius = 6
-  askPricesSeries.tooltip.background.stroke = am4core.color('#2A2B2C')
-  askPricesSeries.tooltipHTML =
+  collateralValueSeries.tooltip.getFillFromObject = false
+  collateralValueSeries.tooltip.background.fill = am4core.color('#181A1C')
+  collateralValueSeries.tooltip.background.filters.clear()
+  collateralValueSeries.tooltip.background.cornerRadius = 6
+  collateralValueSeries.tooltip.background.stroke = am4core.color('#2A2B2C')
+  collateralValueSeries.tooltipHTML =
     '<div class="text-xs text-[#D6D6D6] border-none flex-wrap max-w-[400px] p-1 whitespace-normal">{text}</div>'
-
-  askPricesSeries.adapter.add('tooltipText', (text, target) => {
+  collateralValueSeries.adapter.add('tooltipText', (text, target) => {
     const dateX = target?.tooltipDataItem?.values?.dateX?.value ?? 0
     const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
 
-    const askPrice = round(dateX, 4)
+    const date = new Date(dateX).toISOString()
     const volume = round(valueY, 4)
 
-    return `${market}<br/>
-Ask Price:  ${askPrice} ${convertibleTokenLabel}<br/>
-Volume:  ${volume} ${convertibleTokenLabel}<br/>
-`
+    return `Time:  ${date}<br/>
+Collateral value:  ${volume} ${collateralToken.name}`
   })
 
-  bidPricesSeries.tooltip.getFillFromObject = false
-  bidPricesSeries.tooltip.background.fill = am4core.color('#181A1C')
-  bidPricesSeries.tooltip.background.filters.clear()
-  bidPricesSeries.tooltip.background.cornerRadius = 6
-  bidPricesSeries.tooltip.background.stroke = am4core.color('#2A2B2C')
-  bidPricesSeries.tooltipHTML =
-    '<div class="text-xs text-[#D6D6D6] border-none flex-wrap max-w-[400px] p-1 whitespace-normal">{text}</div>'
-  bidPricesSeries.adapter.add('tooltipText', (text, target) => {
-    const dateX = target?.tooltipDataItem?.values?.dateX?.value ?? 0
-    const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
+  if (chart.series.values.length > 2) {
+    const convertibleValueSeries = chart.series.values[2]
 
-    const bidPrice = round(dateX, 4)
-    const volume = round(valueY, 4)
+    convertibleValueSeries.tooltip.getFillFromObject = false
+    convertibleValueSeries.tooltip.background.fill = am4core.color('#181A1C')
+    convertibleValueSeries.tooltip.background.filters.clear()
+    convertibleValueSeries.tooltip.background.cornerRadius = 6
+    convertibleValueSeries.tooltip.background.stroke = am4core.color('#2A2B2C')
+    convertibleValueSeries.tooltipHTML =
+      '<div class="text-xs text-[#D6D6D6] border-none flex-wrap max-w-[400px] p-1 whitespace-normal">{text}</div>'
 
-    return `${market}<br/>
-Bid Price:  ${bidPrice} ${convertibleTokenLabel}<br/>
-Volume:  ${volume} ${convertibleTokenLabel}<br/>
-`
-  })
+    convertibleValueSeries.adapter.add('tooltipText', (text, target) => {
+      const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
+      const convertibleValue = round(valueY, 4)
+      return `Convertible value:  ${convertibleValue} ${convertibleToken.name}`
+    })
+  }
 }
