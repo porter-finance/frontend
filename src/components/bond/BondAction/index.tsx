@@ -279,9 +279,6 @@ const BondAction = ({
                 chainId={chainId}
                 disabled={!account}
                 maxTitle={`${getActionText(componentType)} all`}
-                onMax={() => {
-                  setBondsToRedeem(formatUnits(Number(bondTokenBalance), bondInfo?.decimals))
-                }}
                 onUserSellAmountInput={setBondsToRedeem}
                 token={tok}
                 value={bondsToRedeem}
