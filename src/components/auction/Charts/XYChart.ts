@@ -242,7 +242,7 @@ export const drawInformation = (props: DrawInformation) => {
     return `${market}<br/>
 Ask Price:  ${askPrice} ${quoteTokenLabel}<br/>
 Volume:  ${volume} ${quoteTokenLabel}<br/>
-Interest:  ${interest} 
+Interest:  ${interest}
 `
   })
 
@@ -264,7 +264,7 @@ Interest:  ${interest}
     return `${market}<br/>
 Bid Price:  ${bidPrice} ${quoteTokenLabel}<br/>
 Volume:  ${volume} ${quoteTokenLabel}<br/>
-Interest:  ${interest} 
+Interest:  ${interest}
 `
   })
 }
