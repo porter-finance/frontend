@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { createGlobalStyle } from 'styled-components'
 
 import { formatUnits } from '@ethersproject/units'
@@ -12,7 +12,8 @@ import Table from '../../components/auctions/Table'
 import TokenLogo from '../../components/token/TokenLogo'
 import { BondInfo, useBonds } from '../../hooks/useBond'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
-import { ConvertButtonOutline, SimpleButtonOutline } from '../Auction'
+import { AllButton, ConvertButtonOutline, SimpleButtonOutline } from '../Auction'
+import { TABLE_FILTERS } from '../Portfolio'
 
 const GlobalStyle = createGlobalStyle`
   .siteHeader {
@@ -97,6 +98,7 @@ export const createTable = (data: BondInfo[]) => {
     return {
       id,
       search: JSON.stringify(bond),
+      type,
       bond: (
         <div className="flex flex-row items-center space-x-4">
           <div className="flex">
@@ -109,12 +111,12 @@ export const createTable = (data: BondInfo[]) => {
               }}
             />
           </div>
-          <div className="flex flex-col text-[#EEEFEB] text-lg">
+          <div className="flex flex-col text-lg text-[#EEEFEB]">
             <div className="flex items-center space-x-2 capitalize">
               <span>{name.toLowerCase()} </span>
               {type === 'convert' ? <ConvertIcon width={15} /> : <SimpleIcon width={15} />}
             </div>
-            <p className="text-[#9F9F9F] text-sm uppercase">{symbol}</p>
+            <p className="text-sm text-[#9F9F9F] uppercase">{symbol}</p>
           </div>
         </div>
       ),
@@ -146,7 +148,11 @@ export const createTable = (data: BondInfo[]) => {
 
 const Products = () => {
   const { data, loading } = useBonds()
-  const tableData = data ? createTable(data) : []
+  const [tableFilter, setTableFilter] = useState<TABLE_FILTERS>(TABLE_FILTERS.ALL)
+
+  const tableData = data
+    ? createTable(data).filter(({ type }) => (tableFilter ? type === tableFilter : true))
+    : []
   useSetNoDefaultNetworkId()
 
   return (
@@ -164,12 +170,19 @@ const Products = () => {
         }
         legendIcons={
           <>
-            <div className="rounded-full bg-white px-5 py-1.5 text-black text-xs uppercase">
-              All
-            </div>
+            <AllButton
+              active={tableFilter === TABLE_FILTERS.ALL}
+              onClick={() => setTableFilter(TABLE_FILTERS.ALL)}
+            />
             <DividerIcon />
-            <ConvertButtonOutline />
-            <SimpleButtonOutline />
+            <ConvertButtonOutline
+              active={tableFilter === TABLE_FILTERS.CONVERT}
+              onClick={() => setTableFilter(TABLE_FILTERS.CONVERT)}
+            />
+            <SimpleButtonOutline
+              active={tableFilter === TABLE_FILTERS.SIMPLE}
+              onClick={() => setTableFilter(TABLE_FILTERS.SIMPLE)}
+            />
           </>
         }
         loading={loading}

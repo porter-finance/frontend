@@ -28,7 +28,7 @@ export const TokenPill = ({ token }) => {
   }
 
   return token ? (
-    <FieldRowToken className="flex flex-row items-center space-x-2 bg-[#2C2C2C] rounded-full p-1 px-2 pl-1">
+    <FieldRowToken className="flex flex-row items-center p-1 px-2 pl-1 space-x-2 bg-[#2C2C2C] rounded-full">
       {(token.address || token.id) && (
         <TokenLogo
           size={'16px'}
@@ -248,13 +248,13 @@ const BondAction = ({
           {Status()}
         </div>
         {isConvertComponent && !isMatured && bondInfo && (
-          <div className="space-y-1 mb-1">
-            <div className="text-[#EEEFEB] text-sm">
+          <div className="mb-1 space-y-1">
+            <div className="text-sm text-[#EEEFEB]">
               {dayjs(bondInfo.maturityDate * 1000)
                 .utc()
                 .format('MMM DD, YYYY HH:mm UTC')}
             </div>
-            <div className="text-[#696969] text-xs">
+            <div className="text-xs text-[#696969]">
               <Tooltip
                 left="Active until"
                 tip="Date each bond is no longer convertible into the convertible tokens and will only be redeemable for its face value (assuming no default)."
@@ -265,7 +265,7 @@ const BondAction = ({
         <div>
           <div className="space-y-6">
             {account && !Number(bondTokenBalance) ? (
-              <div className="flex justify-center text-[12px] text-[#696969] border border-[#2C2C2C] p-12 rounded-lg">
+              <div className="flex justify-center p-12 text-sm text-[#696969] rounded-lg border border-[#2C2C2C]">
                 <span>No bonds to {getActionText(componentType).toLowerCase()}</span>
               </div>
             ) : (
@@ -288,14 +288,14 @@ const BondAction = ({
                 wrap={{ isWrappable: false, onClick: null }}
               />
             )}
-            <div className="text-xs text-[12px] text-[#696969] space-y-6">
+            <div className="space-y-6 text-xs text-[#696969]">
               {(isConvertComponent || componentType === BondActions.Redeem) && (
                 <div className="space-y-2">
                   {assetsToReceive.map(({ token, value }, index) => (
                     <TokenInfo disabled={!account} key={index} token={token} value={value} />
                   ))}
 
-                  <div className="text-[#696969] text-xs">
+                  <div className="text-xs text-[#696969]">
                     <Tooltip
                       left="Amount of assets to receive"
                       tip={
