@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import { formatUnits } from '@ethersproject/units'
-import { Fraction, TokenAmount } from '@josojo/honeyswap-sdk'
+import { Fraction, Token, TokenAmount } from '@josojo/honeyswap-sdk'
 import { useTokenBalance } from '@usedapp/core'
 import dayjs from 'dayjs'
 import useGeoLocation from 'react-ipgeolocation'
@@ -32,6 +32,7 @@ import {
   ChainId,
   EASY_AUCTION_NETWORKS,
   getFullTokenDisplay,
+  getTokenDisplay,
   isTokenWETH,
   isTokenWMATIC,
   isTokenXDAI,
@@ -114,15 +115,8 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const [showWarning, setShowWarning] = useState<boolean>(false)
   const [showWarningWrongChainId, setShowWarningWrongChainId] = useState<boolean>(false)
 
-  const auctioningToken = React.useMemo(
-    () => derivedAuctionInfo.auctioningToken,
-    [derivedAuctionInfo.auctioningToken],
-  )
-
-  const biddingToken = React.useMemo(
-    () => derivedAuctionInfo.biddingToken,
-    [derivedAuctionInfo.biddingToken],
-  )
+  const auctioningToken = derivedAuctionInfo?.auctioningToken
+  const biddingToken = derivedAuctionInfo?.biddingToken
 
   const parsedBiddingAmount = tryParseAmount(sellAmount, biddingToken)
   const approvalTokenAmount: TokenAmount | undefined = parsedBiddingAmount
@@ -153,14 +147,8 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     biddingToken,
   )
 
-  const biddingTokenDisplay = useMemo(
-    () => getFullTokenDisplay(biddingToken, chainId),
-    [biddingToken, chainId],
-  )
-  const auctioningTokenDisplay = useMemo(
-    () => getFullTokenDisplay(auctioningToken, chainId),
-    [auctioningToken, chainId],
-  )
+  const biddingTokenDisplay = getFullTokenDisplay(biddingToken, chainId)
+  const auctioningTokenDisplay = graphInfo?.bond?.name
   const notApproved = approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING
 
   const handleShowConfirm = () => {
@@ -356,11 +344,11 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                     actionText="Place order"
                     beforeDisplay={
                       <ReviewOrder
-                        amountToken={auctioningToken}
+                        amountToken={graphInfo?.bond}
                         cancelCutoff={cancelCutoff}
                         data={reviewData}
                         orderPlacingOnly={orderPlacingOnly}
-                        priceToken={biddingToken}
+                        priceToken={graphInfo?.bond?.paymentToken}
                       />
                     }
                     finishedText="Order placed"
