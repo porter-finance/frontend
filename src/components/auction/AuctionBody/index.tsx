@@ -120,10 +120,8 @@ const AuctionBody = (props: AuctionBodyProps) => {
   const location = useGeoLocation()
   const disabledCountry = process.env.NODE_ENV !== 'development' && location?.country === 'US'
   const { data: graphInfo } = useAuction(auctionIdentifier?.auctionId)
-  const auctionStarted = React.useMemo(
-    () => auctionState !== undefined && auctionState !== AuctionState.NOT_YET_STARTED,
-    [auctionState],
-  )
+  const auctionStarted = auctionState !== undefined && auctionState !== AuctionState.NOT_YET_STARTED
+  const settling = derivedAuctionInfo?.auctionState === AuctionState.NEEDS_SETTLED
 
   const placeAndCancel =
     forceDevData ||
@@ -152,7 +150,7 @@ const AuctionBody = (props: AuctionBodyProps) => {
           }
           rightChildren={
             <>
-              {auctionState === AuctionState.NEEDS_SETTLED && <AuctionSettle />}
+              {settling && <AuctionSettle />}
               {placeAndCancel && (
                 <>
                   <OrderPlacement
