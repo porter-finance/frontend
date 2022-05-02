@@ -44,18 +44,18 @@ const AuctionDetails = (props: Props) => {
     maxBondAPR = '-'
 
   if (graphInfo) {
-    offeringSize = `${abbreviation(
+    offeringSize = `${Number(
       formatUnits(graphInfo.offeringSize, graphInfo.bond.decimals),
-    )} bonds`
-    totalBidVolume = `${abbreviation(
+    ).toLocaleString()} bonds`
+    totalBidVolume = `${Number(
       formatUnits(graphInfo.totalBidVolume, graphInfo.bidding.decimals),
-    )} ${biddingTokenDisplay}`
-    minimumFundingThreshold = `${abbreviation(
+    ).toLocaleString()} ${biddingTokenDisplay}`
+    minimumFundingThreshold = `${Number(
       formatUnits(graphInfo.minimumFundingThreshold, graphInfo.bidding.decimals),
-    )} ${biddingTokenDisplay}`
-    minimumBidSize = `${abbreviation(
+    ).toLocaleString()} ${biddingTokenDisplay}`
+    minimumBidSize = `${Number(
       formatUnits(graphInfo.minimumBidSize, graphInfo.bidding.decimals),
-    )} ${biddingTokenDisplay}`
+    ).toLocaleString()} ${biddingTokenDisplay}`
     currentBondAPR = calculateInterestRate(
       auctionCurrentPrice,
       graphInfo.bond.maturityDate,
@@ -68,14 +68,13 @@ const AuctionDetails = (props: Props) => {
 
   const minimumBondPrice = (
     <TokenValue>
-      {abbreviation(graphInfo?.minimumBondPrice).toLocaleString()}{' '}
-      {`${getDisplay(graphInfo?.bidding)}`}
+      {graphInfo?.minimumBondPrice?.toLocaleString()} {`${getDisplay(graphInfo?.bidding)}`}
     </TokenValue>
   )
 
   const currentBondPrice = (
     <TokenValue>
-      {abbreviation(auctionCurrentPrice)} {`${getDisplay(graphInfo?.bidding)}`}
+      {auctionCurrentPrice} {`${getDisplay(graphInfo?.bidding)}`}
     </TokenValue>
   )
 
