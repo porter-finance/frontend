@@ -84,7 +84,7 @@ export const AuctionTimer = ({
 
   return (
     <div className="" {...restProps}>
-      <div className="flex flex-col place-items-start space-y-1 mb-7">
+      <div className="flex flex-col place-items-start mb-7 space-y-1">
         {timeLeft && timeLeft > -1 ? (
           <Time>
             {dayjs(endDate * 1000)
@@ -119,7 +119,7 @@ export const AuctionTimer = ({
           <Tooltip left={endText} tip={endTip} />
         </DateTitle>
       </div>
-      <div className="flex w-full flex-col space-y-3">
+      <div className="flex flex-col space-y-3 w-full">
         <progress
           className={`progress progress-primary progress-${color}`}
           max="100"

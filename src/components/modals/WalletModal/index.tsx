@@ -279,7 +279,7 @@ const WalletModal: React.FC = () => {
             </CheckboxWrapper>
             <Footer>
               <ExternalLink
-                className="inline-flex items-center text-xs font-normal text-gray-500 hover:underline dark:text-gray-400"
+                className="inline-flex items-center text-xs font-normal text-gray-500 dark:text-gray-400 hover:underline"
                 href="https://metamask.io/download.html"
               >
                 <svg
