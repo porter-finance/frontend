@@ -106,7 +106,7 @@ export const createTable = (data: BondInfo[]) => {
               size="30px"
               square
               token={{
-                address: collateralToken.id,
+                address: id,
                 symbol,
               }}
             />
