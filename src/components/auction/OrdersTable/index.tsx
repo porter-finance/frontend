@@ -1,8 +1,5 @@
 import React, { useCallback, useState } from 'react'
 
-import { formatUnits } from '@ethersproject/units'
-import { round } from 'lodash'
-
 import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
 import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
 import { useParticipatingAuctionBids } from '../../../hooks/useParticipatingAuctionBids'
@@ -14,11 +11,16 @@ import {
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { OrderStatus } from '../../../state/orders/reducer'
 import { getTokenDisplay } from '../../../utils'
-import { calculateInterestRate } from '../../form/InterestRateInputPanel'
 import ConfirmationModal from '../../modals/ConfirmationModal'
 import WarningModal from '../../modals/WarningModal'
 import CancelModalFooter from '../../modals/common/CancelModalFooter'
-import { ActiveStatusPill, BidTransactionLink, OverflowWrap, TableDesign } from '../OrderbookTable'
+import {
+  BidTransactionLink,
+  OverflowWrap,
+  TableDesign,
+  calculateRow,
+  ordersTableColumns,
+} from '../OrderbookTable'
 
 interface OrdersTableProps {
   auctionIdentifier: AuctionIdentifier
@@ -31,6 +33,7 @@ export const orderStatusText = {
   [OrderStatus.PENDING]: 'Pending',
   [OrderStatus.PENDING_CANCELLATION]: 'Cancelling',
 }
+
 const OrdersTable: React.FC<OrdersTableProps> = (props) => {
   const {
     auctionIdentifier,
@@ -90,57 +93,16 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
   const hideCancelButton = orderPlacingOnly || orderSubmissionFinished
 
   useAllUserOrders(auctionIdentifier, derivedAuctionInfo)
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: 'Status',
-        accessor: 'status', // accessor is the "key" in the data
-      },
-      {
-        Header: 'Price',
-        accessor: 'price',
-      },
-      {
-        Header: 'Interest rate',
-        accessor: 'interest',
-      },
-      {
-        Header: 'Total cost',
-        accessor: 'amount',
-      },
-      {
-        Header: 'Bonds',
-        accessor: 'bonds',
-      },
-      {
-        Header: 'Transaction',
-        accessor: 'transaction',
-      },
-    ],
-    [],
-  )
+
   const data = []
   const paymentToken = getTokenDisplay(derivedAuctionInfo?.biddingToken)
 
   !ordersEmpty &&
     bids.forEach((row) => {
-      let statusText = ''
-      if (row.createtx) statusText = orderStatusText[OrderStatus.PLACED]
-      if (!row.createtx) statusText = orderStatusText[OrderStatus.PENDING]
-      if (row.canceltx) statusText = 'Cancelled'
-      const status = <ActiveStatusPill title={statusText} />
-      const price = `${round(row.payable / row.size, 18).toLocaleString()} ${paymentToken}`
-      const interest = `${calculateInterestRate(row.payable / row.size, maturityDate)} `
-      const amount = `${round(
-        Number(formatUnits(row.payable, derivedAuctionInfo.biddingToken.decimals)),
-        2,
-      ).toLocaleString()} ${paymentToken} `
-      const bonds = `${round(
-        Number(formatUnits(row.size, derivedAuctionInfo.auctioningToken.decimals)),
-        2,
-      ).toLocaleString()}+ ${'Bonds'}`
-      //  TODO: add way to check pending cancellations when they click cancel button
-      const transaction = (
+      const items = calculateRow(row, paymentToken, maturityDate, derivedAuctionInfo)
+
+      // TODO: add way to check pending cancellations when they click cancel button
+      items.transaction = (
         <div className="flex flex-row items-center space-x-5">
           <BidTransactionLink bid={row} />
           {!hideCancelButton && (
@@ -158,13 +120,13 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
         </div>
       )
 
-      data.push({ status, price, interest, amount, bonds, transaction })
+      data.push(items)
     })
 
   return (
     <>
       <OverflowWrap>
-        <TableDesign columns={columns} data={data} showConnect />
+        <TableDesign columns={ordersTableColumns} data={data} showConnect />
       </OverflowWrap>
       <ConfirmationModal
         attemptingTxn={attemptingTxn}
