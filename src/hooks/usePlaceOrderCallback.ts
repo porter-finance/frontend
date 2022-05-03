@@ -91,7 +91,7 @@ export function usePlaceOrderCallback(
       )
 
       if (sellAmountScaled == undefined || buyAmountScaled == undefined) {
-        return 'Price was not correct.'
+        throw new Error('Price was not correct.')
       }
 
       try {
