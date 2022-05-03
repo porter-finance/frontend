@@ -48,7 +48,7 @@ export const TokenPill = ({ token }) => {
           }}
         />
       )}
-      {displayName && <FieldRowTokenSymbol>{displayName}</FieldRowTokenSymbol>}
+      {displayName && <FieldRowTokenSymbol>{token.symbol}</FieldRowTokenSymbol>}
     </a>
   ) : null
 }
