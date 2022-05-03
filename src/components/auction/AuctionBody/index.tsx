@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 
 import useGeoLocation from 'react-ipgeolocation'
 
+import { ReactComponent as BondConvertIcon } from '../../../assets/svg/bond-convert.svg'
+import { ReactComponent as BondSimpleIcon } from '../../../assets/svg/bond-simple.svg'
 import { Auction, useAuction } from '../../../hooks/useAuction'
 import { useBondExtraDetails } from '../../../hooks/useBondExtraDetails'
 import { TwoGridPage } from '../../../pages/Auction'
@@ -78,13 +80,7 @@ const BondCard = ({ graphInfo }: { graphInfo: Auction }) => {
 
         <div className="flex justify-between items-end text-sm text-[#9F9F9F]">
           <div className="flex items-center space-x-4 cursor-pointer">
-            <TokenLogo
-              square
-              token={{
-                address: graphInfo?.bond.collateralToken.id,
-                symbol: graphInfo?.bond.symbol,
-              }}
-            />
+            {graphInfo?.bond?.type === 'convert' ? <BondConvertIcon /> : <BondSimpleIcon />}
 
             <div className="space-y-2">
               <h2 className="text-2xl font-normal text-white capitalize">

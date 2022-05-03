@@ -4,12 +4,13 @@ import { createGlobalStyle } from 'styled-components'
 import { formatUnits } from '@ethersproject/units'
 import dayjs from 'dayjs'
 
+import { ReactComponent as BondConvertIcon } from '../../assets/svg/bond-convert.svg'
+import { ReactComponent as BondSimpleIcon } from '../../assets/svg/bond-simple.svg'
 import { ReactComponent as ConvertIcon } from '../../assets/svg/convert.svg'
 import { ReactComponent as DividerIcon } from '../../assets/svg/divider.svg'
 import { ReactComponent as SimpleIcon } from '../../assets/svg/simple.svg'
 import { ActiveStatusPill } from '../../components/auction/OrderbookTable'
 import Table from '../../components/auctions/Table'
-import TokenLogo from '../../components/token/TokenLogo'
 import { BondInfo, useBonds } from '../../hooks/useBond'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import { AllButton, ConvertButtonOutline, SimpleButtonOutline } from '../Auction'
@@ -102,14 +103,7 @@ export const createTable = (data: BondInfo[]) => {
       bond: (
         <div className="flex flex-row items-center space-x-4">
           <div className="flex">
-            <TokenLogo
-              size="30px"
-              square
-              token={{
-                address: collateralToken.id,
-                symbol,
-              }}
-            />
+            {type === 'convert' ? <BondConvertIcon /> : <BondSimpleIcon />}
           </div>
           <div className="flex flex-col text-lg text-[#EEEFEB]">
             <div className="flex items-center space-x-2 capitalize">

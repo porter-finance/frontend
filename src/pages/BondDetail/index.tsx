@@ -6,21 +6,20 @@ import { formatUnits } from '@ethersproject/units'
 import { useWeb3React } from '@web3-react/core'
 import dayjs from 'dayjs'
 
+import { ReactComponent as BondConvertIcon } from '../../assets/svg/bond-convert.svg'
+import { ReactComponent as BondSimpleIcon } from '../../assets/svg/bond-simple.svg'
 import { ReactComponent as ConnectIcon } from '../../assets/svg/connect.svg'
 import { ReactComponent as WalletIcon } from '../../assets/svg/wallet.svg'
 import BondGraphCard from '../../components/BondGraphCard/BondGraphCard'
 import Dev, { forceDevData } from '../../components/Dev'
 import { AuctionTimer } from '../../components/auction/AuctionTimer'
-import BondChart from '../../components/auction/BondChart'
 import { ExtraDetailsItem } from '../../components/auction/ExtraDetailsItem'
 import { ActiveStatusPill, TableDesign } from '../../components/auction/OrderbookTable'
 import BondAction from '../../components/bond/BondAction'
 import { calculateInterestRate } from '../../components/form/InterestRateInputPanel'
 import WarningModal from '../../components/modals/WarningModal'
-import TokenLogo from '../../components/token/TokenLogo'
 import { BondInfo, useBond } from '../../hooks/useBond'
 import { useBondExtraDetails } from '../../hooks/useBondExtraDetails'
-import { useHistoricTokenPrice } from '../../hooks/useTokenPrice'
 import { ConvertButtonOutline, LoadingTwoGrid, SimpleButtonOutline, TwoGridPage } from '../Auction'
 
 export enum BondActions {
@@ -175,14 +174,7 @@ const BondDetail: React.FC = () => {
       <div className="flex flex-wrap justify-center content-center items-end py-2 md:justify-between">
         <div className="flex flex-wrap items-center space-x-6">
           <div className="hidden md:flex">
-            <TokenLogo
-              size="60px"
-              square
-              token={{
-                address: bond?.collateralToken.id,
-                symbol: bond?.symbol,
-              }}
-            />
+            {isConvertBond ? <BondConvertIcon /> : <BondSimpleIcon />}
           </div>
           <div>
             <h1 className="text-3xl text-white capitalize">{bond?.name.toLowerCase()}</h1>

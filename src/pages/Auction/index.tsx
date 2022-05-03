@@ -2,12 +2,13 @@ import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import { ReactComponent as AuctionsIcon } from '../../assets/svg/auctions.svg'
+import { ReactComponent as BondConvertIcon } from '../../assets/svg/bond-convert.svg'
+import { ReactComponent as BondSimpleIcon } from '../../assets/svg/bond-simple.svg'
 import { ReactComponent as ConvertIcon } from '../../assets/svg/convert.svg'
 import { ReactComponent as OTCIcon } from '../../assets/svg/otc.svg'
 import { ReactComponent as SimpleIcon } from '../../assets/svg/simple.svg'
 import AuctionBody from '../../components/auction/AuctionBody'
 import WarningModal from '../../components/modals/WarningModal'
-import TokenLogo from '../../components/token/TokenLogo'
 import { useAuction } from '../../hooks/useAuction'
 import useShowTopWarning from '../../hooks/useShowTopWarning'
 import { useDerivedAuctionInfo } from '../../state/orderPlacement/hooks'
@@ -181,14 +182,7 @@ const Auction: React.FC = () => {
       <div className="flex flex-wrap justify-center content-center items-end py-2 md:justify-between">
         <div className="flex flex-wrap items-center space-x-6">
           <div className="hidden md:flex">
-            <TokenLogo
-              size="60px"
-              square
-              token={{
-                address: graphInfo?.bond.collateralToken.id,
-                symbol: graphInfo?.bond.symbol,
-              }}
-            />
+            {graphInfo?.bond?.type === 'convert' ? <BondConvertIcon /> : <BondSimpleIcon />}
           </div>
           <div>
             <h1 className="text-3xl text-white capitalize">{graphInfo?.bond.name} Auction</h1>

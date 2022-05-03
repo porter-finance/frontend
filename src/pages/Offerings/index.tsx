@@ -3,12 +3,13 @@ import React, { useState } from 'react'
 import dayjs from 'dayjs'
 
 import { ReactComponent as AuctionsIcon } from '../../assets/svg/auctions.svg'
+import { ReactComponent as BondConvertIcon } from '../../assets/svg/bond-convert.svg'
+import { ReactComponent as BondSimpleIcon } from '../../assets/svg/bond-simple.svg'
 import { ReactComponent as DividerIcon } from '../../assets/svg/divider.svg'
 import { ReactComponent as OTCIcon } from '../../assets/svg/otc.svg'
 import { ActiveStatusPill } from '../../components/auction/OrderbookTable'
 import Table from '../../components/auctions/Table'
 import { calculateInterestRate } from '../../components/form/InterestRateInputPanel'
-import TokenLogo from '../../components/token/TokenLogo'
 import { useActiveWeb3React } from '../../hooks'
 import { useAuctions } from '../../hooks/useAuction'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
@@ -108,14 +109,7 @@ const Offerings = () => {
       offering: (
         <div className="flex flex-row items-center space-x-4">
           <div className="flex">
-            <TokenLogo
-              size="30px"
-              square
-              token={{
-                address: auction?.bond?.collateralToken.id,
-                symbol: auction?.bond?.symbol,
-              }}
-            />
+            {auction?.bond?.type === 'convert' ? <BondConvertIcon /> : <BondSimpleIcon />}
           </div>
           <div className="flex flex-col text-lg text-[#EEEFEB]">
             <div className="flex items-center space-x-2 capitalize">
