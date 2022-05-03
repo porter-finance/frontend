@@ -238,7 +238,7 @@ export function escapeRegExp(string: string): string {
 
 // Always return a non-undefined token display
 export function getTokenDisplay(token: Token): string {
-  return token?.name || token?.symbol?.slice(0, 7) || token?.address.slice(0, 7) || '🤔'
+  return token?.name || token?.symbol?.slice(0, 7) || token?.address?.slice(0, 7) || '🤔'
 }
 
 export function getDisplay(token: GraphToken): string {
@@ -252,7 +252,7 @@ export function getFullTokenDisplay(token: Token, chainId: ChainId): string {
   if (isTokenXDAI(token.address, chainId)) return `XDAI`
   if (isTokenWETH(token.address, chainId)) return `ETH`
   if (isTokenWMATIC(token.address, chainId)) return `MATIC`
-  return token?.symbol || token?.name || token?.address || '🤔'
+  return token?.name || token?.symbol || token?.address || '🤔'
 }
 
 export function isTokenXDAI(tokenAddress?: string, chainId?: ChainId): boolean {
