@@ -18,7 +18,7 @@ export const getValuePerBond = (bond: BondInfo, value: number) => {
             WADDecimals + bond.collateralToken.decimals - bond.paymentToken.decimals,
           ),
         ),
-        2,
+        3,
       )
     : 0
 }
@@ -32,8 +32,8 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
 
   const collateralPerBond = getValuePerBond(bond, bond?.collateralRatio)
   const convertiblePerBond = getValuePerBond(bond, bond?.convertibleRatio)
-  const collateralValue = round(collateralPerBond * collateralTokenPrice, 2)
-  const convertibleValue = round(convertiblePerBond * collateralTokenPrice, 2)
+  const collateralValue = round(collateralPerBond * collateralTokenPrice, 3)
+  const convertibleValue = round(convertiblePerBond * collateralTokenPrice, 3)
 
   const collateralizationRatio = ((collateralValue / paymentTokenPrice) * 100).toLocaleString()
 
@@ -48,14 +48,14 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
     },
     {
       title: 'Collateral tokens',
-      value: `${collateralPerBond} ${bond?.collateralToken.symbol || ''}`,
+      value: `${collateralPerBond.toLocaleString()} ${bond?.collateralToken.symbol || ''}`,
       hint: `($${collateralValue})`,
       tooltip:
         'Number of collateral tokens securing each bond. If a bond is defaulted on, the bondholder is able to exchange each bond for these collateral tokens.',
     },
     {
       title: 'Convertible tokens',
-      value: `${convertiblePerBond} ${bond?.collateralToken.symbol || ''}`,
+      value: `${convertiblePerBond.toLocaleString()} ${bond?.collateralToken.symbol || ''}`,
       hint: `($${convertibleValue})`,
       tooltip: 'Number of tokens each bond is convertible into up until the maturity date.',
       show: isConvertBond,
