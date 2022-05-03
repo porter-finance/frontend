@@ -88,7 +88,7 @@ const BondCard = ({ graphInfo }: { graphInfo: Auction }) => {
 
             <div className="space-y-2">
               <h2 className="text-2xl font-normal text-white capitalize">
-                {graphInfo?.bond.name.toLowerCase() || 'Bond Name'} Bond
+                {graphInfo?.bond.name.toLowerCase() || 'Bond Name'}
               </h2>
               <p className="text-xs font-normal text-[#9F9F9F] uppercase">
                 {graphInfo?.bond.symbol || 'Bond Symbol'}
