@@ -128,8 +128,8 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
 
   const biddingTokenBalance = useTokenBalance(biddingToken.address, account, { chainId })
   const balanceString = biddingTokenBalance
-    ? formatUnits(biddingTokenBalance, biddingToken.decimals)
-    : '0'
+    ? Number(formatUnits(biddingTokenBalance, biddingToken.decimals)).toLocaleString()
+    : '0.00'
 
   useEffect(() => {
     onUserPriceInput(price)
@@ -369,13 +369,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                     <div>{biddingTokenDisplay} Balance</div>
                     <div>
                       <button className="text-xs font-normal text-[#9F9F9F] btn btn-xs btn-link">
-                        {!balanceString ||
-                        balanceString === '0' ||
-                        !Number(balanceString) ||
-                        !account
-                          ? '0.00'
-                          : balanceString}{' '}
-                        {biddingTokenDisplay}
+                        {balanceString} {biddingTokenDisplay}
                       </button>
                     </div>
                   </div>
