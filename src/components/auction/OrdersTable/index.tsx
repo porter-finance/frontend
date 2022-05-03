@@ -102,7 +102,11 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
       </OverflowWrap>
       <ConfirmationDialog
         actionText="Cancel order"
-        beforeDisplay={<span>Are you sure</span>}
+        beforeDisplay={
+          <span>
+            You will need to place a new order if you still want to participate in this auction.
+          </span>
+        }
         finishedText="Order cancelled"
         loadingText="Cancelling order"
         onOpenChange={setShowConfirm}
