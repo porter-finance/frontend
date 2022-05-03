@@ -32,19 +32,19 @@ type Auction {
     bond: Bond!
     "Quantity of bonds sold"
     bondsSold: BigInt!
-    "Price that each bond was sold at denominated in paymentToken tokens"
-    clearing: BigDecimal
+    "Price that each bond was sold at denominated in paymentTokens"
+    clearingPrice: BigDecimal
     "Auction end timestamp"
     end: BigInt!
     "Gnosis Auction ID"
     id: ID!
     "If the auction is currently ongoing, or if it has ended"
     live: Boolean!
-    "Minimum amount of payment tokens in a single bid"
+    "Minimum amount of paymentTokens in a single bid"
     minimumBidSize: BigInt!
     "Minimum paymentToken per bond"
     minimumBondPrice: BigDecimal!
-    "Minimum amount of payment tokens to buy full size"
+    "Minimum amount of payment tokens to buy for a successful auction"
     minimumFundingThreshold: BigInt!
     "Total number of bonds to be auctioned"
     offeringSize: BigInt!
@@ -83,7 +83,7 @@ type Bid {
 
 type Bond {
     amountUnpaid: BigInt!
-    auctionPrice: BigInt
+    clearingPrice: BigDecimal
     collateralRatio: BigInt!
     collateralToken: Token!
     collateralTokenAmount: BigInt!
@@ -425,7 +425,7 @@ enum Auction_orderBy {
     bidding
     bond
     bondsSold
-    clearing
+    clearingPrice
     end
     id
     live
@@ -474,7 +474,7 @@ enum BondType {
 
 enum Bond_orderBy {
     amountUnpaid
-    auctionPrice
+    clearingPrice
     collateralRatio
     collateralToken
     collateralTokenAmount
@@ -611,14 +611,14 @@ input Auction_filter {
     bondsSold_lte: BigInt
     bondsSold_not: BigInt
     bondsSold_not_in: [BigInt!]
-    clearing: BigDecimal
-    clearing_gt: BigDecimal
-    clearing_gte: BigDecimal
-    clearing_in: [BigDecimal!]
-    clearing_lt: BigDecimal
-    clearing_lte: BigDecimal
-    clearing_not: BigDecimal
-    clearing_not_in: [BigDecimal!]
+    clearingPrice: BigDecimal
+    clearingPrice_gt: BigDecimal
+    clearingPrice_gte: BigDecimal
+    clearingPrice_in: [BigDecimal!]
+    clearingPrice_lt: BigDecimal
+    clearingPrice_lte: BigDecimal
+    clearingPrice_not: BigDecimal
+    clearingPrice_not_in: [BigDecimal!]
     end: BigInt
     end_gt: BigInt
     end_gte: BigInt
@@ -864,14 +864,14 @@ input Bond_filter {
     amountUnpaid_lte: BigInt
     amountUnpaid_not: BigInt
     amountUnpaid_not_in: [BigInt!]
-    auctionPrice: BigInt
-    auctionPrice_gt: BigInt
-    auctionPrice_gte: BigInt
-    auctionPrice_in: [BigInt!]
-    auctionPrice_lt: BigInt
-    auctionPrice_lte: BigInt
-    auctionPrice_not: BigInt
-    auctionPrice_not_in: [BigInt!]
+    clearingPrice: BigDecimal
+    clearingPrice_gt: BigDecimal
+    clearingPrice_gte: BigDecimal
+    clearingPrice_in: [BigDecimal!]
+    clearingPrice_lt: BigDecimal
+    clearingPrice_lte: BigDecimal
+    clearingPrice_not: BigDecimal
+    clearingPrice_not_in: [BigDecimal!]
     collateralRatio: BigInt
     collateralRatio_gt: BigInt
     collateralRatio_gte: BigInt
