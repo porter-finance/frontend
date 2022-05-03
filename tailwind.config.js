@@ -6,6 +6,7 @@ module.exports = {
     extend: {
       colors: {
         white: '#e0e0e0',
+        'base-100': '#131415',
       },
       maxWidth: {
         '8xl': '85rem',
@@ -78,10 +79,8 @@ module.exports = {
         dark: {
           ...require('daisyui/src/colors/themes')['[data-theme=dark]'],
           'base-100': '#131415',
-          'bg-neutral': '#181A1C',
         },
       },
-      'light',
     ],
   },
   darkMode: 'class',
