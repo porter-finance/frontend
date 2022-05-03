@@ -107,7 +107,7 @@ export const createTable = (data: BondInfo[]) => {
               square
               token={{
                 address: id,
-                symbol,
+                symbol: name,
               }}
             />
           </div>
