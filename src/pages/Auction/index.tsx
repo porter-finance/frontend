@@ -21,7 +21,9 @@ export const GhostButton = ({ children, ...props }) => {
   }
   return (
     <button
-      className="inline-flex items-center py-2 px-5 space-x-2 h-[32px] text-xs leading-none text-white uppercase bg-transparent rounded-full border border-blue-100 border-opacity-50"
+      className={`${
+        !props.onClick ? 'pointer-events-none' : ''
+      } inline-flex items-center py-2 px-5 space-x-2 h-[32px] text-xs leading-none text-white uppercase bg-transparent rounded-full border border-blue-100 border-opacity-50`}
       {...props}
     >
       {children}
@@ -33,7 +35,7 @@ export const AllButton = ({ ...props }) => <GhostButton {...props}>All</GhostBut
 
 export const ActiveButton = ({ children, ...props }) => (
   <button
-    className="inline-flex items-center py-2 px-5 space-x-2 h-[32px] text-xs leading-none text-white uppercase bg-black rounded-full"
+    className="inline-flex items-center py-2 px-5 space-x-2 h-[32px] text-xs leading-none text-white uppercase bg-black rounded-full pointer-events-none"
     {...props}
   >
     {children}
