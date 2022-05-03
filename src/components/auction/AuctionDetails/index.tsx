@@ -85,18 +85,28 @@ const AuctionDetails = (props: Props) => {
     ) as string
   }
 
-  const minimumBondPrice = (
-    <TokenValue>
-      {abbreviation(graphInfo?.minimumBondPrice).toLocaleString()}{' '}
-      {`${getDisplay(graphInfo?.bidding)}`}
-    </TokenValue>
-  )
+  const minimumBondPrice = {
+    fullNumberHint: graphInfo?.minimumBondPrice.toLocaleString(),
+    value: graphInfo?.minimumBondPrice ? (
+      <TokenValue>
+        {abbreviation(graphInfo?.minimumBondPrice).toLocaleString()}{' '}
+        {`${getDisplay(graphInfo?.bidding)}`}
+      </TokenValue>
+    ) : (
+      '-'
+    ),
+  }
 
-  const currentBondPrice = (
-    <TokenValue>
-      {abbreviation(auctionCurrentPrice)} {`${getDisplay(graphInfo?.bidding)}`}
-    </TokenValue>
-  )
+  const currentBondPrice = {
+    fullNumberHint: auctionCurrentPrice.toLocaleString(),
+    value: auctionCurrentPrice ? (
+      <TokenValue>
+        {abbreviation(auctionCurrentPrice)} {`${getDisplay(graphInfo?.bidding)}`}
+      </TokenValue>
+    ) : (
+      '-'
+    ),
+  }
 
   const extraDetails: Array<ExtraDetailsItemProps> = [
     {
@@ -123,7 +133,7 @@ const AuctionDetails = (props: Props) => {
     {
       title: 'Current bond price',
       tooltip: `Current auction clearing price for a single bond. If the auction ended now, this would be the price set.`,
-      value: currentBondPrice ? currentBondPrice : '-',
+      ...currentBondPrice,
       bordered: 'blue',
     },
     {
@@ -136,7 +146,7 @@ const AuctionDetails = (props: Props) => {
     {
       title: 'Minimum bond price',
       tooltip: 'Minimum price a bond can be sold for. Bids below this price will not be accepted.',
-      value: minimumBondPrice ? minimumBondPrice : '-',
+      ...minimumBondPrice,
     },
     {
       title: 'Maximum bond APR',
