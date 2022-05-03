@@ -180,7 +180,7 @@ const BondDetail: React.FC = () => {
               square
               token={{
                 address: bond?.id,
-                symbol: bond?.symbol,
+                symbol: bond?.name,
               }}
             />
           </div>
