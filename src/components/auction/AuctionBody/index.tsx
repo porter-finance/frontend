@@ -69,15 +69,15 @@ const BondCard = ({ graphInfo }: { graphInfo: Auction }) => {
   const { isConvertBond } = getBondStates(graphInfo?.bond)
 
   return (
-    <div className="card card-bordered bond-card-color">
+    <div
+      className="shadow-sm hover:shadow-[#532DBE] transition-all hover:scale-105 cursor-pointer will-change-auto card  card-bordered bond-card-color"
+      onClick={() => navigate(`/products/${graphInfo?.bond.id || ''}`)}
+    >
       <div className="card-body">
         <h2 className="card-title">Bond information</h2>
 
         <div className="flex justify-between items-end text-sm text-[#9F9F9F]">
-          <div
-            className="flex items-center space-x-4 cursor-pointer"
-            onClick={() => navigate(`/products/${graphInfo?.bond.id || ''}`)}
-          >
+          <div className="flex items-center space-x-4 cursor-pointer">
             <TokenLogo
               square
               token={{
