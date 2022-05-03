@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 import { formatUnits } from '@ethersproject/units'
+import { round } from 'lodash'
 import { usePagination, useTable } from 'react-table'
 
 import { useActiveWeb3React } from '../../../hooks'
@@ -19,6 +20,54 @@ export const OverflowWrap = styled.div`
   overflow-x: auto;
   overflow-y: auto;
 `
+export const ordersTableColumns = [
+  {
+    Header: 'Status',
+    accessor: 'status',
+  },
+  {
+    Header: 'Price',
+    accessor: 'price',
+  },
+  {
+    Header: 'Interest rate',
+    accessor: 'interest',
+  },
+  {
+    Header: 'Total cost',
+    accessor: 'amount',
+  },
+  {
+    Header: 'Bonds',
+    accessor: 'bonds',
+  },
+  {
+    Header: 'Transaction',
+    accessor: 'transaction',
+  },
+]
+
+export const calculateRow = (row, paymentToken, maturityDate, derivedAuctionInfo) => {
+  let statusText = ''
+  if (row.createtx) statusText = orderStatusText[OrderStatus.PLACED]
+  if (!row.createtx) statusText = orderStatusText[OrderStatus.PENDING]
+  if (row.canceltx) statusText = 'Cancelled'
+  const status = <ActiveStatusPill title={statusText} />
+  const price = `${(row.payable / row.size).toLocaleString()} ${paymentToken}`
+  const interest = `${calculateInterestRate(row.payable / row.size, maturityDate)} `
+  const amount = `${Number(
+    formatUnits(row.payable, derivedAuctionInfo.biddingToken.decimals),
+  ).toLocaleString()} ${paymentToken} `
+
+  const bonds = `${round(
+    Number(formatUnits(row.size, derivedAuctionInfo.auctioningToken.decimals)),
+    2,
+  ).toLocaleString()}+ ${'Bonds'}`
+
+  const transaction = <BidTransactionLink bid={row} />
+
+  return { status, price, interest, amount, bonds, transaction }
+}
 
 export const TableDesign = ({
   columns,
@@ -63,7 +112,7 @@ export const TableDesign = ({
             >
               {headerGroup.headers.map((column, i) => (
                 <th
-                  className="bg-transparent text-[#696969] text-xs font-normal tracking-widest"
+                  className="text-xs font-normal tracking-widest text-[#696969] bg-transparent"
                   key={i}
                   {...column.getHeaderProps()}
                 >
@@ -75,9 +124,9 @@ export const TableDesign = ({
         </thead>
         <tbody {...getTableBodyProps()}>
           {!page.length && (
-            <tr className="bg-transparent text-[#D2D2D2] text-sm">
+            <tr className="text-sm text-[#D2D2D2] bg-transparent">
               <td
-                className="bg-transparent text-center py-[100px] text-[#696969] space-y-4"
+                className="py-[100px] space-y-4 text-center text-[#696969] bg-transparent"
                 colSpan={columns.length}
               >
                 {(account || !showConnect) && (
@@ -129,7 +178,7 @@ export const TableDesign = ({
           {page.map((row, i) => {
             prepareRow(row)
             return (
-              <tr className="bg-transparent text-[#D2D2D2] text-sm" key={i} {...row.getRowProps()}>
+              <tr className="text-sm text-[#D2D2D2] bg-transparent" key={i} {...row.getRowProps()}>
                 {row.cells.map((cell, i) => {
                   return (
                     <td className="bg-transparent" key={i} {...cell.getCellProps()}>
@@ -143,18 +192,18 @@ export const TableDesign = ({
         </tbody>
       </table>
       {!hidePagination && pageOptions.length > 0 && (
-        <div className="btn-group !border-none text-[#696969]">
+        <div className="text-[#696969] !border-none btn-group">
           <button
-            className="btn btn-lg !text-lg"
+            className="!text-lg btn btn-lg"
             disabled={!canPreviousPage}
             onClick={previousPage}
           >
             «
           </button>
-          <button className="btn btn-lg disabled:text-[#696969]" disabled>
+          <button className="disabled:text-[#696969] btn btn-lg" disabled>
             Page {pageIndex + 1} of {pageOptions.length}
           </button>
-          <button className="btn btn-lg !text-lg" disabled={!canNextPage} onClick={nextPage}>
+          <button className="!text-lg btn btn-lg" disabled={!canNextPage} onClick={nextPage}>
             »
           </button>
         </div>
@@ -219,36 +268,6 @@ export const BidTransactionLink = ({ bid }) => {
 export const OrderBookTable: React.FC<OrderBookTableProps> = ({ bids, derivedAuctionInfo }) => {
   const maturityDate = useBondMaturityForAuction()
 
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: 'Status',
-        accessor: 'status', // accessor is the "key" in the data
-      },
-      {
-        Header: 'Price',
-        accessor: 'price',
-      },
-      {
-        Header: 'Interest rate',
-        accessor: 'interest',
-      },
-      {
-        Header: 'Total Cost',
-        accessor: 'amount',
-      },
-      {
-        Header: 'Bonds',
-        accessor: 'bonds',
-      },
-      {
-        Header: 'Transaction',
-        accessor: 'transaction',
-      },
-    ],
-    [],
-  )
-
   const data = []
 
   const paymentToken = getTokenDisplay(derivedAuctionInfo?.biddingToken)
@@ -257,28 +276,12 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({ bids, derivedAuc
 
   !noBids &&
     bids.forEach((row) => {
-      let statusText = ''
-      if (row.createtx) statusText = orderStatusText[OrderStatus.PLACED]
-      if (!row.createtx) statusText = orderStatusText[OrderStatus.PENDING]
-      if (row.canceltx) statusText = 'Cancelled'
-      const status = <ActiveStatusPill title={statusText} />
-      const price = `${(row.payable / row.size).toLocaleString()} ${paymentToken}`
-      const interest = `${calculateInterestRate(row.payable / row.size, maturityDate)} `
-      const amount = `${Number(
-        formatUnits(row.payable, derivedAuctionInfo.biddingToken.decimals),
-      ).toLocaleString()} ${paymentToken} `
-      const bonds = `${formatUnits(
-        row.size,
-        derivedAuctionInfo.auctioningToken.decimals,
-      ).toLocaleString()}  Bonds`
-      const transaction = <BidTransactionLink bid={row} />
-
-      data.push({ status, price, interest, amount, bonds, transaction })
+      data.push(calculateRow(row, paymentToken, maturityDate, derivedAuctionInfo))
     })
 
   return (
     <OverflowWrap>
-      <TableDesign columns={columns} data={data} />
+      <TableDesign columns={ordersTableColumns} data={data} />
     </OverflowWrap>
   )
 }

@@ -39,6 +39,7 @@ module.exports = {
     'plugin:import/errors',
     'plugin:import/warnings',
     'plugin:import/typescript',
+    'plugin:tailwindcss/recommended',
   ],
   rules: {
     '@typescript-eslint/explicit-function-return-type': 'off',

@@ -89,12 +89,14 @@ export interface Props {
   bordered?: string
   url?: string
   hint?: string | number | ReactElement
+  fullNumberHint?: string
   value: string | number | ReactElement
 }
 
 export const ExtraDetailsItem: React.FC<Props> = ({
   bordered,
   disabled = false,
+  fullNumberHint,
   hint,
   show = true,
   title,
@@ -107,7 +109,9 @@ export const ExtraDetailsItem: React.FC<Props> = ({
     <div className="col-span-1" {...restProps}>
       <div className="space-y-2">
         <Value className={`${disabled ? 'text-[#696969]' : 'text-white'}`}>
-          <ValueText className="overflow-hidden overflow-ellipsis">{value || 'Unknown'}</ValueText>
+          <ValueText className="overflow-hidden text-ellipsis" title={fullNumberHint}>
+            {value || 'Unknown'}
+          </ValueText>
           {url && <Link href={url} />}
           {hint && <span className="text-[#979797]">{hint}</span>}
         </Value>
