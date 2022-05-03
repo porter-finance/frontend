@@ -235,8 +235,8 @@ export const drawInformation = (props: DrawInformation) => {
     const valueX = target?.tooltipDataItem?.values?.valueX?.value ?? 0
     const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
 
-    const askPrice = round(valueX, 4)
-    const volume = round(valueY, 4)
+    const askPrice = round(valueX, 3)
+    const volume = round(valueY, 3)
     const interest = maturityDate && calculateInterestRate(valueX, maturityDate)
 
     return `${market}<br/>
@@ -257,8 +257,8 @@ Interest:  ${interest}
     const valueX = target?.tooltipDataItem?.values?.valueX?.value ?? 0
     const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
 
-    const bidPrice = round(valueX, 4)
-    const volume = round(valueY, 4)
+    const bidPrice = round(valueX, 3)
+    const volume = round(valueY, 3)
     const interest = maturityDate && calculateInterestRate(valueX, maturityDate)
 
     return `${market}<br/>
