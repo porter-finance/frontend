@@ -15,42 +15,61 @@ import { RouteAuctionIdentifier, parseURL } from '../../state/orderPlacement/red
 import { useTokenListState } from '../../state/tokenList/hooks'
 import { isAddress } from '../../utils'
 
-export const GhostButton = ({ children }) => (
-  <span className="leading-none space-x-2 inline-flex items-center px-5 py-2 rounded-full bg-transparent text-white border-blue-100 border uppercase border-opacity-50 pointer-events-none">
+export const GhostButton = ({ children, ...props }) => {
+  if (props.active) {
+    return <ActiveButton {...props}>{children}</ActiveButton>
+  }
+  return (
+    <button
+      className="inline-flex items-center py-2 px-5 space-x-2 h-[32px] text-xs leading-none text-white uppercase bg-transparent rounded-full border border-blue-100 border-opacity-50"
+      {...props}
+    >
+      {children}
+    </button>
+  )
+}
+
+export const AllButton = ({ ...props }) => <GhostButton {...props}>All</GhostButton>
+
+export const ActiveButton = ({ children, ...props }) => (
+  <button
+    className="inline-flex items-center py-2 px-5 space-x-2 h-[32px] text-xs leading-none text-white uppercase bg-black rounded-full"
+    {...props}
+  >
     {children}
-  </span>
+  </button>
 )
 
-export const ConvertButtonOutline = () => (
-  <GhostButton>
-    <ConvertIcon height={12.57} width={12.57} /> <span className="text-xs">Convertible</span>
+export const ConvertButtonOutline = ({ ...props }) => (
+  <GhostButton {...props}>
+    <ConvertIcon height={12.57} width={12.57} /> <span>Convertible</span>
   </GhostButton>
 )
 
-export const SimpleButtonOutline = () => (
-  <GhostButton>
-    <SimpleIcon height={12.57} width={12.57} /> <span className="text-xs">Simple</span>
+export const SimpleButtonOutline = ({ ...props }) => (
+  <GhostButton {...props}>
+    <SimpleIcon height={12.57} width={12.57} /> <span>Simple</span>
   </GhostButton>
 )
 
-export const AuctionButtonOutline = ({ plural = false }) => (
-  <GhostButton>
+export const AuctionButtonOutline = ({ plural = false, ...props }) => (
+  <GhostButton {...props}>
     <AuctionsIcon height={12.57} width={12.57} />
-    <span className="text-xs">Auction{plural && 's'}</span>
+    <span>Auction{plural && 's'}</span>
   </GhostButton>
 )
 
-export const OTCButtonOutline = () => (
-  <GhostButton>
+export const OTCButtonOutline = ({ ...props }) => (
+  <GhostButton {...props}>
     <OTCIcon height={12.57} width={12.57} />
-    <span className="text-xs">OTC</span>
+    <span>OTC</span>
   </GhostButton>
 )
 
 // Strangely couldn't use tailwind h-[9px] or min-h- , had to specify style = manually
 export const LoadingBox = ({ height }) => (
   <div
-    className="mt-8 animate-pulse shadow rounded-lg h-full bg-gradient-to-r from-[#181A1C] to-[#1F2123]"
+    className="mt-8 h-full bg-gradient-to-r from-[#181A1C] to-[#1F2123] rounded-lg shadow animate-pulse"
     style={{ height }}
   />
 )
@@ -58,7 +77,7 @@ export const LoadingBox = ({ height }) => (
 export const TwoGridPage = ({ hasHeader = true, leftChildren, rightChildren }) => (
   <main className={`pb-8 px-0 ${!hasHeader ? 'mt-20' : ''}`}>
     {/* Main 3 column grid */}
-    <div className="grid grid-cols-1 gap-4 items-start lg:grid-cols-3 lg:gap-8 pb-32">
+    <div className="grid grid-cols-1 gap-4 items-start pb-32 lg:grid-cols-3 lg:gap-8">
       {/* Left column */}
       <div className="grid grid-cols-1 gap-4 lg:col-span-2">
         <section aria-labelledby="section-1-title">{leftChildren}</section>
@@ -157,7 +176,7 @@ const Auction: React.FC = () => {
 
   return (
     <>
-      <div className="py-2 flex content-center justify-center md:justify-between flex-wrap items-end">
+      <div className="flex flex-wrap justify-center content-center items-end py-2 md:justify-between">
         <div className="flex flex-wrap items-center space-x-6">
           <div className="hidden md:flex">
             <TokenLogo
@@ -171,7 +190,7 @@ const Auction: React.FC = () => {
           </div>
           <div>
             <h1 className="text-3xl text-white capitalize">{graphInfo?.bond.name} Auction</h1>
-            <p className="text-[#E0E0E0] text-2sm">{graphInfo?.bond.symbol}</p>
+            <p className="text-2sm text-[#E0E0E0]">{graphInfo?.bond.symbol}</p>
           </div>
         </div>
         <AuctionButtonOutline />
