@@ -131,7 +131,7 @@ export const UserDropdown: React.FC<Props> = (props) => {
       ? Object.prototype.hasOwnProperty.call(provider, 'wc')
       : undefined
 
-    return isMetaMask ? 'MetaMask' : isWalletConnect ? 'WalletConnect' : 'Unknown'
+    return isMetaMask ? 'MetaMask' : isWalletConnect ? 'WalletConnect' : 'Safe App'
   }, [library])
 
   const disconnect = React.useCallback(async () => {
