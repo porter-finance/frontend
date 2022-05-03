@@ -39,7 +39,7 @@ const RedeemError = () => (
   <div className="card card-bordered">
     <div className="card-body">
       <div className="flex justify-between">
-        <h2 className="card-title !text-[#696969]">Redeem</h2>
+        <h2 className="!text-[#696969] card-title">Redeem</h2>
       </div>
       <div className="space-y-6">
         <div className="text-base text-[#696969]">
@@ -51,14 +51,14 @@ const RedeemError = () => (
 )
 
 const EmptyConnectWallet = () => (
-  <div className="text-center py-[50px] text-[#696969] space-y-4">
+  <div className="py-[50px] space-y-4 text-center text-[#696969]">
     <ConnectIcon className="m-auto" height={49.5} width={51} />
     <div className="text-base">Connect your wallet to view your position</div>
   </div>
 )
 
 const EmptyConnected = ({ bondName }) => (
-  <div className="text-center py-[50px] text-[#696969] space-y-4">
+  <div className="py-[50px] space-y-4 text-center text-[#696969]">
     <WalletIcon className="m-auto" height={49.5} width={51} />
     <div className="text-base">You don&apos;t own any {bondName}</div>
   </div>
@@ -68,7 +68,7 @@ const ConvertError = () => (
   <div className="card card-bordered">
     <div className="card-body">
       <div className="flex justify-between">
-        <h2 className="card-title !text-[#696969]">Convert</h2>
+        <h2 className="!text-[#696969] card-title">Convert</h2>
       </div>
       <div className="space-y-6">
         <div className="text-base text-[#696969]">
@@ -172,7 +172,7 @@ const BondDetail: React.FC = () => {
   return (
     <>
       <GlobalStyle />
-      <div className="py-2 flex content-center justify-center md:justify-between flex-wrap items-end">
+      <div className="flex flex-wrap justify-center content-center items-end py-2 md:justify-between">
         <div className="flex flex-wrap items-center space-x-6">
           <div className="hidden md:flex">
             <TokenLogo
@@ -186,7 +186,7 @@ const BondDetail: React.FC = () => {
           </div>
           <div>
             <h1 className="text-3xl text-white capitalize">{bond?.name.toLowerCase()} Bond</h1>
-            <p className="text-blue-100 text-sm">{bond?.symbol}</p>
+            <p className="text-sm text-blue-100">{bond?.symbol}</p>
           </div>
         </div>
         <div>{isConvertBond ? <ConvertButtonOutline /> : <SimpleButtonOutline />}</div>
@@ -197,7 +197,7 @@ const BondDetail: React.FC = () => {
           <>
             <div className="card">
               <div className="card-body">
-                <h2 className="card-title flex flex-row items-center justify-between">
+                <h2 className="flex flex-row justify-between items-center card-title">
                   <span>Bond information</span>
                   {!isMatured ? (
                     <ActiveStatusPill />
