@@ -3,8 +3,25 @@ import dayjs from 'dayjs'
 import { round } from 'lodash'
 
 import { Props as ExtraDetailsItemProps } from '../components/auction/ExtraDetailsItem'
-import { useBond } from './useBond'
+import { BondInfo, useBond } from './useBond'
 import { useTokenPrice } from './useTokenPrice'
+
+const WADDecimals = 18
+const paymentTokenPrice = 1
+
+export const getValuePerBond = (bond: BondInfo, value: number) => {
+  return bond
+    ? round(
+        Number(
+          formatUnits(
+            value,
+            WADDecimals + bond.collateralToken.decimals - bond.paymentToken.decimals,
+          ),
+        ),
+        2,
+      )
+    : 0
+}
 
 export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => {
   const { data: bond } = useBond(bondId)
@@ -12,32 +29,9 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
   const { data: collateralTokenPrice } = useTokenPrice(bond?.collateralToken.id)
   // TODO - use this value, its value should always be close to 1 tho since its a stable
   // const { data: paymentTokenPrice } = useTokenPrice(bond?.paymentToken.id)
-  const paymentTokenPrice = 1
-  const WADDecimals = 18
 
-  const collateralPerBond = bond
-    ? round(
-        Number(
-          formatUnits(
-            bond.collateralRatio,
-            WADDecimals + bond.collateralToken.decimals - bond.paymentToken.decimals,
-          ),
-        ),
-        2,
-      )
-    : 0
-
-  const convertiblePerBond = bond
-    ? round(
-        Number(
-          formatUnits(
-            bond.convertibleRatio,
-            WADDecimals + bond.collateralToken.decimals - bond.paymentToken.decimals,
-          ),
-        ),
-        2,
-      )
-    : 0
+  const collateralPerBond = getValuePerBond(bond, bond?.collateralRatio)
+  const convertiblePerBond = getValuePerBond(bond, bond?.convertibleRatio)
   const collateralValue = round(collateralPerBond * collateralTokenPrice, 2)
   const convertibleValue = round(convertiblePerBond * collateralTokenPrice, 2)
 
