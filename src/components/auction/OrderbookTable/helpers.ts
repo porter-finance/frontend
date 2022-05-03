@@ -46,7 +46,7 @@ export const buildTableData = (bids: PricePoint[], myBids: PricePoint[], granula
         mySize += (myBid.volume / currentValue.amount) * 100
       }
     }
-    currentValue.mySize = Math.min(round(mySize, 2), 100)
+    currentValue.mySize = Math.min(round(mySize, 3), 100)
 
     rangeVolume.set(key, currentValue)
   }
