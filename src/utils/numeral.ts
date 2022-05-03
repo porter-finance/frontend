@@ -9,6 +9,7 @@ export const abbreviation = (_value: string | number, mantissa = 6) => {
     const parseValue: numbro.Numbro = numbro(value)
     const format = {
       spaceSeparated: false,
+      thousandSeparated: true,
       optionalMantissa: true,
       trimMantissa: true,
       average: false,
