@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 import { formatUnits } from '@ethersproject/units'
+import { round } from 'lodash'
 import { usePagination, useTable } from 'react-table'
 
 import { useActiveWeb3React } from '../../../hooks'
@@ -19,6 +20,54 @@ export const OverflowWrap = styled.div`
   overflow-x: auto;
   overflow-y: auto;
 `
+export const ordersTableColumns = [
+  {
+    Header: 'Status',
+    accessor: 'status',
+  },
+  {
+    Header: 'Price',
+    accessor: 'price',
+  },
+  {
+    Header: 'Interest rate',
+    accessor: 'interest',
+  },
+  {
+    Header: 'Total cost',
+    accessor: 'amount',
+  },
+  {
+    Header: 'Bonds',
+    accessor: 'bonds',
+  },
+  {
+    Header: 'Transaction',
+    accessor: 'transaction',
+  },
+]
+
+export const calculateRow = (row, paymentToken, maturityDate, derivedAuctionInfo) => {
+  let statusText = ''
+  if (row.createtx) statusText = orderStatusText[OrderStatus.PLACED]
+  if (!row.createtx) statusText = orderStatusText[OrderStatus.PENDING]
+  if (row.canceltx) statusText = 'Cancelled'
+  const status = <ActiveStatusPill title={statusText} />
+  const price = `${(row.payable / row.size).toLocaleString()} ${paymentToken}`
+  const interest = `${calculateInterestRate(row.payable / row.size, maturityDate)} `
+  const amount = `${Number(
+    formatUnits(row.payable, derivedAuctionInfo.biddingToken.decimals),
+  ).toLocaleString()} ${paymentToken} `
+
+  const bonds = `${round(
+    Number(formatUnits(row.size, derivedAuctionInfo.auctioningToken.decimals)),
+    2,
+  ).toLocaleString()}+ ${'Bonds'}`
+
+  const transaction = <BidTransactionLink bid={row} />
+
+  return { status, price, interest, amount, bonds, transaction }
+}
 
 export const TableDesign = ({
   columns,
@@ -219,36 +268,6 @@ export const BidTransactionLink = ({ bid }) => {
 export const OrderBookTable: React.FC<OrderBookTableProps> = ({ bids, derivedAuctionInfo }) => {
   const maturityDate = useBondMaturityForAuction()
 
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: 'Status',
-        accessor: 'status', // accessor is the "key" in the data
-      },
-      {
-        Header: 'Price',
-        accessor: 'price',
-      },
-      {
-        Header: 'Interest rate',
-        accessor: 'interest',
-      },
-      {
-        Header: 'Total Cost',
-        accessor: 'amount',
-      },
-      {
-        Header: 'Bonds',
-        accessor: 'bonds',
-      },
-      {
-        Header: 'Transaction',
-        accessor: 'transaction',
-      },
-    ],
-    [],
-  )
-
   const data = []
 
   const paymentToken = getTokenDisplay(derivedAuctionInfo?.biddingToken)
@@ -257,28 +276,12 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({ bids, derivedAuc
 
   !noBids &&
     bids.forEach((row) => {
-      let statusText = ''
-      if (row.createtx) statusText = orderStatusText[OrderStatus.PLACED]
-      if (!row.createtx) statusText = orderStatusText[OrderStatus.PENDING]
-      if (row.canceltx) statusText = 'Cancelled'
-      const status = <ActiveStatusPill title={statusText} />
-      const price = `${(row.payable / row.size).toLocaleString()} ${paymentToken}`
-      const interest = `${calculateInterestRate(row.payable / row.size, maturityDate)} `
-      const amount = `${Number(
-        formatUnits(row.payable, derivedAuctionInfo.biddingToken.decimals),
-      ).toLocaleString()} ${paymentToken} `
-      const bonds = `${formatUnits(
-        row.size,
-        derivedAuctionInfo.auctioningToken.decimals,
-      ).toLocaleString()}  Bonds`
-      const transaction = <BidTransactionLink bid={row} />
-
-      data.push({ status, price, interest, amount, bonds, transaction })
+      data.push(calculateRow(row, paymentToken, maturityDate, derivedAuctionInfo))
     })
 
   return (
     <OverflowWrap>
-      <TableDesign columns={columns} data={data} />
+      <TableDesign columns={ordersTableColumns} data={data} />
     </OverflowWrap>
   )
 }
