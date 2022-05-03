@@ -50,10 +50,6 @@ html {
     border-bottom-right-radius: inherit;
 }
 
-.bg-neutral {
-    background-color: #181A1C;
-}
-
 .btn-warning {
     background-color: #EDA651;
     border-color: #EDA651;
@@ -68,7 +64,7 @@ html {
 
 .card {
     @apply rounded-md;
-    @apply bg-neutral;
+    background-color: #181A1C;
     @apply text-neutral-content;
     @apply h-min;
     @apply mt-8;

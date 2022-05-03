@@ -44,7 +44,7 @@ export interface Props {
   chainId: ChainId
 }
 
-const Wrapper = styled.div`
+export const ChartWrapper = styled.div`
   align-items: center;
   box-sizing: border-box;
   color: ${({ theme }) => theme.text1};
@@ -127,7 +127,7 @@ const OrderBookChart: React.FC<Props> = (props) => {
       <VolumeLabel>{volumeTitle}</VolumeLabel>
       {mountPoint && !loading && (
         <>
-          <Wrapper ref={mountPoint} />
+          <ChartWrapper ref={mountPoint} />
         </>
       )}
     </>
@@ -139,7 +139,7 @@ interface OrderBookErrorProps {
 }
 
 export const OrderBookError: React.FC<OrderBookErrorProps> = ({ error }: OrderBookErrorProps) => (
-  <Wrapper>{error ? error.message : <InlineLoading size={SpinnerSize.small} />}</Wrapper>
+  <ChartWrapper>{error ? error.message : <InlineLoading size={SpinnerSize.small} />}</ChartWrapper>
 )
 
 export default OrderBookChart
