@@ -273,11 +273,11 @@ const Table = ({
 
   return (
     <Wrapper ref={sectionHead} {...restProps}>
-      <div className="py-2 flex content-center justify-center md:justify-between flex-wrap items-end mb-10">
+      <div className="flex flex-wrap justify-center content-center items-end py-2 mb-10 md:justify-between">
         <div className="flex flex-col space-y-4">
           <SectionTitle>{title}</SectionTitle>
 
-          <div className="flex flex-row space-x-4 items-center">{legendIcons}</div>
+          <div className="flex flex-row items-center space-x-4">{legendIcons}</div>
         </div>
 
         <div>
@@ -317,7 +317,7 @@ const Table = ({
                   (column, i) =>
                     column.render('show') && (
                       <th
-                        className="bg-transparent text-[#696969] text-xs font-normal tracking-widest"
+                        className="text-xs font-normal tracking-widest text-[#696969] bg-transparent"
                         key={i}
                         {...column.getHeaderProps()}
                       >
@@ -335,19 +335,19 @@ const Table = ({
           <tbody {...getTableBodyProps()}>
             {loading &&
               [...Array(10).keys()].map((z) => (
-                <tr className="bg-transparent text-[#D2D2D2] text-sm" key={z}>
+                <tr className="text-sm text-[#D2D2D2] bg-transparent" key={z}>
                   {[...Array(columns.length - 1).keys()].map((i) => (
-                    <td className="bg-transparent text-center text-[#696969]" key={i}>
-                      <div className="my-4 max-w-sm w-full animate-pulse h-4 bg-gradient-to-r to-[#181A1C] from-[#1F2123] rounded"></div>
+                    <td className="text-center text-[#696969] bg-transparent" key={i}>
+                      <div className="my-4 w-full max-w-sm h-4 bg-gradient-to-r from-[#1F2123] to-[#181A1C] rounded animate-pulse"></div>
                     </td>
                   ))}
                 </tr>
               ))}
 
             {!loading && !page.length && (
-              <tr className="bg-transparent text-[#D2D2D2] text-sm">
+              <tr className="text-sm text-[#D2D2D2] bg-transparent">
                 <td
-                  className="bg-transparent text-center py-[100px] text-[#696969] space-y-7"
+                  className="py-[100px] space-y-7 text-center text-[#696969] bg-transparent"
                   colSpan={columns.length}
                 >
                   <div className="flex justify-center space-x-4 opacity-60">{emptyLogo}</div>
@@ -368,7 +368,7 @@ const Table = ({
                 prepareRow(row)
                 return (
                   <tr
-                    className="bg-transparent text-[#D2D2D2] text-2sm cursor-pointer hover"
+                    className="text-2sm text-[#D2D2D2] bg-transparent cursor-pointer hover"
                     key={i}
                     onClick={() => navigate(row.original.url)}
                     {...row.getRowProps()}
