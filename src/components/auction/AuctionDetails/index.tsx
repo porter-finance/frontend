@@ -9,6 +9,7 @@ import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderbookState } from '../../../state/orderbook/hooks'
 import { getDisplay } from '../../../utils'
 import { abbreviation } from '../../../utils/numeral'
+import { TokenInfo, TokenPill } from '../../bond/BondAction'
 import { calculateInterestRate } from '../../form/InterestRateInputPanel'
 import { AuctionTimer } from '../AuctionTimer'
 import { ExtraDetailsItem, Props as ExtraDetailsItemProps } from '../ExtraDetailsItem'
@@ -56,9 +57,14 @@ const AuctionDetails = (props: Props) => {
       fullNumberHint: Number(
         formatUnits(graphInfo.totalBidVolume, graphInfo.bidding.decimals),
       ).toLocaleString(),
-      value: `${abbreviation(
-        formatUnits(graphInfo.totalBidVolume, graphInfo.bidding.decimals),
-      )} ${biddingTokenDisplay}`,
+      value: (
+        <>
+          <TokenInfo
+            token={graphInfo?.bidding}
+            value={formatUnits(graphInfo.totalBidVolume, graphInfo.bidding.decimals)}
+          />
+        </>
+      ),
     }
     minimumFundingThreshold = {
       fullNumberHint: Number(
