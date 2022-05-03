@@ -24,8 +24,8 @@ export const Footer: React.FC = ({ ...restProps }) => {
   return (
     <Wrapper {...restProps} className="flex pt-10">
       <Inner className="fullPage">
-        <div className="footer p-4 py-10 mt-5 text-neutral-content">
-          <FooterLogo className="items-center grid-flow-col text-2xl font-medium">
+        <div className="p-4 py-10 mt-5 footer text-neutral-content">
+          <FooterLogo className="grid-flow-col items-center text-2xl font-medium">
             <svg
               fill="none"
               height="28"
@@ -41,7 +41,7 @@ export const Footer: React.FC = ({ ...restProps }) => {
               />
             </svg>
           </FooterLogo>
-          <FooterLinks className="grid-flow-col gap-4 md:place-self-center md:justify-self-end">
+          <FooterLinks className="grid-flow-col gap-4 md:justify-self-end md:place-self-center">
             <a href="https://docs.porter.finance/portal/faq">Faq</a>
             <a href="https://medium.com/@porterfinance_">Blog</a>
             <a href="https://docs.porter.finance">Docs</a>
