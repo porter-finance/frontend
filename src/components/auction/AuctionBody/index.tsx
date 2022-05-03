@@ -81,7 +81,7 @@ const BondCard = ({ graphInfo }: { graphInfo: Auction }) => {
             <TokenLogo
               square
               token={{
-                address: graphInfo?.bond.collateralToken.id,
+                address: graphInfo?.bond.id,
                 symbol: graphInfo?.bond.symbol,
               }}
             />
