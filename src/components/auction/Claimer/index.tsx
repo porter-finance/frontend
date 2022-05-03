@@ -152,9 +152,9 @@ const Claimer: React.FC<Props> = (props) => {
   }
 
   return (
-    <div className="card card-bordered border-[#404EEDA4]">
+    <div className="border-[#404EEDA4] card card-bordered">
       <div className="card-body">
-        <h2 className="card-title border-b border-b-[#333333] pb-4">Claim proceeds</h2>
+        <h2 className="pb-4 border-b border-b-[#333333] card-title">Claim proceeds</h2>
 
         <Wrapper>
           <div className="mb-7 space-y-3">

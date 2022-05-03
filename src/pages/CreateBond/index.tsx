@@ -188,7 +188,7 @@ const CreateBond: React.FC = () => {
             />
           </div>
           <button
-            className="write-btn btn btn-xs btn-primary border disabled"
+            className="border write-btn btn btn-xs btn-primary disabled"
             disabled={error === 'DISCONNECTED'}
             type="submit"
           >
