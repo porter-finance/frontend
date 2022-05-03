@@ -1,8 +1,11 @@
+import React from 'react'
+
 import { formatUnits } from '@ethersproject/units'
 import dayjs from 'dayjs'
 import { round } from 'lodash'
 
 import { Props as ExtraDetailsItemProps } from '../components/auction/ExtraDetailsItem'
+import TokenLink from '../components/token/TokenLink'
 import { BondInfo, useBond } from './useBond'
 import { useTokenPrice } from './useTokenPrice'
 
@@ -43,19 +46,33 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
   return [
     {
       title: 'Face value',
-      value: `1 ${bond?.paymentToken.symbol}`,
+      value: (
+        <span className="flex items-center space-x-1">
+          <span>1</span> <TokenLink token={bond?.paymentToken} withLink />
+        </span>
+      ),
       tooltip: 'Amount each bond is redeemable for at maturity assuming a default does not occur.',
     },
     {
       title: 'Collateral tokens',
-      value: `${collateralPerBond.toLocaleString()} ${bond?.collateralToken.symbol || ''}`,
+      value: (
+        <span className="flex items-center space-x-1">
+          <span>{collateralPerBond.toLocaleString()}</span>
+          <TokenLink token={bond?.collateralToken} withLink />
+        </span>
+      ),
       hint: `($${collateralValue})`,
       tooltip:
         'Number of collateral tokens securing each bond. If a bond is defaulted on, the bondholder is able to exchange each bond for these collateral tokens.',
     },
     {
       title: 'Convertible tokens',
-      value: `${convertiblePerBond.toLocaleString()} ${bond?.collateralToken.symbol || ''}`,
+      value: (
+        <span className="flex items-center space-x-1">
+          <span>{convertiblePerBond.toLocaleString()}</span>
+          <TokenLink token={bond?.collateralToken} withLink />
+        </span>
+      ),
       hint: `($${convertibleValue})`,
       tooltip: 'Number of tokens each bond is convertible into up until the maturity date.',
       show: isConvertBond,
@@ -76,9 +93,15 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
     {
       title: 'Call strike price',
       tooltip: 'Price where the convertible tokens for a bond are equal to its face value.',
-      value: `${strikePrice} ${bond?.paymentToken.symbol || ''}/${
-        bond?.collateralToken.symbol || ''
-      }`,
+      value: (
+        <span className="flex items-center space-x-1">
+          <span>{strikePrice.toLocaleString()}</span>
+          <TokenLink token={bond?.paymentToken} withLink />
+          <span>/</span>
+          <TokenLink token={bond?.collateralToken} withLink />
+        </span>
+      ),
+
       show: isConvertBond,
     },
   ]
