@@ -8,8 +8,10 @@ import dayjs from 'dayjs'
 
 import { ReactComponent as ConnectIcon } from '../../assets/svg/connect.svg'
 import { ReactComponent as WalletIcon } from '../../assets/svg/wallet.svg'
+import BondGraphCard from '../../components/BondGraphCard/BondGraphCard'
 import Dev, { forceDevData } from '../../components/Dev'
 import { AuctionTimer } from '../../components/auction/AuctionTimer'
+import BondChart from '../../components/auction/BondChart'
 import { ExtraDetailsItem } from '../../components/auction/ExtraDetailsItem'
 import { ActiveStatusPill, TableDesign } from '../../components/auction/OrderbookTable'
 import BondAction from '../../components/bond/BondAction'
@@ -18,6 +20,7 @@ import WarningModal from '../../components/modals/WarningModal'
 import TokenLogo from '../../components/token/TokenLogo'
 import { BondInfo, useBond } from '../../hooks/useBond'
 import { useBondExtraDetails } from '../../hooks/useBondExtraDetails'
+import { useHistoricTokenPrice } from '../../hooks/useTokenPrice'
 import { ConvertButtonOutline, LoadingTwoGrid, SimpleButtonOutline, TwoGridPage } from '../Auction'
 
 export enum BondActions {
@@ -119,18 +122,14 @@ export const getBondStates = (bond: BondInfo) => {
 const BondDetail: React.FC = () => {
   const { account } = useWeb3React()
   const navigate = useNavigate()
-  const bondIdentifier = useParams()
+  const { bondId } = useParams()
 
-  const extraDetails = useBondExtraDetails(bondIdentifier?.bondId)
-  const { data: bond, loading: isLoading } = useBond(bondIdentifier?.bondId)
-  const invalidBond = React.useMemo(() => !bondIdentifier || !bond, [bondIdentifier, bond])
+  const extraDetails = useBondExtraDetails(bondId)
+  const { data: bond, loading: isLoading } = useBond(bondId)
+  const invalidBond = React.useMemo(() => !bondId || !bond, [bondId, bond])
   const { isConvertBond, isDefaulted, isMatured, isPaid, isPartiallyPaid } = getBondStates(bond)
 
-  // TODO write the graph using this data
-  // const graphData = useHistoricTokenPrice(bond?.collateralToken.id, 30)
-
   let positionData
-
   if (bond && Array.isArray(bond.tokenBalances) && bond.tokenBalances.length) {
     const amount = Number(
       formatUnits(bond?.tokenBalances[0].amount, bond.decimals),
@@ -230,11 +229,7 @@ const BondDetail: React.FC = () => {
               </div>
             </div>
 
-            <div className="card">
-              <div className="card-body">
-                <h2 className="card-title">Graph goes here</h2>
-              </div>
-            </div>
+            <BondGraphCard bond={bond} />
 
             <div className="card">
               <div className="card-body">
