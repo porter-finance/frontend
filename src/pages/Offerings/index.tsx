@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import dayjs from 'dayjs'
 
@@ -12,7 +12,8 @@ import TokenLogo from '../../components/token/TokenLogo'
 import { useActiveWeb3React } from '../../hooks'
 import { useAuctions } from '../../hooks/useAuction'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
-import { AuctionButtonOutline, OTCButtonOutline } from '../Auction'
+import { AllButton, AuctionButtonOutline, OTCButtonOutline } from '../Auction'
+import { TABLE_FILTERS } from '../Portfolio'
 
 const columns = [
   {
@@ -76,6 +77,8 @@ const columns = [
 const Offerings = () => {
   const { chainId } = useActiveWeb3React()
   const { data: allAuctions, loading } = useAuctions()
+  const [tableFilter, setTableFilter] = useState<TABLE_FILTERS>(TABLE_FILTERS.ALL)
+
   const tableData = []
 
   useSetNoDefaultNetworkId()
@@ -86,6 +89,7 @@ const Offerings = () => {
       currentPrice: auction.clearingPrice ? auction.clearingPrice : '-',
       search: JSON.stringify(auction),
       auctionId: `#${auction.id}`,
+      type: 'auction', // TODO: currently hardcoded since no OTC exists
       price: `1 ${auction?.bidding?.symbol}`,
       fixedAPR: calculateInterestRate(auction.clearingPrice, auction.end),
       status: auction.live ? (
@@ -113,12 +117,12 @@ const Offerings = () => {
               }}
             />
           </div>
-          <div className="flex flex-col text-[#EEEFEB] text-lg">
+          <div className="flex flex-col text-lg text-[#EEEFEB]">
             <div className="flex items-center space-x-2 capitalize">
               <span>{auction?.bond.name.toLowerCase()}</span>
               <AuctionsIcon width={15} />
             </div>
-            <p className="text-[#9F9F9F] text-sm uppercase">{auction?.bond.symbol}</p>
+            <p className="text-sm text-[#9F9F9F] uppercase">{auction?.bond.symbol}</p>
           </div>
         </div>
       ),
@@ -129,7 +133,7 @@ const Offerings = () => {
   return (
     <Table
       columns={columns}
-      data={tableData}
+      data={tableData.filter(({ type }) => (tableFilter ? type === tableFilter : true))}
       emptyDescription="There are no offerings at the moment"
       emptyLogo={
         <>
@@ -138,10 +142,20 @@ const Offerings = () => {
       }
       legendIcons={
         <>
-          <div className="rounded-full bg-black px-5 py-1.5 text-white text-xs uppercase">All</div>
+          <AllButton
+            active={tableFilter === TABLE_FILTERS.ALL}
+            onClick={() => setTableFilter(TABLE_FILTERS.ALL)}
+          />
           <DividerIcon />
-          <AuctionButtonOutline plural />
-          <OTCButtonOutline />
+          <AuctionButtonOutline
+            active={tableFilter === TABLE_FILTERS.AUCTION}
+            onClick={() => setTableFilter(TABLE_FILTERS.AUCTION)}
+            plural
+          />
+          <OTCButtonOutline
+            active={tableFilter === TABLE_FILTERS.OTC}
+            onClick={() => setTableFilter(TABLE_FILTERS.OTC)}
+          />
         </>
       }
       loading={loading}

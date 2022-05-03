@@ -107,7 +107,7 @@ export const ExtraDetailsItem: React.FC<Props> = ({
     <div className="col-span-1" {...restProps}>
       <div className="space-y-2">
         <Value className={`${disabled ? 'text-[#696969]' : 'text-white'}`}>
-          <ValueText className="overflow-hidden overflow-ellipsis">{value || 'Unknown'}</ValueText>
+          <ValueText className="overflow-hidden text-ellipsis">{value || 'Unknown'}</ValueText>
           {url && <Link href={url} />}
           {hint && <span className="text-[#979797]">{hint}</span>}
         </Value>

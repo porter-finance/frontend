@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { createGlobalStyle } from 'styled-components'
 
@@ -10,7 +10,7 @@ import { useActiveWeb3React } from '../../hooks'
 import { useBondsPortfolio } from '../../hooks/useBondsPortfolio'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
-import { ConvertButtonOutline, SimpleButtonOutline } from '../Auction'
+import { AllButton, ConvertButtonOutline, SimpleButtonOutline } from '../Auction'
 import { columns, createTable } from '../Products'
 
 const GlobalStyle = createGlobalStyle`
@@ -19,13 +19,24 @@ const GlobalStyle = createGlobalStyle`
   }
 `
 
+export enum TABLE_FILTERS {
+  ALL = '',
+  CONVERT = 'convert',
+  SIMPLE = 'simple',
+  AUCTION = 'auction',
+  OTC = 'otc',
+}
+
 const Portfolio = () => {
   const { account } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
   const navigate = useNavigate()
+  const [tableFilter, setTableFilter] = useState<TABLE_FILTERS>(TABLE_FILTERS.ALL)
 
   const { data, loading } = useBondsPortfolio()
-  const tableData = data ? createTable(data) : []
+  const tableData = data
+    ? createTable(data).filter(({ type }) => (tableFilter ? type === tableFilter : true))
+    : []
 
   const emptyActionText = account ? 'Go to offerings' : 'Connect wallet'
   const emptyActionClick = account ? () => navigate('/offerings') : toggleWalletModal
@@ -52,12 +63,19 @@ const Portfolio = () => {
         emptyLogo={emptyLogo}
         legendIcons={
           <>
-            <div className="rounded-full bg-white px-5 py-1.5 text-black text-xs uppercase">
-              All
-            </div>
+            <AllButton
+              active={tableFilter === TABLE_FILTERS.ALL}
+              onClick={() => setTableFilter(TABLE_FILTERS.ALL)}
+            />
             <DividerIcon />
-            <ConvertButtonOutline />
-            <SimpleButtonOutline />
+            <ConvertButtonOutline
+              active={tableFilter === TABLE_FILTERS.CONVERT}
+              onClick={() => setTableFilter(TABLE_FILTERS.CONVERT)}
+            />
+            <SimpleButtonOutline
+              active={tableFilter === TABLE_FILTERS.SIMPLE}
+              onClick={() => setTableFilter(TABLE_FILTERS.SIMPLE)}
+            />
           </>
         }
         loading={loading}

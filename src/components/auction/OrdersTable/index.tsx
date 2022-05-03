@@ -145,7 +145,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
           <BidTransactionLink bid={row} />
           {!hideCancelButton && (
             <button
-              className="btn btn-outline btn-error normal-case btn-xs font-normal px-3 !text-[#D25453] !bg-transparent"
+              className="px-3 font-normal !text-[#D25453] normal-case !bg-transparent btn btn-outline btn-error btn-xs"
               disabled={isOrderCancellationExpired}
               onClick={() => {
                 setOrderId(row.id)
