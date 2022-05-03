@@ -278,16 +278,12 @@ const ConfirmationDialog = ({
       .some((hash) => {
         if (hash !== showOrderTransactionComplete) return false
         const tx = allTransactions[hash]
-        if (tx.summary?.includes('Buy')) {
-          // the first one is always the new order
-          if (tx.receipt?.logs) {
-            setOrderComplete(true)
-          }
-
-          return true
+        // the first one is always the new order
+        if (tx.receipt?.logs) {
+          setOrderComplete(true)
         }
 
-        return false
+        return true
       })
   }, [showOrderTransactionComplete, allTransactions])
 
@@ -353,26 +349,26 @@ const ConfirmationDialog = ({
               )}
           </div>
 
-          {showOrderTransactionComplete && (
-            <div className="flex flex-col justify-center items-center mt-20 space-y-4">
+          <div className="flex flex-col justify-center items-center mt-20 space-y-4">
+            {showOrderTransactionComplete && (
               <GhostTransactionLink chainId={chainId} hash={showOrderTransactionComplete} />
-            </div>
-          )}
+            )}
 
-          {orderComplete && (
-            <DialogClose asChild>
-              <ActionButton
-                aria-label="Done"
-                color={actionColor}
-                onClick={() => {
-                  setOrderComplete(false)
-                  setShowOrderTransactionComplete('')
-                }}
-              >
-                Done
-              </ActionButton>
-            </DialogClose>
-          )}
+            {orderComplete && (
+              <DialogClose asChild>
+                <ActionButton
+                  aria-label="Done"
+                  color={actionColor}
+                  onClick={() => {
+                    setOrderComplete(false)
+                    setShowOrderTransactionComplete('')
+                  }}
+                >
+                  Done
+                </ActionButton>
+              </DialogClose>
+            )}
+          </div>
         </>
       )}
 
