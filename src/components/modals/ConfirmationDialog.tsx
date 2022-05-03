@@ -349,26 +349,28 @@ const ConfirmationDialog = ({
               )}
           </div>
 
-          <div className="flex flex-col justify-center items-center mt-20 space-y-4">
-            {showOrderTransactionComplete && (
-              <GhostTransactionLink chainId={chainId} hash={showOrderTransactionComplete} />
-            )}
+          {(showOrderTransactionComplete || orderComplete) && (
+            <div className="flex flex-col justify-center items-center mt-20 space-y-4">
+              {showOrderTransactionComplete && (
+                <GhostTransactionLink chainId={chainId} hash={showOrderTransactionComplete} />
+              )}
 
-            {orderComplete && (
-              <DialogClose asChild>
-                <ActionButton
-                  aria-label="Done"
-                  color={actionColor}
-                  onClick={() => {
-                    setOrderComplete(false)
-                    setShowOrderTransactionComplete('')
-                  }}
-                >
-                  Done
-                </ActionButton>
-              </DialogClose>
-            )}
-          </div>
+              {orderComplete && (
+                <DialogClose asChild>
+                  <ActionButton
+                    aria-label="Done"
+                    color={actionColor}
+                    onClick={() => {
+                      setOrderComplete(false)
+                      setShowOrderTransactionComplete('')
+                    }}
+                  >
+                    Done
+                  </ActionButton>
+                </DialogClose>
+              )}
+            </div>
+          )}
         </>
       )}
 
