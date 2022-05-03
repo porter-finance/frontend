@@ -199,7 +199,7 @@ export const drawInformation = (props: DrawInformation) => {
     const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
 
     const date = new Date(dateX).toISOString()
-    const volume = round(valueY, 4)
+    const volume = round(valueY, 3)
 
     return `Time:  ${date}<br/>
 Collateral value:  ${volume} ${collateralToken.name}`
@@ -218,7 +218,7 @@ Collateral value:  ${volume} ${collateralToken.name}`
 
     convertibleValueSeries.adapter.add('tooltipText', (text, target) => {
       const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
-      const convertibleValue = round(valueY, 4)
+      const convertibleValue = round(valueY, 3)
       return `Convertible value:  ${convertibleValue} ${convertibleToken.name}`
     })
   }

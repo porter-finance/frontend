@@ -2,6 +2,7 @@ import React from 'react'
 
 import { parseUnits } from '@ethersproject/units'
 import { useWeb3React } from '@web3-react/core'
+import { round } from 'lodash'
 
 import BondAction from '../../components/bond/BondAction'
 import { useCreateBond } from '../../hooks/useCreateBond'
@@ -22,8 +23,9 @@ const getFakeData = (account: string): Array<string | number> => {
   const bondSymbol = 'LEARN'
   const collateralRatio = parseUnits('.5', 18).toString()
   const convertibilityRatio = parseUnits('.5', 18).toString()
-  const maturityDate = Math.round(
+  const maturityDate = round(
     new Date(new Date().setFullYear(new Date().getFullYear() + 3)).getTime() / 1000,
+    3,
   )
   const paymentTokenAddress = '0x90eabcc82cd7ff622f9a68ec10019aedb3808938'
   const collateralTokenAddress = '0xf4e2543879d3a7ca73f8c98ebc5206d77240043f'
