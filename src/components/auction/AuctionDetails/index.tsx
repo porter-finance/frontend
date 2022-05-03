@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { formatUnits } from '@ethersproject/units'
 
 import { useAuction } from '../../../hooks/useAuction'
-import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
+import { AuctionState, DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderbookState } from '../../../state/orderbook/hooks'
 import { getDisplay } from '../../../utils'
@@ -35,6 +35,7 @@ const AuctionDetails = (props: Props) => {
   const { orderbookPrice: auctionCurrentPrice } = useOrderbookState()
 
   const biddingTokenDisplay = getDisplay(graphInfo?.bidding)
+  const settling = derivedAuctionInfo?.auctionState === AuctionState.NEEDS_SETTLED
 
   let totalBidVolume,
     offeringSize,
@@ -128,14 +129,14 @@ const AuctionDetails = (props: Props) => {
   ]
 
   const hasEnded = new Date() > new Date(derivedAuctionInfo?.auctionEndDate * 1000)
-  const statusLabel = hasEnded ? 'Ended' : 'Ongoing'
+  const statusLabel = settling ? 'Settling' : hasEnded ? 'Ended' : 'Ongoing'
 
   return (
     <div className="card">
       <div className="card-body">
         <h2 className="card-title flex justify-between">
           <span>Auction information</span>
-          <ActiveStatusPill disabled={hasEnded} title={statusLabel} />
+          <ActiveStatusPill disabled={hasEnded || settling} title={statusLabel} />
         </h2>
         <AuctionTimer
           color="blue"
