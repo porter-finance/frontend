@@ -21,7 +21,7 @@ export const DropdownButton = styled.button`
   color: #1e1e1e;
   font-size: 14px;
   height: 29px;
-  font-weight: 600;
+  font-weight: 400;
   align-items: center;
   text-align: center;
   display: flex;
@@ -57,7 +57,7 @@ const ConnectionStatus = styled.div`
 const ConnectionText = styled.div`
   color: ${({ theme }) => theme.green1};
   font-size: 9px;
-  font-weight: 600;
+  font-weight: 400;
   margin-bottom: -2px;
 `
 
