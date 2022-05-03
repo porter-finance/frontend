@@ -52,7 +52,7 @@ export const calculateRow = (row, paymentToken, maturityDate, derivedAuctionInfo
   if (row.createtx) statusText = orderStatusText[OrderStatus.PLACED]
   if (!row.createtx) statusText = orderStatusText[OrderStatus.PENDING]
   if (row.canceltx) statusText = 'Cancelled'
-  const status = <ActiveStatusPill title={statusText} />
+  const status = <ActiveStatusPill disabled={!!row.canceltx} title={statusText} />
   const price = `${(row.payable / row.size).toLocaleString()} ${paymentToken}`
   const interest = `${calculateInterestRate(row.payable / row.size, maturityDate)} `
   const amount = `${Number(
