@@ -1,8 +1,5 @@
 import React, { useCallback, useState } from 'react'
 
-import { formatUnits } from '@ethersproject/units'
-import { round } from 'lodash'
-
 import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
 import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
 import { useParticipatingAuctionBids } from '../../../hooks/useParticipatingAuctionBids'
@@ -14,12 +11,10 @@ import {
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { OrderStatus } from '../../../state/orders/reducer'
 import { getTokenDisplay } from '../../../utils'
-import { calculateInterestRate } from '../../form/InterestRateInputPanel'
 import ConfirmationModal from '../../modals/ConfirmationModal'
 import WarningModal from '../../modals/WarningModal'
 import CancelModalFooter from '../../modals/common/CancelModalFooter'
 import {
-  ActiveStatusPill,
   BidTransactionLink,
   OverflowWrap,
   TableDesign,
