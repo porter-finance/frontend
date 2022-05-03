@@ -112,7 +112,7 @@ const Offerings = () => {
               size="30px"
               square
               token={{
-                address: auction?.bond?.collateralToken.id,
+                address: auction?.bond?.id,
                 symbol: auction?.bond?.symbol,
               }}
             />

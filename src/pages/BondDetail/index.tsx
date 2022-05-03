@@ -179,7 +179,7 @@ const BondDetail: React.FC = () => {
               size="60px"
               square
               token={{
-                address: bond?.collateralToken.id,
+                address: bond?.id,
                 symbol: bond?.symbol,
               }}
             />
