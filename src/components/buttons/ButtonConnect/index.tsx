@@ -27,7 +27,7 @@ export const ButtonConnect: React.FC<ButtonHTMLAttributes<HTMLButtonElement>> = 
   ...restProps
 }) => (
   <Wrapper className={`buttonConnect ${className}`}>
-    <DropdownButton {...restProps} className="btn btn-sm normal-case">
+    <DropdownButton {...restProps} className="normal-case btn btn-sm">
       Connect wallet
     </DropdownButton>
   </Wrapper>

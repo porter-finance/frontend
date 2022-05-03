@@ -76,12 +76,12 @@ const UserDropdownButton = () => {
   return (
     <DropdownButton className="btn btn-sm">
       <Address>
-        <div className="flex flex-row nowrap w-full lg:flex-row items-center">
+        <div className="flex flex-row items-center w-full lg:flex-row nowrap">
           <AddressText className="addressText" title={account}>
             {account ? truncateStringInTheMiddle(account, 5, 3) : 'Invalid address.'}
           </AddressText>
-          <div className="divider divider-horizontal mx-1 after:bg-gray-300 before:bg-gray-300" />
-          <div className="grid flex-grow place-items-center">
+          <div className="mx-1 after:bg-gray-300 before:bg-gray-300 divider divider-horizontal" />
+          <div className="grid grow place-items-center">
             <svg
               className="chevronDown"
               fill="none"
@@ -167,7 +167,7 @@ export const UserDropdown: React.FC<Props> = (props) => {
     ]
 
     return (
-      <ul className="menu p-2 shadow bg-base-100 rounded-box w-52" tabIndex={0}>
+      <ul className="p-2 w-52 shadow menu bg-base-100 rounded-box" tabIndex={0}>
         {items.map((item, index) => (
           <Item
             hasOnClick={item.onClick && item.onClick ? true : false}
