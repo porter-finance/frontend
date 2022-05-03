@@ -113,7 +113,7 @@ const Offerings = () => {
               square
               token={{
                 address: auction?.bond?.id,
-                symbol: auction?.bond?.symbol,
+                symbol: auction?.bond?.name,
               }}
             />
           </div>
