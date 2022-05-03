@@ -160,7 +160,7 @@ const AmountInputPanel: React.FC<Props> = (props) => {
             value={!account ? '-' : value}
           />
           <Wrap>
-            {token && <TokenPill token={token.collateralToken} />}
+            {token && <TokenPill token={token} />}
             {unlock?.isLocked && (
               <UnlockButton
                 disabled={isUnlocking}
@@ -230,13 +230,14 @@ const AmountInputPanel: React.FC<Props> = (props) => {
               <FieldRowLabelStyled>
                 <Tooltip left={amountText} tip={amountTooltip} />
               </FieldRowLabelStyled>
-              <button
-                className="px-3 font-normal !text-[#E0E0E0] normal-case !border-[#2A2B2C] btn btn-xs"
-                disabled={!onMax || !account}
-                onClick={onMax}
-              >
-                {maxTitle}
-              </button>
+              {onMax && account && (
+                <button
+                  className="px-3 font-normal !text-[#E0E0E0] normal-case !border-[#2A2B2C] btn btn-xs"
+                  onClick={onMax}
+                >
+                  {maxTitle}
+                </button>
+              )}
             </div>
           )}
         </FieldRowBottom>
