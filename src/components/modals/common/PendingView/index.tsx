@@ -1,24 +1,17 @@
 import React from 'react'
 import styled from 'styled-components'
 
+import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 
-import { Button } from '../../../buttons/Button'
+import { ActionButton } from '../../../auction/Claimer'
 import { InlineLoading } from '../../../common/InlineLoading'
 import { SpinnerSize } from '../../../common/Spinner'
-import { AlertIcon } from '../../../icons/AlertIcon'
-import { IconWrapper } from '../../common/pureStyledComponents/IconWrapper'
-import { Text } from '../../common/pureStyledComponents/Text'
 
 const Wrapper = styled.div``
 
 const LoadingWrapper = styled(InlineLoading)`
   height: 180px;
-`
-
-const ActionButton = styled(Button)`
-  margin-top: 80px;
-  width: 100%;
 `
 
 interface Props {
@@ -35,25 +28,15 @@ const PendingView: React.FC<Props> = (props) => {
   return (
     <Wrapper {...restProps}>
       {error && (
-        <>
-          <IconWrapper>
-            <AlertIcon />
-          </IconWrapper>
-          <Text fontSize="18px" textAlign="center">
-            Error connecting.
-          </Text>
-          <ActionButton
-            onClick={() => {
-              setPendingError(false)
-              connector && tryActivation(connector)
-            }}
-          >
-            Try Again
-          </ActionButton>
-          <button className="w-full btn btn-link" onClick={reset}>
-            Go back
-          </button>
-        </>
+        <div className="space-y-5">
+          <div className="flex flex-col items-center space-x-2 justify-center mt-5 text-xl">
+            <ExclamationTriangleIcon height={35} width={35} />
+            <span className="flex">Error connecting.</span>
+          </div>
+          <div>
+            <ActionButton onClick={reset}>Try Again</ActionButton>
+          </div>
+        </div>
       )}
       {!error && <LoadingWrapper message={'Connecting...'} size={SpinnerSize.large} />}
     </Wrapper>
