@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { Web3Provider } from '@ethersproject/providers'
+import { SafeAppConnector, useSafeAppConnection } from '@gnosis.pm/safe-apps-web3-react'
 import { useWeb3React as useWeb3ReactCore } from '@web3-react/core'
 import { isMobile } from 'react-device-detect'
 
@@ -9,6 +10,8 @@ import { NetworkContextName } from '../constants'
 import { useOrderPlacementState } from '../state/orderPlacement/hooks'
 import { useOrderActionHandlers } from '../state/orders/hooks'
 import { getLogger } from '../utils/logger'
+
+const safeAppConnector = new SafeAppConnector()
 
 const logger = getLogger('hooks/index')
 
@@ -23,31 +26,36 @@ export function useEagerConnect() {
   const { activate, active } = useWeb3ReactCore() // specifically using useWeb3ReactCore because of what this hook does
   const [tried, setTried] = useState(false)
   const { chainId } = useOrderPlacementState()
-  useEffect(() => {
-    const previouslyUsedWalletConnect = localStorage.getItem('walletconnect')
+  const triedToConnectToSafeApp = useSafeAppConnection(safeAppConnector)
 
-    if (previouslyUsedWalletConnect && chainId) {
-      activate(walletconnect[chainId], undefined, true).catch(() => {
-        setTried(true)
-      })
-    } else {
-      injected.isAuthorized().then((isAuthorized) => {
-        if (isAuthorized) {
-          activate(injected, undefined, true).catch(() => {
-            setTried(true)
-          })
-        } else {
-          if (isMobile && window.ethereum) {
+  useEffect(() => {
+    // Safe app gets first dibs. If it's not connected, try to connect to injected.
+    if (triedToConnectToSafeApp && !active) {
+      const previouslyUsedWalletConnect = localStorage.getItem('walletconnect')
+
+      if (previouslyUsedWalletConnect && chainId) {
+        activate(walletconnect[chainId], undefined, true).catch(() => {
+          setTried(true)
+        })
+      } else {
+        injected.isAuthorized().then((isAuthorized) => {
+          if (isAuthorized) {
             activate(injected, undefined, true).catch(() => {
               setTried(true)
             })
           } else {
-            setTried(true)
+            if (isMobile && window.ethereum) {
+              activate(injected, undefined, true).catch(() => {
+                setTried(true)
+              })
+            } else {
+              setTried(true)
+            }
           }
-        }
-      })
+        })
+      }
     }
-  }, [activate, chainId]) // intentionally only running on mount (make sure it's only mounted once :))
+  }, [active, activate, chainId, triedToConnectToSafeApp]) // intentionally only running on mount (make sure it's only mounted once :))
 
   // if the connection worked, wait until we get confirmation of that to flip the flag
   useEffect(() => {
