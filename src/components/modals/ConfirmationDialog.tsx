@@ -55,7 +55,14 @@ export const ReviewOrder = ({ amountToken, cancelCutoff, data, orderPlacingOnly,
       </div>
     </div>
     <div className="pb-4 space-y-2 text-xs text-[#696969] border-b border-b-[#D5D5D519]">
-      <TokenInfo plus token={amountToken} value={data.receive} />
+      <TokenInfo
+        plus
+        token={{
+          ...amountToken,
+          symbol: amountToken?.name || amountToken?.symbol,
+        }}
+        value={data.receive}
+      />
       <div className="text-xs text-[#696969]">
         <Tooltip
           left="Amount of bonds you receive"
@@ -79,7 +86,13 @@ export const ReviewOrder = ({ amountToken, cancelCutoff, data, orderPlacingOnly,
 export const ReviewConvert = ({ amount, amountToken, assetsToReceive, type = 'convert' }) => (
   <div className="mt-10 space-y-6">
     <div className="pb-4 space-y-2 text-xs text-[#696969] border-b border-b-[#D5D5D519]">
-      <TokenInfo token={amountToken} value={amount} />
+      <TokenInfo
+        token={{
+          ...amountToken,
+          symbol: amountToken?.name || amountToken?.symbol,
+        }}
+        value={amount}
+      />
       <div className="text-xs text-[#696969]">
         <Tooltip
           left={`Amount of bonds to ${type}`}
