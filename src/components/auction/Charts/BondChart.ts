@@ -1,6 +1,7 @@
 import * as am4charts from '@amcharts/amcharts4/charts'
 import * as am4core from '@amcharts/amcharts4/core'
 import am4themesSpiritedaway from '@amcharts/amcharts4/themes/spiritedaway'
+import dayjs from 'dayjs'
 import { round } from 'lodash'
 
 import { Token } from '../../../hooks/useBond'
@@ -198,7 +199,7 @@ export const drawInformation = (props: DrawInformation) => {
     const dateX = target?.tooltipDataItem?.values?.dateX?.value ?? 0
     const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
 
-    const date = new Date(dateX).toISOString()
+    const date = dayjs(dateX).format('MMM DD, YYYY')
     const volume = round(valueY, 3)
 
     return `Time:  ${date}<br/>
