@@ -78,7 +78,7 @@ const AuctionDetails = (props: Props) => {
     }
     minimumBondPrice = {
       fullNumberHint: graphInfo?.minimumBondPrice.toLocaleString(),
-      value: <TokenInfoWithLink value={graphInfo.minimumBondPrice} />,
+      value: <TokenInfoWithLink value={graphInfo.minimumBondPrice} withLink={false} />,
     }
     minimumBidSize = {
       fullNumberHint: Number(
