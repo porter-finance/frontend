@@ -69,7 +69,7 @@ const AuctionDetails = (props: Props) => {
       fullNumberHint: Number(
         formatUnits(graphInfo.totalBidVolume, graphInfo.bidding.decimals),
       ).toLocaleString(),
-      value: <TokenInfoWithLink value={graphInfo.totalBidVolume} />,
+      value: <TokenInfoWithLink value={graphInfo.totalBidVolume} withLink={false} />,
     }
     minimumFundingThreshold = {
       fullNumberHint: Number(
