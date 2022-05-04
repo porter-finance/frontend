@@ -84,7 +84,7 @@ const AuctionDetails = (props: Props) => {
       fullNumberHint: Number(
         formatUnits(graphInfo.minimumBidSize, graphInfo.bidding.decimals),
       ).toLocaleString(),
-      value: <TokenInfoWithLink value={graphInfo.minimumBidSize} />,
+      value: <TokenInfoWithLink value={graphInfo.minimumBidSize} withLink={false} />,
     }
     currentBondAPR = calculateInterestRate(
       auctionCurrentPrice,
