@@ -77,7 +77,7 @@ export const LoadingBox = ({ height }) => (
 )
 
 export const TwoGridPage = ({ hasHeader = true, leftChildren, rightChildren }) => (
-  <main className={`pb-8 px-0 ${!hasHeader ? 'mt-20' : ''}`}>
+  <main className={`pb-8 px-0 ${!hasHeader ? 'mt-20' : 'mt-5'}`}>
     {/* Main 3 column grid */}
     <div className="grid grid-cols-1 gap-4 items-start pb-32 lg:grid-cols-3 lg:gap-8">
       {/* Left column */}
