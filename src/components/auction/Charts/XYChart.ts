@@ -19,7 +19,7 @@ const createGradient = (color) => {
   return gradient
 }
 
-numberFormatter.numberFormat = '###.00 a'
+numberFormatter.numberFormat = '###.000 a'
 numberFormatter.smallNumberThreshold = 0
 numberFormatter.bigNumberPrefixes = [
   { number: 1e3, suffix: 'K' }, // Use K only with value greater than 999.00
@@ -76,7 +76,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   priceAxis.renderer.labels.template.fill = am4core.color(colors.grey)
 
   volumeAxis.numberFormatter = numberFormatter
-  //priceAxis.numberFormatter = numberFormatter
+  priceAxis.numberFormatter = numberFormatter
 
   priceAxis.strictMinMax = true
   priceAxis.extraMin = 0.02
@@ -219,9 +219,8 @@ export const drawInformation = (props: DrawInformation) => {
   // move it to the top of the graph to match design mocks
   // yAxis.title.text = volumeTitle
 
-  const {
-    values: [askPricesSeries, bidPricesSeries],
-  } = chart.series
+  const bidPricesSeries = chart.series.values[0]
+  const askPricesSeries = chart.series.values[1]
 
   askPricesSeries.tooltip.getFillFromObject = false
   askPricesSeries.tooltip.background.fill = am4core.color('#181A1C')
