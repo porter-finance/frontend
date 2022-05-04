@@ -35,7 +35,6 @@ const AuctionDetails = (props: Props) => {
   const { data: graphInfo } = useAuction(auctionIdentifier?.auctionId)
   const { orderbookPrice: auctionCurrentPrice } = useOrderbookState()
 
-  const BidTokenLink = <TokenLink token={graphInfo?.bidding} />
   const settling = derivedAuctionInfo?.auctionState === AuctionState.NEEDS_SETTLED
 
   let totalBidVolume,
@@ -101,8 +100,8 @@ const AuctionDetails = (props: Props) => {
     fullNumberHint: auctionCurrentPrice.toLocaleString(),
     value: auctionCurrentPrice ? (
       <TokenValue className="space-x-1">
-        <span>{abbreviation(auctionCurrentPrice)}</span>
-        {BidTokenLink}
+        <span>{auctionCurrentPrice.toLocaleString()}</span>
+        <TokenLink token={graphInfo?.bidding} />
       </TokenValue>
     ) : (
       '-'
