@@ -56,7 +56,7 @@ module.exports = {
         '2xl': [
           '23px',
           {
-            letterSpacing: '0.01em',
+            letterSpacing: '0.06em',
           },
         ],
         '3xl': [
