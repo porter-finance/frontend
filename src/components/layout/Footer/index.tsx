@@ -16,15 +16,14 @@ const FooterLogo = styled.div`
 `
 const Wrapper = styled.footer`
   width: 100%;
-  min-height: 203px;
-  border: 1px solid rgba(213, 213, 213, 0.1);
+  border-top: 1px solid rgba(213, 213, 213, 0.1);
 `
 
 export const Footer: React.FC = ({ ...restProps }) => {
   return (
-    <Wrapper {...restProps} className="flex pt-10">
+    <Wrapper {...restProps} className="flex py-10">
       <Inner className="fullPage">
-        <div className="py-10 mt-5 footer text-neutral-content">
+        <div className="footer text-neutral-content">
           <FooterLogo className="grid-flow-col items-center text-2xl font-medium">
             <svg
               fill="none"
