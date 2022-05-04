@@ -10,7 +10,7 @@ const logger = getLogger('useAuctionBids')
 
 const bidsQuery = gql`
   query AuctionBidList($auctionId: Int!) {
-    bids(first: 100, where: { auction: $auctionId }) {
+    bids(first: 100, where: { auction: $auctionId, canceltx: null }) {
       id
       timestamp
       canceltx
