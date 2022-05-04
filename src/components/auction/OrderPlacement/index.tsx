@@ -262,7 +262,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     derivedAuctionInfo?.orderCancellationEndDate &&
     dayjs(derivedAuctionInfo?.orderCancellationEndDate * 1000)
       .utc()
-      .format('MMM DD, YYYY HH:mm UTC')
+      .format('MMMM DD, YYYY HH:mm UTC')
   const reviewData = getReviewData({
     amount: Number(sellAmount),
     maturityDate: graphInfo?.bond?.maturityDate,

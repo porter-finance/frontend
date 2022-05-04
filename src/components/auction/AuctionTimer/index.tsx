@@ -102,13 +102,13 @@ export const AuctionTimer = ({
           {startDate &&
             dayjs(startDate * 1000)
               .utc()
-              .format('MMM DD, YYYY HH:mm UTC')}
+              .format('MMMM DD, YYYY HH:mm UTC')}
         </DateValue>
         <DateValue>
           {endDate &&
             dayjs(endDate * 1000)
               .utc()
-              .format('MMM DD, YYYY HH:mm UTC')}
+              .format('MMMM DD, YYYY HH:mm UTC')}
         </DateValue>
       </div>
       <div className="flex justify-between mb-3">

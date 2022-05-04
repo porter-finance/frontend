@@ -262,7 +262,7 @@ const BondAction = ({
             <div className="text-sm text-[#EEEFEB]">
               {dayjs(bondInfo.maturityDate * 1000)
                 .utc()
-                .format('MMM DD, YYYY HH:mm UTC')}
+                .format('MMMM DD, YYYY HH:mm UTC')}
             </div>
             <div className="text-xs text-[#696969]">
               <Tooltip
