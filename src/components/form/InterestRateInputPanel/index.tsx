@@ -66,9 +66,9 @@ export const getReviewData = ({
   price,
 }): { apr: string | number; earn: string; receive: string; pay: string } => ({
   apr: calculateInterestRate(price, maturityDate),
-  earn: `${(amount - price * amount).toLocaleString()}`,
-  receive: `${amount.toLocaleString()}`,
-  pay: `${(price * amount).toLocaleString()}`,
+  earn: `${round(amount - price * amount, 2).toLocaleString()}+`,
+  receive: `${amount.toLocaleString()}+`,
+  pay: `${round(price * amount, 2).toLocaleString()}`,
 })
 
 const InterestRateInputPanel = ({
