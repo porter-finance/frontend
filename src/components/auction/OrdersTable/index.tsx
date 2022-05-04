@@ -11,9 +11,7 @@ import {
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { OrderStatus } from '../../../state/orders/reducer'
 import { getTokenDisplay } from '../../../utils'
-import ConfirmationModal from '../../modals/ConfirmationModal'
-import WarningModal from '../../modals/WarningModal'
-import CancelModalFooter from '../../modals/common/CancelModalFooter'
+import ConfirmationDialog from '../../modals/ConfirmationDialog'
 import {
   BidTransactionLink,
   OverflowWrap,
@@ -27,7 +25,6 @@ interface OrdersTableProps {
   derivedAuctionInfo: DerivedAuctionInfo
 }
 
-const pendingText = `Cancelling Order`
 export const orderStatusText = {
   [OrderStatus.PLACED]: 'Active',
   [OrderStatus.PENDING]: 'Pending',
@@ -47,34 +44,11 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
     derivedAuctionInfo?.biddingToken,
   )
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
-  const [showWarning, setShowWarning] = useState<boolean>(false)
-  const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirmed
-  const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true) // waiting for user confirmation
-  const [orderError, setOrderError] = useState<string>()
-  const [txHash, setTxHash] = useState<string>('')
   const [orderId, setOrderId] = useState<string>('')
 
-  const resetModal = useCallback(() => {
-    setPendingConfirmation(true)
-    setAttemptingTxn(false)
-  }, [setPendingConfirmation, setAttemptingTxn])
-
   const onCancelOrder = useCallback(() => {
-    setAttemptingTxn(true)
-
-    cancelOrderCallback(orderId)
-      .then((hash) => {
-        setTxHash(hash)
-        setPendingConfirmation(false)
-      })
-      .catch((err) => {
-        console.log(err)
-        setOrderError(err.message)
-        setShowConfirm(false)
-        setPendingConfirmation(false)
-        setShowWarning(true)
-      })
-  }, [setAttemptingTxn, setTxHash, setPendingConfirmation, orderId, cancelOrderCallback])
+    return cancelOrderCallback(orderId)
+  }, [cancelOrderCallback, orderId])
 
   const hasLastCancellationDate =
     derivedAuctionInfo?.auctionEndDate !== derivedAuctionInfo?.orderCancellationEndDate &&
@@ -107,9 +81,9 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
           <BidTransactionLink bid={row} />
           <button
             className="px-3 font-normal text-[#D25453] hover:text-white normal-case !bg-transparent btn btn-outline btn-xs"
-            disabled={isOrderCancellationExpired || hideCancelButton}
+            disabled={!!row.canceltx || isOrderCancellationExpired || hideCancelButton}
             onClick={() => {
-              setOrderId(row.id)
+              setOrderId(row.bytes)
               setShowConfirm(true)
             }}
           >
@@ -126,28 +100,20 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
       <OverflowWrap>
         <TableDesign columns={ordersTableColumns} data={data} showConnect />
       </OverflowWrap>
-      <ConfirmationModal
-        attemptingTxn={attemptingTxn}
-        content={<CancelModalFooter confirmText={'Cancel Order'} onCancelOrder={onCancelOrder} />}
-        hash={txHash}
-        isOpen={showConfirm}
-        onDismiss={() => {
-          resetModal()
-          setShowConfirm(false)
-        }}
-        pendingConfirmation={pendingConfirmation}
-        pendingText={pendingText}
-        title="Warning!"
-      />
-      <WarningModal
-        content={orderError}
-        isOpen={showWarning}
-        onDismiss={() => {
-          resetModal()
-          setOrderError(null)
-          setShowWarning(false)
-        }}
-        title="Warning!"
+      <ConfirmationDialog
+        actionText="Cancel order"
+        beforeDisplay={
+          <span>
+            You will need to place a new order if you still want to participate in this auction.
+          </span>
+        }
+        finishedText="Order cancelled"
+        loadingText="Cancelling order"
+        onOpenChange={setShowConfirm}
+        open={showConfirm}
+        pendingText="Confirm cancellation in wallet"
+        placeOrder={onCancelOrder}
+        title="Review cancellation"
       />
     </>
   )

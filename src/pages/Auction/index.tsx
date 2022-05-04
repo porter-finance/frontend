@@ -185,8 +185,8 @@ const Auction: React.FC = () => {
               size="60px"
               square
               token={{
-                address: graphInfo?.bond.collateralToken.id,
-                symbol: graphInfo?.bond.symbol,
+                address: graphInfo?.bond.id,
+                symbol: graphInfo?.bond.name,
               }}
             />
           </div>

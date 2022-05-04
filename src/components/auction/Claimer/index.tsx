@@ -170,7 +170,12 @@ const Claimer: React.FC<Props> = (props) => {
                 <div className="text-base text-white">
                   {claimableBonds ? `${claimableBonds.toSignificant(6)}` : `-`}
                 </div>
-                <TokenPill token={auctioningToken} />
+                <TokenPill
+                  token={{
+                    ...auctioningToken,
+                    symbol: auctioningToken?.name || auctioningToken?.symbol,
+                  }}
+                />
               </TokenItem>
             )}
 

@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { ReactComponent as UnicornSvg } from '../../../assets/svg/unicorn.svg'
+import { ReactComponent as UnicornSvg } from '../../../assets/svg/simple-bond.svg'
 import { useTokenListState } from '../../../state/tokenList/hooks'
 import { isAddress } from '../../../utils'
 import { UnregisteredToken } from '../UnregisteredToken'
@@ -56,24 +56,25 @@ const TokenLogo: React.FC<TokenLogoProps> = (props) => {
   let forceSvg = false
 
   // Example used in dev
-  if (address === '0x314a07fbff5efa2e0bf98c8c96efe9adab1a50db') {
+  if (address === '0xc10042e945084d816b2bf4bc90dbea8cc8d038ca') {
     forceSvg = true
   }
 
+  const showImg = imageURL || forceSvg
   const UnTok = !imageURL && <UnregisteredToken size={sizeToUse} symbol={symbol} {...restProps} />
 
-  const ImageToken = imageURL && (
+  const ImageToken = showImg && (
     <Wrapper className="tokenLogo" size={sizeToUse} {...restProps}>
       {forceSvg && <UnicornSvg height={sizeToUse} width={sizeToUse} />}
       {!forceSvg && <Image src={imageURL} />}
     </Wrapper>
   )
 
-  if (square && imageURL) {
+  if (square && showImg) {
     return <SquareHolder size={size}>{ImageToken}</SquareHolder>
   }
 
-  if (imageURL) {
+  if (showImg) {
     return ImageToken
   }
 
