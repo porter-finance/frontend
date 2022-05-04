@@ -79,6 +79,7 @@ const BondCard = ({ graphInfo }: { graphInfo: Auction }) => {
         <div className="flex justify-between items-end text-sm text-[#9F9F9F]">
           <div className="flex items-center space-x-4 cursor-pointer">
             <TokenLogo
+              size={'49px'}
               square
               token={{
                 address: graphInfo?.bond.id,
