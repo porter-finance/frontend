@@ -171,7 +171,7 @@ const Table = ({
         </div>
       </div>
 
-      <div className="min-h-[385px]">
+      <div className="min-h-[492px]">
         <table className="table w-full h-full" {...getTableProps()}>
           <thead className="sticky top-0">
             {headerGroups.map((headerGroup, i) => (
