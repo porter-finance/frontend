@@ -61,7 +61,7 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
           <TokenLink token={bond?.collateralToken} withLink />
         </span>
       ),
-      hint: `($${collateralValue})`,
+      hint: `($${round(collateralValue, 2).toLocaleString()})`,
       tooltip:
         'Number of collateral tokens securing each bond. If a bond is defaulted on, the bondholder is able to exchange each bond for these collateral tokens.',
     },
