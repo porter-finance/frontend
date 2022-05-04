@@ -86,6 +86,11 @@ html {
   @apply border-[#532dbe];
 }
 
+.card.redeem-card-color {
+  @apply card-bordered;
+  @apply border-[#532dbe];
+}
+
 .card-title {
   font-style: normal;
   font-weight: 400;

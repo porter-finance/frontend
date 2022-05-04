@@ -251,7 +251,7 @@ const BondAction = ({
   }
 
   return (
-    <div className="card bond-card-color">
+    <div className="card redeem-card-color">
       <div className="card-body">
         <div className="flex flex-row justify-between items-start">
           <h2 className="card-title">{getActionText(componentType)}</h2>
