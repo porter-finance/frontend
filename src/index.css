@@ -3,133 +3,134 @@
 @tailwind utilities;
 
 html {
-    background-color: #131415;
+  background-color: #131415;
 }
 
 @layer base {
-    html {
-        @apply text-base;
-    }
+  html {
+    @apply text-base;
+  }
 }
 
 .fullPage {
-    @apply max-w-3xl mx-auto px-4 sm:px-6 lg:max-w-7xl lg:px-8 xl:max-w-8xl xl:px-12;
+  @apply max-w-3xl mx-auto px-4 sm:px-6 lg:max-w-7xl lg:px-8 xl:max-w-8xl xl:px-12;
 }
 
 .btn-sm {
-    @apply text-base;
+  @apply text-base;
 }
 
 .btn-group {
-    border: 1px solid #454545;
-    @apply rounded-full;
+  border: 1px solid #454545;
+  @apply rounded-full;
 }
 
 .btn-group .btn-active {
-    background-color: #2c2c2c;
-    border-color: #454545;
+  background-color: #2c2c2c;
+  border-color: #454545;
 }
 
 .btn-group button {
-    @apply btn-xs;
-    @apply rounded-full;
-    @apply m-0.5;
-    border: none;
-    font-weight: 400;
-    font-size: 10px;
-    letter-spacing: 0.1em;
+  @apply btn-xs;
+  @apply rounded-full;
+  @apply m-0.5;
+  border: none;
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.1em;
 }
 
 .btn-group > .btn:not(:first-of-type) {
-    border-top-left-radius: inherit;
-    border-bottom-left-radius: inherit;
+  border-top-left-radius: inherit;
+  border-bottom-left-radius: inherit;
 }
 
 .btn-group > .btn:not(:last-of-type) {
-    border-top-right-radius: inherit;
-    border-bottom-right-radius: inherit;
+  border-top-right-radius: inherit;
+  border-bottom-right-radius: inherit;
 }
 
 .btn-warning {
-    background-color: #EDA651;
-    border-color: #EDA651;
-    color: #2C2C2C;
+  background-color: #eda651;
+  border-color: #eda651;
+  color: #2c2c2c;
 }
 
 .btn-error {
-    background-color: #D25453;
-    border-color: #D25453;
-    color: #2C2C2C;
+  background-color: #d25453;
+  border-color: #d25453;
+  color: #2c2c2c;
 }
 
 .card {
-    @apply rounded-md;
-    background-color: #181A1C;
-    @apply text-neutral-content;
-    @apply h-min;
-    @apply mt-8;
-    box-shadow: 0px 0px 1px rgba(30, 30, 30, 0.32), 0px 8px 16px rgba(0, 0, 0, 0.16);
+  @apply bg-[#181a1c];
+  @apply rounded-lg;
+  @apply text-neutral-content;
+  @apply h-min;
+  @apply mt-8;
+  @apply border;
+  @apply border-[#2c2c2c];
 }
 
 .card.place-order-color {
-    border-image: conic-gradient(black, black, black, black, black, black, black) 1;
-    border-image-source: linear-gradient(131.96deg, #404EED 0%, rgba(64, 78, 237, 0) 100%);
+  border-image: conic-gradient(black, black, black, black, black, black, black) 1;
+  border-image-source: linear-gradient(131.96deg, #404eed 0%, rgba(64, 78, 237, 0) 100%);
 
-    @apply card-bordered
+  @apply card-bordered;
 }
 
 .card.bond-card-color {
-    border-image: conic-gradient(black, black, black, black, black, black, black) 1;
-    border-image-source: linear-gradient(131.96deg, #532DBE 0%, rgba(83, 45, 190, 0.15) 100%);
+  border-image: conic-gradient(black, black, black, black, black, black, black) 1;
+  border-image-source: linear-gradient(131.96deg, #532dbe 0%, rgba(83, 45, 190, 0.15) 100%);
 
-    @apply card-bordered;
+  @apply card-bordered;
 }
 
 .card-title {
-    font-style: normal;
-    font-weight: 400;
-    font-size: 22px;
-    letter-spacing: 0.01em;
-    color: #EEEFEB;
-    @apply mb-4;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 22px;
+  letter-spacing: 0.01em;
+  color: #eeefeb;
+  @apply mb-4;
 }
 
 .progress-blue::-webkit-progress-value {
-    background: linear-gradient(270deg, #404EED -0.07%, #2B3BF4 100%);
-    border-radius: 4px;
+  background: linear-gradient(270deg, #404eed -0.07%, #2b3bf4 100%);
+  border-radius: 4px;
 }
 
 .progress-purple::-webkit-progress-value {
-    background: linear-gradient(270deg, #6433d9 -0.07%, #532DBE 100%);
-    border-radius: 4px;
+  background: linear-gradient(270deg, #6433d9 -0.07%, #532dbe 100%);
+  border-radius: 4px;
 }
 
 .progress {
-    height: 12px;
-    border-radius: 4px;
-    background: rgba(213, 213, 213, 0.1);
+  height: 12px;
+  border-radius: 4px;
+  background: rgba(213, 213, 213, 0.1);
 }
 
 .mockup-code pre:before {
-    margin-right: 0;
+  margin-right: 0;
 }
 
 .mockup-code pre {
-    margin-left: 2ch;
+  margin-left: 2ch;
 }
 
 /* Charts */
 
-svg text tspan  {
-    @apply normal-case;
-    font-style: normal;
-    font-weight: 400;
-    font-size: 10px;
-    line-height: 11px;
-    letter-spacing: 0.06em;
-    color: #D6D6D6;
+svg text tspan {
+  @apply normal-case;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 11px;
+  letter-spacing: 0.06em;
+  color: #d6d6d6;
 }
 
-g[role="tooltip"] {
-    @apply ease-in-out duration-300;
+g[role='tooltip'] {
+  @apply ease-in-out duration-300;
 }
