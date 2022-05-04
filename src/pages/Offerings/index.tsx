@@ -109,7 +109,7 @@ const Offerings = () => {
         <div className="flex flex-row items-center space-x-4">
           <div className="flex">
             <TokenLogo
-              size="30px"
+              size="41px"
               square
               token={{
                 address: auction?.bond?.id,
