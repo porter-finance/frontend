@@ -180,7 +180,7 @@ export const drawInformation = (props: DrawInformation) => {
   const [xAxis] = chart.xAxes
   const [yAxis] = chart.yAxes
 
-  xAxis.title.text = 'date'
+  xAxis.title.text = 'Date'
   xAxis.title.align = 'left'
 
   yAxis.title.text = convertibleTokenLabel
