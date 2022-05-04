@@ -1,13 +1,11 @@
 import React, { ReactElement, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 
-import { useGlobalFilter, usePagination, useTable } from 'react-table'
+import { useGlobalFilter, useTable } from 'react-table'
 
 import { ActionButton } from '../../auction/Claimer'
-import { Dropdown } from '../../common/Dropdown'
 import Tooltip from '../../common/Tooltip'
-import { ChevronRight } from '../../icons/ChevronRight'
 import { Delete } from '../../icons/Delete'
 import { Magnifier } from '../../icons/Magnifier'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
@@ -85,118 +83,6 @@ const DeleteSearchTerm = styled.button`
   }
 `
 
-const Pagination = styled.div`
-  align-items: center;
-  border-top: 1px solid ${({ theme }) => theme.border};
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-height: 50px;
-  padding: 0 15px;
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    flex-direction: row;
-    justify-content: flex-end;
-  }
-`
-
-const PaginationBlock = styled.span`
-  align-items: center;
-  display: flex;
-  justify-content: center;
-`
-
-const PaginationTextCSS = css`
-  color: ${({ theme }) => theme.text1};
-  font-size: 13px;
-  font-weight: normal;
-  white-space: nowrap;
-`
-
-const PaginationText = styled.span`
-  ${PaginationTextCSS}
-  margin-right: 8px;
-`
-
-const PaginationBreak = styled.span`
-  ${PaginationTextCSS}
-  display: none;
-  margin: 0 12px;
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    display: block;
-  }
-`
-
-const PaginationButton = styled.button`
-  align-items: center;
-  background: none;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  height: auto;
-  outline: none;
-  padding: 0;
-  user-select: none;
-  width: 25px;
-  white-space: nowrap;
-
-  &:hover {
-    .fill {
-      color: ${({ theme }) => theme.primary1};
-    }
-  }
-
-  &[disabled],
-  &[disabled]:hover {
-    cursor: not-allowed;
-    opacity: 0.5;
-
-    .fill {
-      color: ${({ theme }) => theme.text1};
-    }
-  }
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    height: 35px;
-  }
-`
-
-const ChevronLeft = styled(ChevronRight)`
-  transform: rotateZ(180deg);
-`
-
-const DropdownPagination = styled(Dropdown)`
-  .dropdownItems {
-    min-width: 70px;
-  }
-`
-
-const PaginationDropdownButton = styled.div`
-  ${PaginationTextCSS}
-  cursor: pointer;
-  white-space: nowrap;
-`
-
-const PaginationItem = styled.div`
-  align-items: center;
-  border-bottom: 1px solid ${(props) => props.theme.dropdown.item.borderColor};
-  color: ${(props) => props.theme.dropdown.item.color};
-  cursor: pointer;
-  display: flex;
-  font-size: 14px;
-  font-weight: 400;
-  height: 32px;
-  line-height: 1.2;
-  padding: 0 10px;
-  white-space: nowrap;
-
-  &:hover {
-    background-color: ${(props) => props.theme.dropdown.item.backgroundColorHover};
-  }
-`
-
 interface Props {
   data: any[]
   loading: boolean
@@ -234,42 +120,23 @@ const Table = ({
   )
 
   const {
-    canNextPage,
-    canPreviousPage,
     getTableBodyProps,
     getTableProps,
     headerGroups,
-    nextPage,
-    page,
     prepareRow,
-    previousPage,
     rows,
     setGlobalFilter,
-    setPageSize,
     state,
   } = useTable(
     {
       columns,
       data,
       globalFilter,
-      initialState: { pageIndex: 0, pageSize: 10 },
     },
     useGlobalFilter,
-    usePagination,
   )
 
   const sectionHead = useRef(null)
-  const { pageIndex, pageSize } = state
-
-  function handleNextPage() {
-    nextPage()
-    sectionHead.current.scrollIntoView()
-  }
-
-  function handlePrevPage() {
-    previousPage()
-    sectionHead.current.scrollIntoView()
-  }
 
   return (
     <Wrapper ref={sectionHead} {...restProps}>
@@ -306,7 +173,7 @@ const Table = ({
 
       <div className="min-h-[385px]">
         <table className="table w-full h-full" {...getTableProps()}>
-          <thead>
+          <thead className="sticky top-0">
             {headerGroups.map((headerGroup, i) => (
               <tr
                 className="border-b border-b-[#D5D5D519]"
@@ -317,7 +184,7 @@ const Table = ({
                   (column, i) =>
                     column.render('show') && (
                       <th
-                        className="text-xs font-normal tracking-widest text-[#696969] bg-transparent"
+                        className="text-xs font-normal tracking-widest text-[#696969] bg-base-100"
                         key={i}
                         {...column.getHeaderProps()}
                       >
@@ -344,7 +211,7 @@ const Table = ({
                 </tr>
               ))}
 
-            {!loading && !page.length && (
+            {!loading && !rows.length && (
               <tr className="text-sm text-[#D2D2D2] bg-transparent">
                 <td
                   className="py-[100px] space-y-7 text-center text-[#696969] bg-transparent"
@@ -364,7 +231,7 @@ const Table = ({
               </tr>
             )}
             {!loading &&
-              page.map((row, i) => {
+              rows.map((row, i) => {
                 prepareRow(row)
                 return (
                   <tr
@@ -387,41 +254,6 @@ const Table = ({
               })}
           </tbody>
         </table>
-
-        <Pagination>
-          <PaginationBlock>
-            <PaginationText>Items per page</PaginationText>{' '}
-            <DropdownPagination
-              dropdownButtonContent={
-                <PaginationDropdownButton>{pageSize} ▼</PaginationDropdownButton>
-              }
-              items={[5, 10, 20, 30].map((pageSize) => (
-                <PaginationItem
-                  key={pageSize}
-                  onClick={() => {
-                    setPageSize(Number(pageSize))
-                  }}
-                >
-                  {pageSize}
-                </PaginationItem>
-              ))}
-            />
-          </PaginationBlock>
-          <PaginationBreak>|</PaginationBreak>
-          <PaginationBlock>
-            <PaginationText>
-              {pageIndex + 1 === 1 ? 1 : pageIndex * pageSize + 1} -{' '}
-              {rows.length < (pageIndex + 1) * pageSize ? rows.length : (pageIndex + 1) * pageSize}{' '}
-              of {rows.length} {name}
-            </PaginationText>{' '}
-            <PaginationButton disabled={!canPreviousPage} onClick={() => handlePrevPage()}>
-              <ChevronLeft />
-            </PaginationButton>
-            <PaginationButton disabled={!canNextPage} onClick={() => handleNextPage()}>
-              <ChevronRight />
-            </PaginationButton>
-          </PaginationBlock>
-        </Pagination>
       </div>
     </Wrapper>
   )
