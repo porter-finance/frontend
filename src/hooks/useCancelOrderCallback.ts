@@ -65,16 +65,12 @@ export function useCancelOrderCallback(
         )
         .then((response) => {
           addTransaction(response, {
-            summary:
-              'Cancel order selling ' +
-              abbreviation(
-                new Fraction(
-                  decodedOrder.sellAmount.toString(),
-                  BigNumber.from(10).pow(biddingToken.decimals).toString(),
-                ).toSignificant(2),
-              ) +
-              ' ' +
-              biddingToken.symbol,
+            summary: `Cancel ${abbreviation(
+              new Fraction(
+                decodedOrder.sellAmount.toString(),
+                BigNumber.from(10).pow(biddingToken.decimals).toString(),
+              ).toSignificant(2),
+            )} ${biddingToken.symbol} Order`,
           })
           actionCancelOrder(orderId)
 
