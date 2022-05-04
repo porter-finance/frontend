@@ -118,6 +118,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   minFunding.dataFields.valueX = 'priceNumber'
   minFunding.dataFields.valueY = 'minFundY'
   minFunding.strokeWidth = 2
+  minFunding.zIndex = 10
   minFunding.stroke = am4core.color(colors.red)
   minFunding.fill = minFunding.stroke
   minFunding.name = 'MIN. FUNDING THRESHOLD'

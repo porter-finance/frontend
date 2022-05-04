@@ -83,6 +83,7 @@ export const XYSimpleBondChart = (props: XYBondChartProps): am4charts.XYChart =>
   faceValue.dataFields.valueY = 'faceValueY'
   faceValue.strokeWidth = 2
   faceValue.stroke = am4core.color(colors.red)
+  faceValue.zIndex = 10
   faceValue.fill = faceValue.stroke
   faceValue.startLocation = 0.5
   faceValue.name = 'FACE VALUE'
