@@ -40,6 +40,10 @@ html {
   letter-spacing: 0.1em;
 }
 
+.btn-group .btn:focus-visible {
+  outline: none;
+}
+
 .btn-group > .btn:not(:first-of-type) {
   border-top-left-radius: inherit;
   border-bottom-left-radius: inherit;
