@@ -48,14 +48,14 @@ const AuctionDetails = (props: Props) => {
     maxBondAPR = '-'
 
   if (graphInfo) {
-    const TokenInfoWithLink = ({ value }) => (
+    const TokenInfoWithLink = ({ value, withLink = true }) => (
       <TokenValue className="space-x-1">
         <span>
           {isBigNumberish(value)
             ? abbreviation(formatUnits(value, graphInfo?.bidding?.decimals))
             : Number(value).toLocaleString()}
         </span>
-        <TokenLink token={graphInfo?.bidding} withLink />
+        <TokenLink token={graphInfo?.bidding} withLink={withLink} />
       </TokenValue>
     )
 
@@ -75,7 +75,7 @@ const AuctionDetails = (props: Props) => {
       fullNumberHint: Number(
         formatUnits(graphInfo.minimumFundingThreshold, graphInfo.bidding.decimals),
       ).toLocaleString(),
-      value: <TokenInfoWithLink value={graphInfo.minimumFundingThreshold} />,
+      value: <TokenInfoWithLink value={graphInfo.minimumFundingThreshold} withLink={false} />,
     }
     minimumBondPrice = {
       fullNumberHint: graphInfo?.minimumBondPrice.toLocaleString(),
