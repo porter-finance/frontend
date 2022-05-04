@@ -24,7 +24,7 @@ export const Footer: React.FC = ({ ...restProps }) => {
   return (
     <Wrapper {...restProps} className="flex pt-10">
       <Inner className="fullPage">
-        <div className="p-4 py-10 mt-5 footer text-neutral-content">
+        <div className="py-10 mt-5 footer text-neutral-content">
           <FooterLogo className="grid-flow-col items-center text-2xl font-medium">
             <svg
               fill="none"
