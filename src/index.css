@@ -73,17 +73,13 @@ html {
 }
 
 .card.place-order-color {
-  border-image: conic-gradient(black, black, black, black, black, black, black) 1;
-  border-image-source: linear-gradient(131.96deg, #404eed 0%, rgba(64, 78, 237, 0) 100%);
-
   @apply card-bordered;
+  @apply border-[#404eed];
 }
 
-.card.bond-card-color {
-  border-image: conic-gradient(black, black, black, black, black, black, black) 1;
-  border-image-source: linear-gradient(131.96deg, #532dbe 0%, rgba(83, 45, 190, 0.15) 100%);
-
+.card.bond-card-color:hover {
   @apply card-bordered;
+  @apply border-[#532dbe];
 }
 
 .card-title {

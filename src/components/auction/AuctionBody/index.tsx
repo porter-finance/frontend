@@ -70,7 +70,7 @@ const BondCard = ({ graphInfo }: { graphInfo: Auction }) => {
 
   return (
     <div
-      className="shadow-sm hover:shadow-[#532DBE] transition-all hover:scale-105 cursor-pointer will-change-auto card  card-bordered bond-card-color"
+      className="shadow-sm transition-all cursor-pointer card card-bordered bond-card-color"
       onClick={() => navigate(`/products/${graphInfo?.bond.id || ''}`)}
     >
       <div className="card-body">
