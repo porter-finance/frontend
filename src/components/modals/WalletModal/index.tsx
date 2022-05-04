@@ -57,7 +57,7 @@ const WalletModal: React.FC = () => {
   const toggleWalletModal = useWalletModalToggle()
   const previousAccount = usePrevious(account)
   const { errorWrongNetwork } = useNetworkCheck()
-  const [termsAccepted, setTermsAccepted] = useState(false)
+  const [termsAccepted, setTermsAccepted] = useState(true)
   const { chainId } = useOrderPlacementState()
   const [walletConnectChainError, setWalletConnectChainError] = useState<NetworkError>()
 
@@ -246,26 +246,6 @@ const WalletModal: React.FC = () => {
         {!error && !connectingToWallet && (
           <>
             <ul className="my-4 space-y-3">{getOptions()}</ul>
-
-            <>
-              <label className="cursor-pointer label space-x-4">
-                <input
-                  checked={termsAccepted}
-                  className="checkbox checkbox-sm"
-                  onChange={() => {
-                    setTermsAccepted(!termsAccepted)
-                  }}
-                  type="checkbox"
-                />
-                <span className="label-text">
-                  I have read, understood and agree to the{' '}
-                  <NavLink target="_blank" to="/terms-and-conditions">
-                    Terms &amp; Conditions
-                  </NavLink>
-                  .
-                </span>
-              </label>
-            </>
 
             <Footer>
               <ExternalLink
