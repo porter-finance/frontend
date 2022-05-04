@@ -176,14 +176,13 @@ export const drawInformation = (props: DrawInformation) => {
   const { chart, collateralToken, convertibleToken } = props
   const convertibleTokenLabel = getDisplay(convertibleToken)
 
-  const priceTitle = ` Price (${convertibleTokenLabel})`
   const [xAxis] = chart.xAxes
   const [yAxis] = chart.yAxes
 
   xAxis.title.text = 'date'
   xAxis.title.align = 'left'
 
-  yAxis.title.text = priceTitle
+  yAxis.title.text = convertibleTokenLabel
   yAxis.title.align = 'left'
 
   const collateralValueSeries = chart.series.values[1]
@@ -203,7 +202,7 @@ export const drawInformation = (props: DrawInformation) => {
     const volume = round(valueY, 3)
 
     return `Time:  ${date}<br/>
-Collateral value:  ${volume} ${collateralToken.name}`
+Collateral value:  ${volume} ${convertibleTokenLabel}`
   })
 
   if (chart.series.values.length > 2) {
@@ -220,7 +219,7 @@ Collateral value:  ${volume} ${collateralToken.name}`
     convertibleValueSeries.adapter.add('tooltipText', (text, target) => {
       const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
       const convertibleValue = round(valueY, 3)
-      return `Convertible value:  ${convertibleValue} ${convertibleToken.name}`
+      return `Convertible value:  ${convertibleValue} ${convertibleTokenLabel}`
     })
   }
 }
