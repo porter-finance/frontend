@@ -104,6 +104,7 @@ const auctionsQuery = gql`
           decimals
         }
         type
+        id
         name
         symbol
         collateralToken {

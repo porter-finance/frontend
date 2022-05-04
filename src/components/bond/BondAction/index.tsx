@@ -6,29 +6,39 @@ import { Token, TokenAmount } from '@josojo/honeyswap-sdk'
 import { useWeb3React } from '@web3-react/core'
 import dayjs from 'dayjs'
 
+import { useActiveWeb3React } from '../../../hooks'
 import { useBond } from '../../../hooks/useBond'
 import { useConvertBond } from '../../../hooks/useConvertBond'
 import { usePreviewBond } from '../../../hooks/usePreviewBond'
 import { useRedeemBond } from '../../../hooks/useRedeemBond'
 import { BondActions, getBondStates } from '../../../pages/BondDetail'
 import { useActivePopups, useWalletModalToggle } from '../../../state/application/hooks'
-import { getTokenDisplay } from '../../../utils'
+import { getExplorerLink, getTokenDisplay } from '../../../utils'
 import { ActionButton } from '../../auction/Claimer'
 import { ActiveStatusPill } from '../../auction/OrderbookTable'
 import Tooltip from '../../common/Tooltip'
 import AmountInputPanel from '../../form/AmountInputPanel'
 import ConfirmationDialog, { ReviewConvert } from '../../modals/ConfirmationDialog'
-import { FieldRowToken, FieldRowTokenSymbol } from '../../pureStyledComponents/FieldRow'
+import { FieldRowTokenSymbol } from '../../pureStyledComponents/FieldRow'
 import TokenLogo from '../../token/TokenLogo'
 
 export const TokenPill = ({ token }) => {
+  const { chainId } = useActiveWeb3React()
+  const noPropagation = (e) => e.stopPropagation()
+
   let displayName = ''
   if (token) {
     displayName = getTokenDisplay(token)
   }
 
   return token ? (
-    <FieldRowToken className="flex flex-row items-center p-1 px-2 pl-1 space-x-2 bg-[#2C2C2C] rounded-full">
+    <a
+      className="flex flex-row items-center p-1 px-2 pl-1 space-x-2 bg-[#2C2C2C] rounded-full cursor-pointer"
+      href={getExplorerLink(chainId, token.address || token.id, 'address')}
+      onClick={noPropagation}
+      rel="noreferrer"
+      target="_blank"
+    >
       {(token.address || token.id) && (
         <TokenLogo
           size={'16px'}
@@ -38,8 +48,8 @@ export const TokenPill = ({ token }) => {
           }}
         />
       )}
-      {displayName && <FieldRowTokenSymbol>{displayName}</FieldRowTokenSymbol>}
-    </FieldRowToken>
+      {displayName && <FieldRowTokenSymbol>{token.symbol}</FieldRowTokenSymbol>}
+    </a>
   ) : null
 }
 
