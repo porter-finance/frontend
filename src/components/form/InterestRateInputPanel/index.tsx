@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 import dayjs from 'dayjs'
+import { round } from 'lodash'
 
 import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
 import Tooltip from '../../common/Tooltip'
@@ -53,7 +54,7 @@ export const calculateInterestRate = (
   interestRate = isNaN(interestRate) || interestRate === Infinity ? 0 : interestRate
 
   if (display) {
-    return !interestRate ? '-' : `${(interestRate * 100).toLocaleString()}%`
+    return !interestRate ? '-' : `${round(interestRate * 100, 2).toLocaleString()}+%`
   }
 
   return interestRate
