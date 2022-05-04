@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 import { formatUnits } from '@ethersproject/units'
+import { DoubleArrowLeftIcon, DoubleArrowRightIcon } from '@radix-ui/react-icons'
 import { round } from 'lodash'
 import { usePagination, useTable } from 'react-table'
 
@@ -193,19 +194,15 @@ export const TableDesign = ({
         </tbody>
       </table>
       {!hidePagination && pageOptions.length > 0 && (
-        <div className="text-[#696969] !border-none btn-group">
-          <button
-            className="!text-lg btn btn-lg"
-            disabled={!canPreviousPage}
-            onClick={previousPage}
-          >
-            «
+        <div className="flex justify-end items-center space-x-2 text-[#696969] !border-none">
+          <button className="btn btn-xs" disabled={!canPreviousPage} onClick={previousPage}>
+            <DoubleArrowLeftIcon />
           </button>
-          <button className="disabled:text-[#696969] btn btn-lg" disabled>
+          <span className="text-xs text-[#696969]">
             Page {pageIndex + 1} of {pageOptions.length}
-          </button>
-          <button className="!text-lg btn btn-lg" disabled={!canNextPage} onClick={nextPage}>
-            »
+          </span>
+          <button className="btn btn-xs" disabled={!canNextPage} onClick={nextPage}>
+            <DoubleArrowRightIcon />
           </button>
         </div>
       )}
