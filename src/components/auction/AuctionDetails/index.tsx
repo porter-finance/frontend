@@ -1,15 +1,16 @@
 import React from 'react'
 import styled from 'styled-components'
 
+import { isBigNumberish } from '@ethersproject/bignumber/lib/bignumber'
 import { formatUnits } from '@ethersproject/units'
 
 import { useAuction } from '../../../hooks/useAuction'
 import { AuctionState, DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderbookState } from '../../../state/orderbook/hooks'
-import { getDisplay } from '../../../utils'
 import { abbreviation } from '../../../utils/numeral'
 import { calculateInterestRate } from '../../form/InterestRateInputPanel'
+import TokenLink from '../../token/TokenLink'
 import { AuctionTimer } from '../AuctionTimer'
 import { ExtraDetailsItem, Props as ExtraDetailsItemProps } from '../ExtraDetailsItem'
 import { ActiveStatusPill } from '../OrderbookTable'
@@ -34,18 +35,30 @@ const AuctionDetails = (props: Props) => {
   const { data: graphInfo } = useAuction(auctionIdentifier?.auctionId)
   const { orderbookPrice: auctionCurrentPrice } = useOrderbookState()
 
-  const biddingTokenDisplay = getDisplay(graphInfo?.bidding)
+  const BidTokenLink = <TokenLink token={graphInfo?.bidding} />
   const settling = derivedAuctionInfo?.auctionState === AuctionState.NEEDS_SETTLED
 
   let totalBidVolume,
     offeringSize,
+    minimumBondPrice,
     minimumFundingThreshold,
-    minimumBidSize = { value: '-', fullNumberHint: '' }
+    minimumBidSize = {}
 
   let currentBondAPR,
     maxBondAPR = '-'
 
   if (graphInfo) {
+    const TokenInfoWithLink = ({ value }) => (
+      <TokenValue className="space-x-1">
+        <span>
+          {isBigNumberish(value)
+            ? abbreviation(formatUnits(value, graphInfo?.bidding?.decimals))
+            : Number(value).toLocaleString()}
+        </span>
+        <TokenLink token={graphInfo?.bidding} withLink />
+      </TokenValue>
+    )
+
     offeringSize = {
       fullNumberHint: Number(
         formatUnits(graphInfo.offeringSize, graphInfo.bond.decimals),
@@ -56,25 +69,23 @@ const AuctionDetails = (props: Props) => {
       fullNumberHint: Number(
         formatUnits(graphInfo.totalBidVolume, graphInfo.bidding.decimals),
       ).toLocaleString(),
-      value: `${abbreviation(
-        formatUnits(graphInfo.totalBidVolume, graphInfo.bidding.decimals),
-      )} ${biddingTokenDisplay}`,
+      value: <TokenInfoWithLink value={graphInfo.totalBidVolume} />,
     }
     minimumFundingThreshold = {
       fullNumberHint: Number(
         formatUnits(graphInfo.minimumFundingThreshold, graphInfo.bidding.decimals),
       ).toLocaleString(),
-      value: `${abbreviation(
-        formatUnits(graphInfo.minimumFundingThreshold, graphInfo.bidding.decimals),
-      )} ${biddingTokenDisplay}`,
+      value: <TokenInfoWithLink value={graphInfo.minimumFundingThreshold} />,
+    }
+    minimumBondPrice = {
+      fullNumberHint: graphInfo?.minimumBondPrice.toLocaleString(),
+      value: <TokenInfoWithLink value={graphInfo.minimumBondPrice} />,
     }
     minimumBidSize = {
       fullNumberHint: Number(
         formatUnits(graphInfo.minimumBidSize, graphInfo.bidding.decimals),
       ).toLocaleString(),
-      value: `${abbreviation(
-        formatUnits(graphInfo.minimumBidSize, graphInfo.bidding.decimals),
-      )} ${biddingTokenDisplay}`,
+      value: <TokenInfoWithLink value={graphInfo.minimumBidSize} />,
     }
     currentBondAPR = calculateInterestRate(
       auctionCurrentPrice,
@@ -86,23 +97,12 @@ const AuctionDetails = (props: Props) => {
     ) as string
   }
 
-  const minimumBondPrice = {
-    fullNumberHint: graphInfo?.minimumBondPrice.toLocaleString(),
-    value: graphInfo?.minimumBondPrice ? (
-      <TokenValue>
-        {abbreviation(graphInfo?.minimumBondPrice).toLocaleString()}{' '}
-        {`${getDisplay(graphInfo?.bidding)}`}
-      </TokenValue>
-    ) : (
-      '-'
-    ),
-  }
-
   const currentBondPrice = {
     fullNumberHint: auctionCurrentPrice.toLocaleString(),
     value: auctionCurrentPrice ? (
-      <TokenValue>
-        {abbreviation(auctionCurrentPrice)} {`${getDisplay(graphInfo?.bidding)}`}
+      <TokenValue className="space-x-1">
+        <span>{abbreviation(auctionCurrentPrice)}</span>
+        {BidTokenLink}
       </TokenValue>
     ) : (
       '-'
@@ -112,11 +112,13 @@ const AuctionDetails = (props: Props) => {
   const extraDetails: Array<ExtraDetailsItemProps> = [
     {
       title: 'Offering size',
+      value: '-',
       ...offeringSize,
       tooltip: 'Number of bonds being sold.',
     },
     {
       title: 'Total bid volume',
+      value: '-',
       ...totalBidVolume,
       tooltip: 'Sum of all bid volume.',
     },
@@ -124,16 +126,19 @@ const AuctionDetails = (props: Props) => {
       title: 'Min funding threshold',
       tooltip:
         'Minimum bid volume required for auction to close. If this value is not reached, all funds will be returned and no bonds will be sold.',
+      value: '-',
       ...minimumFundingThreshold,
     },
     {
       title: 'Minimum bid size',
+      value: '-',
       ...minimumBidSize,
       tooltip: 'Minimum size for a single bid. Bids below this size cannot be placed.',
     },
     {
       title: 'Current bond price',
       tooltip: `Current auction clearing price for a single bond. If the auction ended now, this would be the price set.`,
+      value: '-',
       ...currentBondPrice,
       bordered: 'blue',
     },
@@ -147,6 +152,7 @@ const AuctionDetails = (props: Props) => {
     {
       title: 'Minimum bond price',
       tooltip: 'Minimum price a bond can be sold for. Bids below this price will not be accepted.',
+      value: '-',
       ...minimumBondPrice,
     },
     {
