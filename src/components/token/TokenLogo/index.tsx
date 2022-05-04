@@ -59,7 +59,7 @@ const TokenLogo: React.FC<TokenLogoProps> = (props) => {
     forceSvg = true
   }
 
-  const showImg = forceSvg
+  const showImg = imageURL || forceSvg
 
   const ImageToken = showImg && (
     <Wrapper className="tokenLogo" size={sizeToUse} {...restProps}>
