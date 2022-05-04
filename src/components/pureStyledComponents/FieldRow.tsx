@@ -67,7 +67,6 @@ export const FieldRowInput = styled(NumericalInput)<{ hasError?: boolean }>`
   color: ${(props) => (props.hasError ? ({ theme }) => theme.error : ({ theme }) => theme.text1)};
   flex-grow: 1;
   flex-shrink: 1;
-  font-family: 'Neue Haas Grotesk Display', sans-serif;
   font-weight: 400;
   font-size: 16px;
   height: 22px;

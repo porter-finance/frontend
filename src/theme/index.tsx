@@ -78,8 +78,6 @@ export const theme = (darkMode: boolean): DefaultTheme => ({
   ...colors(darkMode),
   fonts: {
     defaultSize: '14px',
-    fontFamily: `Neue Haas Grotesk Display, Arial, 'Helvetica Neue', 'Segoe UI', Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans',-apple-system, BlinkMacSystemFont, sans-serif`,
-    fontFamilyCode: `source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace`,
   },
   grids: {
     sm: 8,

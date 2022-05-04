@@ -30,7 +30,6 @@ export const IconUnregistered: React.FC<{ className?: string }> = (props) => {
       </g>
       <text
         fill="red"
-        fontFamily="Neue Haas Grotesk Display-Bold, Neue Haas Grotesk Display ☞"
         fontSize="50px"
         fontWeight="700"
         transform="translate(2.5 7.535) translate(34.5 48.465)"
