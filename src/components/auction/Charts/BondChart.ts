@@ -77,12 +77,13 @@ export const XYSimpleBondChart = (props: XYBondChartProps): am4charts.XYChart =>
 
   volumeAxis.numberFormatter = numberFormatter
 
-  const faceValue = chart.series.push(new am4charts.LineSeries())
+  const faceValue = chart.series.push(new am4charts.StepLineSeries())
   faceValue.dataFields.dateX = 'date'
   faceValue.dataFields.valueY = 'faceValueY'
   faceValue.strokeWidth = 2
   faceValue.stroke = am4core.color(colors.red)
   faceValue.fill = faceValue.stroke
+  faceValue.startLocation = 0.5
   faceValue.name = 'FACE VALUE'
   faceValue.dummyData = {
     description:
