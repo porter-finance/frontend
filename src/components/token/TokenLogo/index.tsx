@@ -4,7 +4,6 @@ import styled from 'styled-components'
 import { ReactComponent as UnicornSvg } from '../../../assets/svg/simple-bond.svg'
 import { useTokenListState } from '../../../state/tokenList/hooks'
 import { isAddress } from '../../../utils'
-import { UnregisteredToken } from '../UnregisteredToken'
 
 const Wrapper = styled.div<{ size: string }>`
   background-color: #e0e0e0;
@@ -53,15 +52,14 @@ const TokenLogo: React.FC<TokenLogoProps> = (props) => {
   const validToken = isAddress(address) && tokens
   const imageURL = validToken && tokens[address.toLowerCase()]
   const sizeToUse = square && size === '24px' ? '30px' : size
-  let forceSvg = false
+  let forceSvg = !imageURL
 
   // Example used in dev
   if (address === '0xc10042e945084d816b2bf4bc90dbea8cc8d038ca') {
     forceSvg = true
   }
 
-  const showImg = imageURL || forceSvg
-  const UnTok = !imageURL && <UnregisteredToken size={sizeToUse} symbol={symbol} {...restProps} />
+  const showImg = forceSvg
 
   const ImageToken = showImg && (
     <Wrapper className="tokenLogo" size={sizeToUse} {...restProps}>
@@ -78,11 +76,11 @@ const TokenLogo: React.FC<TokenLogoProps> = (props) => {
     return ImageToken
   }
 
-  if (square) {
-    return <SquareHolder size={size}>{UnTok}</SquareHolder>
-  }
-
-  return UnTok
+  return (
+    <Wrapper className="tokenLogo" size={sizeToUse} {...restProps}>
+      <UnicornSvg height={sizeToUse} width={sizeToUse} />
+    </Wrapper>
+  )
 }
 
 export default TokenLogo
