@@ -132,16 +132,6 @@ export const AuctionTimer = ({
           width="100%"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <path d="M127 0V6" stroke="#454545" />
-          <path d="M205 0V6" stroke="#454545" />
-          <path d="M283 0V6" stroke="#454545" />
-          <path d="M361 0V6" stroke="#454545" />
-          <path d="M439 0V6" stroke="#454545" />
-          <path d="M517 0V6" stroke="#454545" />
-          <path d="M595 0V6" stroke="#454545" />
-          <path d="M673 0V6" stroke="#454545" />
-          <path d="M751 0V6" stroke="#454545" />
-          <path d="M829 0V6" stroke="#454545" />
           <path
             d="M1 0V8C1 10.2091 2.79086 12 5 12H880C882.209 12 884 10.2091 884 8V0"
             stroke="#454545"
