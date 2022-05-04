@@ -55,8 +55,9 @@ export const calculateRow = (row, paymentToken, maturityDate, derivedAuctionInfo
   const status = <ActiveStatusPill disabled={!!row.canceltx} title={statusText} />
   const price = `${(row.payable / row.size).toLocaleString()} ${paymentToken}`
   const interest = `${calculateInterestRate(row.payable / row.size, maturityDate)} `
-  const amount = `${Number(
-    formatUnits(row.payable, derivedAuctionInfo.biddingToken.decimals),
+  const amount = `${round(
+    Number(formatUnits(row.payable, derivedAuctionInfo.biddingToken.decimals)),
+    2,
   ).toLocaleString()} ${paymentToken} `
 
   const bonds = `${round(
