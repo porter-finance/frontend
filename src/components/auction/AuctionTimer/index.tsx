@@ -1,11 +1,13 @@
 import React from 'react'
 import styled from 'styled-components'
 
+import { TimerIcon } from '@radix-ui/react-icons'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import utc from 'dayjs/plugin/utc'
+import Countdown from 'react-countdown'
 
-import { calculateTimeLeft, calculateTimeProgress } from '../../../utils/tools'
+import { calculateTimeProgress } from '../../../utils/tools'
 import Tooltip from '../../common/Tooltip'
 
 dayjs.extend(utc)
@@ -30,8 +32,6 @@ const DateValue = styled.span`
 const Time = styled.div`
   font-weight: 400;
   font-size: 16px;
-  line-height: 18px;
-  color: #eeefeb;
   flex-shrink: 1;
   margin-bottom: 2px;
   min-width: 0;
@@ -66,17 +66,6 @@ export const AuctionTimer = ({
   text,
   ...restProps
 }: AuctionTimerProps) => {
-  const [timeLeft, setTimeLeft] = React.useState(calculateTimeLeft(endDate))
-
-  React.useEffect(() => {
-    const id = setInterval(() => {
-      setTimeLeft(calculateTimeLeft(endDate))
-    }, 1000)
-    return () => {
-      clearInterval(id)
-    }
-  }, [endDate])
-
   const progress = React.useMemo(() => {
     const progress = calculateTimeProgress(startDate, endDate)
     return progress === 100 ? progress : 100 - progress
@@ -85,18 +74,12 @@ export const AuctionTimer = ({
   return (
     <div className="" {...restProps}>
       <div className="flex flex-col place-items-start mb-7 space-y-1">
-        {timeLeft && timeLeft > -1 ? (
-          <Time>
-            {dayjs(endDate * 1000)
-              .utc()
-              .toNow(true)}
-          </Time>
-        ) : (
-          <Time>0 days</Time>
-        )}
+        <Time className="flex flex-row items-center space-x-1 text-white">
+          <Countdown date={endDate * 1000} />
+          <TimerIcon />
+        </Time>
         <DateTitle>{text}</DateTitle>
       </div>
-
       <div className="flex justify-between mb-3">
         <DateValue>
           {startDate &&
