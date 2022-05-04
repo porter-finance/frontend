@@ -2,10 +2,11 @@ import React from 'react'
 
 import { Token } from '../../../hooks/useBond'
 import useBondChart from '../../../hooks/useBondChart'
+import { getDisplay } from '../../../utils'
 import { InlineLoading } from '../../common/InlineLoading'
 import { SpinnerSize } from '../../common/Spinner'
 import { XYConvertBondChart, XYSimpleBondChart } from '../Charts/BondChart'
-import { ChartWrapper } from '../OrderbookChart'
+import { ChartWrapper, VolumeLabel } from '../OrderbookChart'
 
 interface Props {
   collateralToken: Token
@@ -21,10 +22,12 @@ const BondChart = ({ collateralToken, convertibleToken, data, showConvertible }:
     collateralToken,
     convertibleToken,
   })
+  const volumeTitle = getDisplay(convertibleToken)
 
   return (
     <>
       {(!mountPoint || loading) && <InlineLoading size={SpinnerSize.small} />}
+      <VolumeLabel>{volumeTitle}</VolumeLabel>
       {mountPoint && !loading && (
         <>
           <ChartWrapper ref={mountPoint} />

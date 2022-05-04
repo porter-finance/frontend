@@ -174,17 +174,17 @@ interface DrawInformation {
 }
 
 export const drawInformation = (props: DrawInformation) => {
-  const { chart, collateralToken, convertibleToken } = props
+  const { chart, convertibleToken } = props
   const convertibleTokenLabel = getDisplay(convertibleToken)
 
   const [xAxis] = chart.xAxes
-  const [yAxis] = chart.yAxes
+  // const [yAxis] = chart.yAxes
 
   xAxis.title.text = 'Date'
   xAxis.title.align = 'left'
 
-  yAxis.title.text = convertibleTokenLabel
-  yAxis.title.align = 'left'
+  // yAxis.title.text = convertibleTokenLabel
+  // yAxis.title.align = 'left'
 
   const collateralValueSeries = chart.series.values[1]
 

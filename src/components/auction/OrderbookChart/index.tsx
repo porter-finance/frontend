@@ -101,7 +101,7 @@ export const ChartWrapper = styled.div`
   }
 `
 
-const VolumeLabel = styled.div`
+export const VolumeLabel = styled.div`
   font-weight: 400;
   font-size: 10px;
   letter-spacing: 0.06em;
@@ -112,7 +112,7 @@ const VolumeLabel = styled.div`
 const OrderBookChart: React.FC<Props> = (props) => {
   const { baseToken, chainId, data, quoteToken } = props
   const quoteTokenLabel = getTokenDisplay(quoteToken)
-  const volumeTitle = ` Volume (${quoteTokenLabel})`
+  const volumeTitle = `Volume (${quoteTokenLabel})`
   const { loading, mountPoint } = useChart({
     createChart: XYChart,
     data,
