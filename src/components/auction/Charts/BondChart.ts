@@ -127,16 +127,16 @@ export const XYSimpleBondChart = (props: XYBondChartProps): am4charts.XYChart =>
   chart.zoomOutButton.tooltip.text = 'Zoom out'
 
   // Legend
-  // const legendContainer = am4core.create('legenddiv', am4core.Container)
-  // legendContainer.width = am4core.percent(100)
-  // legendContainer.height = am4core.percent(100)
+  const legendContainer = am4core.create('legenddiv', am4core.Container)
+  legendContainer.width = am4core.percent(100)
+  legendContainer.height = am4core.percent(100)
 
   chart.legend = new am4charts.Legend()
   chart.legend.labels.template.fill = am4core.color(colors.grey)
   chart.legend.markers.template.strokeWidth = 44
   chart.legend.markers.template.height = 5
   chart.legend.markers.template.width = 14
-  // chart.legend.parent = legendContainer
+  chart.legend.parent = legendContainer
   chart.tooltip.getFillFromObject = false
   chart.tooltip.background.fill = am4core.color('#181A1C')
   chart.tooltip.background.filters.clear()

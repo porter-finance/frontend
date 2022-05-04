@@ -128,6 +128,10 @@ const OrderBookChart: React.FC<Props> = (props) => {
       {mountPoint && !loading && (
         <>
           <ChartWrapper ref={mountPoint} />
+          <div
+            className="flex flex-row items-center p-5 mt-4 h-[61px] rounded-lg border border-[#2A2B2C]"
+            id="legenddiv"
+          />
         </>
       )}
     </>
