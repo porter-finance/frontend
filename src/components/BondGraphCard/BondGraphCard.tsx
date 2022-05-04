@@ -42,6 +42,8 @@ const BondGraphCard = ({ bond }: { bond: BondInfo }) => {
   return (
     <div className="card">
       <div className="card-body">
+        <h2 className="card-title">Bond graph</h2>
+
         <div className="flex justify-end">
           <div className="btn-group">
             {durations.map(([day, string]) => {
