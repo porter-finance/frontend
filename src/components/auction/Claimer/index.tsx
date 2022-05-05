@@ -3,6 +3,7 @@ import styled from 'styled-components'
 
 import { useActiveWeb3React } from '../../../hooks'
 import { useAuction } from '../../../hooks/useAuction'
+import { useBond } from '../../../hooks/useBond'
 import {
   ClaimState,
   useClaimOrderCallback,
@@ -108,6 +109,9 @@ const Claimer: React.FC<Props> = (props) => {
   )
 
   const { auctioningToken, biddingToken } = derivedAuctionInfo
+  const {
+    data: { name: bondName },
+  } = useBond(auctioningToken.address)
 
   const resetModal = () => setPendingConfirmation(true)
 
@@ -173,7 +177,7 @@ const Claimer: React.FC<Props> = (props) => {
                 <TokenPill
                   token={{
                     ...auctioningToken,
-                    symbol: auctioningToken?.name || auctioningToken?.symbol,
+                    symbol: bondName || auctioningToken?.name || auctioningToken?.symbol,
                   }}
                 />
               </TokenItem>
