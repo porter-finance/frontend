@@ -1,9 +1,10 @@
 {
   "name": "porter-finance",
   "description": "Porter Finance",
+  "homepage": "https://porter-app.vercel.app/",
   "private": true,
   "engines": {
-    "node": ">=4.4.7"
+    "node": ">=12"
   },
   "scripts": {
     "typechain:generate": "yarn typechain --target=ethers-v5 ./src/constants/abis/**/*.json --out-dir=./gen/types",
