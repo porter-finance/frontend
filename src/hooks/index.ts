@@ -30,30 +30,34 @@ export function useEagerConnect() {
 
   useEffect(() => {
     // Safe app gets first dibs. If it's not connected, try to connect to injected.
-    if (triedToConnectToSafeApp && !active) {
-      const previouslyUsedWalletConnect = localStorage.getItem('walletconnect')
+    if (!triedToConnectToSafeApp) {
+      return
+    }
+    if (active) {
+      return
+    }
+    const previouslyUsedWalletConnect = localStorage.getItem('walletconnect')
 
-      if (previouslyUsedWalletConnect && chainId) {
-        activate(walletconnect[chainId], undefined, true).catch(() => {
-          setTried(true)
-        })
-      } else {
-        injected.isAuthorized().then((isAuthorized) => {
-          if (isAuthorized) {
+    if (previouslyUsedWalletConnect && chainId) {
+      activate(walletconnect[chainId], undefined, true).catch(() => {
+        setTried(true)
+      })
+    } else {
+      injected.isAuthorized().then((isAuthorized) => {
+        if (isAuthorized) {
+          activate(injected, undefined, true).catch(() => {
+            setTried(true)
+          })
+        } else {
+          if (isMobile && window.ethereum) {
             activate(injected, undefined, true).catch(() => {
               setTried(true)
             })
           } else {
-            if (isMobile && window.ethereum) {
-              activate(injected, undefined, true).catch(() => {
-                setTried(true)
-              })
-            } else {
-              setTried(true)
-            }
+            setTried(true)
           }
-        })
-      }
+        }
+      })
     }
   }, [active, activate, chainId, triedToConnectToSafeApp]) // intentionally only running on mount (make sure it's only mounted once :))
 
