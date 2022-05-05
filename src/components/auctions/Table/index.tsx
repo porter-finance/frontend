@@ -171,7 +171,10 @@ const Table = ({
         </div>
       </div>
 
-      <div className="min-h-[492px]">
+      <div
+        className="overflow-auto overscroll-contain min-h-[492px]"
+        style={{ maxHeight: 'calc(100vh - 390px)' }}
+      >
         <table className="table w-full h-full" {...getTableProps()}>
           <thead className="sticky top-0 z-10">
             {headerGroups.map((headerGroup, i) => (
