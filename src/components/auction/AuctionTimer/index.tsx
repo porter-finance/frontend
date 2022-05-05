@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { TimerIcon } from '@radix-ui/react-icons'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import utc from 'dayjs/plugin/utc'

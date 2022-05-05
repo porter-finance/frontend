@@ -182,21 +182,6 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   chart.tooltip.background.cornerRadius = 6
   chart.tooltip.background.stroke = am4core.color('#2A2B2C')
 
-  // Legend
-  const legendContainer = am4core.create('legenddiv', am4core.Container)
-  legendContainer.width = am4core.percent(100)
-  legendContainer.height = am4core.percent(100)
-
-  chart.legend = new am4charts.Legend()
-  chart.legend.labels.template.fill = am4core.color(colors.grey)
-  chart.legend.markers.template.strokeWidth = 44
-  chart.legend.markers.template.height = 5
-  chart.legend.markers.template.width = 14
-  chart.legend.parent = legendContainer
-
-  chart.legend.itemContainers.template.tooltipHTML =
-    '<div class="!text-xs !text-[#D6D6D6] !border-none flex-wrap max-w-[400px] p-1 whitespace-normal">{dataContext.dummyData.description}</div>'
-
   return chart
 }
 

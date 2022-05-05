@@ -7,6 +7,7 @@ import useChart from '../../../hooks/useChart'
 import { ChainId, getTokenDisplay } from '../../../utils'
 import { InlineLoading } from '../../common/InlineLoading'
 import { SpinnerSize } from '../../common/Spinner'
+import Tooltip from '../../common/Tooltip'
 import { XYChart } from '../Charts/XYChart'
 
 export enum Offer {
@@ -129,9 +130,50 @@ const OrderBookChart: React.FC<Props> = (props) => {
         <>
           <ChartWrapper ref={mountPoint} />
           <div
-            className="flex flex-row items-center p-5 mt-4 h-[61px] rounded-lg border border-[#2A2B2C]"
+            className="flex flex-row justify-center items-center p-5 mt-4 space-x-6 h-[61px] text-xxs text-white uppercase rounded-lg border border-[#2A2B2C]"
             id="legenddiv"
-          />
+          >
+            <Tooltip
+              left={
+                <div className="flex items-center space-x-3">
+                  <span className="w-[14px] h-[5px] bg-[#404EED] rounded-sm" />
+                  <span>Bids</span>
+                </div>
+              }
+              tip="Shows the price (x axis) and size (y axis) of the bids that have been placed, both expressed in the bid token"
+            />
+            <Tooltip
+              left={
+                <div className="flex items-center space-x-3">
+                  <span className="w-[14px] h-[5px] bg-[#EDA651] rounded-sm" />
+                  <span>Sell supply</span>
+                </div>
+              }
+              tip="Shows sell supply of the auction based on the price and nominated in the bidding token"
+            />
+            <Tooltip
+              left={
+                <div className="flex items-center space-x-3">
+                  <span className="w-[14px] h-[5px] bg-[#DB3635] rounded-sm" />
+                  <span>Min. Funding Threshold</span>
+                </div>
+              }
+              tip="Auction will not be executed, unless this minimum funding threshold is met"
+            />
+            <Tooltip
+              left={
+                <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-1">
+                    <span className="w-[4px] border-t-2 border-t-[#D6D6D6]" />
+                    <span className="w-[4px] border-t-2 border-t-[#D6D6D6]" />
+                    <span className="w-[4px] border-t-2 border-t-[#D6D6D6]" />
+                  </div>
+                  <span>Current price</span>
+                </div>
+              }
+              tip="Shows the current price. This price would be the closing price of the auction if no more bids are submitted or cancelled"
+            />
+          </div>
         </>
       )}
     </>
