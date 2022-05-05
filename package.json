@@ -1,7 +1,6 @@
 {
   "name": "porter-finance",
   "description": "Porter Finance",
-  "homepage": "/",
   "private": true,
   "engines": {
     "node": ">=4.4.7"
