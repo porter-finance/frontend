@@ -54,15 +54,17 @@ const BondChart = ({ collateralToken, convertibleToken, data, showConvertible }:
               }
               tip="Number of collateral tokens securing each bond. If a bond is defaulted on, the bondholder is able to exchange each bond for these collateral tokens."
             />
-            <Tooltip
-              left={
-                <div className="flex items-center space-x-3">
-                  <span className="w-[14px] h-[5px] bg-[#532DBE] rounded-sm" />
-                  <span>Convertible token value</span>
-                </div>
-              }
-              tip="Number of tokens each bond is convertible into up until the maturity date."
-            />
+            {showConvertible && (
+              <Tooltip
+                left={
+                  <div className="flex items-center space-x-3">
+                    <span className="w-[14px] h-[5px] bg-[#532DBE] rounded-sm" />
+                    <span>Convertible token value</span>
+                  </div>
+                }
+                tip="Number of tokens each bond is convertible into up until the maturity date."
+              />
+            )}
           </div>
         </>
       )}
