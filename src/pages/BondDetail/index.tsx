@@ -58,7 +58,7 @@ const EmptyConnectWallet = () => (
 const EmptyConnected = ({ bondName }) => (
   <div className="py-[50px] space-y-4 text-center text-[#696969]">
     <WalletIcon className="m-auto" height={49.5} width={51} />
-    <div className="text-base">You don&apos;t own any {bondName}</div>
+    <div className="text-base">You don&apos;t own any {bondName}s</div>
   </div>
 )
 
