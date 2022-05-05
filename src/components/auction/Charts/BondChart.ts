@@ -85,7 +85,7 @@ export const XYSimpleBondChart = (props: XYBondChartProps): am4charts.XYChart =>
   priceAxis.numberFormatter = numberFormatter
   priceAxis.adjustLabelPrecision = false
   priceAxis.extraTooltipPrecision = 3
-  tooltipRender(priceAxis)
+  priceAxis.tooltip.disabled = true
 
   dateAxis.renderer.grid.template.strokeOpacity = 0
   dateAxis.title.fill = am4core.color(colors.grey)
@@ -128,11 +128,6 @@ export const XYSimpleBondChart = (props: XYBondChartProps): am4charts.XYChart =>
   chart.cursor.lineX.strokeWidth = 1
   chart.cursor.lineX.strokeOpacity = 0.6
   chart.cursor.lineX.strokeDasharray = '4'
-
-  chart.cursor.lineY.stroke = am4core.color(colors.grey)
-  chart.cursor.lineY.strokeWidth = 1
-  chart.cursor.lineY.strokeOpacity = 0.6
-  chart.cursor.lineY.strokeDasharray = '4'
 
   // Button configuration
   chart.zoomOutButton.background.cornerRadius(5, 5, 5, 5)
