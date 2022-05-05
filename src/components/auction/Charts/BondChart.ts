@@ -192,15 +192,6 @@ export const drawInformation = (props: DrawInformation) => {
   const { chart, convertibleToken } = props
   const convertibleTokenLabel = getDisplay(convertibleToken)
 
-  const [xAxis] = chart.xAxes
-  // const [yAxis] = chart.yAxes
-
-  xAxis.title.text = 'Date'
-  xAxis.title.align = 'left'
-
-  // yAxis.title.text = convertibleTokenLabel
-  // yAxis.title.align = 'left'
-
   const collateralValueSeries = chart.series.values[1]
   collateralValueSeries.dy = -15
   tooltipRender(collateralValueSeries)
