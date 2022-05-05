@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 
 import useGeoLocation from 'react-ipgeolocation'
 
-import { Auction, useAuction } from '../../../hooks/useAuction'
+import { Auction } from '../../../hooks/useAuction'
 import { useBondExtraDetails } from '../../../hooks/useBondExtraDetails'
 import { TwoGridPage } from '../../../pages/Auction'
 import { getBondStates } from '../../../pages/BondDetail'
@@ -12,7 +12,6 @@ import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { forceDevData } from '../../Dev'
 import TokenLogo from '../../token/TokenLogo'
 import AuctionDetails from '../AuctionDetails'
-import { AuctionNotStarted } from '../AuctionNotStarted'
 import AuctionSettle from '../AuctionSettle'
 import Claimer from '../Claimer'
 import { ExtraDetailsItem } from '../ExtraDetailsItem'
@@ -22,6 +21,7 @@ import { OrderBookContainer } from '../OrderbookContainer'
 interface AuctionBodyProps {
   auctionIdentifier: AuctionIdentifier
   derivedAuctionInfo: DerivedAuctionInfo
+  graphInfo: Auction
 }
 
 const DisabledCountryError = () => (
@@ -117,10 +117,10 @@ const AuctionBody = (props: AuctionBodyProps) => {
     auctionIdentifier,
     derivedAuctionInfo: { auctionState },
     derivedAuctionInfo,
+    graphInfo,
   } = props
   const location = useGeoLocation()
   const disabledCountry = process.env.NODE_ENV !== 'development' && location?.country === 'US'
-  const { data: graphInfo } = useAuction(auctionIdentifier?.auctionId)
   const auctionStarted = auctionState !== undefined && auctionState !== AuctionState.NOT_YET_STARTED
   const settling = derivedAuctionInfo?.auctionState === AuctionState.NEEDS_SETTLED
 
@@ -172,7 +172,6 @@ const AuctionBody = (props: AuctionBodyProps) => {
           }
         />
       )}
-      {auctionState === AuctionState.NOT_YET_STARTED && <AuctionNotStarted />}
     </>
   )
 }
