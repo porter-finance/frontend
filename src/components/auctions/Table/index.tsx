@@ -173,7 +173,10 @@ const Table = ({
 
       <div
         className="overflow-auto overscroll-contain min-h-[492px]"
-        style={{ maxHeight: 'calc(100vh - 390px)' }}
+        style={{
+          maxHeight: !rows.length ? '100%' : 'calc(100vh - 390px)',
+          height: !rows.length ? 'calc(100vh - 390px)' : '100%',
+        }}
       >
         <table className="table w-full h-full" {...getTableProps()}>
           <thead className="sticky top-0 z-10">
