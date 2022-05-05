@@ -137,10 +137,5 @@ svg text tspan {
 }
 
 g[role='tooltip'] {
-  @apply ease-in-out duration-300;
-}
-g[role='tooltip'] > g {
-  fill: #181a1c;
-  stroke: #2a2b2c;
-  fill-opacity: 1;
+  @apply ease-in-out duration-150;
 }

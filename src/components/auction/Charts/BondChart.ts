@@ -50,6 +50,18 @@ export const colors = {
   tooltipBorder: '#174172',
 }
 
+export const tooltipRender = (o) => {
+  o.tooltip.getFillFromObject = false
+  o.tooltip.background.fill = am4core.color('#181A1C')
+  o.tooltip.background.filters.clear()
+  o.tooltip.background.cornerRadius = 6
+  o.tooltip.background.stroke = am4core.color('#2A2B2C')
+  o.tooltipHTML =
+    '<div class="text-xs text-[#D6D6D6] border-none flex-wrap max-w-[400px] p-1 whitespace-normal">{text}</div>'
+
+  return o
+}
+
 export const XYSimpleBondChart = (props: XYBondChartProps): am4charts.XYChart => {
   const { chartElement } = props
 
@@ -71,12 +83,14 @@ export const XYSimpleBondChart = (props: XYBondChartProps): am4charts.XYChart =>
   volumeAxis.renderer.grid.template.strokeOpacity = 0
   volumeAxis.title.fill = am4core.color(colors.grey)
   volumeAxis.renderer.labels.template.fill = am4core.color(colors.grey)
+  volumeAxis.numberFormatter = numberFormatter
+  tooltipRender(volumeAxis)
 
   dateAxis.renderer.grid.template.strokeOpacity = 0
   dateAxis.title.fill = am4core.color(colors.grey)
   dateAxis.renderer.labels.template.fill = am4core.color(colors.grey)
-
-  volumeAxis.numberFormatter = numberFormatter
+  dateAxis.tooltipDateFormat = 'MMM dd, YYYY'
+  tooltipRender(dateAxis)
 
   const faceValue = chart.series.push(new am4charts.StepLineSeries())
   faceValue.dataFields.dateX = 'date'
@@ -188,36 +202,19 @@ export const drawInformation = (props: DrawInformation) => {
   // yAxis.title.align = 'left'
 
   const collateralValueSeries = chart.series.values[1]
-
-  collateralValueSeries.tooltip.getFillFromObject = false
-  collateralValueSeries.tooltip.background.fill = am4core.color('#181A1C')
-  collateralValueSeries.tooltip.background.filters.clear()
-  collateralValueSeries.tooltip.background.cornerRadius = 6
-  collateralValueSeries.tooltip.background.stroke = am4core.color('#2A2B2C')
-  collateralValueSeries.tooltipHTML =
-    '<div class="text-xs text-[#D6D6D6] border-none flex-wrap max-w-[400px] p-1 whitespace-normal">{text}</div>'
+  collateralValueSeries.dy = -15
+  tooltipRender(collateralValueSeries)
   collateralValueSeries.adapter.add('tooltipText', (text, target) => {
-    const dateX = target?.tooltipDataItem?.values?.dateX?.value ?? 0
     const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
-
-    const date = dayjs(dateX).format('MMM DD, YYYY')
     const volume = round(valueY, 3)
 
-    return `Time:  ${date}<br/>
-Collateral value:  ${volume} ${convertibleTokenLabel}`
+    return `Collateral value:  ${volume} ${convertibleTokenLabel}`
   })
 
   if (chart.series.values.length > 2) {
     const convertibleValueSeries = chart.series.values[2]
-
-    convertibleValueSeries.tooltip.getFillFromObject = false
-    convertibleValueSeries.tooltip.background.fill = am4core.color('#181A1C')
-    convertibleValueSeries.tooltip.background.filters.clear()
-    convertibleValueSeries.tooltip.background.cornerRadius = 6
-    convertibleValueSeries.tooltip.background.stroke = am4core.color('#2A2B2C')
-    convertibleValueSeries.tooltipHTML =
-      '<div class="text-xs text-[#D6D6D6] border-none flex-wrap max-w-[400px] p-1 whitespace-normal">{text}</div>'
-
+    tooltipRender(convertibleValueSeries)
+    convertibleValueSeries.dy = -15
     convertibleValueSeries.adapter.add('tooltipText', (text, target) => {
       const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
       const convertibleValue = round(valueY, 3)
