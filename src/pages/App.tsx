@@ -3,13 +3,13 @@ import styled from 'styled-components'
 
 import ReactTooltip from 'react-tooltip'
 
+import ScrollToTop from '../components/ScrollToTop'
 import { TopDisclaimer } from '../components/common/TopDisclaimer'
 import { Footer } from '../components/layout/Footer'
 import { Header } from '../components/layout/Header'
 import Routes from '../components/navigation/Routes/Routes'
 import Popups from '../components/popups/Popups'
 import { InnerContainer } from '../components/pureStyledComponents/InnerContainer'
-import { MainScroll } from '../components/pureStyledComponents/MainScroll'
 import { MainWrapper } from '../components/pureStyledComponents/MainWrapper'
 import Web3ReactManager from '../components/web3/Web3ReactManager'
 import useShowTopWarning from '../hooks/useShowTopWarning'
@@ -28,25 +28,24 @@ const App: React.FC = () => {
   return (
     <Suspense fallback={null}>
       <MainWrapper>
-        <MainScroll>
-          <Header />
-          <Popups />
-          <ReactTooltip
-            className="customTooltip"
-            delayHide={500}
-            delayShow={50}
-            delayUpdate={500}
-            effect="solid"
-            textColor="#fff"
-          />
-          {showTopWarning && <TopDisclaimer />}
-          <InnerApp className="fullPage">
-            <Web3ReactManager>
-              <Routes />
-            </Web3ReactManager>
-          </InnerApp>
-          <Footer />
-        </MainScroll>
+        <ScrollToTop />
+        <Header />
+        <Popups />
+        <ReactTooltip
+          className="customTooltip"
+          delayHide={500}
+          delayShow={50}
+          delayUpdate={500}
+          effect="solid"
+          textColor="#fff"
+        />
+        {showTopWarning && <TopDisclaimer />}
+        <InnerApp className="fullPage">
+          <Web3ReactManager>
+            <Routes />
+          </Web3ReactManager>
+        </InnerApp>
+        <Footer />
       </MainWrapper>
     </Suspense>
   )
