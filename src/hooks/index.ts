@@ -33,7 +33,7 @@ export function useEagerConnect() {
     if (!triedToConnectToSafeApp) {
       return
     }
-    if (active) {
+    if (tried) {
       return
     }
     const previouslyUsedWalletConnect = localStorage.getItem('walletconnect')
@@ -59,7 +59,7 @@ export function useEagerConnect() {
         }
       })
     }
-  }, [active, activate, chainId, triedToConnectToSafeApp]) // intentionally only running on mount (make sure it's only mounted once :))
+  }, [tried, activate, chainId, triedToConnectToSafeApp]) // intentionally only running on mount (make sure it's only mounted once :))
 
   // if the connection worked, wait until we get confirmation of that to flip the flag
   useEffect(() => {
