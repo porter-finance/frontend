@@ -1,15 +1,10 @@
 import * as am4charts from '@amcharts/amcharts4/charts'
 import * as am4core from '@amcharts/amcharts4/core'
 import am4themesSpiritedaway from '@amcharts/amcharts4/themes/spiritedaway'
-import dayjs from 'dayjs'
 import { round } from 'lodash'
 
 import { Token } from '../../../hooks/useBond'
 import { getDisplay } from '../../../utils'
-
-// Recalculates very big and very small numbers by reducing their length according to rules and applying suffix/prefix.
-const numberFormatter = new am4core.NumberFormatter()
-am4core.addLicense('ch-custom-attribution')
 
 export const createGradient = (color) => {
   const gradient = new am4core.LinearGradient()
@@ -19,7 +14,11 @@ export const createGradient = (color) => {
   return gradient
 }
 
-numberFormatter.numberFormat = '###.00 a'
+am4core.addLicense('ch-custom-attribution')
+
+// Recalculates very big and very small numbers by reducing their length according to rules and applying suffix/prefix.
+const numberFormatter = new am4core.NumberFormatter()
+numberFormatter.numberFormat = '###.### a'
 numberFormatter.smallNumberThreshold = 0
 numberFormatter.bigNumberPrefixes = [
   { number: 1e3, suffix: 'K' }, // Use K only with value greater than 999.00
@@ -78,13 +77,15 @@ export const XYSimpleBondChart = (props: XYBondChartProps): am4charts.XYChart =>
 
   // Create axes
   const dateAxis = chart.xAxes.push(new am4charts.DateAxis())
-  const volumeAxis = chart.yAxes.push(new am4charts.ValueAxis())
-  volumeAxis.renderer.grid.template.stroke = am4core.color(colors.grey)
-  volumeAxis.renderer.grid.template.strokeOpacity = 0
-  volumeAxis.title.fill = am4core.color(colors.grey)
-  volumeAxis.renderer.labels.template.fill = am4core.color(colors.grey)
-  volumeAxis.numberFormatter = numberFormatter
-  tooltipRender(volumeAxis)
+  const priceAxis = chart.yAxes.push(new am4charts.ValueAxis())
+  priceAxis.renderer.grid.template.stroke = am4core.color(colors.grey)
+  priceAxis.renderer.grid.template.strokeOpacity = 0
+  priceAxis.title.fill = am4core.color(colors.grey)
+  priceAxis.renderer.labels.template.fill = am4core.color(colors.grey)
+  priceAxis.numberFormatter = numberFormatter
+  priceAxis.adjustLabelPrecision = false
+  priceAxis.extraTooltipPrecision = 3
+  tooltipRender(priceAxis)
 
   dateAxis.renderer.grid.template.strokeOpacity = 0
   dateAxis.title.fill = am4core.color(colors.grey)
