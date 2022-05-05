@@ -35,10 +35,6 @@ const BondGraphCard = ({ bond }: { bond: BondInfo }) => {
   const { data, loading } = useHistoricTokenPrice(bond?.collateralToken?.id, daysToShow)
   const processedData = doProcess(bond, data)
 
-  if (loading) {
-    return <LoadingBox height={541} />
-  }
-
   return (
     <div className="card">
       <div className="card-body">
