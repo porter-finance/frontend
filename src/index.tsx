@@ -56,7 +56,7 @@ const Updaters = () => {
     </>
   )
 }
-const Router = PUBLIC_URL === '.' ? HashRouter : BrowserRouter
+const Router = BrowserRouter
 
 const container = document.getElementById('root')
 const root = createRoot(container)
