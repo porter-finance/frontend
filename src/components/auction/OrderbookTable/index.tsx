@@ -126,7 +126,7 @@ export const TableDesign = ({
         </thead>
         <tbody {...getTableBodyProps()}>
           {!page.length && (
-            <tr className="text-sm text-[#D2D2D2] bg-transparent">
+            <tr className="h-[57px] text-sm text-[#D2D2D2] bg-transparent">
               <td
                 className="py-[100px] space-y-4 text-center text-[#696969] bg-transparent"
                 colSpan={columns.length}
@@ -180,7 +180,11 @@ export const TableDesign = ({
           {page.map((row, i) => {
             prepareRow(row)
             return (
-              <tr className="text-sm text-[#D2D2D2] bg-transparent" key={i} {...row.getRowProps()}>
+              <tr
+                className="h-[57px] text-sm text-[#D2D2D2] bg-transparent"
+                key={i}
+                {...row.getRowProps()}
+              >
                 {row.cells.map((cell, i) => {
                   return (
                     <td className="bg-transparent" key={i} {...cell.getCellProps()}>
