@@ -25,7 +25,7 @@ import { NetworkError, useNetworkCheck } from '../../web3/Web3Status'
 const Wrapper = styled.header`
   width: 100%;
   min-height: 220px;
-  background: #404eed;
+  background: transparent;
   transition: background 0.3s ease;
 `
 

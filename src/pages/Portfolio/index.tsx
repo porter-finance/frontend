@@ -15,7 +15,7 @@ import { columns, createTable } from '../Products'
 
 const GlobalStyle = createGlobalStyle`
   .siteHeader {
-    background: #262728;
+    background: #262728 !important;
   }
 `
 

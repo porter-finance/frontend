@@ -17,7 +17,7 @@ import { TABLE_FILTERS } from '../Portfolio'
 
 const GlobalStyle = createGlobalStyle`
   .siteHeader {
-    background: #532DBE;
+    background: #532DBE !important;
   }
 `
 

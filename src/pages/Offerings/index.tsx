@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { createGlobalStyle } from 'styled-components'
 
 import dayjs from 'dayjs'
 
@@ -14,6 +15,12 @@ import { useAuctions } from '../../hooks/useAuction'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import { AllButton, AuctionButtonOutline, OTCButtonOutline } from '../Auction'
 import { TABLE_FILTERS } from '../Portfolio'
+
+const GlobalStyle = createGlobalStyle`
+  .siteHeader {
+    background: #404eed !important;
+  }
+`
 
 const columns = [
   {
@@ -131,37 +138,40 @@ const Offerings = () => {
   })
 
   return (
-    <Table
-      columns={columns}
-      data={tableData.filter(({ type }) => (tableFilter ? type === tableFilter : true))}
-      emptyDescription="There are no offerings at the moment"
-      emptyLogo={
-        <>
-          <AuctionsIcon height={36} width={36} /> <OTCIcon height={36} width={36} />
-        </>
-      }
-      legendIcons={
-        <>
-          <AllButton
-            active={tableFilter === TABLE_FILTERS.ALL}
-            onClick={() => setTableFilter(TABLE_FILTERS.ALL)}
-          />
-          <DividerIcon />
-          <AuctionButtonOutline
-            active={tableFilter === TABLE_FILTERS.AUCTION}
-            onClick={() => setTableFilter(TABLE_FILTERS.AUCTION)}
-            plural
-          />
-          <OTCButtonOutline
-            active={tableFilter === TABLE_FILTERS.OTC}
-            onClick={() => setTableFilter(TABLE_FILTERS.OTC)}
-          />
-        </>
-      }
-      loading={loading}
-      name="offerings"
-      title="Offerings"
-    />
+    <>
+      <GlobalStyle />
+      <Table
+        columns={columns}
+        data={tableData.filter(({ type }) => (tableFilter ? type === tableFilter : true))}
+        emptyDescription="There are no offerings at the moment"
+        emptyLogo={
+          <>
+            <AuctionsIcon height={36} width={36} /> <OTCIcon height={36} width={36} />
+          </>
+        }
+        legendIcons={
+          <>
+            <AllButton
+              active={tableFilter === TABLE_FILTERS.ALL}
+              onClick={() => setTableFilter(TABLE_FILTERS.ALL)}
+            />
+            <DividerIcon />
+            <AuctionButtonOutline
+              active={tableFilter === TABLE_FILTERS.AUCTION}
+              onClick={() => setTableFilter(TABLE_FILTERS.AUCTION)}
+              plural
+            />
+            <OTCButtonOutline
+              active={tableFilter === TABLE_FILTERS.OTC}
+              onClick={() => setTableFilter(TABLE_FILTERS.OTC)}
+            />
+          </>
+        }
+        loading={loading}
+        name="offerings"
+        title="Offerings"
+      />
+    </>
   )
 }
 

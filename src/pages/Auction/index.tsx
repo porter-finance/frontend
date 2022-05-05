@@ -1,5 +1,6 @@
 import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { createGlobalStyle } from 'styled-components'
 
 import { ReactComponent as AuctionsIcon } from '../../assets/svg/auctions.svg'
 import { ReactComponent as ConvertIcon } from '../../assets/svg/convert.svg'
@@ -14,6 +15,12 @@ import { useDerivedAuctionInfo } from '../../state/orderPlacement/hooks'
 import { RouteAuctionIdentifier, parseURL } from '../../state/orderPlacement/reducer'
 import { useTokenListState } from '../../state/tokenList/hooks'
 import { isAddress } from '../../utils'
+
+const GlobalStyle = createGlobalStyle`
+  .siteHeader {
+    background: #404eed !important;
+  }
+`
 
 export const GhostButton = ({ children, ...props }) => {
   if (props.active) {
@@ -162,22 +169,31 @@ const Auction: React.FC = () => {
   )
 
   if (isLoading) {
-    return <LoadingTwoGrid />
+    return (
+      <>
+        <GlobalStyle />
+        <LoadingTwoGrid />
+      </>
+    )
   }
 
   if (invalidAuction) {
     return (
-      <WarningModal
-        content={`This auction doesn't exist or it hasn't started yet.`}
-        isOpen
-        onDismiss={() => navigate('/auctions')}
-        title="Warning!"
-      />
+      <>
+        <GlobalStyle />
+        <WarningModal
+          content={`This auction doesn't exist or it hasn't started yet.`}
+          isOpen
+          onDismiss={() => navigate('/auctions')}
+          title="Warning!"
+        />
+      </>
     )
   }
 
   return (
     <>
+      <GlobalStyle />
       <div className="flex flex-wrap justify-center content-center items-end py-2 md:justify-between">
         <div className="flex flex-wrap items-center space-x-6">
           <div className="hidden md:flex">
