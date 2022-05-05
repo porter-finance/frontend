@@ -97,9 +97,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
 
   return (
     <>
-      <OverflowWrap>
-        <TableDesign columns={ordersTableColumns} data={data} showConnect />
-      </OverflowWrap>
+      <TableDesign columns={ordersTableColumns} data={data} showConnect />
       <ConfirmationDialog
         actionText="Cancel order"
         beforeDisplay={
