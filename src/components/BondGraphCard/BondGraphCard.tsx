@@ -3,7 +3,6 @@ import React, { useState } from 'react'
 import { BondInfo } from '../../hooks/useBond'
 import { getValuePerBond } from '../../hooks/useBondExtraDetails'
 import { useHistoricTokenPrice } from '../../hooks/useTokenPrice'
-import { LoadingBox } from '../../pages/Auction'
 import BondChart from '../auction/BondChart'
 
 const durations: [[number, string], [number, string], [number, string], [number, string]] = [
@@ -38,9 +37,8 @@ const BondGraphCard = ({ bond }: { bond: BondInfo }) => {
   return (
     <div className="card">
       <div className="card-body">
-        <h2 className="card-title">Bond graph</h2>
-
-        <div className="flex justify-end">
+        <h2 className="flex justify-between card-title">
+          <span>Bond graph</span>
           <div className="btn-group">
             {durations.map(([day, string]) => {
               return (
@@ -54,7 +52,7 @@ const BondGraphCard = ({ bond }: { bond: BondInfo }) => {
               )
             })}
           </div>
-        </div>
+        </h2>
 
         <BondChart
           collateralToken={bond?.collateralToken}
