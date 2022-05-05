@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { BondInfo } from '../../hooks/useBond'
 import { getValuePerBond } from '../../hooks/useBondExtraDetails'
 import { useHistoricTokenPrice } from '../../hooks/useTokenPrice'
+import { LoadingBox } from '../../pages/Auction'
 import BondChart from '../auction/BondChart'
 
 const durations: [[number, string], [number, string], [number, string], [number, string]] = [
@@ -60,6 +61,20 @@ const BondGraphCard = ({ bond }: { bond: BondInfo }) => {
           data={processedData}
           showConvertible={bond?.type === 'convert'}
         />
+
+        {loading && (
+          <div
+            className="absolute w-full"
+            style={{
+              top: '109px',
+              height: '398px',
+              width: '791px',
+              left: '61px',
+            }}
+          >
+            <LoadingBox className="mt-0" height="100%" />
+          </div>
+        )}
       </div>
     </div>
   )

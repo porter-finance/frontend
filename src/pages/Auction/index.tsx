@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createGlobalStyle } from 'styled-components'
 
-import { Transition } from '@headlessui/react'
+import { twMerge } from 'tailwind-merge'
 
 import { ReactComponent as AuctionsIcon } from '../../assets/svg/auctions.svg'
 import { ReactComponent as ConvertIcon } from '../../assets/svg/convert.svg'
@@ -78,9 +78,12 @@ export const OTCButtonOutline = ({ ...props }) => (
 )
 
 // Strangely couldn't use tailwind h-[9px] or min-h- , had to specify style = manually
-export const LoadingBox = ({ height }) => (
+export const LoadingBox = ({ className = '', height }) => (
   <div
-    className="mt-8 h-full bg-gradient-to-r from-[#181A1C] to-[#1F2123] rounded-lg shadow animate-pulse"
+    className={twMerge(
+      'mt-8 h-full bg-gradient-to-r from-[#181A1C] to-[#1F2123] rounded-lg shadow animate-pulse',
+      className,
+    )}
     style={{ height }}
   />
 )
