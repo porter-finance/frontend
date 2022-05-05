@@ -165,7 +165,7 @@ const Claimer: React.FC<Props> = (props) => {
               <TokenPill token={biddingToken} />
             </TokenItem>
 
-            {graphInfo?.bondsSold > 0 && (
+            {(graphInfo?.bondsSold > 0 || claimableBonds.greaterThan('0')) && (
               <TokenItem>
                 <div className="text-base text-white">
                   {claimableBonds ? `${claimableBonds.toSignificant(6)}` : `-`}
