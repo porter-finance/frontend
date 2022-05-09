@@ -85,8 +85,8 @@ export const XYSimpleBondChart = (props: XYBondChartProps): am4charts.XYChart =>
   priceAxis.title.fill = am4core.color(colors.grey)
   priceAxis.renderer.labels.template.fill = am4core.color(colors.grey)
   priceAxis.numberFormatter = numberFormatter
-  priceAxis.adjustLabelPrecision = false
   priceAxis.extraTooltipPrecision = 3
+  priceAxis.adjustLabelPrecision = false
   priceAxis.tooltip.disabled = true
 
   const dateAxis = chart.xAxes.push(new am4charts.DateAxis())
@@ -94,6 +94,7 @@ export const XYSimpleBondChart = (props: XYBondChartProps): am4charts.XYChart =>
   dateAxis.title.fill = am4core.color(colors.grey)
   dateAxis.renderer.labels.template.fill = am4core.color(colors.grey)
   dateAxis.tooltipDateFormat = 'MMM dd, YYYY'
+  dateAxis.dx = 70
   tooltipRender(dateAxis)
 
   const faceValue = chart.series.push(new am4charts.StepLineSeries())
