@@ -290,8 +290,10 @@ const ConfirmationDialog = ({
       })
   }, [showOrderTransactionComplete, onFinished, allTransactions])
 
+  const waitingTransactionToComplete = showOrderTransactionComplete && !orderComplete
+
   return (
-    <Modal isOpen={open} onDismiss={onOpenChange}>
+    <Modal isOpen={open} onDismiss={!waitingTransactionToComplete && onOpenChange}>
       {!transactionError && (
         <>
           {!showOrderTransactionComplete && !orderComplete && !showTokenTransactionComplete && (

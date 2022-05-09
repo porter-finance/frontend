@@ -94,11 +94,13 @@ const Modal = ({ children, isOpen: open, onDismiss: onOpenChange }) => {
       <DialogContent>
         {children}
 
-        <DialogClose asChild>
-          <IconButton>
-            <Cross2Icon />
-          </IconButton>
-        </DialogClose>
+        {onOpenChange && (
+          <DialogClose asChild>
+            <IconButton>
+              <Cross2Icon />
+            </IconButton>
+          </DialogClose>
+        )}
       </DialogContent>
     </Dialog>
   )
