@@ -71,12 +71,6 @@ const TokenLogo: React.FC<TokenLogoProps> = (props) => {
   }
 
   return ImageToken
-
-  return (
-    <Wrapper className="tokenLogo" size={sizeToUse} {...restProps}>
-      <UnicornSvg height={sizeToUse} width={sizeToUse} />
-    </Wrapper>
-  )
 }
 
 export default TokenLogo
