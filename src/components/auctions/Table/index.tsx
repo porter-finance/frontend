@@ -209,7 +209,7 @@ const Table = ({
             {loading &&
               [...Array(10).keys()].map((z) => (
                 <tr className="h-[57px] text-sm text-[#D2D2D2] bg-transparent" key={z}>
-                  {[...Array(columns.length - 2).keys()].map((i) => (
+                  {[...Array(columns.length - 1).keys()].map((i) => (
                     <td className="text-center text-[#696969] bg-transparent" key={i}>
                       <div className="my-4 w-full max-w-sm h-4 bg-gradient-to-r from-[#1F2123] to-[#181A1C] rounded animate-pulse"></div>
                     </td>
