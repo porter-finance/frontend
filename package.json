@@ -188,10 +188,11 @@
     "util": "^0.12.4"
   },
   "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx}": [
+    "*.{js,jsx,ts,tsx}": [
       "eslint --fix",
       "prettier --write"
-    ]
+    ],
+    "*": "prettier --ignore-unknown --write"
   },
   "jest": {
     "transformIgnorePatterns": [
