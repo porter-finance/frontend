@@ -174,8 +174,8 @@ const Table = ({
       <div
         className="overflow-auto overscroll-contain min-h-[492px]"
         style={{
-          maxHeight: !rows.length ? '100%' : 'calc(100vh - 390px)',
-          height: !rows.length ? 'calc(100vh - 390px)' : '100%',
+          maxHeight: !rows.length ? '100%' : 'calc(100vh - 391px)',
+          height: !rows.length ? 'calc(100vh - 391px)' : '100%',
         }}
       >
         <table className="table w-full h-full" {...getTableProps()}>
