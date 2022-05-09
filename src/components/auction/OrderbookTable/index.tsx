@@ -7,6 +7,7 @@ import { round } from 'lodash'
 import { usePagination, useTable } from 'react-table'
 
 import { useActiveWeb3React } from '../../../hooks'
+import { useAuctionBids } from '../../../hooks/useAuctionBids'
 import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
 import { BidInfo } from '../../../hooks/useParticipatingAuctionBids'
 import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
@@ -73,6 +74,7 @@ export const TableDesign = ({
   columns,
   data,
   hidePagination = false,
+  loading = false,
   showConnect = false,
   ...restProps
 }) => {
@@ -123,7 +125,17 @@ export const TableDesign = ({
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
-          {!page.length && (
+          {loading &&
+            [...Array(10).keys()].map((z) => (
+              <tr className="h-[57px] text-sm text-[#D2D2D2] bg-transparent" key={z}>
+                {[...Array(columns.length).keys()].map((i) => (
+                  <td className="text-center text-[#696969] bg-transparent" key={i}>
+                    <div className="my-4 w-full max-w-sm h-4 bg-gradient-to-r from-[#1F2123] to-[#181A1C] rounded animate-pulse"></div>
+                  </td>
+                ))}
+              </tr>
+            ))}
+          {!loading && !page.length && (
             <tr className="h-[57px] text-sm text-[#D2D2D2] bg-transparent">
               <td
                 className="py-[100px] space-y-4 text-center text-[#696969] bg-transparent"
@@ -175,24 +187,25 @@ export const TableDesign = ({
               </td>
             </tr>
           )}
-          {page.map((row, i) => {
-            prepareRow(row)
-            return (
-              <tr
-                className="h-[57px] text-sm text-[#D2D2D2] bg-transparent"
-                key={i}
-                {...row.getRowProps()}
-              >
-                {row.cells.map((cell, i) => {
-                  return (
-                    <td className="bg-transparent" key={i} {...cell.getCellProps()}>
-                      {cell.render('Cell')}
-                    </td>
-                  )
-                })}
-              </tr>
-            )
-          })}
+          {!loading &&
+            page.map((row, i) => {
+              prepareRow(row)
+              return (
+                <tr
+                  className="h-[57px] text-sm text-[#D2D2D2] bg-transparent"
+                  key={i}
+                  {...row.getRowProps()}
+                >
+                  {row.cells.map((cell, i) => {
+                    return (
+                      <td className="bg-transparent" key={i} {...cell.getCellProps()}>
+                        {cell.render('Cell')}
+                      </td>
+                    )
+                  })}
+                </tr>
+              )
+            })}
         </tbody>
       </table>
       {!hidePagination && (
@@ -214,7 +227,6 @@ export const TableDesign = ({
 
 interface OrderBookTableProps {
   derivedAuctionInfo: DerivedAuctionInfo
-  bids: BidInfo[]
 }
 
 export const ActiveStatusPill = ({
@@ -266,7 +278,9 @@ export const BidTransactionLink = ({ bid }) => {
   )
 }
 
-export const OrderBookTable: React.FC<OrderBookTableProps> = ({ bids, derivedAuctionInfo }) => {
+export const OrderBookTable: React.FC<OrderBookTableProps> = ({ derivedAuctionInfo }) => {
+  const { bids, loading } = useAuctionBids()
+
   const maturityDate = useBondMaturityForAuction()
   const paymentToken = getTokenDisplay(derivedAuctionInfo?.biddingToken)
   const noBids = !Array.isArray(bids) || bids.length === 0
@@ -276,5 +290,5 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({ bids, derivedAuc
       data.push(calculateRow(row, paymentToken, maturityDate, derivedAuctionInfo))
     })
 
-  return <TableDesign columns={ordersTableColumns} data={data} />
+  return <TableDesign columns={ordersTableColumns} data={data} loading={loading} />
 }

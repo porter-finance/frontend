@@ -61,7 +61,6 @@ export const Wrap = styled.div<Partial<CSS.Properties & WrapProps>>`
 export const OrderBookContainer = (props) => {
   const { auctionIdentifier, auctionStarted, derivedAuctionInfo } = props
   const [showMyOrders, setShowMyOrders] = useState(false)
-  const { bids } = useAuctionBids()
 
   useOrderbookDataCallback(auctionIdentifier)
 
@@ -100,7 +99,7 @@ export const OrderBookContainer = (props) => {
             />
           )}
 
-          {!showMyOrders && <OrderBookTable bids={bids} derivedAuctionInfo={derivedAuctionInfo} />}
+          {!showMyOrders && <OrderBookTable derivedAuctionInfo={derivedAuctionInfo} />}
         </div>
       </div>
     </>

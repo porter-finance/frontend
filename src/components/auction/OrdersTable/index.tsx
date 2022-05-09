@@ -39,7 +39,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
     derivedAuctionInfo: { auctionState },
   } = props
   const maturityDate = useBondMaturityForAuction()
-  const { bids } = useParticipatingAuctionBids()
+  const { bids, loading } = useParticipatingAuctionBids()
   const cancelOrderCallback = useCancelOrderCallback(
     auctionIdentifier,
     derivedAuctionInfo?.biddingToken,
@@ -107,7 +107,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
 
   return (
     <>
-      <TableDesign columns={ordersTableColumns} data={data} showConnect />
+      <TableDesign columns={ordersTableColumns} data={data} loading={loading} showConnect />
       <ConfirmationDialog
         actionText="Cancel order"
         beforeDisplay={

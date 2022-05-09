@@ -26,11 +26,12 @@ const bidsQuery = gql`
 
 export const useAuctionBids = (): Maybe<{
   bids: BidInfo[]
+  loading: boolean
   error: ApolloError | undefined
 }> => {
   const { auctionId } = parseURL(useParams<RouteAuctionIdentifier>())
 
-  const { data, error } = useQuery(bidsQuery, {
+  const { data, error, loading } = useQuery(bidsQuery, {
     variables: { auctionId: Number(auctionId) },
   })
 
@@ -38,5 +39,5 @@ export const useAuctionBids = (): Maybe<{
     logger.error('Error getting useAuctionBids info', error)
   }
 
-  return { bids: data?.bids, error }
+  return { loading, bids: data?.bids, error }
 }
