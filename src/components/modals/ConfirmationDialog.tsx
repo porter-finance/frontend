@@ -380,11 +380,7 @@ const ConfirmationDialog = ({
       {transactionError && (
         <div className="mt-10 space-y-6 text-center">
           <h1 className="text-xl text-[#E0E0E0]">Oops, something went wrong!</h1>
-          <p className="text-[#D6D6D6]">
-            This is text explaining to the users how sometimes things go wrong and they shouldn’t
-            worry. They should just try the transaction again because giving up is unacceptable.
-          </p>
-          <p className="overflow-hidden">{transactionError}</p>
+          <p className="overflow-hidden text-[#D6D6D6]">{transactionError}</p>
           <ActionButton
             aria-label="Try again"
             className="!mt-20"
