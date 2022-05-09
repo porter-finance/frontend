@@ -92,7 +92,7 @@ const TooltipElement = ({
     return (
       <div className="flex flex-row items-center space-x-2">
         <div className="flex">{left}</div>
-        <div className="flex">{tipEl}</div>
+        {tipEl && <div className="flex">{tipEl}</div>}
       </div>
     )
   }
