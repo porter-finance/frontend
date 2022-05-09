@@ -175,7 +175,7 @@ const Table = ({
         className="overflow-auto overscroll-contain min-h-[492px] scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-zinc-700"
         style={{
           maxHeight: !rows.length ? '100%' : 'calc(100vh - 391px)',
-          height: !rows.length ? 'calc(100vh - 391px)' : '100%',
+          height: !rows.length ? 'calc(100vh - 391px)' : 'inherit',
         }}
       >
         <table className="table w-full h-full" {...getTableProps()}>
