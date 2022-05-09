@@ -47,7 +47,7 @@ const SquareHolder = ({ children, size }) => {
 
 const TokenLogo: React.FC<TokenLogoProps> = (props) => {
   const { size = '24px', square, token, ...restProps } = props
-  const { address, symbol } = token
+  const { address } = token
   const { tokens } = useTokenListState()
   const validToken = isAddress(address) && tokens
   const imageURL = validToken && tokens[address.toLowerCase()]
@@ -59,22 +59,18 @@ const TokenLogo: React.FC<TokenLogoProps> = (props) => {
     forceSvg = true
   }
 
-  const showImg = imageURL || forceSvg
-
-  const ImageToken = showImg && (
+  const ImageToken = (
     <Wrapper className="tokenLogo" size={sizeToUse} {...restProps}>
       {forceSvg && <UnicornSvg height={sizeToUse} width={sizeToUse} />}
-      {!forceSvg && <Image src={imageURL} />}
+      {imageURL && <Image src={imageURL} />}
     </Wrapper>
   )
 
-  if (square && showImg) {
+  if (square) {
     return <SquareHolder size={size}>{ImageToken}</SquareHolder>
   }
 
-  if (showImg) {
-    return ImageToken
-  }
+  return ImageToken
 
   return (
     <Wrapper className="tokenLogo" size={sizeToUse} {...restProps}>
