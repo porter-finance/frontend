@@ -134,15 +134,9 @@ export function usePlaceOrderCallback(
         .then((response) => {
           try {
             addTransaction(response, {
-              summary:
-                'Buy ' +
-                abbreviation(sellAmount) +
-                ' ' +
-                auctioningTokenDisplay +
-                ' for ' +
-                abbreviation(parseFloat(price).toPrecision(4)) +
-                ' ' +
-                biddingTokenDisplay,
+              summary: `Place ${abbreviation(
+                sellAmount,
+              )} ${biddingTokenDisplay} order for ${auctioningTokenDisplay}`,
             })
 
             const order = {

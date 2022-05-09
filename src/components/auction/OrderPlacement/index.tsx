@@ -115,7 +115,14 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const [showWarning, setShowWarning] = useState<boolean>(false)
   const [showWarningWrongChainId, setShowWarningWrongChainId] = useState<boolean>(false)
 
-  const auctioningToken = derivedAuctionInfo?.auctioningToken
+  // Setting the name from graphql to the token from gnosis
+  const auctioningToken = new Token(
+    derivedAuctionInfo?.auctioningToken.chainId,
+    derivedAuctionInfo?.auctioningToken.address,
+    derivedAuctionInfo?.auctioningToken.decimals,
+    derivedAuctionInfo?.auctioningToken.symbol,
+    graphInfo?.bond?.name,
+  )
   const biddingToken = derivedAuctionInfo?.biddingToken
 
   const parsedBiddingAmount = tryParseAmount(sellAmount, biddingToken)
