@@ -1,10 +1,10 @@
 {
   "name": "porter-finance",
   "description": "Porter Finance",
-  "homepage": ".",
+  "homepage": "https://porter-app.vercel.app/",
   "private": true,
   "engines": {
-    "node": ">=4.4.7"
+    "node": ">=12"
   },
   "scripts": {
     "typechain:generate": "yarn typechain --target=ethers-v5 ./src/constants/abis/**/*.json --out-dir=./gen/types",
@@ -84,7 +84,7 @@
   "dependencies": {
     "@amcharts/amcharts4": "^4.10.24",
     "@anxolin/walletconnect-connector": "^6.1.9",
-    "@apollo/client": "^3.5.10",
+    "@apollo/client": "^3.6.2",
     "@babel/core": "^7.17.8",
     "@babel/helper-define-map": "^7.16.7",
     "@ethersproject/address": "^5.6.0",
@@ -188,7 +188,8 @@
     "tiny-invariant": "^1.1.0",
     "typescript": "^4.6.3",
     "uniswap-xdai-sdk": "^3.0.2-a3",
-    "use-media": "^1.4.0"
+    "use-media": "^1.4.0",
+    "util": "^0.12.4"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx}": [

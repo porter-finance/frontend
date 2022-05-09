@@ -38,9 +38,8 @@ const BondGraphCard = ({ bond }: { bond: BondInfo }) => {
   return (
     <div className="card">
       <div className="card-body">
-        <h2 className="card-title">Bond graph</h2>
-
-        <div className="flex justify-end">
+        <h2 className="flex justify-between card-title">
+          <span>Bond graph</span>
           <div className="btn-group">
             {durations.map(([day, string]) => {
               return (
@@ -54,7 +53,7 @@ const BondGraphCard = ({ bond }: { bond: BondInfo }) => {
               )
             })}
           </div>
-        </div>
+        </h2>
 
         <BondChart
           collateralToken={bond?.collateralToken}
@@ -62,6 +61,20 @@ const BondGraphCard = ({ bond }: { bond: BondInfo }) => {
           data={processedData}
           showConvertible={bond?.type === 'convert'}
         />
+
+        {loading && (
+          <div
+            className="absolute w-full"
+            style={{
+              top: '109px',
+              height: '398px',
+              width: '791px',
+              left: '61px',
+            }}
+          >
+            <LoadingBox className="mt-0" height="100%" />
+          </div>
+        )}
       </div>
     </div>
   )

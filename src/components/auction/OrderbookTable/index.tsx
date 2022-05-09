@@ -18,8 +18,6 @@ import { orderStatusText } from '../OrdersTable'
 export const OverflowWrap = styled.div`
   max-width: 100%;
   flex-grow: 1;
-  overflow-x: auto;
-  overflow-y: auto;
 `
 export const ordersTableColumns = [
   {
@@ -282,9 +280,5 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({ bids, derivedAuc
       data.push(calculateRow(row, paymentToken, maturityDate, derivedAuctionInfo))
     })
 
-  return (
-    <OverflowWrap>
-      <TableDesign columns={ordersTableColumns} data={data} />
-    </OverflowWrap>
-  )
+  return <TableDesign columns={ordersTableColumns} data={data} />
 }

@@ -19,7 +19,7 @@ const createGradient = (color) => {
   return gradient
 }
 
-numberFormatter.numberFormat = '###.000 a'
+numberFormatter.numberFormat = '###.### a'
 numberFormatter.smallNumberThreshold = 0
 numberFormatter.bigNumberPrefixes = [
   { number: 1e3, suffix: 'K' }, // Use K only with value greater than 999.00
@@ -70,10 +70,12 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   volumeAxis.renderer.grid.template.strokeOpacity = 0
   volumeAxis.title.fill = am4core.color(colors.grey)
   volumeAxis.renderer.labels.template.fill = am4core.color(colors.grey)
+  volumeAxis.extraTooltipPrecision = 3
 
   priceAxis.renderer.grid.template.strokeOpacity = 0
   priceAxis.title.fill = am4core.color(colors.grey)
   priceAxis.renderer.labels.template.fill = am4core.color(colors.grey)
+  priceAxis.extraTooltipPrecision = 3
 
   volumeAxis.numberFormatter = numberFormatter
   priceAxis.numberFormatter = numberFormatter
@@ -179,21 +181,6 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   chart.tooltip.background.filters.clear()
   chart.tooltip.background.cornerRadius = 6
   chart.tooltip.background.stroke = am4core.color('#2A2B2C')
-
-  // Legend
-  const legendContainer = am4core.create('legenddiv', am4core.Container)
-  legendContainer.width = am4core.percent(100)
-  legendContainer.height = am4core.percent(100)
-
-  chart.legend = new am4charts.Legend()
-  chart.legend.labels.template.fill = am4core.color(colors.grey)
-  chart.legend.markers.template.strokeWidth = 44
-  chart.legend.markers.template.height = 5
-  chart.legend.markers.template.width = 14
-  chart.legend.parent = legendContainer
-
-  chart.legend.itemContainers.template.tooltipHTML =
-    '<div class="!text-xs !text-[#D6D6D6] !border-none flex-wrap max-w-[400px] p-1 whitespace-normal">{dataContext.dummyData.description}</div>'
 
   return chart
 }

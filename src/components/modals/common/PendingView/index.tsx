@@ -29,9 +29,9 @@ const PendingView: React.FC<Props> = (props) => {
     <Wrapper {...restProps}>
       {error && (
         <div className="space-y-5">
-          <div className="flex flex-col items-center space-x-2 justify-center mt-5 text-xl">
+          <div className="flex flex-col justify-center items-center mt-5 space-x-2 text-xl">
             <ExclamationTriangleIcon height={35} width={35} />
-            <span className="flex">Error connecting.</span>
+            <span className="flex">{error || 'Error connecting.'}</span>
           </div>
           <div>
             <ActionButton onClick={reset}>Try Again</ActionButton>

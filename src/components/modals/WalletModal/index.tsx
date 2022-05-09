@@ -57,7 +57,6 @@ const WalletModal: React.FC = () => {
   const toggleWalletModal = useWalletModalToggle()
   const previousAccount = usePrevious(account)
   const { errorWrongNetwork } = useNetworkCheck()
-  const [termsAccepted, setTermsAccepted] = useState(true)
   const { chainId } = useOrderPlacementState()
   const [walletConnectChainError, setWalletConnectChainError] = useState<NetworkError>()
 
@@ -162,7 +161,8 @@ const WalletModal: React.FC = () => {
           ? activate(connector[chainId], muteWalletConnectError)
           : activate(connector)
       } else {
-        setPendingError(true)
+        console.log(error)
+        setPendingError(error?.message)
       }
     }
   }
@@ -186,7 +186,6 @@ const WalletModal: React.FC = () => {
 
       return (
         <Option
-          disabled={!termsAccepted}
           icon={option.icon}
           key={key}
           onClick={() => {
@@ -233,16 +232,6 @@ const WalletModal: React.FC = () => {
         )}
       </div>
       <Content>
-        {(error || walletConnectChainError) && (
-          <>
-            <IconWrapper>
-              <AlertIcon />
-            </IconWrapper>
-            <Text fontSize="18px" textAlign="center">
-              {errorMessage}
-            </Text>
-          </>
-        )}
         {!error && !connectingToWallet && (
           <>
             <ul className="my-4 space-y-3">{getOptions()}</ul>

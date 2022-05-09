@@ -1,13 +1,22 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
-import { LockBig } from '../../icons/LockBig'
-import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponents/EmptyContent'
+import { LockClosedIcon } from '@radix-ui/react-icons'
+
+import { ActionButton } from '../Claimer'
 
 export const AuctionNotStarted: React.FC = () => {
+  const navigate = useNavigate()
   return (
-    <EmptyContentWrapper>
-      <LockBig />
-      <EmptyContentText>Auction not started yet.</EmptyContentText>
-    </EmptyContentWrapper>
+    <div className="card">
+      <div className="flex flex-col items-center card-body">
+        <LockClosedIcon height={70} width={70} />
+
+        <h2 className="card-title">Auction not started yet.</h2>
+        <ActionButton className="max-w-sm" onClick={() => navigate('/offerings')}>
+          Go to offerings
+        </ActionButton>
+      </div>
+    </div>
   )
 }

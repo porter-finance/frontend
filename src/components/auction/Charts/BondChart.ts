@@ -1,15 +1,10 @@
 import * as am4charts from '@amcharts/amcharts4/charts'
 import * as am4core from '@amcharts/amcharts4/core'
 import am4themesSpiritedaway from '@amcharts/amcharts4/themes/spiritedaway'
-import dayjs from 'dayjs'
 import { round } from 'lodash'
 
 import { Token } from '../../../hooks/useBond'
 import { getDisplay } from '../../../utils'
-
-// Recalculates very big and very small numbers by reducing their length according to rules and applying suffix/prefix.
-const numberFormatter = new am4core.NumberFormatter()
-am4core.addLicense('ch-custom-attribution')
 
 export const createGradient = (color) => {
   const gradient = new am4core.LinearGradient()
@@ -19,7 +14,11 @@ export const createGradient = (color) => {
   return gradient
 }
 
-numberFormatter.numberFormat = '###.00 a'
+am4core.addLicense('ch-custom-attribution')
+
+// Recalculates very big and very small numbers by reducing their length according to rules and applying suffix/prefix.
+const numberFormatter = new am4core.NumberFormatter()
+numberFormatter.numberFormat = '###.### a'
 numberFormatter.smallNumberThreshold = 0
 numberFormatter.bigNumberPrefixes = [
   { number: 1e3, suffix: 'K' }, // Use K only with value greater than 999.00
@@ -38,7 +37,7 @@ export interface XYBondChartProps {
 
 export const colors = {
   blue: '#404EED',
-  red: '#D25453',
+  red: '#DB3635',
   supply: '#EDA651',
   white: '#e0e0e0',
   green: '#5BCD88',
@@ -48,6 +47,18 @@ export const colors = {
   newOrder: '#D2D2D2',
   tooltipBg: '#001429',
   tooltipBorder: '#174172',
+}
+
+export const tooltipRender = (o) => {
+  o.tooltip.getFillFromObject = false
+  o.tooltip.background.fill = am4core.color('#181A1C')
+  o.tooltip.background.filters.clear()
+  o.tooltip.background.cornerRadius = 6
+  o.tooltip.background.stroke = am4core.color('#2A2B2C')
+  o.tooltipHTML =
+    '<div class="text-xs text-[#D6D6D6] border-none flex-wrap max-w-[400px] p-1 whitespace-normal">{text}</div>'
+
+  return o
 }
 
 export const XYSimpleBondChart = (props: XYBondChartProps): am4charts.XYChart => {
@@ -66,17 +77,21 @@ export const XYSimpleBondChart = (props: XYBondChartProps): am4charts.XYChart =>
 
   // Create axes
   const dateAxis = chart.xAxes.push(new am4charts.DateAxis())
-  const volumeAxis = chart.yAxes.push(new am4charts.ValueAxis())
-  volumeAxis.renderer.grid.template.stroke = am4core.color(colors.grey)
-  volumeAxis.renderer.grid.template.strokeOpacity = 0
-  volumeAxis.title.fill = am4core.color(colors.grey)
-  volumeAxis.renderer.labels.template.fill = am4core.color(colors.grey)
+  const priceAxis = chart.yAxes.push(new am4charts.ValueAxis())
+  priceAxis.renderer.grid.template.stroke = am4core.color(colors.grey)
+  priceAxis.renderer.grid.template.strokeOpacity = 0
+  priceAxis.title.fill = am4core.color(colors.grey)
+  priceAxis.renderer.labels.template.fill = am4core.color(colors.grey)
+  priceAxis.numberFormatter = numberFormatter
+  priceAxis.adjustLabelPrecision = false
+  priceAxis.extraTooltipPrecision = 3
+  priceAxis.tooltip.disabled = true
 
   dateAxis.renderer.grid.template.strokeOpacity = 0
   dateAxis.title.fill = am4core.color(colors.grey)
   dateAxis.renderer.labels.template.fill = am4core.color(colors.grey)
-
-  volumeAxis.numberFormatter = numberFormatter
+  dateAxis.tooltipDateFormat = 'MMM dd, YYYY'
+  tooltipRender(dateAxis)
 
   const faceValue = chart.series.push(new am4charts.StepLineSeries())
   faceValue.dataFields.dateX = 'date'
@@ -114,11 +129,6 @@ export const XYSimpleBondChart = (props: XYBondChartProps): am4charts.XYChart =>
   chart.cursor.lineX.strokeOpacity = 0.6
   chart.cursor.lineX.strokeDasharray = '4'
 
-  chart.cursor.lineY.stroke = am4core.color(colors.grey)
-  chart.cursor.lineY.strokeWidth = 1
-  chart.cursor.lineY.strokeOpacity = 0.6
-  chart.cursor.lineY.strokeDasharray = '4'
-
   // Button configuration
   chart.zoomOutButton.background.cornerRadius(5, 5, 5, 5)
   chart.zoomOutButton.background.fill = am4core.color('#3f3f3f')
@@ -127,24 +137,11 @@ export const XYSimpleBondChart = (props: XYBondChartProps): am4charts.XYChart =>
   chart.zoomOutButton.icon.strokeWidth = 2
   chart.zoomOutButton.tooltip.text = 'Zoom out'
 
-  // Legend
-  const legendContainer = am4core.create('legenddiv', am4core.Container)
-  legendContainer.width = am4core.percent(100)
-  legendContainer.height = am4core.percent(100)
-
-  chart.legend = new am4charts.Legend()
-  chart.legend.labels.template.fill = am4core.color(colors.grey)
-  chart.legend.markers.template.strokeWidth = 44
-  chart.legend.markers.template.height = 5
-  chart.legend.markers.template.width = 14
-  chart.legend.parent = legendContainer
   chart.tooltip.getFillFromObject = false
   chart.tooltip.background.fill = am4core.color('#181A1C')
   chart.tooltip.background.filters.clear()
   chart.tooltip.background.cornerRadius = 6
   chart.tooltip.background.stroke = am4core.color('#2A2B2C')
-  chart.legend.itemContainers.template.tooltipHTML =
-    '<div class="text-xs text-[#D6D6D6] border-none flex-wrap max-w-[400px] p-1 whitespace-normal">{dataContext.dummyData.description}</div>'
 
   return chart
 }
@@ -178,46 +175,20 @@ export const drawInformation = (props: DrawInformation) => {
   const { chart, convertibleToken } = props
   const convertibleTokenLabel = getDisplay(convertibleToken)
 
-  const [xAxis] = chart.xAxes
-  // const [yAxis] = chart.yAxes
-
-  xAxis.title.text = 'Date'
-  xAxis.title.align = 'left'
-
-  // yAxis.title.text = convertibleTokenLabel
-  // yAxis.title.align = 'left'
-
   const collateralValueSeries = chart.series.values[1]
-
-  collateralValueSeries.tooltip.getFillFromObject = false
-  collateralValueSeries.tooltip.background.fill = am4core.color('#181A1C')
-  collateralValueSeries.tooltip.background.filters.clear()
-  collateralValueSeries.tooltip.background.cornerRadius = 6
-  collateralValueSeries.tooltip.background.stroke = am4core.color('#2A2B2C')
-  collateralValueSeries.tooltipHTML =
-    '<div class="text-xs text-[#D6D6D6] border-none flex-wrap max-w-[400px] p-1 whitespace-normal">{text}</div>'
+  collateralValueSeries.dy = -15
+  tooltipRender(collateralValueSeries)
   collateralValueSeries.adapter.add('tooltipText', (text, target) => {
-    const dateX = target?.tooltipDataItem?.values?.dateX?.value ?? 0
     const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
-
-    const date = dayjs(dateX).format('MMM DD, YYYY')
     const volume = round(valueY, 3)
 
-    return `Time:  ${date}<br/>
-Collateral value:  ${volume} ${convertibleTokenLabel}`
+    return `Collateral value:  ${volume} ${convertibleTokenLabel}`
   })
 
   if (chart.series.values.length > 2) {
     const convertibleValueSeries = chart.series.values[2]
-
-    convertibleValueSeries.tooltip.getFillFromObject = false
-    convertibleValueSeries.tooltip.background.fill = am4core.color('#181A1C')
-    convertibleValueSeries.tooltip.background.filters.clear()
-    convertibleValueSeries.tooltip.background.cornerRadius = 6
-    convertibleValueSeries.tooltip.background.stroke = am4core.color('#2A2B2C')
-    convertibleValueSeries.tooltipHTML =
-      '<div class="text-xs text-[#D6D6D6] border-none flex-wrap max-w-[400px] p-1 whitespace-normal">{text}</div>'
-
+    tooltipRender(convertibleValueSeries)
+    convertibleValueSeries.dy = -15
     convertibleValueSeries.adapter.add('tooltipText', (text, target) => {
       const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
       const convertibleValue = round(valueY, 3)

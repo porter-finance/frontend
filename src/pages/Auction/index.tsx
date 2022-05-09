@@ -2,6 +2,8 @@ import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createGlobalStyle } from 'styled-components'
 
+import { twMerge } from 'tailwind-merge'
+
 import { ReactComponent as AuctionsIcon } from '../../assets/svg/auctions.svg'
 import { ReactComponent as ConvertIcon } from '../../assets/svg/convert.svg'
 import { ReactComponent as OTCIcon } from '../../assets/svg/otc.svg'
@@ -76,15 +78,18 @@ export const OTCButtonOutline = ({ ...props }) => (
 )
 
 // Strangely couldn't use tailwind h-[9px] or min-h- , had to specify style = manually
-export const LoadingBox = ({ height }) => (
+export const LoadingBox = ({ className = '', height }) => (
   <div
-    className="mt-8 h-full bg-gradient-to-r from-[#181A1C] to-[#1F2123] rounded-lg shadow animate-pulse"
+    className={twMerge(
+      'mt-8 h-full bg-gradient-to-r from-[#181A1C] to-[#1F2123] rounded-lg shadow animate-pulse',
+      className,
+    )}
     style={{ height }}
   />
 )
 
-export const TwoGridPage = ({ hasHeader = true, leftChildren, rightChildren }) => (
-  <main className={`pb-8 px-0 ${!hasHeader ? 'mt-20' : 'mt-5'}`}>
+export const TwoGridPage = ({ leftChildren, rightChildren }) => (
+  <main className="px-0 pb-8 mt-[15px]">
     {/* Main 3 column grid */}
     <div className="grid grid-cols-1 gap-4 items-start pb-32 lg:grid-cols-3 lg:gap-8">
       {/* Left column */}
@@ -101,31 +106,100 @@ export const TwoGridPage = ({ hasHeader = true, leftChildren, rightChildren }) =
 )
 
 export const LoadingTwoGrid = () => (
-  <TwoGridPage
-    hasHeader={false}
-    leftChildren={
-      <>
-        <LoadingBox height={489} />
-        <LoadingBox height={579} />
-        <LoadingBox height={521} />
-      </>
-    }
-    rightChildren={
-      <>
-        <LoadingBox height={404} />
-        <LoadingBox height={223} />
-      </>
-    }
-  />
+  <>
+    <div className="flex flex-wrap justify-center content-center items-end py-2 md:justify-between">
+      <div className="flex flex-wrap items-center space-x-6">
+        <div className="hidden md:flex">
+          <div className="w-[66px] h-[66px] bg-transparent rounded-xl animate-pulse"></div>
+        </div>
+        <div className="space-y-3">
+          <div className="w-[425px] h-[33px] bg-transparent rounded animate-pulse"></div>
+          <div className="w-[425px] h-[22px] bg-transparent rounded animate-pulse"></div>
+        </div>
+      </div>
+      <div className="w-[120px] h-[32px] bg-transparent rounded-full animate-pulse"></div>
+    </div>
+
+    <TwoGridPage
+      leftChildren={
+        <>
+          <LoadingBox height={489} />
+          <LoadingBox height={579} />
+          <LoadingBox height={521} />
+        </>
+      }
+      rightChildren={
+        <>
+          <LoadingBox height={404} />
+          <LoadingBox height={223} />
+        </>
+      }
+    />
+  </>
 )
+
+const AuctionPage = ({ data: { auctionIdentifier, derivedAuctionInfo, graphInfo }, loading }) => {
+  const navigate = useNavigate()
+  const invalidAuction = !loading && (!auctionIdentifier || derivedAuctionInfo === undefined)
+
+  if (invalidAuction) {
+    return (
+      <>
+        <GlobalStyle />
+        <WarningModal
+          content={`This auction doesn't exist or it hasn't started yet.`}
+          isOpen
+          onDismiss={() => navigate('/auctions')}
+          title="Warning!"
+        />
+      </>
+    )
+  }
+
+  return (
+    <>
+      <GlobalStyle />
+
+      {loading && <LoadingTwoGrid />}
+      {!loading && (
+        <>
+          <div className="flex flex-wrap justify-center content-center items-end py-2 md:justify-between">
+            <div className="flex flex-wrap items-center space-x-6">
+              <div className="hidden md:flex">
+                <TokenLogo
+                  size="60px"
+                  square
+                  token={{
+                    address: graphInfo?.bond.id,
+                    symbol: graphInfo?.bond.name,
+                  }}
+                />
+              </div>
+              <div>
+                <h1 className="text-3xl text-white capitalize">{graphInfo?.bond.name} Auction</h1>
+                <p className="text-2sm text-[#E0E0E0]">{graphInfo?.bond.symbol}</p>
+              </div>
+            </div>
+            <AuctionButtonOutline />
+          </div>
+
+          <AuctionBody
+            auctionIdentifier={auctionIdentifier}
+            derivedAuctionInfo={derivedAuctionInfo}
+            graphInfo={graphInfo}
+          />
+        </>
+      )}
+    </>
+  )
+}
 
 const Auction: React.FC = () => {
   const { setShowTopWarning } = useShowTopWarning()
-  const navigate = useNavigate()
 
   const auctionIdentifier = parseURL(useParams<RouteAuctionIdentifier>())
-  const derivedAuctionInfo = useDerivedAuctionInfo(auctionIdentifier)
-  const { data: graphInfo } = useAuction(auctionIdentifier?.auctionId)
+  const { data: derivedAuctionInfo, loading } = useDerivedAuctionInfo(auctionIdentifier)
+  const { data: graphInfo, loading: graphLoading } = useAuction(auctionIdentifier?.auctionId)
 
   const { tokens } = useTokenListState()
 
@@ -162,60 +236,11 @@ const Auction: React.FC = () => {
     validBiddingTokenAddress,
   ])
 
-  const isLoading = React.useMemo(() => derivedAuctionInfo === null, [derivedAuctionInfo])
-  const invalidAuction = React.useMemo(
-    () => !auctionIdentifier || derivedAuctionInfo === undefined,
-    [auctionIdentifier, derivedAuctionInfo],
-  )
-
-  if (isLoading) {
-    return (
-      <>
-        <GlobalStyle />
-        <LoadingTwoGrid />
-      </>
-    )
-  }
-
-  if (invalidAuction) {
-    return (
-      <>
-        <GlobalStyle />
-        <WarningModal
-          content={`This auction doesn't exist or it hasn't started yet.`}
-          isOpen
-          onDismiss={() => navigate('/auctions')}
-          title="Warning!"
-        />
-      </>
-    )
-  }
-
   return (
-    <>
-      <GlobalStyle />
-      <div className="flex flex-wrap justify-center content-center items-end py-2 md:justify-between">
-        <div className="flex flex-wrap items-center space-x-6">
-          <div className="hidden md:flex">
-            <TokenLogo
-              size="60px"
-              square
-              token={{
-                address: graphInfo?.bond.id,
-                symbol: graphInfo?.bond.name,
-              }}
-            />
-          </div>
-          <div>
-            <h1 className="text-3xl text-white capitalize">{graphInfo?.bond.name} Auction</h1>
-            <p className="text-2sm text-[#E0E0E0]">{graphInfo?.bond.symbol}</p>
-          </div>
-        </div>
-        <AuctionButtonOutline />
-      </div>
-
-      <AuctionBody auctionIdentifier={auctionIdentifier} derivedAuctionInfo={derivedAuctionInfo} />
-    </>
+    <AuctionPage
+      data={{ auctionIdentifier, derivedAuctionInfo, graphInfo }}
+      loading={loading || graphLoading}
+    />
   )
 }
 

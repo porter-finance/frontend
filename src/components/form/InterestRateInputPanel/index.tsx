@@ -54,7 +54,7 @@ export const calculateInterestRate = (
   interestRate = isNaN(interestRate) || interestRate === Infinity ? 0 : interestRate
 
   if (display) {
-    return !interestRate ? '-' : `${round(interestRate * 100, 2).toLocaleString()}+ %`
+    return !interestRate ? '-' : `${round(interestRate * 100, 1).toLocaleString()}%`
   }
 
   return interestRate
@@ -65,7 +65,7 @@ export const getReviewData = ({
   maturityDate,
   price,
 }): { apr: string | number; earn: string; receive: string; pay: string } => ({
-  apr: calculateInterestRate(price, maturityDate),
+  apr: `${calculateInterestRate(price, maturityDate)}`.replace('%', '+ %'),
   earn: `${round(amount - price * amount, 2).toLocaleString()}+`,
   receive: `${amount.toLocaleString()}+`,
   pay: `${round(price * amount, 2).toLocaleString()}`,

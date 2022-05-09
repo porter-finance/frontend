@@ -1,3 +1,4 @@
+/* config-overrides.js */
 const webpack = require('webpack')
 
 module.exports = {
@@ -12,6 +13,21 @@ module.exports = {
       os: require.resolve('os-browserify'),
       url: require.resolve('url'),
     })
+    config.plugins.push(
+      new webpack.ProvidePlugin({
+        Buffer: ['buffer', 'Buffer'],
+        process: 'process/browser',
+      }),
+    )
+    config.module.rules = [
+      ...config.module.rules,
+      {
+        test: /\.m?js/,
+        resolve: {
+          fullySpecified: false,
+        },
+      },
+    ]
     config.resolve.fallback = fallback
     config.ignoreWarnings = [/Failed to parse source map/]
     return config

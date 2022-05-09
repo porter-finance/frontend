@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { TimerIcon } from '@radix-ui/react-icons'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import utc from 'dayjs/plugin/utc'
@@ -74,9 +73,8 @@ export const AuctionTimer = ({
   return (
     <div className="" {...restProps}>
       <div className="flex flex-col place-items-start mb-7 space-y-1">
-        <Time className="flex flex-row items-center space-x-1 text-white">
-          <Countdown date={endDate * 1000} />
-          <TimerIcon />
+        <Time className="flex flex-row items-center space-x-1 text-xs text-white">
+          <Countdown className="text-left" date={endDate * 1000} />
         </Time>
         <DateTitle>{text}</DateTitle>
       </div>

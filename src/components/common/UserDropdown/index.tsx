@@ -167,7 +167,7 @@ export const UserDropdown: React.FC<Props> = (props) => {
     ]
 
     return (
-      <ul className="p-2 w-52 shadow menu bg-base-100 rounded-box" tabIndex={0}>
+      <ul className="p-2 w-52 bg-base-100 shadow menu rounded-box" tabIndex={0}>
         {items.map((item, index) => (
           <Item
             hasOnClick={item.onClick && item.onClick ? true : false}

@@ -369,9 +369,10 @@ export interface DerivedAuctionInfo {
   auctionState: AuctionState | null | undefined
 }
 
-export function useDerivedAuctionInfo(
-  auctionIdentifier: AuctionIdentifier,
-): Maybe<DerivedAuctionInfo> | undefined {
+export function useDerivedAuctionInfo(auctionIdentifier: AuctionIdentifier): {
+  loading: boolean
+  data: Maybe<DerivedAuctionInfo>
+} {
   const { chainId } = auctionIdentifier
   const { auctionDetails, auctionInfoLoading } = useAuctionDetails(auctionIdentifier)
   const { clearingPriceInfo, loadingClearingPrice } = useClearingPriceInfo(auctionIdentifier)
@@ -454,25 +455,28 @@ export function useDerivedAuctionInfo(
   }, [initialAuctionOrder])
 
   if (isLoading) {
-    return null
+    return { loading: true, data: null }
   } else if (noAuctionData) {
-    return undefined
+    return { loading: false, data: null }
   }
 
   return {
-    auctioningToken,
-    biddingToken,
-    clearingPriceSellOrder,
-    clearingPriceOrder,
-    clearingPrice,
-    initialAuctionOrder,
-    auctionStartDate: auctionDetails?.startingTimestamp,
-    auctionEndDate: auctionDetails?.endTimeTimestamp,
-    clearingPriceVolume,
-    initialPrice,
-    minBiddingAmountPerOrder,
-    orderCancellationEndDate: auctionDetails?.orderCancellationEndDate,
-    auctionState,
+    loading: false,
+    data: {
+      auctioningToken,
+      biddingToken,
+      clearingPriceSellOrder,
+      clearingPriceOrder,
+      clearingPrice,
+      initialAuctionOrder,
+      auctionStartDate: auctionDetails?.startingTimestamp,
+      auctionEndDate: auctionDetails?.endTimeTimestamp,
+      clearingPriceVolume,
+      initialPrice,
+      minBiddingAmountPerOrder,
+      orderCancellationEndDate: auctionDetails?.orderCancellationEndDate,
+      auctionState,
+    },
   }
 }
 
