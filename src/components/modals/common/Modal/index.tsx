@@ -48,7 +48,9 @@ function Content({ children, ...props }) {
   return (
     <DialogPrimitive.Portal>
       <StyledOverlay />
-      <StyledContent {...props}>{children}</StyledContent>
+      <StyledContent onOpenAutoFocus={(e) => e.preventDefault()} {...props}>
+        {children}
+      </StyledContent>
     </DialogPrimitive.Portal>
   )
 }
