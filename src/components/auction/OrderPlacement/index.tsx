@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 
+import { useApolloClient } from '@apollo/client'
 import { formatUnits } from '@ethersproject/units'
 import { Fraction, Token, TokenAmount } from '@josojo/honeyswap-sdk'
 import { useTokenBalance } from '@usedapp/core'
@@ -93,6 +94,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     derivedAuctionInfo: { auctionState },
     derivedAuctionInfo,
   } = props
+  const apolloClient = useApolloClient()
   const { data: graphInfo } = useAuction(auctionIdentifier?.auctionId)
   const location = useGeoLocation()
   const disabledCountry = process.env.NODE_ENV !== 'development' && location?.country === 'US'
@@ -276,6 +278,11 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     price,
   })
 
+  const refetchOrders = () =>
+    apolloClient.refetchQueries({
+      include: 'active',
+    })
+
   return (
     <div className="card place-order-color">
       <div className="card-body">
@@ -360,6 +367,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                     }
                     finishedText="Order placed"
                     loadingText="Placing order"
+                    onFinished={refetchOrders}
                     onOpenChange={setShowConfirm}
                     open={showConfirm}
                     pendingText="Confirm order in wallet"

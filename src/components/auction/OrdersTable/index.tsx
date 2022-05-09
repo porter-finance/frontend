@@ -15,7 +15,6 @@ import { getTokenDisplay } from '../../../utils'
 import ConfirmationDialog from '../../modals/ConfirmationDialog'
 import {
   BidTransactionLink,
-  OverflowWrap,
   TableDesign,
   calculateRow,
   ordersTableColumns,
@@ -97,13 +96,9 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
     })
 
   const refetchBids = () =>
-    apolloClient
-      .refetchQueries({
-        include: 'active',
-      })
-      .then((r) => {
-        console.log(r)
-      })
+    apolloClient.refetchQueries({
+      include: 'active',
+    })
 
   return (
     <>
