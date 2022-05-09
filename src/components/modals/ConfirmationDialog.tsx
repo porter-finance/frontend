@@ -240,6 +240,7 @@ const ConfirmationDialog = ({
   beforeDisplay,
   finishedText,
   loadingText,
+  onFinished,
   onOpenChange,
   open,
   pendingText,
@@ -250,6 +251,7 @@ const ConfirmationDialog = ({
   placeOrder: () => Promise<any>
   actionColor?: string
   actionText: string
+  onFinished?: () => void
   pendingText: string
   title: string
   loadingText: string
@@ -281,11 +283,12 @@ const ConfirmationDialog = ({
         // the first one is always the new order
         if (tx.receipt?.logs) {
           setOrderComplete(true)
+          if (onFinished) onFinished()
         }
 
         return true
       })
-  }, [showOrderTransactionComplete, allTransactions])
+  }, [showOrderTransactionComplete, onFinished, allTransactions])
 
   return (
     <Modal isOpen={open} onDismiss={onOpenChange}>

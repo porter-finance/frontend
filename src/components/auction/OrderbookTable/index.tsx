@@ -268,13 +268,9 @@ export const BidTransactionLink = ({ bid }) => {
 
 export const OrderBookTable: React.FC<OrderBookTableProps> = ({ bids, derivedAuctionInfo }) => {
   const maturityDate = useBondMaturityForAuction()
-
-  const data = []
-
   const paymentToken = getTokenDisplay(derivedAuctionInfo?.biddingToken)
-
   const noBids = !Array.isArray(bids) || bids.length === 0
-
+  const data = []
   !noBids &&
     bids.forEach((row) => {
       data.push(calculateRow(row, paymentToken, maturityDate, derivedAuctionInfo))

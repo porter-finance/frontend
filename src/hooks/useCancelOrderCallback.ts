@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 
+import { useApolloClient } from '@apollo/client'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
 import { Fraction, Token } from '@josojo/honeyswap-sdk'
@@ -24,6 +25,7 @@ export function useCancelOrderCallback(
   const { account, chainId, library } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
   const { onCancelOrder: actionCancelOrder } = useOrderActionHandlers()
+  const apolloClient = useApolloClient()
   const { auctionId, chainId: orderChainId } = auctionIdentifier
   const gasPrice = useGasPrice(chainId)
 
@@ -73,7 +75,6 @@ export function useCancelOrderCallback(
             )} ${biddingToken.symbol} Order`,
           })
           actionCancelOrder(orderId)
-
           return response.hash
         })
         .catch((error) => {
