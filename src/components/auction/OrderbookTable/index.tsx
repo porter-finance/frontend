@@ -62,7 +62,7 @@ export const calculateRow = (row, paymentToken, maturityDate, derivedAuctionInfo
   const bonds = `${round(
     Number(formatUnits(row.size, derivedAuctionInfo.auctioningToken.decimals)),
     3,
-  ).toLocaleString()}+ ${'Bonds'}`
+  ).toLocaleString()} ${'bonds'}`
 
   const transaction = <BidTransactionLink bid={row} />
 
