@@ -179,7 +179,7 @@ const Table = ({
         }}
       >
         <table className="table w-full h-full" {...getTableProps()}>
-          <thead className="sticky top-0 z-10">
+          <thead className="sticky top-0 z-[1]">
             {headerGroups.map((headerGroup, i) => (
               <tr
                 className="border-b border-b-[#D5D5D519]"
