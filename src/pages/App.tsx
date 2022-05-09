@@ -30,7 +30,6 @@ const App: React.FC = () => {
       <MainWrapper>
         <ScrollToTop />
         <Header />
-        <Popups />
         <ReactTooltip
           className="customTooltip"
           delayHide={500}
