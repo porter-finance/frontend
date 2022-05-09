@@ -75,7 +75,7 @@ export const ReviewOrder = ({ amountToken, cancelCutoff, data, orderPlacingOnly,
       <div className="text-xs text-[#696969]">
         <Tooltip
           left="Amount of interest you earn"
-          tip="Amount of bonds you will receive. If the final auction price is lower than your bid price, you will receive more bonds than were ordered at that lower price. This is also the amount you will earn assuming no default. If the final price is lower than your bid price, you will receive more bonds than ordered and, therefore, earn more."
+          tip="Amount you will earn assuming no default. If the final auction price is lower than your bid price, you will receive more bonds than ordered and, therefore, earn more."
         />
       </div>
     </div>
