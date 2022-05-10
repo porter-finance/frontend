@@ -10,6 +10,7 @@ import useGeoLocation from 'react-ipgeolocation'
 
 import kycLinks from '../../../assets/links/kycLinks.json'
 import { ReactComponent as PrivateIcon } from '../../../assets/svg/private.svg'
+import { isDev } from '../../../connectors'
 import { useActiveWeb3React } from '../../../hooks'
 import { ApprovalState, useApproveCallback } from '../../../hooks/useApproveCallback'
 import { useAuction } from '../../../hooks/useAuction'
@@ -98,7 +99,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const apolloClient = useApolloClient()
   const { data: graphInfo } = useAuction(auctionIdentifier?.auctionId)
   const location = useGeoLocation()
-  const disabledCountry = process.env.NODE_ENV !== 'development' && location?.country === 'US'
+  const disabledCountry = !isDev && location?.country === 'US'
   const [showCountry, setShowCountryDisabledModal] = useState(false)
   const { chainId } = auctionIdentifier
   const { account, chainId: chainIdFromWeb3 } = useActiveWeb3React()

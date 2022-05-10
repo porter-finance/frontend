@@ -3,6 +3,7 @@ import styled from 'styled-components'
 
 import ReactTooltip from 'react-tooltip'
 
+import ChainWarning from '../components/ChainWarning'
 import ScrollToTop from '../components/ScrollToTop'
 import { Footer } from '../components/layout/Footer'
 import { Header } from '../components/layout/Header'
@@ -23,6 +24,7 @@ const App: React.FC = () => (
   <Suspense fallback={null}>
     <MainWrapper>
       <ScrollToTop />
+      <ChainWarning />
       <Header />
       <ReactTooltip
         className="customTooltip"
