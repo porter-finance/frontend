@@ -12,11 +12,8 @@ import AuctionBody from '../../components/auction/AuctionBody'
 import WarningModal from '../../components/modals/WarningModal'
 import TokenLogo from '../../components/token/TokenLogo'
 import { useAuction } from '../../hooks/useAuction'
-import useShowTopWarning from '../../hooks/useShowTopWarning'
 import { useDerivedAuctionInfo } from '../../state/orderPlacement/hooks'
 import { RouteAuctionIdentifier, parseURL } from '../../state/orderPlacement/reducer'
-import { useTokenListState } from '../../state/tokenList/hooks'
-import { isAddress } from '../../utils'
 
 const GlobalStyle = createGlobalStyle`
   .siteHeader {
@@ -195,46 +192,9 @@ const AuctionPage = ({ data: { auctionIdentifier, derivedAuctionInfo, graphInfo 
 }
 
 const Auction: React.FC = () => {
-  const { setShowTopWarning } = useShowTopWarning()
-
   const auctionIdentifier = parseURL(useParams<RouteAuctionIdentifier>())
   const { data: derivedAuctionInfo, loading } = useDerivedAuctionInfo(auctionIdentifier)
   const { data: graphInfo, loading: graphLoading } = useAuction(auctionIdentifier?.auctionId)
-
-  const { tokens } = useTokenListState()
-
-  const biddingTokenAddress = derivedAuctionInfo?.biddingToken?.address
-  const auctioningTokenAddress = derivedAuctionInfo?.auctioningToken?.address
-  const validBiddingTokenAddress =
-    biddingTokenAddress !== undefined &&
-    isAddress(biddingTokenAddress) &&
-    tokens &&
-    tokens[biddingTokenAddress.toLowerCase()] !== undefined
-  const validAuctioningTokenAddress =
-    auctioningTokenAddress !== undefined &&
-    isAddress(auctioningTokenAddress) &&
-    tokens &&
-    tokens[auctioningTokenAddress.toLowerCase()] !== undefined
-
-  React.useEffect(() => {
-    if (
-      !derivedAuctionInfo ||
-      biddingTokenAddress === undefined ||
-      auctioningTokenAddress === undefined
-    ) {
-      setShowTopWarning(false)
-      return
-    }
-
-    setShowTopWarning(!validBiddingTokenAddress || !validAuctioningTokenAddress)
-  }, [
-    auctioningTokenAddress,
-    biddingTokenAddress,
-    derivedAuctionInfo,
-    setShowTopWarning,
-    validAuctioningTokenAddress,
-    validBiddingTokenAddress,
-  ])
 
   return (
     <AuctionPage
