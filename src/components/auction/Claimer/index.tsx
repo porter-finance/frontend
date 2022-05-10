@@ -16,7 +16,6 @@ import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { TokenInfo, TokenPill } from '../../bond/BondAction'
 import Tooltip from '../../common/Tooltip'
 import { FieldRowLabelStyled } from '../../form/PriceInputPanel'
-import ClaimConfirmationModal from '../../modals/ClaimConfirmationModal'
 import ConfirmationDialog from '../../modals/ConfirmationDialog'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 
@@ -89,10 +88,6 @@ const Claimer: React.FC<Props> = (props) => {
   const { chainId } = auctionIdentifier
   const { account, chainId: Web3ChainId } = useActiveWeb3React()
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
-  const [userConfirmedTx, setUserConfirmedTx] = useState<boolean>(false)
-  const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true)
-  const [txHash, setTxHash] = useState<string>('')
-  const pendingText = `Claiming Funds`
   const participatingBids = useParticipatingAuctionBids()
 
   const [claimStatus, claimOrderCallback] = useClaimOrderCallback(auctionIdentifier)
@@ -110,21 +105,6 @@ const Claimer: React.FC<Props> = (props) => {
 
   const { auctioningToken, biddingToken } = derivedAuctionInfo
 
-  const resetModal = () => setPendingConfirmation(true)
-
-  const onClaimOrder = () =>
-    claimOrderCallback()
-      .then((hash) => {
-        setTxHash(hash)
-        setPendingConfirmation(false)
-        setUserConfirmedTx(true)
-      })
-      .catch(() => {
-        resetModal()
-        setShowConfirm(false)
-        setUserConfirmedTx(false)
-      })
-
   const isLoading = useMemo(
     () => (account && isDerivedClaimInfoLoading) || !claimableBidFunds || !claimableBonds,
     [account, isDerivedClaimInfoLoading, claimableBidFunds, claimableBonds],
@@ -135,10 +115,9 @@ const Claimer: React.FC<Props> = (props) => {
       !isValid ||
       showConfirm ||
       isLoading ||
-      userConfirmedTx ||
       claimStatus != ClaimState.NOT_CLAIMED ||
       chainId !== Web3ChainId,
-    [isValid, showConfirm, isLoading, userConfirmedTx, claimStatus, chainId, Web3ChainId],
+    [isValid, showConfirm, isLoading, claimStatus, chainId, Web3ChainId],
   )
 
   const claimStatusString =
