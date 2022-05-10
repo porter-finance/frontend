@@ -8,6 +8,7 @@ import { ReactComponent as DividerIcon } from '../../assets/svg/divider.svg'
 import { ReactComponent as OTCIcon } from '../../assets/svg/otc.svg'
 import { ActiveStatusPill } from '../../components/auction/OrderbookTable'
 import Table from '../../components/auctions/Table'
+import { ErrorBoundaryWithFallback } from '../../components/common/ErrorAndReload'
 import { calculateInterestRate } from '../../components/form/InterestRateInputPanel'
 import TokenLogo from '../../components/token/TokenLogo'
 import { useActiveWeb3React } from '../../hooks'
@@ -98,7 +99,8 @@ const Offerings = () => {
         <span className="uppercase">
           {dayjs(auction?.bond?.maturityDate * 1000)
             .utc()
-            .format('DD MMM YYYY')}
+            .tz()
+            .format('ll')}
         </span>
       ),
       offering: (
@@ -129,37 +131,39 @@ const Offerings = () => {
   return (
     <>
       <GlobalStyle />
-      <Table
-        columns={columns}
-        data={tableData.filter(({ type }) => (tableFilter ? type === tableFilter : true))}
-        emptyDescription="There are no offerings at the moment"
-        emptyLogo={
-          <>
-            <AuctionsIcon height={36} width={36} /> <OTCIcon height={36} width={36} />
-          </>
-        }
-        legendIcons={
-          <>
-            <AllButton
-              active={tableFilter === TABLE_FILTERS.ALL}
-              onClick={() => setTableFilter(TABLE_FILTERS.ALL)}
-            />
-            <DividerIcon />
-            <AuctionButtonOutline
-              active={tableFilter === TABLE_FILTERS.AUCTION}
-              onClick={() => setTableFilter(TABLE_FILTERS.AUCTION)}
-              plural
-            />
-            <OTCButtonOutline
-              active={tableFilter === TABLE_FILTERS.OTC}
-              onClick={() => setTableFilter(TABLE_FILTERS.OTC)}
-            />
-          </>
-        }
-        loading={loading}
-        name="offerings"
-        title="Offerings"
-      />
+      <ErrorBoundaryWithFallback>
+        <Table
+          columns={columns}
+          data={tableData.filter(({ type }) => (tableFilter ? type === tableFilter : true))}
+          emptyDescription="There are no offerings at the moment"
+          emptyLogo={
+            <>
+              <AuctionsIcon height={36} width={36} /> <OTCIcon height={36} width={36} />
+            </>
+          }
+          legendIcons={
+            <>
+              <AllButton
+                active={tableFilter === TABLE_FILTERS.ALL}
+                onClick={() => setTableFilter(TABLE_FILTERS.ALL)}
+              />
+              <DividerIcon />
+              <AuctionButtonOutline
+                active={tableFilter === TABLE_FILTERS.AUCTION}
+                onClick={() => setTableFilter(TABLE_FILTERS.AUCTION)}
+                plural
+              />
+              <OTCButtonOutline
+                active={tableFilter === TABLE_FILTERS.OTC}
+                onClick={() => setTableFilter(TABLE_FILTERS.OTC)}
+              />
+            </>
+          }
+          loading={loading}
+          name="offerings"
+          title="Offerings"
+        />
+      </ErrorBoundaryWithFallback>
     </>
   )
 }

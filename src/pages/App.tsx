@@ -1,10 +1,13 @@
 import React, { Suspense } from 'react'
 import styled from 'styled-components'
 
+import * as Sentry from '@sentry/react'
+import { BrowserTracing } from '@sentry/tracing'
 import ReactTooltip from 'react-tooltip'
 
 import ChainWarning from '../components/ChainWarning'
 import ScrollToTop from '../components/ScrollToTop'
+import { ErrorBoundaryWithFallback } from '../components/common/ErrorAndReload'
 import { Footer } from '../components/layout/Footer'
 import { Header } from '../components/layout/Header'
 import Routes from '../components/navigation/Routes/Routes'
@@ -19,6 +22,12 @@ export const InnerApp = styled(InnerContainer)`
     margin-top: -130px;
   }
 `
+Sentry.init({
+  dsn: process.env.REACT_APP_SENTRY_DSN,
+  integrations: [new BrowserTracing()],
+
+  tracesSampleRate: 1,
+})
 
 const App: React.FC = () => (
   <Suspense fallback={null}>
@@ -34,11 +43,13 @@ const App: React.FC = () => (
         effect="solid"
         textColor="#fff"
       />
-      <InnerApp className="fullPage">
-        <Web3ReactManager>
-          <Routes />
-        </Web3ReactManager>
-      </InnerApp>
+      <ErrorBoundaryWithFallback>      
+        <InnerApp className="fullPage">
+          <Web3ReactManager>
+            <Routes />
+          </Web3ReactManager>
+        </InnerApp>
+      </ErrorBoundaryWithFallback>
       <Footer />
     </MainWrapper>
   </Suspense>

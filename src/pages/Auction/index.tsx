@@ -9,6 +9,7 @@ import { ReactComponent as ConvertIcon } from '../../assets/svg/convert.svg'
 import { ReactComponent as OTCIcon } from '../../assets/svg/otc.svg'
 import { ReactComponent as SimpleIcon } from '../../assets/svg/simple.svg'
 import AuctionBody from '../../components/auction/AuctionBody'
+import { ErrorBoundaryWithFallback } from '../../components/common/ErrorAndReload'
 import WarningModal from '../../components/modals/WarningModal'
 import TokenLogo from '../../components/token/TokenLogo'
 import { useAuction } from '../../hooks/useAuction'
@@ -156,37 +157,38 @@ const AuctionPage = ({ data: { auctionIdentifier, derivedAuctionInfo, graphInfo 
   return (
     <>
       <GlobalStyle />
-
-      {loading && <LoadingTwoGrid />}
-      {!loading && (
-        <>
-          <div className="flex flex-wrap justify-center content-center items-end py-2 md:justify-between">
-            <div className="flex flex-wrap items-center space-x-6">
-              <div className="hidden md:flex">
-                <TokenLogo
-                  size="60px"
-                  square
-                  token={{
-                    address: graphInfo?.bond.id,
-                    symbol: graphInfo?.bond.name,
-                  }}
-                />
+      <ErrorBoundaryWithFallback>
+        {loading && <LoadingTwoGrid />}
+        {!loading && (
+          <>
+            <div className="flex flex-wrap justify-center content-center items-end py-2 md:justify-between">
+              <div className="flex flex-wrap items-center space-x-6">
+                <div className="hidden md:flex">
+                  <TokenLogo
+                    size="60px"
+                    square
+                    token={{
+                      address: graphInfo?.bond.id,
+                      symbol: graphInfo?.bond.name,
+                    }}
+                  />
+                </div>
+                <div>
+                  <h1 className="text-3xl text-white capitalize">{graphInfo?.bond.name} Auction</h1>
+                  <p className="text-2sm text-[#E0E0E0]">{graphInfo?.bond.symbol}</p>
+                </div>
               </div>
-              <div>
-                <h1 className="text-3xl text-white capitalize">{graphInfo?.bond.name} Auction</h1>
-                <p className="text-2sm text-[#E0E0E0]">{graphInfo?.bond.symbol}</p>
-              </div>
+              <AuctionButtonOutline />
             </div>
-            <AuctionButtonOutline />
-          </div>
 
-          <AuctionBody
-            auctionIdentifier={auctionIdentifier}
-            derivedAuctionInfo={derivedAuctionInfo}
-            graphInfo={graphInfo}
-          />
-        </>
-      )}
+            <AuctionBody
+              auctionIdentifier={auctionIdentifier}
+              derivedAuctionInfo={derivedAuctionInfo}
+              graphInfo={graphInfo}
+            />
+          </>
+        )}
+      </ErrorBoundaryWithFallback>
     </>
   )
 }

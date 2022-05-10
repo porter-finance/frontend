@@ -9,6 +9,7 @@ import { ReactComponent as DividerIcon } from '../../assets/svg/divider.svg'
 import { ReactComponent as SimpleIcon } from '../../assets/svg/simple.svg'
 import { ActiveStatusPill } from '../../components/auction/OrderbookTable'
 import Table from '../../components/auctions/Table'
+import { ErrorBoundaryWithFallback } from '../../components/common/ErrorAndReload'
 import TokenLogo from '../../components/token/TokenLogo'
 import { BondInfo, useBonds } from '../../hooks/useBond'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
@@ -121,7 +122,7 @@ export const createTable = (data: BondInfo[]) => {
         : `1 ${paymentToken.symbol}`,
 
       status:
-        new Date() > new Date(maturityDate * 1000) ? (
+        new Date() >= new Date(maturityDate * 1000) ? (
           <ActiveStatusPill disabled dot={false} title="Matured" />
         ) : (
           <ActiveStatusPill dot={false} title="Active" />
@@ -130,7 +131,8 @@ export const createTable = (data: BondInfo[]) => {
         <span className="uppercase">
           {dayjs(maturityDate * 1000)
             .utc()
-            .format('DD MMM YYYY')}
+            .tz()
+            .format('ll')}
         </span>
       ),
 
@@ -151,37 +153,39 @@ const Products = () => {
   return (
     <>
       <GlobalStyle />
-      <Table
-        columns={columns()}
-        data={tableData}
-        emptyActionClass="!bg-[#532DBE]"
-        emptyDescription="There are no products at the moment"
-        emptyLogo={
-          <>
-            <ConvertIcon height={36} width={36} /> <SimpleIcon height={36} width={36} />
-          </>
-        }
-        legendIcons={
-          <>
-            <AllButton
-              active={tableFilter === TABLE_FILTERS.ALL}
-              onClick={() => setTableFilter(TABLE_FILTERS.ALL)}
-            />
-            <DividerIcon />
-            <ConvertButtonOutline
-              active={tableFilter === TABLE_FILTERS.CONVERT}
-              onClick={() => setTableFilter(TABLE_FILTERS.CONVERT)}
-            />
-            <SimpleButtonOutline
-              active={tableFilter === TABLE_FILTERS.SIMPLE}
-              onClick={() => setTableFilter(TABLE_FILTERS.SIMPLE)}
-            />
-          </>
-        }
-        loading={loading}
-        name="products"
-        title="Products"
-      />
+      <ErrorBoundaryWithFallback>
+        <Table
+          columns={columns()}
+          data={tableData}
+          emptyActionClass="!bg-[#532DBE]"
+          emptyDescription="There are no products at the moment"
+          emptyLogo={
+            <>
+              <ConvertIcon height={36} width={36} /> <SimpleIcon height={36} width={36} />
+            </>
+          }
+          legendIcons={
+            <>
+              <AllButton
+                active={tableFilter === TABLE_FILTERS.ALL}
+                onClick={() => setTableFilter(TABLE_FILTERS.ALL)}
+              />
+              <DividerIcon />
+              <ConvertButtonOutline
+                active={tableFilter === TABLE_FILTERS.CONVERT}
+                onClick={() => setTableFilter(TABLE_FILTERS.CONVERT)}
+              />
+              <SimpleButtonOutline
+                active={tableFilter === TABLE_FILTERS.SIMPLE}
+                onClick={() => setTableFilter(TABLE_FILTERS.SIMPLE)}
+              />
+            </>
+          }
+          loading={loading}
+          name="products"
+          title="Products"
+        />
+      </ErrorBoundaryWithFallback>
     </>
   )
 }
