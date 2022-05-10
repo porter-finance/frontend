@@ -9,6 +9,7 @@ import { usePagination, useTable } from 'react-table'
 import { useActiveWeb3React } from '../../../hooks'
 import { useAuctionBids } from '../../../hooks/useAuctionBids'
 import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
+import { BidInfo } from '../../../hooks/useParticipatingAuctionBids'
 import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { OrderStatus } from '../../../state/orders/reducer'
 import { getExplorerLink, getTokenDisplay } from '../../../utils'
@@ -112,22 +113,19 @@ export const TableDesign = ({
               key={i}
               {...headerGroup.getHeaderGroupProps()}
             >
-              {headerGroup.headers.map(
-                (column, i) =>
-                  column.render('show') && (
-                    <th
-                      className="text-xs font-normal tracking-widest text-[#696969] bg-base-100"
-                      key={i}
-                      {...column.getHeaderProps()}
-                    >
-                      {column.tooltip ? (
-                        <Tooltip left={column.Header} tip={column.tooltip} />
-                      ) : (
-                        column.render('Header')
-                      )}
-                    </th>
-                  ),
-              )}
+              {headerGroup.headers.map((column, i) => (
+                <th
+                  className="text-xs font-normal tracking-widest text-[#696969] bg-transparent"
+                  key={i}
+                  {...column.getHeaderProps()}
+                >
+                  {column.tooltip ? (
+                    <Tooltip left={column.Header} tip={column.tooltip} />
+                  ) : (
+                    column.render('Header')
+                  )}
+                </th>
+              ))}
             </tr>
           ))}
         </thead>

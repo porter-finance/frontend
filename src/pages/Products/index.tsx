@@ -26,7 +26,6 @@ export const columns = (showAmount = false) => [
     Header: 'Offering',
     accessor: 'bond',
     align: 'flex-start',
-    show: true,
     style: { height: '100%', justifyContent: 'center' },
     filter: 'searchInTags',
   },
@@ -34,7 +33,7 @@ export const columns = (showAmount = false) => [
     Header: 'Amount issued',
     accessor: 'amount',
     align: 'flex-start',
-    show: showAmount,
+    isVisible: !showAmount,
     style: {},
     filter: 'searchInTags',
   },
@@ -49,7 +48,6 @@ export const columns = (showAmount = false) => [
     Header: 'Maturity Date',
     accessor: 'maturityDate',
     align: 'flex-start',
-    show: true,
     style: {},
     filter: 'searchInTags',
   },
@@ -57,7 +55,6 @@ export const columns = (showAmount = false) => [
     Header: 'Value at maturity',
     accessor: 'maturityValue',
     align: 'flex-start',
-    show: true,
     style: {},
     filter: 'searchInTags',
   },
@@ -65,16 +62,8 @@ export const columns = (showAmount = false) => [
     Header: 'Status',
     accessor: 'status',
     align: 'flex-start',
-    show: true,
     style: {},
     filter: 'searchInTags',
-  },
-  {
-    Header: '',
-    accessor: 'url',
-    align: '',
-    show: false,
-    style: {},
   },
 ]
 
@@ -87,11 +76,7 @@ export const createTable = (data: BondInfo[]) => {
       search: JSON.stringify(bond),
       type,
       issuanceDate: (
-        <span className="uppercase">
-          {dayjs(createdAt * 1000)
-            .utc()
-            .format('DD MMM YYYY')}
-        </span>
+        <span className="uppercase">{dayjs(createdAt).utc().format('DD MMM YYYY')}</span>
       ),
       bond: (
         <div className="flex flex-row items-center space-x-4">

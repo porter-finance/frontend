@@ -186,22 +186,19 @@ const Table = ({
                 key={i}
                 {...headerGroup.getHeaderGroupProps()}
               >
-                {headerGroup.headers.map(
-                  (column, i) =>
-                    column.render('show') && (
-                      <th
-                        className="text-xs font-normal tracking-widest text-[#696969] bg-base-100"
-                        key={i}
-                        {...column.getHeaderProps()}
-                      >
-                        {column.tooltip ? (
-                          <Tooltip left={column.Header} tip={column.tooltip} />
-                        ) : (
-                          column.render('Header')
-                        )}
-                      </th>
-                    ),
-                )}
+                {headerGroup.headers.map((column, i) => (
+                  <th
+                    className="text-xs font-normal tracking-widest text-[#696969] bg-base-100"
+                    key={i}
+                    {...column.getHeaderProps()}
+                  >
+                    {column.tooltip ? (
+                      <Tooltip left={column.Header} tip={column.tooltip} />
+                    ) : (
+                      column.render('Header')
+                    )}
+                  </th>
+                ))}
               </tr>
             ))}
           </thead>
@@ -246,15 +243,11 @@ const Table = ({
                     onClick={() => navigate(row.original.url)}
                     {...row.getRowProps()}
                   >
-                    {row.cells.map((cell, i) => {
-                      return (
-                        cell.render('show') && (
-                          <td className="bg-transparent" key={i} {...cell.getCellProps()}>
-                            {cell.render('Cell')}
-                          </td>
-                        )
-                      )
-                    })}
+                    {row.cells.map((cell, i) => (
+                      <td className="bg-transparent" key={i} {...cell.getCellProps()}>
+                        {cell.render('Cell')}
+                      </td>
+                    ))}
                   </tr>
                 )
               })}
