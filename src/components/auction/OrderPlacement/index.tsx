@@ -354,6 +354,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                   <ActionButton disabled={disablePlaceOrder} onClick={handleShowConfirm}>
                     Review order
                   </ActionButton>
+
                   <ConfirmationDialog
                     actionText="Place order"
                     beforeDisplay={

@@ -71,13 +71,6 @@ export const XYSimpleBondChart = (props: XYBondChartProps): am4charts.XYChart =>
 
   const chart = am4core.create(chartElement, am4charts.XYChart)
 
-  chart.paddingTop = 20
-  chart.marginTop = 20
-  chart.paddingBottom = 0
-  chart.paddingLeft = 0
-  chart.paddingRight = 0
-  chart.marginBottom = 0
-
   // Create axes
   const priceAxis = chart.yAxes.push(new am4charts.ValueAxis())
   priceAxis.renderer.grid.template.stroke = am4core.color(colors.grey)
