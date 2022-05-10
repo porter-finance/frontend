@@ -42,19 +42,17 @@ export const calculateInterestRate = (
   price: number | string,
   maturityDate: number,
   display = true,
+  startDate = 0,
 ): string | number => {
-  if (!maturityDate) return '-'
-  if (!price) return '-'
-  const years = Math.abs(
-    dayjs()
-      .utc()
-      .diff(maturityDate * 1000, 'year', true),
-  )
+  if (!maturityDate || !price) return '-'
+  const startingDate = startDate ? dayjs(startDate * 1000) : dayjs().utc()
+  console.log({ startingDate })
+  const years = Math.abs(startingDate.diff(maturityDate * 1000, 'year', true))
   let interestRate = (1 - Number(price)) / Number(price) / years
   interestRate = isNaN(interestRate) || interestRate === Infinity ? 0 : interestRate
 
   if (display) {
-    return !interestRate ? '-' : `${round(interestRate * 100, 1).toLocaleString()}%`
+    return !interestRate ? '-' : `${(interestRate * 100).toLocaleString()}%`
   }
 
   return interestRate
