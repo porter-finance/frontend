@@ -11,7 +11,63 @@ import { useBondsPortfolio } from '../../hooks/useBondsPortfolio'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import { AllButton, ConvertButtonOutline, SimpleButtonOutline } from '../Auction'
-import { columns, createTable } from '../Products'
+import { createTable } from '../Products'
+
+const columns = [
+  {
+    Header: 'Bond',
+    accessor: 'bond',
+    align: 'flex-start',
+    style: { height: '100%', justifyContent: 'center' },
+    filter: 'searchInTags',
+  },
+  {
+    Header: 'Amount',
+    accessor: 'amount',
+    align: 'flex-start',
+    style: {},
+    filter: 'searchInTags',
+  },
+  {
+    Header: 'Cost',
+    accessor: 'cost',
+    align: 'flex-start',
+    tooltip:
+      'How much you paid for your bonds. To get this number, we assume you purchased the bonds through the Porter Finance platform. If you purchased them off the platform through an OTC deal or AMM, this number may be incorrect.',
+    style: {},
+    filter: 'searchInTags',
+  },
+  {
+    Header: 'Value at maturity',
+    accessor: 'maturityValue',
+    align: 'flex-start',
+    tooltip:
+      'The amount your bonds are redeemable for at the maturity date assuming a default does not occur.',
+    style: {},
+    filter: 'searchInTags',
+  },
+  {
+    Header: 'Maturity Date',
+    accessor: 'maturityDate',
+    align: 'flex-start',
+    style: {},
+    filter: 'searchInTags',
+  },
+  {
+    Header: 'Fixed APR',
+    accessor: 'fixedAPR',
+    align: 'flex-start',
+    style: {},
+    filter: 'searchInTags',
+  },
+  {
+    Header: 'Status',
+    accessor: 'status',
+    align: 'flex-start',
+    style: {},
+    filter: 'searchInTags',
+  },
+]
 
 const GlobalStyle = createGlobalStyle`
   .siteHeader {
@@ -55,7 +111,7 @@ const Portfolio = () => {
     <>
       <GlobalStyle />
       <Table
-        columns={columns(true)}
+        columns={columns}
         data={tableData}
         emptyActionClick={emptyActionClick}
         emptyActionText={emptyActionText}

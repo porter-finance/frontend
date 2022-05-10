@@ -90,6 +90,9 @@ export const createTable = (data: BondInfo[]) => {
       issuanceDate: (
         <span className="uppercase">{dayjs(createdAt).utc().format('DD MMM YYYY')}</span>
       ),
+      // TODO ??
+      cost: '-',
+      fixedAPR: '-',
       bond: (
         <div className="flex flex-row items-center space-x-4">
           <div className="flex">
@@ -113,7 +116,6 @@ export const createTable = (data: BondInfo[]) => {
       ),
 
       amount: maxSupply ? Number(formatUnits(maxSupply, decimals)).toLocaleString() : '-',
-      fixedAPY: '-',
       maturityValue: amount
         ? `${Number(formatUnits(amount, decimals)).toLocaleString()} ${paymentToken.symbol}`
         : `1 ${paymentToken.symbol}`,
