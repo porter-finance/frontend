@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { createGlobalStyle } from 'styled-components'
 
 import { formatUnits } from '@ethersproject/units'
+import * as Sentry from '@sentry/react'
 import { useWeb3React } from '@web3-react/core'
 import dayjs from 'dayjs'
 
@@ -11,9 +12,11 @@ import { ReactComponent as WalletIcon } from '../../assets/svg/wallet.svg'
 import BondGraphCard from '../../components/BondGraphCard/BondGraphCard'
 import Dev, { forceDevData } from '../../components/Dev'
 import { AuctionTimer } from '../../components/auction/AuctionTimer'
+import { ActionButton } from '../../components/auction/Claimer'
 import { ExtraDetailsItem } from '../../components/auction/ExtraDetailsItem'
 import { ActiveStatusPill, TableDesign } from '../../components/auction/OrderbookTable'
 import BondAction from '../../components/bond/BondAction'
+import { ErrorBoundaryWithFallback } from '../../components/common/ErrorAndReload'
 import { calculateInterestRate } from '../../components/form/InterestRateInputPanel'
 import WarningModal from '../../components/modals/WarningModal'
 import TokenLogo from '../../components/token/TokenLogo'
@@ -172,98 +175,102 @@ const BondDetail: React.FC = () => {
   return (
     <>
       <GlobalStyle />
-      <div className="flex flex-wrap justify-center content-center items-end py-2 md:justify-between">
-        <div className="flex flex-wrap items-center space-x-6">
-          <div className="hidden md:flex">
-            <TokenLogo
-              size="60px"
-              square
-              token={{
-                address: bond?.id,
-                symbol: bond?.name,
-              }}
-            />
+      <ErrorBoundaryWithFallback>
+        <div className="flex flex-wrap justify-center content-center items-end py-2 md:justify-between">
+          <div className="flex flex-wrap items-center space-x-6">
+            <div className="hidden md:flex">
+              <TokenLogo
+                size="60px"
+                square
+                token={{
+                  address: bond?.id,
+                  symbol: bond?.name,
+                }}
+              />
+            </div>
+            <div>
+              <h1 className="text-3xl text-white capitalize">{bond?.name.toLowerCase()}</h1>
+              <p className="text-sm text-blue-100">{bond?.symbol}</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-3xl text-white capitalize">{bond?.name.toLowerCase()}</h1>
-            <p className="text-sm text-blue-100">{bond?.symbol}</p>
-          </div>
+          <div>{isConvertBond ? <ConvertButtonOutline /> : <SimpleButtonOutline />}</div>
         </div>
-        <div>{isConvertBond ? <ConvertButtonOutline /> : <SimpleButtonOutline />}</div>
-      </div>
 
-      <TwoGridPage
-        leftChildren={
-          <>
-            <div className="card">
-              <div className="card-body">
-                <h2 className="flex flex-row justify-between items-center card-title">
-                  <span>Bond information</span>
-                  {!isMatured ? (
-                    <ActiveStatusPill />
-                  ) : (
-                    <ActiveStatusPill disabled title="Matured" />
-                  )}
-                </h2>
+        <TwoGridPage
+          leftChildren={
+            <>
+              <div className="card">
+                <div className="card-body">
+                  <h2 className="flex flex-row justify-between items-center card-title">
+                    <span>Bond information</span>
+                    {!isMatured ? (
+                      <ActiveStatusPill />
+                    ) : (
+                      <ActiveStatusPill disabled title="Matured" />
+                    )}
+                  </h2>
 
-                <AuctionTimer
-                  color="purple"
-                  endDate={bond?.maturityDate}
-                  endText="Maturity date"
-                  endTip="Date each bond can be redeemed for $1 assuming no default. Convertible bonds cannot be converted after this date."
-                  startDate={bond?.createdAt}
-                  startText="Issuance date"
-                  startTip="Time the bonds were minted."
-                  text="Time until maturity"
-                />
+                  <AuctionTimer
+                    color="purple"
+                    endDate={bond?.maturityDate}
+                    endText="Maturity date"
+                    endTip="Date each bond can be redeemed for $1 assuming no default. Convertible bonds cannot be converted after this date."
+                    startDate={bond?.createdAt}
+                    startText="Issuance date"
+                    startTip="Time the bonds were minted."
+                    text="Time until maturity"
+                  />
 
-                <div
-                  className={`grid gap-x-12 gap-y-8 grid-cols-1 pt-12 ${
-                    isConvertBond ? 'md:grid-cols-3' : 'md:grid-cols-4'
-                  }`}
-                >
-                  {extraDetails.map((item, index) => (
-                    <ExtraDetailsItem key={index} {...item} />
-                  ))}
+                  <div
+                    className={`grid gap-x-12 gap-y-8 grid-cols-1 pt-12 ${
+                      isConvertBond ? 'md:grid-cols-3' : 'md:grid-cols-4'
+                    }`}
+                  >
+                    {extraDetails.map((item, index) => (
+                      <ExtraDetailsItem key={index} {...item} />
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <BondGraphCard bond={bond} />
+              <BondGraphCard bond={bond} />
 
-            <div className="card">
-              <div className="card-body">
-                <h2 className="card-title">Your position</h2>
+              <div className="card">
+                <div className="card-body">
+                  <h2 className="card-title">Your position</h2>
 
-                {/* TODO: extract this component from everywhere, its a nice empty state */}
-                {!account && <EmptyConnectWallet />}
-                {account && !positionData?.length ? <EmptyConnected bondName={bond?.name} /> : null}
-                {account && positionData?.length ? (
-                  <TableDesign
-                    className="min-h-full"
-                    columns={positionColumns}
-                    data={positionData}
-                    hidePagination
-                    showConnect
-                  />
-                ) : null}
+                  {/* TODO: extract this component from everywhere, its a nice empty state */}
+                  {!account && <EmptyConnectWallet />}
+                  {account && !positionData?.length ? (
+                    <EmptyConnected bondName={bond?.name} />
+                  ) : null}
+                  {account && positionData?.length ? (
+                    <TableDesign
+                      className="min-h-full"
+                      columns={positionColumns}
+                      data={positionData}
+                      hidePagination
+                      showConnect
+                    />
+                  ) : null}
+                </div>
               </div>
-            </div>
-          </>
-        }
-        rightChildren={
-          <>
-            {/* prettier-ignore */}
-            <Dev>{JSON.stringify({ isConvertBond, beforeMaturity: !isMatured, afterMaturity: isMatured, isRepaid: isPaid, isDefaulted, isPartiallyPaid, isWalletConnected: !!account }, null, 2)}</Dev>
-            {isConvertBond && isMatured && <ConvertError />}
-            {isConvertBond && !isMatured && <BondAction componentType={BondActions.Convert} />}
-            {(isPartiallyPaid || isPaid || isDefaulted || isMatured) && (
-              <BondAction componentType={BondActions.Redeem} />
-            )}
-            {!isMatured && !isPaid && !isDefaulted && <RedeemError />}
-          </>
-        }
-      />
+            </>
+          }
+          rightChildren={
+            <>
+              {/* prettier-ignore */}
+              <Dev>{JSON.stringify({ isConvertBond, beforeMaturity: !isMatured, afterMaturity: isMatured, isRepaid: isPaid, isDefaulted, isPartiallyPaid, isWalletConnected: !!account }, null, 2)}</Dev>
+              {isConvertBond && isMatured && <ConvertError />}
+              {isConvertBond && !isMatured && <BondAction componentType={BondActions.Convert} />}
+              {(isPartiallyPaid || isPaid || isDefaulted || isMatured) && (
+                <BondAction componentType={BondActions.Redeem} />
+              )}
+              {!isMatured && !isPaid && !isDefaulted && <RedeemError />}
+            </>
+          }
+        />
+      </ErrorBoundaryWithFallback>
     </>
   )
 }

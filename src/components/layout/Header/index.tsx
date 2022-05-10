@@ -87,7 +87,7 @@ const Menu = styled(Mainmenu)`
   }
 `
 
-const Error = styled.span`
+export const Error = styled.span`
   align-items: center;
   color: ${({ theme }) => theme.error};
   display: flex;
