@@ -137,7 +137,7 @@ const Claimer: React.FC<Props> = (props) => {
   }
 
   return (
-    <div className="border-[#404EEDA4] card card-bordered">
+    <div className="place-order-color card card-bordered">
       <div className="card-body">
         <h2 className="pb-4 border-b border-b-[#333333] card-title">Claim auction proceeds</h2>
 
@@ -187,7 +187,7 @@ const Claimer: React.FC<Props> = (props) => {
                 setShowConfirm(true)
               }}
             >
-              Claim proceeds
+              Review claim
             </ActionButton>
           )}
 
