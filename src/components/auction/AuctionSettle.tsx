@@ -42,7 +42,7 @@ const AuctionSettle = () => {
             <h1 className="text-xl font-medium text-center text-[#E0E0E0]">Are you sure?</h1>
             <p className="overflow-hidden text-[#D6D6D6]">
               It is the responsibility of the auctioneer to settle the auction. Therefore, we
-              recommed you wait for them to handle it. However, you have the option to settle the
+              recommend you wait for them to handle it. However, you have the option to settle the
               auction if you’d like.
             </p>
           </div>
