@@ -9,10 +9,10 @@ import { usePagination, useTable } from 'react-table'
 import { useActiveWeb3React } from '../../../hooks'
 import { useAuctionBids } from '../../../hooks/useAuctionBids'
 import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
-import { BidInfo } from '../../../hooks/useParticipatingAuctionBids'
 import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { OrderStatus } from '../../../state/orders/reducer'
 import { getExplorerLink, getTokenDisplay } from '../../../utils'
+import Tooltip from '../../common/Tooltip'
 import { calculateInterestRate } from '../../form/InterestRateInputPanel'
 import { orderStatusText } from '../OrdersTable'
 
@@ -118,7 +118,11 @@ export const TableDesign = ({
                   key={i}
                   {...column.getHeaderProps()}
                 >
-                  {column.render('Header')}
+                  {column.tooltip ? (
+                    <Tooltip left={column.Header} tip={column.tooltip} />
+                  ) : (
+                    column.render('Header')
+                  )}
                 </th>
               ))}
             </tr>

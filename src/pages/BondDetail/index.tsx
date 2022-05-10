@@ -85,6 +85,8 @@ const positionColumns = [
   {
     Header: 'Cost',
     accessor: 'cost',
+    tooltip:
+      'This is how much you paid for your bonds. To get this number, we assume you purchased the bonds through the Porter Finance platform. If you purchased them off the platform through an OTC deal or AMM, this number may be incorrect.',
   },
   {
     Header: 'Value at maturity',
