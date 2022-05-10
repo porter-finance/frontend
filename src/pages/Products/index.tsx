@@ -91,7 +91,6 @@ export const createTable = (data: BondInfo[]) => {
       issuanceDate: (
         <span className="uppercase">{dayjs(createdAt).utc().format('DD MMM YYYY')}</span>
       ),
-      // TODO ??
       cost: clearingPrice
         ? `${Number(formatUnits(clearingPrice * amount, decimals)).toLocaleString()} ${
             paymentToken.symbol
