@@ -69,7 +69,7 @@ const TooltipElement = ({
   left,
   tip,
 }: {
-  tip: ReactElement | string
+  tip?: ReactElement | string
   left?: ReactElement | string
 }) => {
   const tipEl = tip && (
