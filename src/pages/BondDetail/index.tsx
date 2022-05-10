@@ -83,21 +83,21 @@ const positionColumns = [
     accessor: 'amount',
   },
   {
-    Header: 'Issuance price',
-    accessor: 'price',
+    Header: 'Cost',
+    accessor: 'cost',
   },
   {
-    Header: 'Fixed APR',
-    tooltip: 'This APR is calculated using the closing price of the initial offering.',
-    accessor: 'fixedAPR',
+    Header: 'Value at maturity',
+    accessor: 'maturityValue',
   },
   {
     Header: 'Maturity Date',
     accessor: 'maturityDate',
   },
   {
-    Header: 'Value at maturity',
-    accessor: 'maturityValue',
+    Header: 'Fixed APR',
+    tooltip: 'This APR is calculated using the closing price of the initial offering.',
+    accessor: 'fixedAPR',
   },
 ]
 
@@ -129,19 +129,18 @@ const BondDetail: React.FC = () => {
 
   let positionData
   if (bond && Array.isArray(bond.tokenBalances) && bond.tokenBalances.length) {
-    const amount = Number(
-      formatUnits(bond?.tokenBalances[0].amount, bond.decimals),
-    ).toLocaleString()
+    const amount = Number(formatUnits(bond?.tokenBalances[0].amount, bond.decimals))
     const fixedAPR = calculateInterestRate(bond.clearingPrice, bond.maturityDate)
     positionData = [
       {
-        amount,
+        amount: amount.toLocaleString(),
+        cost: (bond?.clearingPrice * amount).toLocaleString() || '-',
         price: bond?.clearingPrice ? bond?.clearingPrice : '-',
         fixedAPR,
         maturityDate: dayjs(bond.maturityDate * 1000)
           .utc()
           .format('DD MMM YYYY'),
-        maturityValue: amount,
+        maturityValue: amount.toLocaleString(),
       },
     ]
   }
