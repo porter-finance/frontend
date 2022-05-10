@@ -40,6 +40,8 @@ const columns = [
   {
     Header: 'Value at maturity',
     accessor: 'maturityValue',
+    tooltip:
+      'This is the amount your bonds are redeemable for at the maturity date assuming a default does not occur.',
     align: 'flex-start',
     style: {},
     filter: 'searchInTags',
