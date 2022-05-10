@@ -46,6 +46,7 @@ import InterestRateInputPanel, { getReviewData } from '../../form/InterestRateIn
 import PriceInputPanel from '../../form/PriceInputPanel'
 import ConfirmationDialog, { ReviewOrder } from '../../modals/ConfirmationDialog'
 import WarningModal from '../../modals/WarningModal'
+import Modal from '../../modals/common/Modal'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { EmptyContentText } from '../../pureStyledComponents/EmptyContent'
 import { InfoType } from '../../pureStyledComponents/FieldRow'
@@ -97,7 +98,8 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const apolloClient = useApolloClient()
   const { data: graphInfo } = useAuction(auctionIdentifier?.auctionId)
   const location = useGeoLocation()
-  const disabledCountry = process.env.NODE_ENV !== 'development' && location?.country === 'US'
+  const disabledCountry = location?.country === 'US'
+  const [showCountry, setShowCountryDisabledModal] = useState(false)
   const { chainId } = auctionIdentifier
   const { account, chainId: chainIdFromWeb3 } = useActiveWeb3React()
   const orders: OrderState | undefined = useOrderState()
@@ -161,6 +163,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const notApproved = approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING
 
   const handleShowConfirm = () => {
+    setShowCountryDisabledModal(false)
     if (chainId !== chainIdFromWeb3) {
       setShowWarningWrongChainId(true)
       return
@@ -213,8 +216,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   )
 
   const disablePlaceOrder =
-    disabledCountry ||
-    ((errorAmount ||
+    (errorAmount ||
       errorPrice ||
       errorBidSize ||
       showWarning ||
@@ -222,7 +224,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
       showConfirm ||
       sellAmount === '' ||
       price === '') &&
-      true)
+    true
 
   const isWrappable =
     biddingTokenBalance &&
@@ -351,9 +353,39 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                 </>
               ) : (
                 <>
-                  <ActionButton disabled={disablePlaceOrder} onClick={handleShowConfirm}>
+                  <ActionButton
+                    disabled={disablePlaceOrder}
+                    onClick={() =>
+                      disabledCountry ? setShowCountryDisabledModal(true) : handleShowConfirm()
+                    }
+                  >
                     Review order
                   </ActionButton>
+
+                  <Modal isOpen={showCountry} onDismiss={setShowCountryDisabledModal}>
+                    <div className="mt-10 space-y-6 text-center">
+                      <h1 className="text-xl text-[#E0E0E0]">Access restriction warning</h1>
+
+                      <p className="overflow-hidden text-[#D6D6D6]">
+                        It looks like you are trying to purchase bonds from a restricted territory
+                        or are using a VPN that shows your location as a restricted territory
+                        (including the United States) or are using Safari Privacy Services
+                      </p>
+
+                      <p className="overflow-hidden text-[#D6D6D6]">
+                        We respect your privacy, but, please change browser Privacy Services or
+                        change your VPN settings to correspond with your real location.
+                      </p>
+
+                      <ActionButton
+                        aria-label="Continue"
+                        className="!mt-10 btn-block"
+                        onClick={handleShowConfirm}
+                      >
+                        Got it
+                      </ActionButton>
+                    </div>
+                  </Modal>
 
                   <ConfirmationDialog
                     actionText="Place order"
