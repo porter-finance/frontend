@@ -139,7 +139,7 @@ const Claimer: React.FC<Props> = (props) => {
   return (
     <div className="border-[#404EEDA4] card card-bordered">
       <div className="card-body">
-        <h2 className="pb-4 border-b border-b-[#333333] card-title">Claim proceeds</h2>
+        <h2 className="pb-4 border-b border-b-[#333333] card-title">Claim auction proceeds</h2>
 
         <Wrapper>
           <div className="mb-7 space-y-3">
@@ -152,23 +152,31 @@ const Claimer: React.FC<Props> = (props) => {
               <TokenPill token={biddingToken} />
             </TokenItem>
 
-            {graphInfo?.bondsSold > 0 && (
-              <TokenItem>
-                <div className="text-base text-white">
-                  {claimableBonds
-                    ? `${Number(claimableBonds.toSignificant(6)).toLocaleString()}`
-                    : `-`}
-                </div>
-                <TokenPill token={bondToken} />
-              </TokenItem>
-            )}
-
             <FieldRowLabelStyled>
               <Tooltip
-                left="Amount of assets to receive"
+                left="Amount of bidding funds to claim"
                 tip="Amount of assets you can claim. If there are no bonds claimable, your order price was not competitive."
               />
             </FieldRowLabelStyled>
+
+            {graphInfo?.bondsSold > 0 && (
+              <>
+                <TokenItem>
+                  <div className="text-base text-white">
+                    {claimableBonds
+                      ? `${Number(claimableBonds.toSignificant(6)).toLocaleString()}`
+                      : `-`}
+                  </div>
+                  <TokenPill token={bondToken} />
+                </TokenItem>
+                <FieldRowLabelStyled>
+                  <Tooltip
+                    left="Amount of bond funds to claim"
+                    tip="Amount of assets you can claim. If there are no bonds claimable, your order price was not competitive."
+                  />
+                </FieldRowLabelStyled>
+              </>
+            )}
           </div>
           {!account ? (
             <ActionButton onClick={toggleWalletModal}>Connect wallet</ActionButton>
