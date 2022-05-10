@@ -83,7 +83,8 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
         'Date each bond can be redeemed for $1 assuming no default. Convertible bonds cannot be converted after this date.',
       value: `${dayjs(bond?.maturityDate * 1000)
         .utc()
-        .format('DD MMM YYYY')}`.toUpperCase(),
+        .tz()
+        .format('ll')}`.toUpperCase(),
     },
     {
       title: 'Collateralization ratio',
