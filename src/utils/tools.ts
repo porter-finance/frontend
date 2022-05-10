@@ -73,13 +73,20 @@ export const setLocale = () => {
     navigator.languages && navigator.languages.length
       ? navigator.languages[0]
       : navigator.language || 'en'
+
   if (!SUPPORTED_LOCALES.includes(locale) && locale.includes('-')) {
     locale = locale.split('-')[0]
     if (!SUPPORTED_LOCALES.includes(locale)) {
       locale = 'en'
     }
   }
-  import(`dayjs/locale/${locale}.js`).then(() => {
-    dayjs.locale(locale)
-  })
+
+  const localeFile = `dayjs/locale/${locale}.js`
+  import(localeFile)
+    .then(() => {
+      dayjs.locale(locale)
+    })
+    .catch(() => {
+      console.error(`Could not find ${localeFile} locale file. Defaulting to en.`)
+    })
 }
