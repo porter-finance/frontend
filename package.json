@@ -112,6 +112,8 @@
     "@reach/dialog": "^0.17.0",
     "@reach/portal": "^0.17.0",
     "@reduxjs/toolkit": "^1.8.0",
+    "@sentry/react": "^6.19.7",
+    "@sentry/tracing": "^6.19.7",
     "@stitches/react": "^1.2.7",
     "@types/react-router-hash-link": "^2.4.5",
     "@uniswap/sdk": "^3.0.3",
