@@ -46,7 +46,7 @@ import InterestRateInputPanel, { getReviewData } from '../../form/InterestRateIn
 import PriceInputPanel from '../../form/PriceInputPanel'
 import ConfirmationDialog, { ReviewOrder } from '../../modals/ConfirmationDialog'
 import WarningModal from '../../modals/WarningModal'
-import Modal from '../../modals/common/Modal'
+import Modal, { DialogClose } from '../../modals/common/Modal'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { EmptyContentText } from '../../pureStyledComponents/EmptyContent'
 import { InfoType } from '../../pureStyledComponents/FieldRow'
@@ -98,7 +98,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const apolloClient = useApolloClient()
   const { data: graphInfo } = useAuction(auctionIdentifier?.auctionId)
   const location = useGeoLocation()
-  const disabledCountry = location?.country === 'US'
+  const disabledCountry = process.env.NODE_ENV !== 'development' && location?.country === 'US'
   const [showCountry, setShowCountryDisabledModal] = useState(false)
   const { chainId } = auctionIdentifier
   const { account, chainId: chainIdFromWeb3 } = useActiveWeb3React()
@@ -373,17 +373,23 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                       </p>
 
                       <p className="overflow-hidden text-[#D6D6D6]">
-                        We respect your privacy, but, please change browser Privacy Services or
-                        change your VPN settings to correspond with your real location.
+                        We respect your privacy, but, please{' '}
+                        <a
+                          className="text-[#6CADFB] hover:underline"
+                          href="https://nordvpn.com/blog/change-location-google-chrome/"
+                          rel="noreferrer"
+                          target="_blank"
+                        >
+                          change browser Privacy Services or change your VPN settings
+                        </a>{' '}
+                        to correspond with your real location.
                       </p>
 
-                      <ActionButton
-                        aria-label="Continue"
-                        className="!mt-10 btn-block"
-                        onClick={handleShowConfirm}
-                      >
-                        Got it
-                      </ActionButton>
+                      <DialogClose asChild>
+                        <ActionButton aria-label="Continue" className="!mt-10 btn-block">
+                          Got it
+                        </ActionButton>
+                      </DialogClose>
                     </div>
                   </Modal>
 
