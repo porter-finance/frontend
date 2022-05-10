@@ -126,7 +126,7 @@ export const createTable = (data: BondInfo[]) => {
         : `1 ${paymentToken.symbol}`,
 
       status:
-        new Date() > new Date(maturityDate * 1000) ? (
+        new Date() >= new Date(maturityDate * 1000) ? (
           <ActiveStatusPill disabled dot={false} title="Matured" />
         ) : (
           <ActiveStatusPill dot={false} title="Active" />
@@ -135,7 +135,8 @@ export const createTable = (data: BondInfo[]) => {
         <span className="uppercase">
           {dayjs(maturityDate * 1000)
             .utc()
-            .format('DD MMM YYYY')}
+            .tz()
+            .format('ll')}
         </span>
       ),
 

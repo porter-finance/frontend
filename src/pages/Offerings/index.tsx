@@ -103,7 +103,8 @@ const Offerings = () => {
         <span className="uppercase">
           {dayjs(auction?.bond?.maturityDate * 1000)
             .utc()
-            .format('DD MMM YYYY')}
+            .tz()
+            .format('ll')}
         </span>
       ),
       offering: (
