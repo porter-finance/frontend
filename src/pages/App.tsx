@@ -1,9 +1,12 @@
 import React, { Suspense } from 'react'
 import styled from 'styled-components'
 
+import * as Sentry from '@sentry/react'
+import { BrowserTracing } from '@sentry/tracing'
 import ReactTooltip from 'react-tooltip'
 
 import ScrollToTop from '../components/ScrollToTop'
+import { ErrorBoundaryWithFallback } from '../components/common/ErrorAndReload'
 import { TopDisclaimer } from '../components/common/TopDisclaimer'
 import { Footer } from '../components/layout/Footer'
 import { Header } from '../components/layout/Header'
@@ -21,6 +24,12 @@ export const InnerApp = styled(InnerContainer)`
     margin-top: -130px;
   }
 `
+Sentry.init({
+  dsn: process.env.REACT_APP_SENTRY_DSN,
+  integrations: [new BrowserTracing()],
+
+  tracesSampleRate: 1,
+})
 
 const App: React.FC = () => {
   const { showTopWarning } = useShowTopWarning()
@@ -39,11 +48,13 @@ const App: React.FC = () => {
           textColor="#fff"
         />
         {showTopWarning && <TopDisclaimer />}
-        <InnerApp className="fullPage">
-          <Web3ReactManager>
-            <Routes />
-          </Web3ReactManager>
-        </InnerApp>
+        <ErrorBoundaryWithFallback>
+          <InnerApp className="fullPage">
+            <Web3ReactManager>
+              <Routes />
+            </Web3ReactManager>
+          </InnerApp>
+        </ErrorBoundaryWithFallback>
         <Footer />
       </MainWrapper>
     </Suspense>
