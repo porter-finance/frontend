@@ -6,6 +6,7 @@ import { ReactComponent as ConnectIcon } from '../../assets/svg/connect.svg'
 import { ReactComponent as DividerIcon } from '../../assets/svg/divider.svg'
 import { ReactComponent as WalletIcon } from '../../assets/svg/wallet.svg'
 import Table from '../../components/auctions/Table'
+import { ErrorBoundaryWithFallback } from '../../components/common/ErrorAndReload'
 import { useActiveWeb3React } from '../../hooks'
 import { useBondsPortfolio } from '../../hooks/useBondsPortfolio'
 import { useWalletModalToggle } from '../../state/application/hooks'
@@ -54,34 +55,36 @@ const Portfolio = () => {
   return (
     <>
       <GlobalStyle />
-      <Table
-        columns={columns(true)}
-        data={tableData}
-        emptyActionClick={emptyActionClick}
-        emptyActionText={emptyActionText}
-        emptyDescription={emptyDescription}
-        emptyLogo={emptyLogo}
-        legendIcons={
-          <>
-            <AllButton
-              active={tableFilter === TABLE_FILTERS.ALL}
-              onClick={() => setTableFilter(TABLE_FILTERS.ALL)}
-            />
-            <DividerIcon />
-            <ConvertButtonOutline
-              active={tableFilter === TABLE_FILTERS.CONVERT}
-              onClick={() => setTableFilter(TABLE_FILTERS.CONVERT)}
-            />
-            <SimpleButtonOutline
-              active={tableFilter === TABLE_FILTERS.SIMPLE}
-              onClick={() => setTableFilter(TABLE_FILTERS.SIMPLE)}
-            />
-          </>
-        }
-        loading={loading}
-        name="products"
-        title="Portfolio"
-      />
+      <ErrorBoundaryWithFallback>
+        <Table
+          columns={columns(true)}
+          data={tableData}
+          emptyActionClick={emptyActionClick}
+          emptyActionText={emptyActionText}
+          emptyDescription={emptyDescription}
+          emptyLogo={emptyLogo}
+          legendIcons={
+            <>
+              <AllButton
+                active={tableFilter === TABLE_FILTERS.ALL}
+                onClick={() => setTableFilter(TABLE_FILTERS.ALL)}
+              />
+              <DividerIcon />
+              <ConvertButtonOutline
+                active={tableFilter === TABLE_FILTERS.CONVERT}
+                onClick={() => setTableFilter(TABLE_FILTERS.CONVERT)}
+              />
+              <SimpleButtonOutline
+                active={tableFilter === TABLE_FILTERS.SIMPLE}
+                onClick={() => setTableFilter(TABLE_FILTERS.SIMPLE)}
+              />
+            </>
+          }
+          loading={loading}
+          name="products"
+          title="Portfolio"
+        />
+      </ErrorBoundaryWithFallback>
     </>
   )
 }
