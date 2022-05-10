@@ -1,6 +1,8 @@
 import React, { Suspense } from 'react'
 import styled from 'styled-components'
 
+import * as Sentry from '@sentry/react'
+import { BrowserTracing } from '@sentry/tracing'
 import ReactTooltip from 'react-tooltip'
 
 import ScrollToTop from '../components/ScrollToTop'
@@ -21,6 +23,13 @@ export const InnerApp = styled(InnerContainer)`
     margin-top: -130px;
   }
 `
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  integrations: [new BrowserTracing()],
+
+  tracesSampleRate: 0.1,
+})
 
 const App: React.FC = () => {
   const { showTopWarning } = useShowTopWarning()
