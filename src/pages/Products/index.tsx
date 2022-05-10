@@ -23,7 +23,7 @@ const GlobalStyle = createGlobalStyle`
 
 export const columns = (showAmount = false) => [
   {
-    Header: 'Bond',
+    Header: 'Offering',
     accessor: 'bond',
     align: 'flex-start',
     show: true,
@@ -31,7 +31,7 @@ export const columns = (showAmount = false) => [
     filter: 'searchInTags',
   },
   {
-    Header: 'Amount',
+    Header: 'Amount issued',
     accessor: 'amount',
     align: 'flex-start',
     show: showAmount,
@@ -39,15 +39,12 @@ export const columns = (showAmount = false) => [
     filter: 'searchInTags',
   },
   {
-    Header: 'Fixed APR',
-    tooltip: 'This APR is calculated using the closing price of the initial offering.',
-    accessor: 'fixedAPR',
+    Header: 'Issuance date',
+    accessor: 'issuanceDate',
     align: 'flex-start',
-    show: true,
     style: {},
     filter: 'searchInTags',
   },
-
   {
     Header: 'Maturity Date',
     accessor: 'maturityDate',
@@ -83,22 +80,19 @@ export const columns = (showAmount = false) => [
 
 export const createTable = (data: BondInfo[]) => {
   return data.map((bond: BondInfo) => {
-    const {
-      amount,
-      collateralToken,
-      decimals,
-      id,
-      maturityDate,
-      name,
-      paymentToken,
-      symbol,
-      type,
-    } = bond
+    const { amount, createdAt, decimals, id, maturityDate, name, paymentToken, symbol, type } = bond
 
     return {
       id,
       search: JSON.stringify(bond),
       type,
+      issuanceDate: (
+        <span className="uppercase">
+          {dayjs(createdAt * 1000)
+            .utc()
+            .format('DD MMM YYYY')}
+        </span>
+      ),
       bond: (
         <div className="flex flex-row items-center space-x-4">
           <div className="flex">

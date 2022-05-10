@@ -105,26 +105,29 @@ export const TableDesign = ({
   return (
     <div className="min-h-[385px]" {...restProps}>
       <table className="table w-full h-full" {...getTableProps()}>
-        <thead>
+        <thead className="sticky top-0 z-[1]">
           {headerGroups.map((headerGroup, i) => (
             <tr
               className="border-b border-b-[#D5D5D519]"
               key={i}
               {...headerGroup.getHeaderGroupProps()}
             >
-              {headerGroup.headers.map((column, i) => (
-                <th
-                  className="text-xs font-normal tracking-widest text-[#696969] bg-transparent"
-                  key={i}
-                  {...column.getHeaderProps()}
-                >
-                  {column.tooltip ? (
-                    <Tooltip left={column.Header} tip={column.tooltip} />
-                  ) : (
-                    column.render('Header')
-                  )}
-                </th>
-              ))}
+              {headerGroup.headers.map(
+                (column, i) =>
+                  column.render('show') && (
+                    <th
+                      className="text-xs font-normal tracking-widest text-[#696969] bg-base-100"
+                      key={i}
+                      {...column.getHeaderProps()}
+                    >
+                      {column.tooltip ? (
+                        <Tooltip left={column.Header} tip={column.tooltip} />
+                      ) : (
+                        column.render('Header')
+                      )}
+                    </th>
+                  ),
+              )}
             </tr>
           ))}
         </thead>

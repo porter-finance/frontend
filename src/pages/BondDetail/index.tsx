@@ -131,7 +131,7 @@ const BondDetail: React.FC = () => {
 
   let positionData
   if (bond && Array.isArray(bond.tokenBalances) && bond.tokenBalances.length) {
-    const amount = Number(formatUnits(bond?.tokenBalances[0].amount, bond.decimals))
+    const amount = Number(formatUnits(bond?.tokenBalances[0].amount, bond.decimals)) || 0
     const fixedAPR = calculateInterestRate(bond.clearingPrice, bond.maturityDate)
     positionData = [
       {
@@ -142,7 +142,7 @@ const BondDetail: React.FC = () => {
         maturityDate: dayjs(bond.maturityDate * 1000)
           .utc()
           .format('DD MMM YYYY'),
-        maturityValue: amount.toLocaleString(),
+        maturityValue: amount ? amount.toLocaleString() : '-',
       },
     ]
   }
