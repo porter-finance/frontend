@@ -220,7 +220,6 @@ const Claimer: React.FC<Props> = (props) => {
             }
             finishedText="Auction proceeds claimed"
             loadingText="Claiming auction proceeds"
-            // onFinished={refetchBids}
             onOpenChange={setShowConfirm}
             open={showConfirm}
             pendingText="Confirm claiming in wallet"
