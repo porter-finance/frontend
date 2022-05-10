@@ -94,7 +94,6 @@ export const XYSimpleBondChart = (props: XYBondChartProps): am4charts.XYChart =>
   dateAxis.title.fill = am4core.color(colors.grey)
   dateAxis.renderer.labels.template.fill = am4core.color(colors.grey)
   dateAxis.tooltipDateFormat = 'MMM dd, YYYY'
-  dateAxis.dx = 70
   tooltipRender(dateAxis)
 
   const faceValue = chart.series.push(new am4charts.StepLineSeries())
