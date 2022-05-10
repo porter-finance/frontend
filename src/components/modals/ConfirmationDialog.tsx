@@ -253,7 +253,7 @@ const ConfirmationDialog = ({
   actionText: string
   onFinished?: () => void
   pendingText: string
-  title: string
+  title?: string
   loadingText: string
   finishedText: string
   beforeDisplay: ReactElement
@@ -306,9 +306,10 @@ const ConfirmationDialog = ({
     <Modal isOpen={open} onDismiss={onDismiss}>
       {!transactionError && (
         <>
-          {!showOrderTransactionComplete && !orderComplete && !showTokenTransactionComplete && (
-            <DialogTitle>{title}</DialogTitle>
-          )}
+          {title &&
+            !showOrderTransactionComplete &&
+            !orderComplete &&
+            !showTokenTransactionComplete && <DialogTitle>{title}</DialogTitle>}
 
           {unlock && !showOrderTransactionComplete && !orderComplete && (
             <TokenApproval
