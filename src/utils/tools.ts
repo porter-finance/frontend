@@ -81,12 +81,11 @@ export const setLocale = () => {
     }
   }
 
-  const localeFile = `dayjs/locale/${locale}.js`
-  import(localeFile)
+  import(`dayjs/locale/${locale}.js`)
     .then(() => {
       dayjs.locale(locale)
     })
     .catch(() => {
-      console.error(`Could not find ${localeFile} locale file. Defaulting to en.`)
+      console.error(`Could not find ${locale} locale file. Defaulting to en.`)
     })
 }
