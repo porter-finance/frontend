@@ -143,22 +143,6 @@ const Claimer: React.FC<Props> = (props) => {
 
         <Wrapper>
           <div className="mb-7 space-y-3">
-            <TokenItem>
-              <div className="text-base text-white">
-                {claimableBidFunds
-                  ? `${Number(claimableBidFunds.toSignificant(6)).toLocaleString()}`
-                  : `-`}
-              </div>
-              <TokenPill token={biddingToken} />
-            </TokenItem>
-
-            <FieldRowLabelStyled>
-              <Tooltip
-                left="Amount of bidding funds to claim"
-                tip="Amount of assets you can claim. If there are no bonds claimable, your order price was not competitive."
-              />
-            </FieldRowLabelStyled>
-
             {graphInfo?.bondsSold > 0 && (
               <>
                 <TokenItem>
@@ -177,6 +161,22 @@ const Claimer: React.FC<Props> = (props) => {
                 </FieldRowLabelStyled>
               </>
             )}
+
+            <TokenItem>
+              <div className="text-base text-white">
+                {claimableBidFunds
+                  ? `${Number(claimableBidFunds.toSignificant(6)).toLocaleString()}`
+                  : `-`}
+              </div>
+              <TokenPill token={biddingToken} />
+            </TokenItem>
+
+            <FieldRowLabelStyled>
+              <Tooltip
+                left="Amount of bidding funds to claim"
+                tip="Amount of assets you can claim. If there are no bonds claimable, your order price was not competitive."
+              />
+            </FieldRowLabelStyled>
           </div>
           {!account ? (
             <ActionButton onClick={toggleWalletModal}>Connect wallet</ActionButton>
