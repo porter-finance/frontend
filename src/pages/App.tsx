@@ -43,7 +43,7 @@ const App: React.FC = () => (
         effect="solid"
         textColor="#fff"
       />
-      <ErrorBoundaryWithFallback>      
+      <ErrorBoundaryWithFallback>
         <InnerApp className="fullPage">
           <Web3ReactManager>
             <Routes />
