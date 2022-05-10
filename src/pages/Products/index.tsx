@@ -32,6 +32,7 @@ export const columns = (showAmount = false) => [
   {
     Header: 'Amount issued',
     accessor: 'amount',
+    tooltip: 'The number of bonds the borrower issued.',
     align: 'flex-start',
     isVisible: !showAmount,
     style: {},
@@ -69,7 +70,18 @@ export const columns = (showAmount = false) => [
 
 export const createTable = (data: BondInfo[]) => {
   return data.map((bond: BondInfo) => {
-    const { amount, createdAt, decimals, id, maturityDate, name, paymentToken, symbol, type } = bond
+    const {
+      amount,
+      createdAt,
+      decimals,
+      id,
+      maturityDate,
+      maxSupply,
+      name,
+      paymentToken,
+      symbol,
+      type,
+    } = bond
 
     return {
       id,
@@ -100,7 +112,7 @@ export const createTable = (data: BondInfo[]) => {
         </div>
       ),
 
-      amount: amount ? Number(formatUnits(amount, decimals)).toLocaleString() : '-',
+      amount: maxSupply ? Number(formatUnits(maxSupply, decimals)).toLocaleString() : '-',
       fixedAPY: '-',
       maturityValue: amount
         ? `${Number(formatUnits(amount, decimals)).toLocaleString()} ${paymentToken.symbol}`

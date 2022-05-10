@@ -38,9 +38,8 @@ const columns = [
     filter: 'searchInTags',
   },
   {
-    Header: 'Fixed APR',
-    tooltip: 'This APR is calculated using the current price of the bond offering.',
-    accessor: 'fixedAPR',
+    Header: 'Value at maturity',
+    accessor: 'maturityValue',
     align: 'flex-start',
     style: {},
     filter: 'searchInTags',
@@ -53,8 +52,9 @@ const columns = [
     filter: 'searchInTags',
   },
   {
-    Header: 'Value at maturity',
-    accessor: 'maturityValue',
+    Header: 'Fixed APR',
+    tooltip: 'This APR is calculated using the current price of the bond offering.',
+    accessor: 'fixedAPR',
     align: 'flex-start',
     style: {},
     filter: 'searchInTags',
