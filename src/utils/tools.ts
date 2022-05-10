@@ -1,4 +1,7 @@
+import dayjs from 'dayjs'
+
 import { ChainId } from '.'
+import { SUPPORTED_LOCALES } from '../constants'
 
 export const truncateStringInTheMiddle = (
   str: string,
@@ -63,4 +66,20 @@ export const getChainName = (chainId: number) => {
     (chainId === ChainId.MATIC && 'Polygon') ||
     'Unknown Network'
   )
+}
+
+export const setLocale = () => {
+  let locale =
+    navigator.languages && navigator.languages.length
+      ? navigator.languages[0]
+      : navigator.language || 'en'
+  if (!SUPPORTED_LOCALES.includes(locale) && locale.includes('-')) {
+    locale = locale.split('-')[0]
+    if (!SUPPORTED_LOCALES.includes(locale)) {
+      locale = 'en'
+    }
+  }
+  import(`dayjs/locale/${locale}.js`).then(() => {
+    dayjs.locale(locale)
+  })
 }

@@ -3,17 +3,19 @@ import styled from 'styled-components'
 
 import dayjs from 'dayjs'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
+import localeData from 'dayjs/plugin/localeData'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
 import Countdown from 'react-countdown'
 
-import { calculateTimeProgress } from '../../../utils/tools'
+import { calculateTimeProgress, setLocale } from '../../../utils/tools'
 import Tooltip from '../../common/Tooltip'
 
 // Used for abbreviated named timezone offset 'z' when formatting.
 dayjs.extend(advancedFormat)
+dayjs.extend(localeData)
 // Used when formatting for localized formats
 dayjs.extend(localizedFormat)
 dayjs.extend(relativeTime)
@@ -22,6 +24,8 @@ dayjs.extend(timezone)
 dayjs.extend(utc)
 // Set default timezone based off of Intl.DateTimeFormat()
 dayjs.tz.guess()
+
+setLocale()
 
 const DateTitle = styled.div`
   font-weight: 400;
