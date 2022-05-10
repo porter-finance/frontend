@@ -10,7 +10,7 @@ import { ActionButton, GhostActionLink } from '../auction/Claimer'
 import { TokenInfo } from '../bond/BondAction'
 import Tooltip from '../common/Tooltip'
 import { unlockProps } from '../form/AmountInputPanel'
-import Modal, { DialogClose, DialogTitle } from './common/Modal'
+import Modal, { DialogTitle } from './common/Modal'
 
 const GeneralWarning = ({ text }) => (
   <div className="space-y-3">
@@ -293,6 +293,8 @@ const ConfirmationDialog = ({
   const waitingTransactionToComplete = showOrderTransactionComplete && !orderComplete
 
   const onDismiss = () => {
+    if (waitingTransactionToComplete) return false
+
     if (orderComplete) {
       setOrderComplete(false)
       setShowOrderTransactionComplete('')
@@ -301,7 +303,7 @@ const ConfirmationDialog = ({
   }
 
   return (
-    <Modal isOpen={open} onDismiss={!waitingTransactionToComplete && onDismiss}>
+    <Modal isOpen={open} onDismiss={onDismiss}>
       {!transactionError && (
         <>
           {!showOrderTransactionComplete && !orderComplete && !showTokenTransactionComplete && (
@@ -369,18 +371,9 @@ const ConfirmationDialog = ({
               )}
 
               {orderComplete && (
-                <DialogClose asChild>
-                  <ActionButton
-                    aria-label="Done"
-                    color={actionColor}
-                    onClick={() => {
-                      setOrderComplete(false)
-                      setShowOrderTransactionComplete('')
-                    }}
-                  >
-                    Done
-                  </ActionButton>
-                </DialogClose>
+                <ActionButton aria-label="Done" color={actionColor} onClick={onDismiss}>
+                  Done
+                </ActionButton>
               )}
             </div>
           )}

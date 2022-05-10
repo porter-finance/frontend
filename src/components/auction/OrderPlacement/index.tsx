@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import { useApolloClient } from '@apollo/client'
@@ -46,7 +46,7 @@ import InterestRateInputPanel, { getReviewData } from '../../form/InterestRateIn
 import PriceInputPanel from '../../form/PriceInputPanel'
 import ConfirmationDialog, { ReviewOrder } from '../../modals/ConfirmationDialog'
 import WarningModal from '../../modals/WarningModal'
-import Modal, { DialogClose } from '../../modals/common/Modal'
+import Modal from '../../modals/common/Modal'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { EmptyContentText } from '../../pureStyledComponents/EmptyContent'
 import { InfoType } from '../../pureStyledComponents/FieldRow'
@@ -385,11 +385,13 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                         to correspond with your real location.
                       </p>
 
-                      <DialogClose asChild>
-                        <ActionButton aria-label="Continue" className="!mt-10 btn-block">
-                          Got it
-                        </ActionButton>
-                      </DialogClose>
+                      <ActionButton
+                        aria-label="Continue"
+                        className="!mt-10 btn-block"
+                        onClick={() => setShowCountryDisabledModal(false)}
+                      >
+                        Got it
+                      </ActionButton>
                     </div>
                   </Modal>
 
