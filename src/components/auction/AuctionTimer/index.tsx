@@ -2,15 +2,30 @@ import React from 'react'
 import styled from 'styled-components'
 
 import dayjs from 'dayjs'
+import advancedFormat from 'dayjs/plugin/advancedFormat'
+import localeData from 'dayjs/plugin/localeData'
+import localizedFormat from 'dayjs/plugin/localizedFormat'
 import relativeTime from 'dayjs/plugin/relativeTime'
+import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
 import Countdown from 'react-countdown'
 
-import { calculateTimeProgress } from '../../../utils/tools'
+import { calculateTimeProgress, setLocale } from '../../../utils/tools'
 import Tooltip from '../../common/Tooltip'
 
-dayjs.extend(utc)
+// Used for abbreviated named timezone offset 'z' when formatting.
+dayjs.extend(advancedFormat)
+dayjs.extend(localeData)
+// Used when formatting for localized formats
+dayjs.extend(localizedFormat)
 dayjs.extend(relativeTime)
+// Used to convert into user's timezone
+dayjs.extend(timezone)
+dayjs.extend(utc)
+// Set default timezone based off of Intl.DateTimeFormat()
+dayjs.tz.guess()
+
+setLocale()
 
 const DateTitle = styled.div`
   font-weight: 400;
@@ -83,13 +98,15 @@ export const AuctionTimer = ({
           {startDate &&
             dayjs(startDate * 1000)
               .utc()
-              .format('MMMM DD, YYYY HH:mm UTC')}
+              .tz()
+              .format('LL HH:mm z')}
         </DateValue>
         <DateValue>
           {endDate &&
             dayjs(endDate * 1000)
               .utc()
-              .format('MMMM DD, YYYY HH:mm UTC')}
+              .tz()
+              .format('LL HH:mm z')}
         </DateValue>
       </div>
       <div className="flex justify-between mb-3">
