@@ -141,7 +141,8 @@ const BondDetail: React.FC = () => {
         fixedAPR,
         maturityDate: dayjs(bond.maturityDate * 1000)
           .utc()
-          .format('DD MMM YYYY'),
+          .tz()
+          .format('ll'),
         maturityValue: amount ? amount.toLocaleString() : '-',
       },
     ]
