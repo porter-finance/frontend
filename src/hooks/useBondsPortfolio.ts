@@ -30,6 +30,7 @@ const bondsQuery = gql`
           collateralRatio
           convertibleRatio
           maxSupply
+          clearingPrice
         }
       }
     }

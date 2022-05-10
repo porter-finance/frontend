@@ -31,7 +31,7 @@ export const columns = (showAmount = false) => [
   },
   {
     Header: 'Amount issued',
-    accessor: 'amount',
+    accessor: 'amountIssued',
     tooltip: 'The number of bonds the borrower issued.',
     align: 'flex-start',
     isVisible: !showAmount,
@@ -72,6 +72,7 @@ export const createTable = (data: BondInfo[]) => {
   return data.map((bond: BondInfo) => {
     const {
       amount,
+      clearingPrice,
       createdAt,
       decimals,
       id,
@@ -91,7 +92,11 @@ export const createTable = (data: BondInfo[]) => {
         <span className="uppercase">{dayjs(createdAt).utc().format('DD MMM YYYY')}</span>
       ),
       // TODO ??
-      cost: '-',
+      cost: clearingPrice
+        ? `${Number(formatUnits(clearingPrice * amount, decimals)).toLocaleString()} ${
+            paymentToken.symbol
+          }`
+        : '-',
       fixedAPR: '-',
       bond: (
         <div className="flex flex-row items-center space-x-4">
@@ -115,7 +120,8 @@ export const createTable = (data: BondInfo[]) => {
         </div>
       ),
 
-      amount: maxSupply ? Number(formatUnits(maxSupply, decimals)).toLocaleString() : '-',
+      amountIssued: maxSupply ? Number(formatUnits(maxSupply, decimals)).toLocaleString() : '-',
+      amount: amount ? `${Number(formatUnits(amount, decimals)).toLocaleString()}` : '-',
       maturityValue: amount
         ? `${Number(formatUnits(amount, decimals)).toLocaleString()} ${paymentToken.symbol}`
         : `1 ${paymentToken.symbol}`,
