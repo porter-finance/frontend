@@ -143,7 +143,7 @@ const Claimer: React.FC<Props> = (props) => {
 
         <Wrapper>
           <div className="mb-7 space-y-3">
-            {graphInfo?.bondsSold > 0 && (
+            {(graphInfo?.bondsSold > 0 || claimableBonds.greaterThan('0')) && (
               <>
                 <TokenItem>
                   <div className="text-base text-white">
