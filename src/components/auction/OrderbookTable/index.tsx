@@ -213,7 +213,7 @@ export const TableDesign = ({
             })}
         </tbody>
       </table>
-      {!hidePagination && (
+      {!hidePagination && pageOptions.length > 0 && (
         <div className="flex justify-end items-center space-x-2 text-[#696969] !border-none">
           <button className="btn btn-xs" disabled={!canPreviousPage} onClick={previousPage}>
             <DoubleArrowLeftIcon />
