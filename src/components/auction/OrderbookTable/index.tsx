@@ -39,7 +39,7 @@ export const ordersTableColumns = [
     accessor: 'amount',
   },
   {
-    Header: 'Bonds',
+    Header: 'Amount',
     accessor: 'bonds',
   },
   {
