@@ -106,7 +106,8 @@ const BondAction = ({
     let payTok = null
 
     if (bondInfo) {
-      const bondsToRedeemBigNumber = parseUnits(bondsToRedeem, bondInfo.decimals)
+      const bondsToRedeemBigNumber =
+        Number(bondsToRedeem) && parseUnits(bondsToRedeem, bondInfo.decimals)
       tok = new Token(chainId, bondInfo.id, bondInfo.decimals, bondInfo.symbol, bondInfo.name)
       payTok = new Token(
         chainId,
@@ -172,10 +173,13 @@ const BondAction = ({
 
     if (!account) return { error: 'Not logged in' }
 
-    const validInput = parseUnits(bondsToRedeem, bondInfo?.decimals).gt(0)
+    console.log(bondsToRedeem)
+
+    const validInput = Number(bondsToRedeem) && parseUnits(bondsToRedeem, bondInfo?.decimals).gt(0)
     if (!validInput) return { error: 'Input must be > 0' }
 
-    const notEnoughBalance = parseUnits(bondsToRedeem, bondInfo?.decimals).gt(bondTokenBalance)
+    const notEnoughBalance =
+      Number(bondsToRedeem) && parseUnits(bondsToRedeem, bondInfo?.decimals).gt(bondTokenBalance)
     if (notEnoughBalance) return { error: 'Bonds to convert exceeds balance' }
 
     return true
@@ -188,10 +192,11 @@ const BondAction = ({
       return { error: 'Must be fully paid, matured, or defaulted' }
     }
 
-    const validInput = parseUnits(bondsToRedeem, bondInfo?.decimals).gt(0)
+    const validInput = Number(bondsToRedeem) && parseUnits(bondsToRedeem, bondInfo?.decimals).gt(0)
     if (!validInput) return { error: 'Input must be > 0' }
 
-    const notEnoughBalance = parseUnits(bondsToRedeem, bondInfo?.decimals).gt(bondTokenBalance)
+    const notEnoughBalance =
+      Number(bondsToRedeem) && parseUnits(bondsToRedeem, bondInfo?.decimals).gt(bondTokenBalance)
     if (notEnoughBalance) return { error: 'Bonds to redeem exceeds balance' }
 
     return true
