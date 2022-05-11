@@ -12,6 +12,23 @@ import Tooltip from '../common/Tooltip'
 import { unlockProps } from '../form/AmountInputPanel'
 import Modal, { DialogTitle } from './common/Modal'
 
+export const OopsWarning = ({ actionClick, actionColor = 'blue', message }) => (
+  <div className="mt-10 space-y-6 text-center">
+    <h1 className="text-xl text-[#E0E0E0]">Oops, something went wrong!</h1>
+    <p className="overflow-hidden text-[#D6D6D6]">{message}</p>
+    {actionClick && (
+      <ActionButton
+        aria-label="Try again"
+        className="!mt-20"
+        color={actionColor}
+        onClick={actionClick}
+      >
+        Try again
+      </ActionButton>
+    )}
+  </div>
+)
+
 const GeneralWarning = ({ text }) => (
   <div className="space-y-3">
     <div className="flex flex-row items-center space-x-2">
@@ -393,20 +410,13 @@ const ConfirmationDialog = ({
       )}
 
       {transactionError && (
-        <div className="mt-10 space-y-6 text-center">
-          <h1 className="text-xl text-[#E0E0E0]">Oops, something went wrong!</h1>
-          <p className="overflow-hidden text-[#D6D6D6]">{transactionError}</p>
-          <ActionButton
-            aria-label="Try again"
-            className="!mt-20"
-            color={actionColor}
-            onClick={() => {
-              setTransactionError(null)
-            }}
-          >
-            Try again
-          </ActionButton>
-        </div>
+        <OopsWarning
+          actionClick={() => {
+            setTransactionError(null)
+          }}
+          actionColor={actionColor}
+          message={transactionError}
+        />
       )}
     </Modal>
   )

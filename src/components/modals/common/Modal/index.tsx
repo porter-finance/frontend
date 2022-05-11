@@ -5,7 +5,7 @@ import { Cross2Icon } from '@radix-ui/react-icons'
 import { styled } from '@stitches/react'
 
 export const DialogTitle = ({ children }) => (
-  <Dialog.Title as="h3" className="text-2xl text-[#E0E0E0]">
+  <Dialog.Title as="h3" className="mb-5 text-2xl text-[#E0E0E0]">
     {children}
   </Dialog.Title>
 )
