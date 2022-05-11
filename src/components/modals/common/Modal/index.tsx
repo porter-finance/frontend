@@ -61,7 +61,7 @@ export default function MyModal({ children, isOpen, onDismiss: onOpenChange }) {
               <Dialog.Panel className="overflow-hidden p-6 w-full max-w-md text-left align-middle bg-[#181A1C] rounded-lg border border-[#2c2c2c] shadow-xl transition-all">
                 <div className="mt-2">{children}</div>
 
-                <IconButton>
+                <IconButton onClick={closeModal}>
                   <Cross2Icon />
                 </IconButton>
               </Dialog.Panel>
