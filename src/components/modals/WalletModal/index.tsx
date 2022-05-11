@@ -238,12 +238,10 @@ const WalletModal: React.FC = () => {
         </div>
       )}
       {!showError && !connectingToWallet && (
-        <div>
+        <>
           <DialogTitle>{title}</DialogTitle>
-          <p className="text-sm font-normal text-gray-500 dark:text-gray-400">
-            Connect with one of our available wallet providers or create a new one.
-          </p>
-        </div>
+          <p>Connect with one of our available wallet providers.</p>
+        </>
       )}
       <Content>
         {!error && !connectingToWallet && (

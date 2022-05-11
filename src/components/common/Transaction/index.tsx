@@ -45,7 +45,7 @@ const IconWrapper = styled.span<{ size?: number }>`
 
 const Text = styled.span`
   color: inherit;
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 400;
   line-height: 1.2;
   text-align: left;
