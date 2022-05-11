@@ -306,7 +306,7 @@ const ConfirmationDialog = ({
         setOrderComplete(false)
         setShowOrderTransactionComplete('')
       }
-    }, 1000)
+    }, 400)
   }
 
   return (
