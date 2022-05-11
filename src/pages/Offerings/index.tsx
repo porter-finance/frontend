@@ -88,7 +88,12 @@ const Offerings = () => {
       auctionId: `#${auction.id}`,
       type: 'auction', // TODO: currently hardcoded since no OTC exists
       price: `1 ${auction?.bidding?.symbol}`,
-      fixedAPR: calculateInterestRate(auction.clearingPrice, auction.end),
+      fixedAPR: calculateInterestRate(
+        auction.clearingPrice,
+        auction.bond.maturityDate,
+        true,
+        auction.end,
+      ),
       status: auction.live ? (
         <ActiveStatusPill title="Ongoing" />
       ) : (

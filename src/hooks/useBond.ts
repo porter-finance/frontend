@@ -70,6 +70,7 @@ const allBondsQuery = gql`
       id
       name
       symbol
+      decimals
       type
       owner
       maturityDate
