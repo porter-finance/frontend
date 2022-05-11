@@ -89,9 +89,7 @@ export const createTable = (data: BondInfo[]) => {
       id,
       search: JSON.stringify(bond),
       type,
-      issuanceDate: (
-        <span className="uppercase">{dayjs(createdAt).utc().format('DD MMM YYYY')}</span>
-      ),
+      issuanceDate: <span className="uppercase">{dayjs(createdAt).utc().tz().format('LL')}</span>,
       cost: clearingPrice
         ? `${Number(formatUnits(clearingPrice * amount, decimals)).toLocaleString()} ${
             paymentToken.symbol

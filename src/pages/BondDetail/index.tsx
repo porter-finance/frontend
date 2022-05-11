@@ -139,7 +139,7 @@ const BondDetail: React.FC = () => {
     positionData = [
       {
         amount: amount.toLocaleString(),
-        cost: (bond?.clearingPrice * amount).toLocaleString() || '-',
+        cost: (bond?.clearingPrice * amount || '-').toLocaleString(),
         price: bond?.clearingPrice ? bond?.clearingPrice : '-',
         fixedAPR,
         maturityDate: dayjs(bond.maturityDate * 1000)

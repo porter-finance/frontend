@@ -289,11 +289,9 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({ derivedAuctionIn
   const maturityDate = useBondMaturityForAuction()
   const paymentToken = getTokenDisplay(derivedAuctionInfo?.biddingToken)
   const noBids = !Array.isArray(bids) || bids.length === 0
-  const data = []
-  !noBids &&
-    bids.forEach((row) => {
-      data.push(calculateRow(row, paymentToken, maturityDate, derivedAuctionInfo))
-    })
+  const data = noBids
+    ? []
+    : bids.map((row) => calculateRow(row, paymentToken, maturityDate, derivedAuctionInfo))
 
   return <TableDesign columns={ordersTableColumns} data={data} loading={loading} />
 }
