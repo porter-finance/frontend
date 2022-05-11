@@ -294,12 +294,15 @@ const ConfirmationDialog = ({
 
   const onDismiss = () => {
     if (waitingTransactionToComplete) return false
-
-    if (orderComplete) {
-      setOrderComplete(false)
-      setShowOrderTransactionComplete('')
-    }
     onOpenChange(false)
+
+    // Prevent changing state during transition
+    setTimeout(() => {
+      if (orderComplete) {
+        setOrderComplete(false)
+        setShowOrderTransactionComplete('')
+      }
+    }, 1000)
   }
 
   return (
