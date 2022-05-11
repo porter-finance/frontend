@@ -62,7 +62,7 @@ export const getReviewData = ({
   maturityDate,
   price,
 }): { apr: string | number; earn: string; receive: string; pay: string } => ({
-  apr: `${calculateInterestRate(price, maturityDate)}`.replace('%', '+ %'),
+  apr: `${calculateInterestRate(price, maturityDate)}+`,
   earn: `${round(amount - price * amount, 2).toLocaleString()}+`,
   receive: `${amount.toLocaleString()}+`,
   pay: `${round(price * amount, 2).toLocaleString()}`,
