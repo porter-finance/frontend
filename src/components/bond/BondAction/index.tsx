@@ -90,7 +90,7 @@ const BondAction = ({
   const { data: bondInfo } = useBond(bondId)
   const bondTokenBalance = bondInfo?.tokenBalances?.[0]?.amount || 0
 
-  const [bondsToRedeem, setBondsToRedeem] = useState('0.00')
+  const [bondsToRedeem, setBondsToRedeem] = useState(null)
   const [openReviewModal, setOpenReviewModal] = useState<boolean>(false)
   const [previewRedeemVal, setPreviewRedeemVal] = useState<string[]>(['0', '0'])
   const [previewConvertVal, setPreviewConvertVal] = useState<string>('0')
