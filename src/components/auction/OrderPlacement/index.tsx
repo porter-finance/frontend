@@ -1,6 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 
+import { useApolloClient } from '@apollo/client'
 import { formatUnits } from '@ethersproject/units'
 import { Fraction, Token, TokenAmount } from '@josojo/honeyswap-sdk'
 import { useTokenBalance } from '@usedapp/core'
@@ -9,6 +10,7 @@ import useGeoLocation from 'react-ipgeolocation'
 
 import kycLinks from '../../../assets/links/kycLinks.json'
 import { ReactComponent as PrivateIcon } from '../../../assets/svg/private.svg'
+import { isDev } from '../../../connectors'
 import { useActiveWeb3React } from '../../../hooks'
 import { ApprovalState, useApproveCallback } from '../../../hooks/useApproveCallback'
 import { useAuction } from '../../../hooks/useAuction'
@@ -45,6 +47,7 @@ import InterestRateInputPanel, { getReviewData } from '../../form/InterestRateIn
 import PriceInputPanel from '../../form/PriceInputPanel'
 import ConfirmationDialog, { ReviewOrder } from '../../modals/ConfirmationDialog'
 import WarningModal from '../../modals/WarningModal'
+import Modal from '../../modals/common/Modal'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { EmptyContentText } from '../../pureStyledComponents/EmptyContent'
 import { InfoType } from '../../pureStyledComponents/FieldRow'
@@ -93,9 +96,11 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     derivedAuctionInfo: { auctionState },
     derivedAuctionInfo,
   } = props
+  const apolloClient = useApolloClient()
   const { data: graphInfo } = useAuction(auctionIdentifier?.auctionId)
   const location = useGeoLocation()
-  const disabledCountry = process.env.NODE_ENV !== 'development' && location?.country === 'US'
+  const disabledCountry = !isDev && location?.country === 'US'
+  const [showCountry, setShowCountryDisabledModal] = useState(false)
   const { chainId } = auctionIdentifier
   const { account, chainId: chainIdFromWeb3 } = useActiveWeb3React()
   const orders: OrderState | undefined = useOrderState()
@@ -115,7 +120,14 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const [showWarning, setShowWarning] = useState<boolean>(false)
   const [showWarningWrongChainId, setShowWarningWrongChainId] = useState<boolean>(false)
 
-  const auctioningToken = derivedAuctionInfo?.auctioningToken
+  // Setting the name from graphql to the token from gnosis
+  const auctioningToken = new Token(
+    derivedAuctionInfo?.auctioningToken.chainId,
+    derivedAuctionInfo?.auctioningToken.address,
+    derivedAuctionInfo?.auctioningToken.decimals,
+    derivedAuctionInfo?.auctioningToken.symbol,
+    graphInfo?.bond?.name,
+  )
   const biddingToken = derivedAuctionInfo?.biddingToken
 
   const parsedBiddingAmount = tryParseAmount(sellAmount, biddingToken)
@@ -152,6 +164,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const notApproved = approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING
 
   const handleShowConfirm = () => {
+    setShowCountryDisabledModal(false)
     if (chainId !== chainIdFromWeb3) {
       setShowWarningWrongChainId(true)
       return
@@ -204,8 +217,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   )
 
   const disablePlaceOrder =
-    disabledCountry ||
-    ((errorAmount ||
+    (errorAmount ||
       errorPrice ||
       errorBidSize ||
       showWarning ||
@@ -213,7 +225,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
       showConfirm ||
       sellAmount === '' ||
       price === '') &&
-      true)
+    true
 
   const isWrappable =
     biddingTokenBalance &&
@@ -269,6 +281,11 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     maturityDate: graphInfo?.bond?.maturityDate,
     price,
   })
+
+  const refetchOrders = () =>
+    apolloClient.refetchQueries({
+      include: 'active',
+    })
 
   return (
     <div className="card place-order-color">
@@ -338,9 +355,48 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                 </>
               ) : (
                 <>
-                  <ActionButton disabled={disablePlaceOrder} onClick={handleShowConfirm}>
+                  <ActionButton
+                    disabled={disablePlaceOrder}
+                    onClick={() =>
+                      disabledCountry ? setShowCountryDisabledModal(true) : handleShowConfirm()
+                    }
+                  >
                     Review order
                   </ActionButton>
+
+                  <Modal isOpen={showCountry} onDismiss={setShowCountryDisabledModal}>
+                    <div className="mt-10 space-y-6 text-center">
+                      <h1 className="text-xl text-[#E0E0E0]">Access restriction warning</h1>
+
+                      <p className="overflow-hidden text-[#D6D6D6]">
+                        It looks like you are trying to purchase bonds from a restricted territory
+                        or are using a VPN that shows your location as a restricted territory
+                        (including the United States) or are using Safari Privacy Services
+                      </p>
+
+                      <p className="overflow-hidden text-[#D6D6D6]">
+                        We respect your privacy, but, please{' '}
+                        <a
+                          className="text-[#6CADFB] hover:underline"
+                          href="https://nordvpn.com/blog/change-location-google-chrome/"
+                          rel="noreferrer"
+                          target="_blank"
+                        >
+                          change browser Privacy Services or change your VPN settings
+                        </a>{' '}
+                        to correspond with your real location.
+                      </p>
+
+                      <ActionButton
+                        aria-label="Continue"
+                        className="!mt-10 btn-block"
+                        onClick={() => setShowCountryDisabledModal(false)}
+                      >
+                        Got it
+                      </ActionButton>
+                    </div>
+                  </Modal>
+
                   <ConfirmationDialog
                     actionText="Place order"
                     beforeDisplay={
@@ -354,6 +410,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                     }
                     finishedText="Order placed"
                     loadingText="Placing order"
+                    onFinished={refetchOrders}
                     onOpenChange={setShowConfirm}
                     open={showConfirm}
                     pendingText="Confirm order in wallet"

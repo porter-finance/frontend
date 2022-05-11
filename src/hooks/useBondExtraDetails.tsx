@@ -97,9 +97,9 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
       value: (
         <span className="flex items-center space-x-1">
           <span>{strikePrice.toLocaleString()}</span>
-          <TokenLink token={bond?.paymentToken} withLink />
+          <TokenLink token={bond?.paymentToken} />
           <span>/</span>
-          <TokenLink token={bond?.collateralToken} withLink />
+          <TokenLink token={bond?.collateralToken} />
         </span>
       ),
 

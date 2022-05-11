@@ -24,36 +24,32 @@ const GlobalStyle = createGlobalStyle`
 
 export const columns = (showAmount = false) => [
   {
-    Header: 'Bond',
+    Header: 'Offering',
     accessor: 'bond',
     align: 'flex-start',
-    show: true,
     style: { height: '100%', justifyContent: 'center' },
     filter: 'searchInTags',
   },
   {
-    Header: 'Amount',
-    accessor: 'amount',
+    Header: 'Amount issued',
+    accessor: 'amountIssued',
+    tooltip: 'The number of bonds the borrower issued.',
     align: 'flex-start',
-    show: showAmount,
+    isVisible: !showAmount,
     style: {},
     filter: 'searchInTags',
   },
   {
-    Header: 'Fixed APR',
-    tooltip: 'This APR is calculated using the closing price of the initial offering.',
-    accessor: 'fixedAPR',
+    Header: 'Issuance date',
+    accessor: 'issuanceDate',
     align: 'flex-start',
-    show: true,
     style: {},
     filter: 'searchInTags',
   },
-
   {
     Header: 'Maturity Date',
     accessor: 'maturityDate',
     align: 'flex-start',
-    show: true,
     style: {},
     filter: 'searchInTags',
   },
@@ -61,7 +57,6 @@ export const columns = (showAmount = false) => [
     Header: 'Value at maturity',
     accessor: 'maturityValue',
     align: 'flex-start',
-    show: true,
     style: {},
     filter: 'searchInTags',
   },
@@ -69,16 +64,8 @@ export const columns = (showAmount = false) => [
     Header: 'Status',
     accessor: 'status',
     align: 'flex-start',
-    show: true,
     style: {},
     filter: 'searchInTags',
-  },
-  {
-    Header: '',
-    accessor: 'url',
-    align: '',
-    show: false,
-    style: {},
   },
 ]
 
@@ -86,10 +73,12 @@ export const createTable = (data: BondInfo[]) => {
   return data.map((bond: BondInfo) => {
     const {
       amount,
-      collateralToken,
+      clearingPrice,
+      createdAt,
       decimals,
       id,
       maturityDate,
+      maxSupply,
       name,
       paymentToken,
       symbol,
@@ -100,6 +89,15 @@ export const createTable = (data: BondInfo[]) => {
       id,
       search: JSON.stringify(bond),
       type,
+      issuanceDate: (
+        <span className="uppercase">{dayjs(createdAt).utc().format('DD MMM YYYY')}</span>
+      ),
+      cost: clearingPrice
+        ? `${Number(formatUnits(clearingPrice * amount, decimals)).toLocaleString()} ${
+            paymentToken.symbol
+          }`
+        : '-',
+      fixedAPR: '-',
       bond: (
         <div className="flex flex-row items-center space-x-4">
           <div className="flex">
@@ -122,8 +120,8 @@ export const createTable = (data: BondInfo[]) => {
         </div>
       ),
 
-      amount: amount ? Number(formatUnits(amount, decimals)).toLocaleString() : '-',
-      fixedAPY: '-',
+      amountIssued: maxSupply ? Number(formatUnits(maxSupply, decimals)).toLocaleString() : '-',
+      amount: amount ? `${Number(formatUnits(amount, decimals)).toLocaleString()}` : '-',
       maturityValue: amount
         ? `${Number(formatUnits(amount, decimals)).toLocaleString()} ${paymentToken.symbol}`
         : `1 ${paymentToken.symbol}`,

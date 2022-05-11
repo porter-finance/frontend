@@ -13,10 +13,10 @@ import { LoadingBox } from '../../../pages/Auction'
 import { useWalletModalToggle } from '../../../state/application/hooks'
 import { DerivedAuctionInfo, useDerivedClaimInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
-import { TokenPill } from '../../bond/BondAction'
+import { TokenInfo, TokenPill } from '../../bond/BondAction'
 import Tooltip from '../../common/Tooltip'
 import { FieldRowLabelStyled } from '../../form/PriceInputPanel'
-import ClaimConfirmationModal from '../../modals/ClaimConfirmationModal'
+import ConfirmationDialog from '../../modals/ConfirmationDialog'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 
 const Wrapper = styled(BaseCard)`
@@ -88,10 +88,6 @@ const Claimer: React.FC<Props> = (props) => {
   const { chainId } = auctionIdentifier
   const { account, chainId: Web3ChainId } = useActiveWeb3React()
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
-  const [userConfirmedTx, setUserConfirmedTx] = useState<boolean>(false)
-  const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true)
-  const [txHash, setTxHash] = useState<string>('')
-  const pendingText = `Claiming Funds`
   const participatingBids = useParticipatingAuctionBids()
 
   const [claimStatus, claimOrderCallback] = useClaimOrderCallback(auctionIdentifier)
@@ -109,21 +105,6 @@ const Claimer: React.FC<Props> = (props) => {
 
   const { auctioningToken, biddingToken } = derivedAuctionInfo
 
-  const resetModal = () => setPendingConfirmation(true)
-
-  const onClaimOrder = () =>
-    claimOrderCallback()
-      .then((hash) => {
-        setTxHash(hash)
-        setPendingConfirmation(false)
-        setUserConfirmedTx(true)
-      })
-      .catch(() => {
-        resetModal()
-        setShowConfirm(false)
-        setUserConfirmedTx(false)
-      })
-
   const isLoading = useMemo(
     () => (account && isDerivedClaimInfoLoading) || !claimableBidFunds || !claimableBonds,
     [account, isDerivedClaimInfoLoading, claimableBidFunds, claimableBonds],
@@ -134,10 +115,9 @@ const Claimer: React.FC<Props> = (props) => {
       !isValid ||
       showConfirm ||
       isLoading ||
-      userConfirmedTx ||
       claimStatus != ClaimState.NOT_CLAIMED ||
       chainId !== Web3ChainId,
-    [isValid, showConfirm, isLoading, userConfirmedTx, claimStatus, chainId, Web3ChainId],
+    [isValid, showConfirm, isLoading, claimStatus, chainId, Web3ChainId],
   )
 
   const claimStatusString =
@@ -151,38 +131,50 @@ const Claimer: React.FC<Props> = (props) => {
     return <LoadingBox height={342} />
   }
 
+  const bondToken = {
+    ...auctioningToken,
+    symbol: graphInfo?.bond?.name || auctioningToken?.name || auctioningToken?.symbol,
+  }
+
   return (
-    <div className="border-[#404EEDA4] card card-bordered">
+    <div className="place-order-color card card-bordered">
       <div className="card-body">
-        <h2 className="pb-4 border-b border-b-[#333333] card-title">Claim proceeds</h2>
+        <h2 className="pb-4 border-b border-b-[#333333] card-title">Claim auction proceeds</h2>
 
         <Wrapper>
           <div className="mb-7 space-y-3">
+            {graphInfo?.bondsSold > 0 && (
+              <>
+                <TokenItem>
+                  <div className="text-base text-white">
+                    {claimableBonds
+                      ? `${Number(claimableBonds.toSignificant(6)).toLocaleString()}`
+                      : `-`}
+                  </div>
+                  <TokenPill token={bondToken} />
+                </TokenItem>
+                <FieldRowLabelStyled>
+                  <Tooltip
+                    left="Amount of bond funds to claim"
+                    tip="Amount of assets you can claim. If there are no bonds claimable, your order price was not competitive."
+                  />
+                </FieldRowLabelStyled>
+              </>
+            )}
+
             <TokenItem>
               <div className="text-base text-white">
-                {claimableBidFunds ? `${claimableBidFunds.toSignificant(6)}` : `-`}
+                {claimableBidFunds
+                  ? `${Number(claimableBidFunds.toSignificant(6)).toLocaleString()}`
+                  : `-`}
               </div>
               <TokenPill token={biddingToken} />
             </TokenItem>
 
-            {graphInfo?.bondsSold > 0 && (
-              <TokenItem>
-                <div className="text-base text-white">
-                  {claimableBonds ? `${claimableBonds.toSignificant(6)}` : `-`}
-                </div>
-                <TokenPill
-                  token={{
-                    ...auctioningToken,
-                    symbol: auctioningToken?.name || auctioningToken?.symbol,
-                  }}
-                />
-              </TokenItem>
-            )}
-
             <FieldRowLabelStyled>
               <Tooltip
-                left="Amount of assets to receive"
-                tip="Amount of assets can claim. If there are no bonds claimable, your order price was not competitive."
+                left="Amount of bidding funds to claim"
+                tip="Amount of assets you can claim. If there are no bonds claimable, your order price was not competitive."
               />
             </FieldRowLabelStyled>
           </div>
@@ -193,25 +185,46 @@ const Claimer: React.FC<Props> = (props) => {
               disabled={isClaimButtonDisabled}
               onClick={() => {
                 setShowConfirm(true)
-                onClaimOrder()
               }}
             >
-              Claim proceeds
+              Review claim
             </ActionButton>
           )}
 
           {claimStatusString && (
             <div className="mt-4 text-xs text-[#9F9F9F]">{claimStatusString}</div>
           )}
-          <ClaimConfirmationModal
-            hash={txHash}
-            isOpen={showConfirm}
-            onDismiss={() => {
-              resetModal()
-              setShowConfirm(false)
-            }}
-            pendingConfirmation={pendingConfirmation}
-            pendingText={pendingText}
+          <ConfirmationDialog
+            actionText="Claim auction proceeds"
+            beforeDisplay={
+              <div className="mt-10 space-y-6">
+                <div className="pb-4 space-y-2 text-xs text-[#696969] border-b border-b-[#D5D5D519]">
+                  <TokenInfo
+                    token={bondToken}
+                    value={Number(claimableBonds.toSignificant(6)).toLocaleString()}
+                  />
+                  <div className="text-xs text-[#696969]">
+                    <Tooltip left="Amount of bonds to claim" />
+                  </div>
+                </div>
+                <div className="pb-4 space-y-2 text-xs text-[#696969] border-b border-b-[#D5D5D519]">
+                  <TokenInfo
+                    token={biddingToken}
+                    value={Number(claimableBidFunds.toSignificant(6)).toLocaleString()}
+                  />
+                  <div className="text-xs text-[#696969]">
+                    <Tooltip left="Amount of bidding funds to claim" />
+                  </div>
+                </div>
+              </div>
+            }
+            finishedText="Auction proceeds claimed"
+            loadingText="Claiming auction proceeds"
+            onOpenChange={setShowConfirm}
+            open={showConfirm}
+            pendingText="Confirm claiming in wallet"
+            placeOrder={claimOrderCallback}
+            title="Review claim"
           />
         </Wrapper>
       </div>

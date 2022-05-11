@@ -15,7 +15,7 @@ const DropdownContainer = styled.span`
   position: absolute;
   right: ${(props) => props.theme.cards.paddingHorizontal};
   top: ${(props) => props.theme.cards.paddingHorizontal};
-  z-index: 5;
+  z-index: 1;
 `
 
 interface FormCardProps {

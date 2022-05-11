@@ -27,7 +27,7 @@ import ThemeProvider from './theme'
 import { GlobalStyle } from './theme/globalStyle'
 import './index.css'
 
-const apolloClient = new ApolloClient({
+export const apolloClient = new ApolloClient({
   uri: SUBGRAPH_URL_RINKEBY,
   connectToDevTools: true,
   cache: new InMemoryCache(),

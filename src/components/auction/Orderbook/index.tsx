@@ -11,11 +11,11 @@ import { useOrderbookState } from '../../../state/orderbook/hooks'
 import OrderBookChart, { OrderBookError } from '../OrderbookChart'
 import { processOrderbookData } from '../OrderbookWidget'
 
-interface OrderbookProps {
+interface OrderbookGraphProps {
   derivedAuctionInfo: DerivedAuctionInfo
 }
 
-export const OrderBook: React.FC<OrderbookProps> = (props) => {
+export const OrderBook: React.FC<OrderbookGraphProps> = (props) => {
   const { derivedAuctionInfo } = props
   const {
     asks,

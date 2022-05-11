@@ -5,17 +5,15 @@ import * as Sentry from '@sentry/react'
 import { BrowserTracing } from '@sentry/tracing'
 import ReactTooltip from 'react-tooltip'
 
+import ChainWarning from '../components/ChainWarning'
 import ScrollToTop from '../components/ScrollToTop'
 import { ErrorBoundaryWithFallback } from '../components/common/ErrorAndReload'
-import { TopDisclaimer } from '../components/common/TopDisclaimer'
 import { Footer } from '../components/layout/Footer'
 import { Header } from '../components/layout/Header'
 import Routes from '../components/navigation/Routes/Routes'
-import Popups from '../components/popups/Popups'
 import { InnerContainer } from '../components/pureStyledComponents/InnerContainer'
 import { MainWrapper } from '../components/pureStyledComponents/MainWrapper'
 import Web3ReactManager from '../components/web3/Web3ReactManager'
-import useShowTopWarning from '../hooks/useShowTopWarning'
 
 export const InnerApp = styled(InnerContainer)`
   margin-top: -100px;
@@ -31,35 +29,30 @@ Sentry.init({
   tracesSampleRate: 1,
 })
 
-const App: React.FC = () => {
-  const { showTopWarning } = useShowTopWarning()
-
-  return (
-    <Suspense fallback={null}>
-      <MainWrapper>
-        <ScrollToTop />
-        <Header />
-        <Popups />
-        <ReactTooltip
-          className="customTooltip"
-          delayHide={500}
-          delayShow={50}
-          delayUpdate={500}
-          effect="solid"
-          textColor="#fff"
-        />
-        {showTopWarning && <TopDisclaimer />}
-        <ErrorBoundaryWithFallback>
-          <InnerApp className="fullPage">
-            <Web3ReactManager>
-              <Routes />
-            </Web3ReactManager>
-          </InnerApp>
-        </ErrorBoundaryWithFallback>
-        <Footer />
-      </MainWrapper>
-    </Suspense>
-  )
-}
+const App: React.FC = () => (
+  <Suspense fallback={null}>
+    <MainWrapper>
+      <ScrollToTop />
+      <ChainWarning />
+      <Header />
+      <ReactTooltip
+        className="customTooltip"
+        delayHide={500}
+        delayShow={50}
+        delayUpdate={500}
+        effect="solid"
+        textColor="#fff"
+      />
+      <ErrorBoundaryWithFallback>
+        <InnerApp className="fullPage">
+          <Web3ReactManager>
+            <Routes />
+          </Web3ReactManager>
+        </InnerApp>
+      </ErrorBoundaryWithFallback>
+      <Footer />
+    </MainWrapper>
+  </Suspense>
+)
 
 export default App

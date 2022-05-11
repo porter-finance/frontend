@@ -6,6 +6,7 @@ import { round } from 'lodash'
 
 import { ChainId, getTokenDisplay } from '../../../utils'
 import { calculateInterestRate } from '../../form/InterestRateInputPanel'
+import { tooltipRender } from './BondChart'
 
 // Recalculates very big and very small numbers by reducing their length according to rules and applying suffix/prefix.
 const numberFormatter = new am4core.NumberFormatter()
@@ -66,6 +67,9 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   // Create axes
   const priceAxis = chart.xAxes.push(new am4charts.ValueAxis())
   const volumeAxis = chart.yAxes.push(new am4charts.ValueAxis())
+  tooltipRender(priceAxis)
+  tooltipRender(volumeAxis)
+
   volumeAxis.renderer.grid.template.stroke = am4core.color(colors.grey)
   volumeAxis.renderer.grid.template.strokeOpacity = 0
   volumeAxis.title.fill = am4core.color(colors.grey)
@@ -176,11 +180,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   chart.zoomOutButton.icon.strokeWidth = 2
   chart.zoomOutButton.tooltip.text = 'Zoom out'
 
-  chart.tooltip.getFillFromObject = false
-  chart.tooltip.background.fill = am4core.color('#181A1C')
-  chart.tooltip.background.filters.clear()
-  chart.tooltip.background.cornerRadius = 6
-  chart.tooltip.background.stroke = am4core.color('#2A2B2C')
+  tooltipRender(chart)
 
   return chart
 }
@@ -212,13 +212,7 @@ export const drawInformation = (props: DrawInformation) => {
   const bidPricesSeries = chart.series.values[0]
   const askPricesSeries = chart.series.values[1]
 
-  askPricesSeries.tooltip.getFillFromObject = false
-  askPricesSeries.tooltip.background.fill = am4core.color('#181A1C')
-  askPricesSeries.tooltip.background.filters.clear()
-  askPricesSeries.tooltip.background.cornerRadius = 6
-  askPricesSeries.tooltip.background.stroke = am4core.color('#2A2B2C')
-  askPricesSeries.tooltipHTML =
-    '<div class="text-xs text-[#D6D6D6] border-none flex-wrap max-w-[400px] p-1 whitespace-normal">{text}</div>'
+  tooltipRender(askPricesSeries)
 
   askPricesSeries.adapter.add('tooltipText', (text, target) => {
     const valueX = target?.tooltipDataItem?.values?.valueX?.value ?? 0
@@ -235,13 +229,7 @@ Interest:  ${interest}
 `
   })
 
-  bidPricesSeries.tooltip.getFillFromObject = false
-  bidPricesSeries.tooltip.background.fill = am4core.color('#181A1C')
-  bidPricesSeries.tooltip.background.filters.clear()
-  bidPricesSeries.tooltip.background.cornerRadius = 6
-  bidPricesSeries.tooltip.background.stroke = am4core.color('#2A2B2C')
-  bidPricesSeries.tooltipHTML =
-    '<div class="text-xs text-[#D6D6D6] border-none flex-wrap max-w-[400px] p-1 whitespace-normal">{text}</div>'
+  tooltipRender(bidPricesSeries)
   bidPricesSeries.adapter.add('tooltipText', (text, target) => {
     const valueX = target?.tooltipDataItem?.values?.valueX?.value ?? 0
     const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0

@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import { Transition } from '@headlessui/react'
 import useGeoLocation from 'react-ipgeolocation'
 
 import { Auction } from '../../../hooks/useAuction'
@@ -24,44 +25,63 @@ interface AuctionBodyProps {
   graphInfo: Auction
 }
 
-const DisabledCountryError = () => (
-  <div className="card card-bordered">
-    <div className="card-body">
-      <div className="flex flex-row items-center space-x-2">
-        <svg
-          fill="none"
-          height="14"
-          viewBox="0 0 15 14"
-          width="15"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            clipRule="evenodd"
-            d="M7.801 14C11.7702 14 14.9879 10.866 14.9879 7C14.9879 3.13401 11.7702 0 7.801 0C3.83179 0 0.614105 3.13401 0.614105 7C0.614105 10.866 3.83179 14 7.801 14ZM6.80125 3.52497C6.78659 3.23938 7.02037 3 7.31396 3H8.28804C8.58162 3 8.81541 3.23938 8.80075 3.52497L8.59541 7.52497C8.58175 7.79107 8.35625 8 8.0827 8H7.5193C7.24575 8 7.02025 7.79107 7.00659 7.52497L6.80125 3.52497ZM6.7743 10C6.7743 9.44772 7.23397 9 7.801 9C8.36803 9 8.8277 9.44772 8.8277 10C8.8277 10.5523 8.36803 11 7.801 11C7.23397 11 6.7743 10.5523 6.7743 10Z"
-            fill="#D25453"
-            fillRule="evenodd"
-          />
-        </svg>
-        <span className="text-[#D25453]">Error</span>
+const WarningCard = () => {
+  const [show, setShow] = useState(true)
+  return (
+    <Transition
+      enter="transition-opacity duration-75"
+      enterFrom="opacity-0"
+      enterTo="opacity-100"
+      leave="transition-opacity duration-150"
+      leaveFrom="opacity-100"
+      leaveTo="opacity-0"
+      show={show}
+    >
+      <div className="card card-bordered">
+        <div className="card-body">
+          <div className="flex flex-row items-center space-x-2">
+            <svg
+              fill="none"
+              height="14"
+              viewBox="0 0 15 14"
+              width="15"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                clipRule="evenodd"
+                d="M7.801 14C11.7702 14 14.9879 10.866 14.9879 7C14.9879 3.13401 11.7702 0 7.801 0C3.83179 0 0.614105 3.13401 0.614105 7C0.614105 10.866 3.83179 14 7.801 14ZM6.80125 3.52497C6.78659 3.23938 7.02037 3 7.31396 3H8.28804C8.58162 3 8.81541 3.23938 8.80075 3.52497L8.59541 7.52497C8.58175 7.79107 8.35625 8 8.0827 8H7.5193C7.24575 8 7.02025 7.79107 7.00659 7.52497L6.80125 3.52497ZM6.7743 10C6.7743 9.44772 7.23397 9 7.801 9C8.36803 9 8.8277 9.44772 8.8277 10C8.8277 10.5523 8.36803 11 7.801 11C7.23397 11 6.7743 10.5523 6.7743 10Z"
+                fill="#EDA651"
+                fillRule="evenodd"
+              />
+            </svg>
+            <span className="text-[#EDA651]">Warning</span>
+          </div>
+          <div className="text-sm text-[#9F9F9F]">
+            Purchasing bonds is risky and may lead to complete or partial loss of funds. Do conduct
+            your own due diligence and consult your financial advisor before making any investment
+            decisions.
+          </div>
+          <div className="flex items-center mt-6 space-x-2 card-actions">
+            <button
+              className="!text-sm font-normal normal-case btn btn-sm btn-warning"
+              onClick={() => setShow(false)}
+            >
+              Ok, I understand
+            </button>
+            <a
+              className="text-sm font-normal normal-case"
+              href="https://docs.porter.finance/"
+              rel="noreferrer"
+              target="_blank"
+            >
+              Learn more
+            </a>
+          </div>
+        </div>
       </div>
-      <div className="text-sm text-[#9F9F9F]">
-        Bonds are not available to people or companies who are residents of, or are located,
-        incorporated or have a registered agent in, the United States or a restricted territory.
-        More details can be found in our Terms of Use
-      </div>
-      <div className="mt-6 card-actions">
-        <a
-          className="text-sm font-normal normal-case btn btn-sm btn-error"
-          href="https://docs.porter.finance/"
-          rel="noreferrer"
-          target="_blank"
-        >
-          Learn more
-        </a>
-      </div>
-    </div>
-  </div>
-)
+    </Transition>
+  )
+}
 
 const BondCard = ({ graphInfo }: { graphInfo: Auction }) => {
   const extraDetails = useBondExtraDetails(graphInfo?.bond.id)
@@ -120,7 +140,6 @@ const AuctionBody = (props: AuctionBodyProps) => {
     graphInfo,
   } = props
   const location = useGeoLocation()
-  const disabledCountry = process.env.NODE_ENV !== 'development' && location?.country === 'US'
   const auctionStarted = auctionState !== undefined && auctionState !== AuctionState.NOT_YET_STARTED
   const settling = derivedAuctionInfo?.auctionState === AuctionState.NEEDS_SETTLED
 
@@ -158,7 +177,7 @@ const AuctionBody = (props: AuctionBodyProps) => {
                     auctionIdentifier={auctionIdentifier}
                     derivedAuctionInfo={derivedAuctionInfo}
                   />
-                  {disabledCountry && <DisabledCountryError />}
+                  <WarningCard />
                 </>
               )}
               {(auctionState === AuctionState.CLAIMING ||

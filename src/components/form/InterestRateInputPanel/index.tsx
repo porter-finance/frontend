@@ -42,14 +42,11 @@ export const calculateInterestRate = (
   price: number | string,
   maturityDate: number,
   display = true,
+  startDate = 0,
 ): string | number => {
-  if (!maturityDate) return '-'
-  if (!price) return '-'
-  const years = Math.abs(
-    dayjs()
-      .utc()
-      .diff(maturityDate * 1000, 'year', true),
-  )
+  if (!maturityDate || !price) return '-'
+  const startingDate = startDate ? dayjs(startDate * 1000) : dayjs().utc()
+  const years = Math.abs(startingDate.diff(maturityDate * 1000, 'year', true))
   let interestRate = (1 - Number(price)) / Number(price) / years
   interestRate = isNaN(interestRate) || interestRate === Infinity ? 0 : interestRate
 
@@ -86,9 +83,9 @@ const InterestRateInputPanel = ({
   return (
     <FieldRowWrapper className="py-1 my-4 space-y-3" {...restProps}>
       <div className="flex flex-row justify-between">
-        <div className="text-sm text-[#E0E0E0]">
+        <div className="w-60 text-sm text-[#E0E0E0]">
           <p>{!account || !price || !amount ? '-' : `${data.pay} ${priceTokenDisplay}`}</p>
-          <p className="text-[#EDA651]">{account && errorBidSize ? errorBidSize : ''}</p>
+          {account && errorBidSize && <p className="text-[#EDA651]">{errorBidSize}</p>}
         </div>
 
         <Tooltip
@@ -101,7 +98,7 @@ const InterestRateInputPanel = ({
         />
       </div>
       <div className="flex flex-row justify-between">
-        <div className="text-sm text-[#E0E0E0]">
+        <div className="w-60 text-sm text-[#E0E0E0]">
           {!account || !amount ? '-' : `${data.receive} ${amountToken}`}
         </div>
 
@@ -111,7 +108,7 @@ const InterestRateInputPanel = ({
         />
       </div>
       <div className="flex flex-row justify-between">
-        <div className="text-sm text-[#E0E0E0]">
+        <div className="w-60 text-sm text-[#E0E0E0]">
           {!account || !price || !amount ? '-' : `${data.earn} ${priceTokenDisplay}`}
         </div>
 
@@ -121,7 +118,7 @@ const InterestRateInputPanel = ({
         />
       </div>
       <div className="flex flex-row justify-between">
-        <div className="text-sm text-[#E0E0E0]">{!account ? '-' : data.apr}</div>
+        <div className="w-60 text-sm text-[#E0E0E0]">{!account ? '-' : data.apr}</div>
         <Tooltip
           left={<FieldRowLabelStyledText>Your APR</FieldRowLabelStyledText>}
           tip="APR you will earn assuming no default. If the final price is lower than your bid price, you will receive more bonds than ordered and, therefore, earn a higher APR."

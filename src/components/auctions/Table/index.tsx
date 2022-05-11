@@ -172,36 +172,33 @@ const Table = ({
       </div>
 
       <div
-        className="overflow-auto overscroll-contain min-h-[492px]"
+        className="overflow-auto overscroll-contain min-h-[492px] scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-zinc-700"
         style={{
           maxHeight: !rows.length ? '100%' : 'calc(100vh - 391px)',
-          height: !rows.length ? 'calc(100vh - 391px)' : '100%',
+          height: !rows.length ? 'calc(100vh - 391px)' : 'inherit',
         }}
       >
         <table className="table w-full h-full" {...getTableProps()}>
-          <thead className="sticky top-0 z-10">
+          <thead className="sticky top-0 z-[1]">
             {headerGroups.map((headerGroup, i) => (
               <tr
                 className="border-b border-b-[#D5D5D519]"
                 key={i}
                 {...headerGroup.getHeaderGroupProps()}
               >
-                {headerGroup.headers.map(
-                  (column, i) =>
-                    column.render('show') && (
-                      <th
-                        className="text-xs font-normal tracking-widest text-[#696969] bg-base-100"
-                        key={i}
-                        {...column.getHeaderProps()}
-                      >
-                        {column.tooltip ? (
-                          <Tooltip left={column.Header} tip={column.tooltip} />
-                        ) : (
-                          column.render('Header')
-                        )}
-                      </th>
-                    ),
-                )}
+                {headerGroup.headers.map((column, i) => (
+                  <th
+                    className="text-xs font-normal tracking-widest text-[#696969] bg-base-100"
+                    key={i}
+                    {...column.getHeaderProps()}
+                  >
+                    {column.tooltip ? (
+                      <Tooltip left={column.Header} tip={column.tooltip} />
+                    ) : (
+                      column.render('Header')
+                    )}
+                  </th>
+                ))}
               </tr>
             ))}
           </thead>
@@ -209,7 +206,7 @@ const Table = ({
             {loading &&
               [...Array(10).keys()].map((z) => (
                 <tr className="h-[57px] text-sm text-[#D2D2D2] bg-transparent" key={z}>
-                  {[...Array(columns.length - 2).keys()].map((i) => (
+                  {[...Array(columns.length).keys()].map((i) => (
                     <td className="text-center text-[#696969] bg-transparent" key={i}>
                       <div className="my-4 w-full max-w-sm h-4 bg-gradient-to-r from-[#1F2123] to-[#181A1C] rounded animate-pulse"></div>
                     </td>
@@ -221,7 +218,7 @@ const Table = ({
               <tr className="h-[57px] text-sm text-[#D2D2D2] bg-transparent">
                 <td
                   className="py-[100px] space-y-7 text-center text-[#696969] bg-transparent"
-                  colSpan={columns.length - 1}
+                  colSpan={columns.length}
                 >
                   <div className="flex justify-center space-x-4 opacity-60">{emptyLogo}</div>
                   <div className="text-base text-[#696969]">{emptyDescription}</div>
@@ -246,15 +243,11 @@ const Table = ({
                     onClick={() => navigate(row.original.url)}
                     {...row.getRowProps()}
                   >
-                    {row.cells.map((cell, i) => {
-                      return (
-                        cell.render('show') && (
-                          <td className="bg-transparent" key={i} {...cell.getCellProps()}>
-                            {cell.render('Cell')}
-                          </td>
-                        )
-                      )
-                    })}
+                    {row.cells.map((cell, i) => (
+                      <td className="bg-transparent" key={i} {...cell.getCellProps()}>
+                        {cell.render('Cell')}
+                      </td>
+                    ))}
                   </tr>
                 )
               })}

@@ -1,73 +1,14 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 
-import * as DialogPrimitive from '@radix-ui/react-dialog'
+import { Dialog, Transition } from '@headlessui/react'
 import { Cross2Icon } from '@radix-ui/react-icons'
-import { keyframes, styled } from '@stitches/react'
+import { styled } from '@stitches/react'
 
-const overlayShow = keyframes({
-  '0%': { opacity: 0 },
-  '100%': { opacity: 1 },
-})
-
-const contentShow = keyframes({
-  '0%': { opacity: 0, transform: 'translate(-50%, -48%) scale(.96)' },
-  '100%': { opacity: 1, transform: 'translate(-50%, -50%) scale(1)' },
-})
-
-const StyledOverlay = styled(DialogPrimitive.Overlay, {
-  zIndex: 1,
-  backgroundColor: '#131415AC',
-  position: 'fixed',
-  inset: 0,
-  '@media (prefers-reduced-motion: no-preference)': {
-    animation: `${overlayShow} 150ms cubic-bezier(0.16, 1, 0.3, 1) forwards`,
-  },
-})
-
-const StyledContent = styled(DialogPrimitive.Content, {
-  zIndex: 2,
-  backgroundColor: '#181A1C',
-  borderRadius: 8,
-  border: '1px solid #2c2c2c',
-  boxShadow: 'hsl(206 22% 7% / 35%) 0px 10px 38px -10px, hsl(206 22% 7% / 20%) 0px 10px 20px -15px',
-  position: 'fixed',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: '90vw',
-  maxWidth: '425px',
-  maxHeight: '85vh',
-  padding: 25,
-  '@media (prefers-reduced-motion: no-preference)': {
-    animation: `${contentShow} 150ms cubic-bezier(0.16, 1, 0.3, 1) forwards`,
-  },
-  '&:focus': { outline: 'none' },
-})
-
-function Content({ children, ...props }) {
-  return (
-    <DialogPrimitive.Portal>
-      <StyledOverlay />
-      <StyledContent {...props}>{children}</StyledContent>
-    </DialogPrimitive.Portal>
-  )
-}
-
-const StyledTitle = styled(DialogPrimitive.Title, {
-  margin: 0,
-  marginBottom: '20px',
-  fontWeight: 400,
-  fontSize: '24px',
-  lineHeight: '27px',
-  letterSpacing: '0.01em',
-  color: '#E0E0E0',
-})
-
-// Exports
-export const Dialog = DialogPrimitive.Root
-export const DialogContent = Content
-export const DialogTitle = StyledTitle
-export const DialogClose = DialogPrimitive.Close
+export const DialogTitle = ({ children }) => (
+  <Dialog.Title as="h3" className="text-2xl text-[#E0E0E0]">
+    {children}
+  </Dialog.Title>
+)
 
 export const IconButton = styled('button', {
   all: 'unset',
@@ -86,20 +27,48 @@ export const IconButton = styled('button', {
   '&:hover': { backgroundColor: '#ececec' },
 })
 
-const Modal = ({ children, isOpen: open, onDismiss: onOpenChange }) => {
-  return (
-    <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent>
-        {children}
+export default function MyModal({ children, isOpen, onDismiss: onOpenChange }) {
+  function closeModal() {
+    onOpenChange(false)
+  }
 
-        <DialogClose asChild>
-          <IconButton>
-            <Cross2Icon />
-          </IconButton>
-        </DialogClose>
-      </DialogContent>
-    </Dialog>
+  return (
+    <Transition appear as={Fragment} show={isOpen}>
+      <Dialog as="div" className="relative z-10" onClose={closeModal}>
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-[#131415AC]" />
+        </Transition.Child>
+
+        <div className="overflow-y-auto fixed inset-0">
+          <div className="flex justify-center items-center p-4 min-h-full text-center">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <Dialog.Panel className="overflow-hidden p-6 w-full max-w-md text-left align-middle bg-[#181A1C] rounded-lg border border-[#2c2c2c] shadow-xl transition-all">
+                <div className="mt-2">{children}</div>
+
+                <IconButton>
+                  <Cross2Icon />
+                </IconButton>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
+      </Dialog>
+    </Transition>
   )
 }
-
-export default Modal

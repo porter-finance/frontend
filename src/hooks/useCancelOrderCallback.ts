@@ -73,7 +73,6 @@ export function useCancelOrderCallback(
             )} ${biddingToken.symbol} Order`,
           })
           actionCancelOrder(orderId)
-
           return response.hash
         })
         .catch((error) => {

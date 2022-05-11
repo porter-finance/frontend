@@ -5,6 +5,7 @@ import { useWeb3React } from '@web3-react/core'
 import { round } from 'lodash'
 
 import BondAction from '../../components/bond/BondAction'
+import { isDev } from '../../connectors'
 import { useCreateBond } from '../../hooks/useCreateBond'
 import { BondActions } from '../BondDetail'
 
@@ -31,20 +32,19 @@ const getFakeData = (account: string): Array<string | number> => {
   const collateralTokenAddress = '0xf4e2543879d3a7ca73f8c98ebc5206d77240043f'
   const maxSupply = parseUnits('50000000', 18).toString()
 
-  const fakeData =
-    process.env.NODE_ENV === 'development'
-      ? [
-          bondName,
-          bondSymbol,
-          account,
-          maturityDate,
-          collateralTokenAddress,
-          paymentTokenAddress,
-          collateralRatio,
-          convertibilityRatio,
-          maxSupply,
-        ]
-      : []
+  const fakeData = isDev
+    ? [
+        bondName,
+        bondSymbol,
+        account,
+        maturityDate,
+        collateralTokenAddress,
+        paymentTokenAddress,
+        collateralRatio,
+        convertibilityRatio,
+        maxSupply,
+      ]
+    : []
 
   return fakeData
 }

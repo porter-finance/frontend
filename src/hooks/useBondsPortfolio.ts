@@ -30,6 +30,7 @@ const bondsQuery = gql`
           collateralRatio
           convertibleRatio
           maxSupply
+          clearingPrice
         }
       }
     }
@@ -54,7 +55,6 @@ export const useBondsPortfolio = (): Portfolio => {
   if (error) {
     logger.error('Error getting useBondsPortfolio info', error)
   }
-  console.log({ data })
   const bonds = data?.account?.tokenBalances?.map(({ amount, bond }: TokenBalance) => ({
     ...bond,
     amount,

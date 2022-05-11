@@ -45,7 +45,12 @@ export interface BidInfo {
 
 const bidsQuery = gql`
   query ParticipatingAuctionBids($account: String!, $auctionId: Int!) {
-    bids(first: 100, where: { account: $account, auction: $auctionId }) {
+    bids(
+      orderBy: timestamp
+      orderDirection: desc
+      first: 100
+      where: { account: $account, auction: $auctionId }
+    ) {
       id
       timestamp
       canceltx
@@ -63,12 +68,13 @@ export const useParticipatingAuctionBids = (
   auctionId?: number,
 ): Maybe<{
   bids: BidInfo[]
+  loading: boolean
   error: ApolloError | undefined
 }> => {
   const { auctionId: urlAuctionId } = parseURL(useParams<RouteAuctionIdentifier>())
   const { account } = useActiveWeb3React()
 
-  const { data, error } = useQuery(bidsQuery, {
+  const { data, error, loading } = useQuery(bidsQuery, {
     variables: {
       auctionId: auctionId || urlAuctionId,
       account: (account && account?.toLowerCase()) || '0x00',
@@ -79,5 +85,5 @@ export const useParticipatingAuctionBids = (
     logger.error('Error getting useParticipatingAuctionBids info', error)
   }
 
-  return { bids: data?.bids, error }
+  return { loading, bids: data?.bids, error }
 }

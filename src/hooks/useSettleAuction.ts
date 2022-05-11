@@ -13,7 +13,7 @@ export function useSettleAuction(address: string) {
   const { account, chainId, library } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
 
-  const settleAuction = useCallback(async (): Promise<ContractTransaction | undefined> => {
+  const settleAuctionCallback = useCallback(async (): Promise<ContractTransaction | undefined> => {
     if (!account || !chainId || !library) {
       logger.error('missing deps')
       return
@@ -40,5 +40,5 @@ export function useSettleAuction(address: string) {
     return response
   }, [addTransaction, address, chainId, account, library])
 
-  return { settleAuction }
+  return { settleAuctionCallback }
 }

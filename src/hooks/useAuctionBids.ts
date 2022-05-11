@@ -10,7 +10,12 @@ const logger = getLogger('useAuctionBids')
 
 const bidsQuery = gql`
   query AuctionBidList($auctionId: Int!) {
-    bids(first: 100, where: { auction: $auctionId, canceltx: null }) {
+    bids(
+      orderBy: timestamp
+      orderDirection: desc
+      first: 100
+      where: { auction: $auctionId, canceltx: null }
+    ) {
       id
       timestamp
       canceltx
@@ -26,11 +31,12 @@ const bidsQuery = gql`
 
 export const useAuctionBids = (): Maybe<{
   bids: BidInfo[]
+  loading: boolean
   error: ApolloError | undefined
 }> => {
   const { auctionId } = parseURL(useParams<RouteAuctionIdentifier>())
 
-  const { data, error } = useQuery(bidsQuery, {
+  const { data, error, loading } = useQuery(bidsQuery, {
     variables: { auctionId: Number(auctionId) },
   })
 
@@ -38,5 +44,5 @@ export const useAuctionBids = (): Maybe<{
     logger.error('Error getting useAuctionBids info', error)
   }
 
-  return { bids: data?.bids, error }
+  return { loading, bids: data?.bids, error }
 }

@@ -7,11 +7,13 @@ import { round } from 'lodash'
 import { usePagination, useTable } from 'react-table'
 
 import { useActiveWeb3React } from '../../../hooks'
+import { useAuctionBids } from '../../../hooks/useAuctionBids'
 import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
 import { BidInfo } from '../../../hooks/useParticipatingAuctionBids'
 import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { OrderStatus } from '../../../state/orders/reducer'
 import { getExplorerLink, getTokenDisplay } from '../../../utils'
+import Tooltip from '../../common/Tooltip'
 import { calculateInterestRate } from '../../form/InterestRateInputPanel'
 import { orderStatusText } from '../OrdersTable'
 
@@ -62,7 +64,7 @@ export const calculateRow = (row, paymentToken, maturityDate, derivedAuctionInfo
   const bonds = `${round(
     Number(formatUnits(row.size, derivedAuctionInfo.auctioningToken.decimals)),
     3,
-  ).toLocaleString()}+ ${'Bonds'}`
+  ).toLocaleString()} ${'bonds'}`
 
   const transaction = <BidTransactionLink bid={row} />
 
@@ -73,6 +75,7 @@ export const TableDesign = ({
   columns,
   data,
   hidePagination = false,
+  loading = false,
   showConnect = false,
   ...restProps
 }) => {
@@ -103,7 +106,7 @@ export const TableDesign = ({
   return (
     <div className="min-h-[385px]" {...restProps}>
       <table className="table w-full h-full" {...getTableProps()}>
-        <thead>
+        <thead className="sticky top-0 z-[1]">
           {headerGroups.map((headerGroup, i) => (
             <tr
               className="border-b border-b-[#D5D5D519]"
@@ -116,14 +119,28 @@ export const TableDesign = ({
                   key={i}
                   {...column.getHeaderProps()}
                 >
-                  {column.render('Header')}
+                  {column.tooltip ? (
+                    <Tooltip left={column.Header} tip={column.tooltip} />
+                  ) : (
+                    column.render('Header')
+                  )}
                 </th>
               ))}
             </tr>
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
-          {!page.length && (
+          {loading &&
+            [...Array(10).keys()].map((z) => (
+              <tr className="h-[57px] text-sm text-[#D2D2D2] bg-transparent" key={z}>
+                {[...Array(columns.length).keys()].map((i) => (
+                  <td className="text-center text-[#696969] bg-transparent" key={i}>
+                    <div className="my-4 w-full max-w-sm h-4 bg-gradient-to-r from-[#1F2123] to-[#181A1C] rounded animate-pulse"></div>
+                  </td>
+                ))}
+              </tr>
+            ))}
+          {!loading && !page.length && (
             <tr className="h-[57px] text-sm text-[#D2D2D2] bg-transparent">
               <td
                 className="py-[100px] space-y-4 text-center text-[#696969] bg-transparent"
@@ -175,27 +192,28 @@ export const TableDesign = ({
               </td>
             </tr>
           )}
-          {page.map((row, i) => {
-            prepareRow(row)
-            return (
-              <tr
-                className="h-[57px] text-sm text-[#D2D2D2] bg-transparent"
-                key={i}
-                {...row.getRowProps()}
-              >
-                {row.cells.map((cell, i) => {
-                  return (
-                    <td className="bg-transparent" key={i} {...cell.getCellProps()}>
-                      {cell.render('Cell')}
-                    </td>
-                  )
-                })}
-              </tr>
-            )
-          })}
+          {!loading &&
+            page.map((row, i) => {
+              prepareRow(row)
+              return (
+                <tr
+                  className="h-[57px] text-sm text-[#D2D2D2] bg-transparent"
+                  key={i}
+                  {...row.getRowProps()}
+                >
+                  {row.cells.map((cell, i) => {
+                    return (
+                      <td className="bg-transparent" key={i} {...cell.getCellProps()}>
+                        {cell.render('Cell')}
+                      </td>
+                    )
+                  })}
+                </tr>
+              )
+            })}
         </tbody>
       </table>
-      {!hidePagination && pageOptions.length > 0 && (
+      {!hidePagination && (
         <div className="flex justify-end items-center space-x-2 text-[#696969] !border-none">
           <button className="btn btn-xs" disabled={!canPreviousPage} onClick={previousPage}>
             <DoubleArrowLeftIcon />
@@ -214,7 +232,6 @@ export const TableDesign = ({
 
 interface OrderBookTableProps {
   derivedAuctionInfo: DerivedAuctionInfo
-  bids: BidInfo[]
 }
 
 export const ActiveStatusPill = ({
@@ -266,19 +283,17 @@ export const BidTransactionLink = ({ bid }) => {
   )
 }
 
-export const OrderBookTable: React.FC<OrderBookTableProps> = ({ bids, derivedAuctionInfo }) => {
+export const OrderBookTable: React.FC<OrderBookTableProps> = ({ derivedAuctionInfo }) => {
+  const { bids, loading } = useAuctionBids()
+
   const maturityDate = useBondMaturityForAuction()
-
-  const data = []
-
   const paymentToken = getTokenDisplay(derivedAuctionInfo?.biddingToken)
-
   const noBids = !Array.isArray(bids) || bids.length === 0
-
+  const data = []
   !noBids &&
     bids.forEach((row) => {
       data.push(calculateRow(row, paymentToken, maturityDate, derivedAuctionInfo))
     })
 
-  return <TableDesign columns={ordersTableColumns} data={data} />
+  return <TableDesign columns={ordersTableColumns} data={data} loading={loading} />
 }

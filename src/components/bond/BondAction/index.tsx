@@ -61,11 +61,7 @@ export const TokenInfo = ({ disabled = false, extra = '', plus = false, token, v
       } flex justify-between`}
     >
       <div className="space-x-2">
-        <span>
-          {Number(`${value}`.replaceAll(',', ''))
-            ? `${parseFloat(`${value}`.replaceAll(',', '')).toLocaleString()}${plus ? '+' : ''}`
-            : '-'}
-        </span>
+        <span>{value || '-'}</span>
         <span className="text-[#696969]">{extra}</span>
       </div>
       <TokenPill token={token} />

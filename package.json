@@ -14,17 +14,11 @@
     "ipfs-publish": "ipfs-deploy -p infura -O dist ./build",
     "test": "react-app-rewired test --env=jsdom",
     "eject": "react-app-rewired eject",
-    "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --fix",
-    "lint:fix": "eslint  --fix",
-    "prettier:fix": "prettier --write",
     "cy:run": "cypress run",
     "serve:build": "serve -s build -l 3000",
     "integration-test": "yarn build && start-server-and-test 'yarn run serve:build' http://localhost:3000 cy:run",
     "prepare": "husky install",
     "postinstall": "yarn typechain:generate"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
   },
   "browserslist": {
     "production": [
@@ -73,10 +67,12 @@
     "os-browserify": "^0.3.0",
     "postcss": "^8.4.12",
     "prettier": "^2.6.1",
+    "pretty-quick": "^3.1.3",
     "process": "^0.11.10",
     "react-app-rewired": "^2.2.1",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
+    "tailwind-scrollbar": "^1.3.1",
     "tailwindcss": "^3.0.23",
     "typechain": "^8.0.0",
     "url": "^0.11.0"
@@ -102,6 +98,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@fortawesome/react-fontawesome": "^0.1.18",
     "@gnosis.pm/safe-apps-web3-react": "^1.3.0",
+    "@headlessui/react": "^1.6.1",
     "@heroicons/react": "^1.0.6",
     "@josojo/honeyswap-sdk": "^1.0.0",
     "@popperjs/core": "^2.11.4",
@@ -194,10 +191,11 @@
     "util": "^0.12.4"
   },
   "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx}": [
-      "yarn run lint:fix",
-      "yarn run prettier:fix"
-    ]
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*": "prettier --ignore-unknown --write"
   },
   "jest": {
     "transformIgnorePatterns": [

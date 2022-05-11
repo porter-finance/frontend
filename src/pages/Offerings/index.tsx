@@ -28,7 +28,6 @@ const columns = [
     Header: 'Offering',
     accessor: 'offering',
     align: 'flex-start',
-    show: true,
     style: { height: '100%', justifyContent: 'center' },
     filter: 'searchInTags',
   },
@@ -36,7 +35,22 @@ const columns = [
     Header: 'Current Price',
     accessor: 'currentPrice',
     align: 'flex-start',
-    show: true,
+    style: {},
+    filter: 'searchInTags',
+  },
+  {
+    Header: 'Value at maturity',
+    accessor: 'maturityValue',
+    tooltip:
+      'This is the amount your bonds are redeemable for at the maturity date assuming a default does not occur.',
+    align: 'flex-start',
+    style: {},
+    filter: 'searchInTags',
+  },
+  {
+    Header: 'Maturity Date',
+    accessor: 'maturityDate',
+    align: 'flex-start',
     style: {},
     filter: 'searchInTags',
   },
@@ -45,23 +59,6 @@ const columns = [
     tooltip: 'This APR is calculated using the current price of the bond offering.',
     accessor: 'fixedAPR',
     align: 'flex-start',
-    show: true,
-    style: {},
-    filter: 'searchInTags',
-  },
-  {
-    Header: 'Maturity Date',
-    accessor: 'maturityDate',
-    align: 'flex-start',
-    show: true,
-    style: {},
-    filter: 'searchInTags',
-  },
-  {
-    Header: 'Value at maturity',
-    accessor: 'maturityValue',
-    align: 'flex-start',
-    show: true,
     style: {},
     filter: 'searchInTags',
   },
@@ -69,16 +66,8 @@ const columns = [
     Header: 'Status',
     accessor: 'status',
     align: 'flex-start',
-    show: true,
     style: {},
     filter: 'searchInTags',
-  },
-  {
-    Header: '',
-    accessor: 'url',
-    align: '',
-    show: false,
-    style: {},
   },
 ]
 
@@ -99,7 +88,12 @@ const Offerings = () => {
       auctionId: `#${auction.id}`,
       type: 'auction', // TODO: currently hardcoded since no OTC exists
       price: `1 ${auction?.bidding?.symbol}`,
-      fixedAPR: calculateInterestRate(auction.clearingPrice, auction.end),
+      fixedAPR: calculateInterestRate(
+        auction.clearingPrice,
+        auction.bond.maturityDate,
+        true,
+        auction.end,
+      ),
       status: auction.live ? (
         <ActiveStatusPill title="Ongoing" />
       ) : (

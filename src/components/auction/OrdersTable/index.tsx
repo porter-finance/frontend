@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react'
 
+import { apolloClient } from '../../..'
 import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
 import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
 import { useParticipatingAuctionBids } from '../../../hooks/useParticipatingAuctionBids'
@@ -14,7 +15,6 @@ import { getTokenDisplay } from '../../../utils'
 import ConfirmationDialog from '../../modals/ConfirmationDialog'
 import {
   BidTransactionLink,
-  OverflowWrap,
   TableDesign,
   calculateRow,
   ordersTableColumns,
@@ -38,7 +38,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
     derivedAuctionInfo: { auctionState },
   } = props
   const maturityDate = useBondMaturityForAuction()
-  const { bids } = useParticipatingAuctionBids()
+  const { bids, loading } = useParticipatingAuctionBids()
   const cancelOrderCallback = useCancelOrderCallback(
     auctionIdentifier,
     derivedAuctionInfo?.biddingToken,
@@ -95,9 +95,14 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
       data.push(items)
     })
 
+  const refetchBids = () =>
+    apolloClient.refetchQueries({
+      include: 'active',
+    })
+
   return (
     <>
-      <TableDesign columns={ordersTableColumns} data={data} showConnect />
+      <TableDesign columns={ordersTableColumns} data={data} loading={loading} showConnect />
       <ConfirmationDialog
         actionText="Cancel order"
         beforeDisplay={
@@ -107,6 +112,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
         }
         finishedText="Order cancelled"
         loadingText="Cancelling order"
+        onFinished={refetchBids}
         onOpenChange={setShowConfirm}
         open={showConfirm}
         pendingText="Confirm cancellation in wallet"

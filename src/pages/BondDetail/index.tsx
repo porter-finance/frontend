@@ -86,21 +86,23 @@ const positionColumns = [
     accessor: 'amount',
   },
   {
-    Header: 'Issuance price',
-    accessor: 'price',
+    Header: 'Cost',
+    accessor: 'cost',
+    tooltip:
+      'This is how much you paid for your bonds. To get this number, we assume you purchased the bonds through the Porter Finance platform. If you purchased them off the platform through an OTC deal or AMM, this number may be incorrect.',
   },
   {
-    Header: 'Fixed APR',
-    tooltip: 'This APR is calculated using the closing price of the initial offering.',
-    accessor: 'fixedAPR',
+    Header: 'Value at maturity',
+    accessor: 'maturityValue',
   },
   {
     Header: 'Maturity Date',
     accessor: 'maturityDate',
   },
   {
-    Header: 'Value at maturity',
-    accessor: 'maturityValue',
+    Header: 'Fixed APR',
+    tooltip: 'This APR is calculated using the closing price of the initial offering.',
+    accessor: 'fixedAPR',
   },
 ]
 
@@ -132,20 +134,19 @@ const BondDetail: React.FC = () => {
 
   let positionData
   if (bond && Array.isArray(bond.tokenBalances) && bond.tokenBalances.length) {
-    const amount = Number(
-      formatUnits(bond?.tokenBalances[0].amount, bond.decimals),
-    ).toLocaleString()
+    const amount = Number(formatUnits(bond?.tokenBalances[0].amount, bond.decimals)) || 0
     const fixedAPR = calculateInterestRate(bond.clearingPrice, bond.maturityDate)
     positionData = [
       {
-        amount,
+        amount: amount.toLocaleString(),
+        cost: (bond?.clearingPrice * amount).toLocaleString() || '-',
         price: bond?.clearingPrice ? bond?.clearingPrice : '-',
         fixedAPR,
         maturityDate: dayjs(bond.maturityDate * 1000)
           .utc()
           .tz()
           .format('ll'),
-        maturityValue: amount,
+        maturityValue: amount ? amount.toLocaleString() : '-',
       },
     ]
   }

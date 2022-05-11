@@ -55,8 +55,11 @@ export const tooltipRender = (o) => {
   o.tooltip.background.filters.clear()
   o.tooltip.background.cornerRadius = 6
   o.tooltip.background.stroke = am4core.color('#2A2B2C')
-  o.tooltipHTML =
-    '<div class="text-xs text-[#D6D6D6] border-none flex-wrap max-w-[400px] p-1 whitespace-normal">{text}</div>'
+  o.tooltip.label.fill = am4core.color('#D6D6D6')
+  o.tooltip.label.maxWidth = 400
+  o.tooltip.label.wrap = true
+  o.tooltip.label.fontSize = 12
+  o.tooltip.label.letterSpacing = 0.1
 
   return o
 }
@@ -68,29 +71,24 @@ export const XYSimpleBondChart = (props: XYBondChartProps): am4charts.XYChart =>
 
   const chart = am4core.create(chartElement, am4charts.XYChart)
 
-  chart.paddingTop = 20
-  chart.marginTop = 20
-  chart.paddingBottom = 0
-  chart.paddingLeft = 0
-  chart.paddingRight = 0
-  chart.marginBottom = 0
-
   // Create axes
-  const dateAxis = chart.xAxes.push(new am4charts.DateAxis())
   const priceAxis = chart.yAxes.push(new am4charts.ValueAxis())
   priceAxis.renderer.grid.template.stroke = am4core.color(colors.grey)
   priceAxis.renderer.grid.template.strokeOpacity = 0
   priceAxis.title.fill = am4core.color(colors.grey)
   priceAxis.renderer.labels.template.fill = am4core.color(colors.grey)
   priceAxis.numberFormatter = numberFormatter
-  priceAxis.adjustLabelPrecision = false
   priceAxis.extraTooltipPrecision = 3
+  priceAxis.adjustLabelPrecision = false
   priceAxis.tooltip.disabled = true
 
+  const dateAxis = chart.xAxes.push(new am4charts.DateAxis())
   dateAxis.renderer.grid.template.strokeOpacity = 0
   dateAxis.title.fill = am4core.color(colors.grey)
   dateAxis.renderer.labels.template.fill = am4core.color(colors.grey)
   dateAxis.tooltipDateFormat = 'MMM dd, YYYY'
+  dateAxis.renderer.labels.template.location = 0.5
+  dateAxis.renderer.grid.template.location = 0.5
   tooltipRender(dateAxis)
 
   const faceValue = chart.series.push(new am4charts.StepLineSeries())

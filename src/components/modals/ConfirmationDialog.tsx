@@ -10,7 +10,7 @@ import { ActionButton, GhostActionLink } from '../auction/Claimer'
 import { TokenInfo } from '../bond/BondAction'
 import Tooltip from '../common/Tooltip'
 import { unlockProps } from '../form/AmountInputPanel'
-import Modal, { DialogClose, DialogTitle } from './common/Modal'
+import Modal, { DialogTitle } from './common/Modal'
 
 const GeneralWarning = ({ text }) => (
   <div className="space-y-3">
@@ -75,7 +75,7 @@ export const ReviewOrder = ({ amountToken, cancelCutoff, data, orderPlacingOnly,
       <div className="text-xs text-[#696969]">
         <Tooltip
           left="Amount of interest you earn"
-          tip="Amount of bonds you will receive. If the final auction price is lower than your bid price, you will receive more bonds than were ordered at that lower price. This is also the amount you will earn assuming no default. If the final price is lower than your bid price, you will receive more bonds than ordered and, therefore, earn more."
+          tip="Amount you will earn assuming no default. If the final auction price is lower than your bid price, you will receive more bonds than ordered and, therefore, earn more."
         />
       </div>
     </div>
@@ -240,6 +240,7 @@ const ConfirmationDialog = ({
   beforeDisplay,
   finishedText,
   loadingText,
+  onFinished,
   onOpenChange,
   open,
   pendingText,
@@ -250,8 +251,9 @@ const ConfirmationDialog = ({
   placeOrder: () => Promise<any>
   actionColor?: string
   actionText: string
+  onFinished?: () => void
   pendingText: string
-  title: string
+  title?: string
   loadingText: string
   finishedText: string
   beforeDisplay: ReactElement
@@ -281,19 +283,33 @@ const ConfirmationDialog = ({
         // the first one is always the new order
         if (tx.receipt?.logs) {
           setOrderComplete(true)
+          if (onFinished) onFinished()
         }
 
         return true
       })
-  }, [showOrderTransactionComplete, allTransactions])
+  }, [showOrderTransactionComplete, onFinished, allTransactions])
+
+  const waitingTransactionToComplete = showOrderTransactionComplete && !orderComplete
+
+  const onDismiss = () => {
+    if (waitingTransactionToComplete) return false
+
+    if (orderComplete) {
+      setOrderComplete(false)
+      setShowOrderTransactionComplete('')
+    }
+    onOpenChange(false)
+  }
 
   return (
-    <Modal isOpen={open} onDismiss={onOpenChange}>
+    <Modal isOpen={open} onDismiss={onDismiss}>
       {!transactionError && (
         <>
-          {!showOrderTransactionComplete && !orderComplete && !showTokenTransactionComplete && (
-            <DialogTitle>{title}</DialogTitle>
-          )}
+          {title &&
+            !showOrderTransactionComplete &&
+            !orderComplete &&
+            !showTokenTransactionComplete && <DialogTitle>{title}</DialogTitle>}
 
           {unlock && !showOrderTransactionComplete && !orderComplete && (
             <TokenApproval
@@ -356,18 +372,9 @@ const ConfirmationDialog = ({
               )}
 
               {orderComplete && (
-                <DialogClose asChild>
-                  <ActionButton
-                    aria-label="Done"
-                    color={actionColor}
-                    onClick={() => {
-                      setOrderComplete(false)
-                      setShowOrderTransactionComplete('')
-                    }}
-                  >
-                    Done
-                  </ActionButton>
-                </DialogClose>
+                <ActionButton aria-label="Done" color={actionColor} onClick={onDismiss}>
+                  Done
+                </ActionButton>
               )}
             </div>
           )}
@@ -377,11 +384,7 @@ const ConfirmationDialog = ({
       {transactionError && (
         <div className="mt-10 space-y-6 text-center">
           <h1 className="text-xl text-[#E0E0E0]">Oops, something went wrong!</h1>
-          <p className="text-[#D6D6D6]">
-            This is text explaining to the users how sometimes things go wrong and they shouldn’t
-            worry. They should just try the transaction again because giving up is unacceptable.
-          </p>
-          <p className="overflow-hidden">{transactionError}</p>
+          <p className="overflow-hidden text-[#D6D6D6]">{transactionError}</p>
           <ActionButton
             aria-label="Try again"
             className="!mt-20"
