@@ -22,7 +22,7 @@ chainIds.forEach((chainId: ChainId) => {
   }
 })
 
-const isDev = process.env.NODE_ENV === 'development'
+export const isDev = process.env.REACT_APP_VERCEL_ENV !== 'production'
 // TODO switch to 1 when we have mainnet graph
 const defaultChainId = isDev ? 4 : 4
 
