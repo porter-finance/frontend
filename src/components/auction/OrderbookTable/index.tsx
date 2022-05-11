@@ -131,7 +131,7 @@ export const TableDesign = ({
         </thead>
         <tbody {...getTableBodyProps()}>
           {loading &&
-            [...Array(10).keys()].map((z) => (
+            [...Array(4).keys()].map((z) => (
               <tr className="h-[57px] text-sm text-[#D2D2D2] bg-transparent" key={z}>
                 {[...Array(columns.length).keys()].map((i) => (
                   <td className="text-center text-[#696969] bg-transparent" key={i}>
