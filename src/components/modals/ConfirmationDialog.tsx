@@ -1,6 +1,7 @@
 import React, { ReactElement, useEffect, useState } from 'react'
 
 import { ReactComponent as GreenCheckIcon } from '../../assets/svg/greencheck.svg'
+import { ReactComponent as PurplePorterIcon } from '../../assets/svg/porter-purple.svg'
 import { ReactComponent as PorterIcon } from '../../assets/svg/porter.svg'
 import { useActiveWeb3React } from '../../hooks'
 import { ApprovalState } from '../../hooks/useApproveCallback'
@@ -146,12 +147,12 @@ export const ReviewConvert = ({ amount, amountToken, assetsToReceive, type = 'co
   </div>
 )
 
-const BodyPanel = ({ after, before, during }) => (
+const BodyPanel = ({ after, before, color = 'blue', during }) => (
   <>
     {before.show && before.display}
     {during.show && (
       <div className="flex flex-col items-center mt-20 animate-pulse">
-        <PorterIcon />
+        {color === 'blue' ? <PorterIcon /> : <PurplePorterIcon />}
         {during.display}
       </div>
     )}
@@ -181,11 +182,13 @@ const GhostTransactionLink = ({ chainId, hash }) => (
   </GhostActionLink>
 )
 const TokenApproval = ({
+  actionColor,
   beforeDisplay,
   setShowTokenTransactionComplete,
   showTokenTransactionComplete,
   unlock,
 }: {
+  actionColor: string
   beforeDisplay: ReactElement
   setShowTokenTransactionComplete: (hash: string) => void
   showTokenTransactionComplete: string
@@ -207,6 +210,7 @@ const TokenApproval = ({
             show: !isUnlocking && !showTokenTransactionComplete,
             display: beforeDisplay,
           }}
+          color={actionColor}
           during={{
             show: isUnlocking,
             display: <span>Approving {unlock.token}</span>,
@@ -347,6 +351,7 @@ const ConfirmationDialog = ({
 
           {unlock && !showOrderTransactionComplete && !orderComplete && (
             <TokenApproval
+              actionColor={actionColor}
               beforeDisplay={beforeDisplay}
               setShowTokenTransactionComplete={setShowTokenTransactionComplete}
               showTokenTransactionComplete={showTokenTransactionComplete}
@@ -364,6 +369,7 @@ const ConfirmationDialog = ({
                 show: !unlock && !showOrderTransactionComplete && !orderComplete,
                 display: beforeDisplay,
               }}
+              color={actionColor}
               during={{
                 show: showOrderTransactionComplete && !orderComplete,
                 display: <span>{loadingText}</span>,
