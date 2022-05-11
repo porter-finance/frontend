@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import * as CSS from 'csstype'
 
 import { useAuctionBids } from '../../../hooks/useAuctionBids'
+import { useParticipatingAuctionBids } from '../../../hooks/useParticipatingAuctionBids'
 import { useOrderbookDataCallback } from '../../../state/orderbook/hooks'
 import { OrderBook } from '../Orderbook'
 import { OrderBookTable } from '../OrderbookTable'
@@ -62,6 +63,10 @@ export const OrderBookContainer = (props) => {
   const { auctionIdentifier, auctionStarted, derivedAuctionInfo } = props
   const [showMyOrders, setShowMyOrders] = useState(false)
 
+  // Always call this when they first load the page to see past prices when placing a new order
+  // Can't allow them to place an order at a past price
+  const { bids, loading } = useParticipatingAuctionBids()
+
   useOrderbookDataCallback(auctionIdentifier)
 
   return (
@@ -95,7 +100,9 @@ export const OrderBookContainer = (props) => {
           {showMyOrders && auctionStarted && (
             <OrdersTable
               auctionIdentifier={auctionIdentifier}
+              bids={bids}
               derivedAuctionInfo={derivedAuctionInfo}
+              loading={loading}
             />
           )}
 
