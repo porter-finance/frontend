@@ -298,6 +298,10 @@ const ConfirmationDialog = ({
 
     // Prevent changing state during transition
     setTimeout(() => {
+      if (transactionError) {
+        setTransactionError(null)
+      }
+
       if (orderComplete) {
         setOrderComplete(false)
         setShowOrderTransactionComplete('')
