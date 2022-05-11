@@ -303,7 +303,11 @@ const ConfirmationDialog = ({
   }
 
   return (
-    <Modal isOpen={open} onDismiss={onDismiss}>
+    <Modal
+      hideCloseIcon={showOrderTransactionComplete && !orderComplete}
+      isOpen={open}
+      onDismiss={onDismiss}
+    >
       {!transactionError && (
         <>
           {title &&
