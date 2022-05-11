@@ -220,15 +220,17 @@ const BondAction = ({
     }
   }, [isConvertComponent, componentType, isConvertable, isRedeemable])
 
-  const Status = () => {
-    if (isDefaulted && componentType === BondActions.Redeem) {
+  const BondStatus = () => {
+    if (componentType !== BondActions.Redeem) return null
+
+    if (isDefaulted) {
       return <ActiveStatusPill className="!bg-[#DB3635]" dot={false} title="Defaulted" />
     }
-    if (isPaid && componentType === BondActions.Redeem) {
+    if (isPaid) {
       return <ActiveStatusPill dot={false} title="Repaid" />
     }
 
-    if (!isPaid && isPartiallyPaid && isMatured && componentType === BondActions.Redeem) {
+    if (!isPaid && isPartiallyPaid && isMatured) {
       return <ActiveStatusPill className="!bg-[#EDA651]" dot={false} title="Partially repaid" />
     }
 
@@ -269,7 +271,7 @@ const BondAction = ({
       <div className="card-body">
         <div className="flex flex-row justify-between items-start">
           <h2 className="card-title">{getActionText(componentType)}</h2>
-          {Status()}
+          <BondStatus />
         </div>
         {isConvertComponent && !isMatured && bondInfo && (
           <div className="mb-1 space-y-1">
