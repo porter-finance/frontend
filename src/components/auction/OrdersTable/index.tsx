@@ -12,7 +12,7 @@ import {
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { OrderStatus } from '../../../state/orders/reducer'
 import { getTokenDisplay } from '../../../utils'
-import ConfirmationDialog from '../../modals/ConfirmationDialog'
+import ConfirmationDialog, { OopsWarning } from '../../modals/ConfirmationDialog'
 import {
   BidTransactionLink,
   TableDesign,
@@ -109,9 +109,10 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
       <ConfirmationDialog
         actionText="Cancel order"
         beforeDisplay={
-          <span>
-            You will need to place a new order if you still want to participate in this auction.
-          </span>
+          <OopsWarning
+            message="Your order will be cancelled and your funds will be returned."
+            title="Are you sure?"
+          />
         }
         finishedText="Order cancelled"
         loadingText="Cancelling order"
@@ -120,7 +121,6 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
         open={showConfirm}
         pendingText="Confirm cancellation in wallet"
         placeOrder={onCancelOrder}
-        title="Review cancellation"
       />
     </>
   )

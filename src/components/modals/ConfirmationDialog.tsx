@@ -12,18 +12,24 @@ import Tooltip from '../common/Tooltip'
 import { unlockProps } from '../form/AmountInputPanel'
 import Modal, { DialogTitle } from './common/Modal'
 
-export const OopsWarning = ({ actionClick, actionColor = 'blue', message }) => (
+export const OopsWarning = ({
+  actionClick = null,
+  actionColor = 'blue',
+  actionText = 'Try again',
+  message,
+  title = 'Oops, something went wrong!',
+}) => (
   <div className="mt-10 space-y-6 text-center">
-    <h1 className="text-xl text-[#E0E0E0]">Oops, something went wrong!</h1>
+    <h1 className="text-xl text-[#E0E0E0]">{title}</h1>
     <p className="overflow-hidden text-[#D6D6D6]">{message}</p>
     {actionClick && (
       <ActionButton
-        aria-label="Try again"
+        aria-label={actionText}
         className="!mt-20"
         color={actionColor}
         onClick={actionClick}
       >
-        Try again
+        {actionText}
       </ActionButton>
     )}
   </div>
@@ -267,7 +273,7 @@ const ConfirmationDialog = ({
 }: {
   placeOrder: () => Promise<any>
   actionColor?: string
-  actionText: string
+  actionText?: string
   onFinished?: () => void
   pendingText: string
   title?: string
