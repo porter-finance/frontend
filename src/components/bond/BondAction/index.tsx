@@ -173,8 +173,6 @@ const BondAction = ({
 
     if (!account) return { error: 'Not logged in' }
 
-    console.log(bondsToRedeem)
-
     const validInput = Number(bondsToRedeem) && parseUnits(bondsToRedeem, bondInfo?.decimals).gt(0)
     if (!validInput) return { error: 'Input must be > 0' }
 
@@ -240,15 +238,30 @@ const BondAction = ({
   const assetsToReceive = []
   if (isDefaulted) {
     const value = isConvertComponent ? previewConvertVal : previewRedeemVal[1]
-    assetsToReceive.push({ token: bondInfo?.collateralToken, value: value })
+    assetsToReceive.push({
+      token: bondInfo?.collateralToken,
+      value: Number(value).toLocaleString(undefined, {
+        maximumSignificantDigits: bondInfo?.collateralToken?.decimals,
+      }),
+    })
   } else {
     if (isPartiallyPaid) {
       const partiallyPaidValue = isConvertComponent ? previewConvertVal : previewRedeemVal[1]
-      assetsToReceive.push({ token: bondInfo?.collateralToken, value: partiallyPaidValue })
+      assetsToReceive.push({
+        token: bondInfo?.collateralToken,
+        value: Number(partiallyPaidValue).toLocaleString(undefined, {
+          maximumSignificantDigits: bondInfo?.collateralToken?.decimals,
+        }),
+      })
     }
 
     const value = isConvertComponent ? previewConvertVal : previewRedeemVal[0]
-    assetsToReceive.push({ token: bondInfo?.paymentToken, value })
+    assetsToReceive.push({
+      token: bondInfo?.paymentToken,
+      value: Number(value).toLocaleString(undefined, {
+        maximumSignificantDigits: bondInfo?.paymentToken?.decimals,
+      }),
+    })
   }
 
   return (
@@ -339,7 +352,7 @@ const BondAction = ({
             actionText={`${getActionText(componentType)} bonds`}
             beforeDisplay={
               <ReviewConvert
-                amount={Number(bondsToRedeem)}
+                amount={Number(bondsToRedeem).toLocaleString()}
                 amountToken={tok}
                 assetsToReceive={assetsToReceive}
                 type={getActionText(componentType).toLowerCase()}
