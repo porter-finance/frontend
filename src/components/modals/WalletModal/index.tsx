@@ -221,7 +221,13 @@ const WalletModal: React.FC = () => {
   const showError = !error && !walletConnectChainError && connectingToWallet && pendingError
 
   return (
-    <Modal isOpen={walletModalOpen} onDismiss={toggleWalletModal}>
+    <Modal
+      isOpen={walletModalOpen}
+      onDismiss={() => {
+        resetModal()
+        toggleWalletModal()
+      }}
+    >
       <div>
         <DialogTitle>{showError ? 'Uh oh' : title}</DialogTitle>
 
