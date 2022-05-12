@@ -183,6 +183,15 @@ export const drawInformation = (props: DrawInformation) => {
     return `Collateral value:  ${volume} ${convertibleTokenLabel}`
   })
 
+  const faceValueSeries = chart.series.values[0]
+  faceValueSeries.dy = -15
+  tooltipRender(faceValueSeries)
+  faceValueSeries.adapter.add('tooltipText', (text, target) => {
+    const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
+
+    return `Face value: ${valueY} ${convertibleTokenLabel}`
+  })
+
   if (chart.series.values.length > 2) {
     const convertibleValueSeries = chart.series.values[2]
     tooltipRender(convertibleValueSeries)
