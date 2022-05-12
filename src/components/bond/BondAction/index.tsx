@@ -5,12 +5,15 @@ import { formatUnits, parseUnits } from '@ethersproject/units'
 import { Token, TokenAmount } from '@josojo/honeyswap-sdk'
 import { useWeb3React } from '@web3-react/core'
 import dayjs from 'dayjs'
+import { round } from 'lodash'
 
 import { useActiveWeb3React } from '../../../hooks'
 import { useBond } from '../../../hooks/useBond'
+import { getValuePerBond } from '../../../hooks/useBondExtraDetails'
 import { useConvertBond } from '../../../hooks/useConvertBond'
 import { usePreviewBond } from '../../../hooks/usePreviewBond'
 import { useRedeemBond } from '../../../hooks/useRedeemBond'
+import { useTokenPrice } from '../../../hooks/useTokenPrice'
 import { BondActions, getBondStates } from '../../../pages/BondDetail'
 import { useActivePopups, useWalletModalToggle } from '../../../state/application/hooks'
 import { getExplorerLink, getTokenDisplay } from '../../../utils'
@@ -128,6 +131,9 @@ const BondAction = ({
   const { convert } = useConvertBond(BondAmount, bondId)
   const { previewConvert, previewRedeem } = usePreviewBond(bondId)
   const toggleWalletModal = useWalletModalToggle()
+  const convertiblePerBond = getValuePerBond(bondInfo, bondInfo?.convertibleRatio)
+  const { data: collateralTokenPrice } = useTokenPrice(bondInfo?.collateralToken.id)
+  const convertibleValue = round(convertiblePerBond * collateralTokenPrice, 3)
 
   useEffect(() => {
     if (!BondAmount) return
@@ -240,6 +246,7 @@ const BondAction = ({
   }
 
   const assetsToReceive = []
+
   if (isDefaulted) {
     const value = isConvertComponent ? previewConvertVal : previewRedeemVal[1]
     assetsToReceive.push({
@@ -247,6 +254,7 @@ const BondAction = ({
       value: Number(value).toLocaleString(undefined, {
         maximumSignificantDigits: bondInfo?.collateralToken?.decimals,
       }),
+      extra: `($${(convertibleValue * Number(value)).toLocaleString()})`,
     })
   } else {
     if (isPartiallyPaid) {
@@ -256,10 +264,12 @@ const BondAction = ({
         value: Number(partiallyPaidValue).toLocaleString(undefined, {
           maximumSignificantDigits: bondInfo?.collateralToken?.decimals,
         }),
+        extra: `($${(convertibleValue * Number(partiallyPaidValue)).toLocaleString()})`,
       })
     }
 
     const value = isConvertComponent ? previewConvertVal : previewRedeemVal[0]
+
     assetsToReceive.push({
       token: bondInfo?.paymentToken,
       value: Number(value).toLocaleString(undefined, {
@@ -317,8 +327,14 @@ const BondAction = ({
             <div className="space-y-6 text-xs text-[#696969]">
               {(isConvertComponent || componentType === BondActions.Redeem) && (
                 <div className="space-y-2">
-                  {assetsToReceive.map(({ token, value }, index) => (
-                    <TokenInfo disabled={!account} key={index} token={token} value={value} />
+                  {assetsToReceive.map(({ extra, token, value }, index) => (
+                    <TokenInfo
+                      disabled={!account}
+                      extra={extra}
+                      key={index}
+                      token={token}
+                      value={value}
+                    />
                   ))}
 
                   <div className="text-xs text-[#696969]">
