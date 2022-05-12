@@ -73,7 +73,10 @@ export const Mobilemenu: React.FC<Props> = (props) => {
   return (
     <Wrapper onClick={onCloseDelay} {...restProps}>
       <Inner>
-        <Item className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')} to={'/'}>
+        <Item
+          className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')}
+          to={'/offerings'}
+        >
           <span>Home</span>
           <ChevronRight />
         </Item>
