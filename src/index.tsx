@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter, HashRouter } from 'react-router-dom'
+import { BrowserRouter } from 'react-router-dom'
 
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { Web3Provider } from '@ethersproject/providers'
@@ -8,15 +8,10 @@ import { Web3ReactProvider, createWeb3ReactRoot } from '@web3-react/core'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 
-import ScrollToTop from './components/ScrollToTop'
+import { isDev } from './connectors'
 import { NetworkContextName } from './constants'
 import './i18n'
-import {
-  NETWORK_URL_MAINNET,
-  NETWORK_URL_RINKEBY,
-  PUBLIC_URL,
-  SUBGRAPH_URL_RINKEBY,
-} from './constants/config'
+import { NETWORK_URL_MAINNET, NETWORK_URL_RINKEBY } from './constants/config'
 import App from './pages/App'
 import store from './state'
 import ApplicationUpdater from './state/application/updater'
@@ -26,12 +21,6 @@ import UserUpdater from './state/user/updater'
 import ThemeProvider from './theme'
 import { GlobalStyle } from './theme/globalStyle'
 import './index.css'
-
-export const apolloClient = new ApolloClient({
-  uri: SUBGRAPH_URL_RINKEBY,
-  connectToDevTools: true,
-  cache: new InMemoryCache(),
-})
 
 const dappConfig = {
   readOnlyChainId: Mainnet.chainId,
@@ -60,6 +49,15 @@ const Updaters = () => {
 
 const container = document.getElementById('root')
 const root = createRoot(container)
+
+const apolloClient = new ApolloClient({
+  uri: isDev
+    ? process.env.REACT_APP_SUBGRAPH_URL_RINKEBY
+    : process.env.REACT_APP_SUBGRAPH_URL_MAINNET,
+  connectToDevTools: true,
+  cache: new InMemoryCache(),
+})
+
 root.render(
   <>
     <Web3ReactProvider getLibrary={getLibrary}>
