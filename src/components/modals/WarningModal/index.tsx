@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { OopsWarning } from '../ConfirmationDialog'
-import Modal, { DialogTitle } from '../common/Modal'
+import Modal from '../common/Modal'
 
 interface Props {
   content: string

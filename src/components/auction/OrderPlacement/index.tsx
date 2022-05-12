@@ -34,7 +34,6 @@ import {
   ChainId,
   EASY_AUCTION_NETWORKS,
   getFullTokenDisplay,
-  getTokenDisplay,
   isTokenWETH,
   isTokenWMATIC,
   isTokenXDAI,

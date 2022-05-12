@@ -3,7 +3,7 @@ import React, { useCallback, useState } from 'react'
 import { apolloClient } from '../../..'
 import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
 import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
-import { BidInfo, useParticipatingAuctionBids } from '../../../hooks/useParticipatingAuctionBids'
+import { BidInfo } from '../../../hooks/useParticipatingAuctionBids'
 import {
   AuctionState,
   DerivedAuctionInfo,

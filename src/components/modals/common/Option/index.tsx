@@ -24,13 +24,13 @@ const Option: React.FC<Props> = (props) => {
 
   return (
     <Wrapper disabled={disabled} onClick={!disabled && onClick} {...restProps}>
-      <a className="cursor-pointer flex items-center p-3 text-base font-bold text-white bg-zinc-700 rounded-lg hover:bg-zinc-500 group hover:shadow">
+      <a className="group flex items-center p-3 text-base font-bold text-white bg-zinc-700 hover:bg-zinc-500 rounded-lg hover:shadow cursor-pointer">
         <div className="h-4">
           <Image alt={'Icon'} src={icon} />
         </div>
         <span className="flex-1 ml-3 whitespace-nowrap">{text}</span>
         {text === 'MetaMask' && (
-          <span className="inline-flex items-center justify-center px-2 py-0.5 ml-3 text-xs font-medium text-white bg-zinc-600 rounded">
+          <span className="inline-flex justify-center items-center py-0.5 px-2 ml-3 text-xs font-medium text-white bg-zinc-600 rounded">
             Popular
           </span>
         )}
