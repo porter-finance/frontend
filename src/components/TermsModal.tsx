@@ -1,15 +1,10 @@
 import React from 'react'
 
-import { useActiveWeb3React } from '../hooks'
 import useLocalStorage from '../hooks/useLocalStorage'
 import MyModal from './modals/common/Modal'
 
 const TermsModal = () => {
-  // Current logged in chain
-  const { account } = useActiveWeb3React()
   const [showTerms, setShowTerms] = useLocalStorage('showTerms', true)
-
-  if (!account) return null
 
   const acceptTerms = () => {
     setShowTerms(false)
