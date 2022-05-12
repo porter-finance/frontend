@@ -13,6 +13,7 @@ const bondsQuery = gql`
         amount
         bond {
           id
+          state
           name
           symbol
           decimals

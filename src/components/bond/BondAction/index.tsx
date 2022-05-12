@@ -224,7 +224,9 @@ const BondAction = ({
     if (componentType !== BondActions.Redeem) return null
 
     if (isDefaulted) {
-      return <ActiveStatusPill className="!bg-[#DB3635]" dot={false} title="Defaulted" />
+      return (
+        <ActiveStatusPill className="!text-white !bg-[#DB3635]" dot={false} title="Defaulted" />
+      )
     }
     if (isPaid) {
       return <ActiveStatusPill dot={false} title="Repaid" />

@@ -14,6 +14,7 @@ import TokenLogo from '../../components/token/TokenLogo'
 import { BondInfo, useBonds } from '../../hooks/useBond'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import { AllButton, ConvertButtonOutline, SimpleButtonOutline } from '../Auction'
+import { getBondStates } from '../BondDetail'
 import { TABLE_FILTERS } from '../Portfolio'
 
 const GlobalStyle = createGlobalStyle`
@@ -124,12 +125,11 @@ export const createTable = (data: BondInfo[]) => {
         ? `${Number(formatUnits(amount, decimals)).toLocaleString()} ${paymentToken.symbol}`
         : `1 ${paymentToken.symbol}`,
 
-      status:
-        new Date() >= new Date(maturityDate * 1000) ? (
-          <ActiveStatusPill disabled dot={false} title="Matured" />
-        ) : (
-          <ActiveStatusPill dot={false} title="Active" />
-        ),
+      status: getBondStates(bond).isMatured ? (
+        <ActiveStatusPill disabled dot={false} title="Matured" />
+      ) : (
+        <ActiveStatusPill dot={false} title="Active" />
+      ),
       maturityDate: (
         <span className="uppercase">
           {dayjs(maturityDate * 1000)

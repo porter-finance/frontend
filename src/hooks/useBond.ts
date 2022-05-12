@@ -68,6 +68,7 @@ const singleBondQuery = gql`
 const allBondsQuery = gql`
   query BondList {
     bonds(first: 100) {
+      state
       id
       name
       symbol

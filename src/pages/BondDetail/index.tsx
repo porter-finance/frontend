@@ -107,12 +107,11 @@ const positionColumns = [
 ]
 
 export const getBondStates = (bond: BondInfo) => {
-  const isMatured = forceDevData ? true : new Date() > new Date(bond?.maturityDate * 1000)
-  const isConvertBond = forceDevData ? false : bond?.type === 'convert'
-  const isPartiallyPaid = forceDevData ? true : false // TODO ADD THIS TO THE GRAPH
-  const isDefaulted = forceDevData ? false : bond?.state === 'defaulted'
-  const isPaid = forceDevData ? false : bond?.state === 'paidEarly' || bond?.state === 'paid'
-
+  const isConvertBond = bond?.type === 'convert'
+  const isPartiallyPaid = false // TODO ADD THIS TO THE GRAPH
+  const isDefaulted = bond?.state === 'defaulted'
+  const isPaid = bond?.state === 'paidEarly' || bond?.state === 'paid'
+  const isMatured = isDefaulted || isPaid
   return {
     isMatured,
     isConvertBond,
