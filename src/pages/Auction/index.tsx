@@ -147,7 +147,7 @@ const AuctionPage = ({ data: { auctionIdentifier, derivedAuctionInfo, graphInfo 
         <WarningModal
           content={`This auction doesn't exist or it hasn't started yet.`}
           isOpen
-          onDismiss={() => navigate('/auctions')}
+          onDismiss={() => navigate('/offerings')}
           title="Warning!"
         />
       </>
