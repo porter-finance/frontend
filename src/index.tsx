@@ -3,10 +3,17 @@ import { BrowserRouter, HashRouter } from 'react-router-dom'
 
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { Web3Provider } from '@ethersproject/providers'
+import {
+  RainbowKitProvider,
+  apiProvider,
+  configureChains,
+  getDefaultWallets,
+} from '@rainbow-me/rainbowkit'
 import { DAppProvider, Mainnet, Rinkeby } from '@usedapp/core'
 import { Web3ReactProvider, createWeb3ReactRoot } from '@web3-react/core'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
+import { WagmiProvider, WagmiProvider, chain, chain, createClient, createClient } from 'wagmi'
 
 import ScrollToTop from './components/ScrollToTop'
 import { NetworkContextName } from './constants'
@@ -26,6 +33,7 @@ import UserUpdater from './state/user/updater'
 import ThemeProvider from './theme'
 import { GlobalStyle } from './theme/globalStyle'
 import './index.css'
+import '@rainbow-me/rainbowkit/styles.css'
 
 export const apolloClient = new ApolloClient({
   uri: SUBGRAPH_URL_RINKEBY,
@@ -40,6 +48,22 @@ const dappConfig = {
     [Mainnet.chainId]: NETWORK_URL_MAINNET,
   },
 }
+
+const { chains, provider } = configureChains(
+  [chain.mainnet, chain.rinkeby],
+  [apiProvider.alchemy(process.env.ALCHEMY_ID), apiProvider.fallback()],
+)
+
+const { connectors } = getDefaultWallets({
+  appName: 'My RainbowKit App',
+  chains,
+})
+
+const wagmiClient = createClient({
+  autoConnect: true,
+  connectors,
+  provider,
+})
 
 const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
 
@@ -66,15 +90,19 @@ root.render(
       <Web3ProviderNetwork getLibrary={getLibrary}>
         <Provider store={store}>
           <ApolloProvider client={apolloClient}>
-            <DAppProvider config={dappConfig}>
-              <Updaters />
-              <ThemeProvider>
-                <GlobalStyle />
-                <BrowserRouter>
-                  <App />
-                </BrowserRouter>
-              </ThemeProvider>
-            </DAppProvider>
+            <WagmiProvider client={wagmiClient}>
+              <RainbowKitProvider chains={chains}>
+                <DAppProvider config={dappConfig}>
+                  <Updaters />
+                  <ThemeProvider>
+                    <GlobalStyle />
+                    <BrowserRouter>
+                      <App />
+                    </BrowserRouter>
+                  </ThemeProvider>
+                </DAppProvider>
+              </RainbowKitProvider>
+            </WagmiProvider>
           </ApolloProvider>
         </Provider>
       </Web3ProviderNetwork>
