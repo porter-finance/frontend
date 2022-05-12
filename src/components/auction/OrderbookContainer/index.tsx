@@ -3,7 +3,6 @@ import styled from 'styled-components'
 
 import * as CSS from 'csstype'
 
-import { useAuctionBids } from '../../../hooks/useAuctionBids'
 import { useParticipatingAuctionBids } from '../../../hooks/useParticipatingAuctionBids'
 import { useOrderbookDataCallback } from '../../../state/orderbook/hooks'
 import { OrderBook } from '../Orderbook'

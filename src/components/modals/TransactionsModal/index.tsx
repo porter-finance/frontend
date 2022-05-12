@@ -3,12 +3,8 @@ import React from 'react'
 import { isTransactionRecent, useAllTransactions } from '../../../state/transactions/hooks'
 import { TransactionDetails } from '../../../state/transactions/reducer'
 import Transaction from '../../common/Transaction'
-import { InfoIcon } from '../../icons/InfoIcon'
-import { OopsWarning } from '../ConfirmationDialog'
 import Modal, { DialogTitle } from '../common/Modal'
 import { Content } from '../common/pureStyledComponents/Content'
-import { IconWrapper } from '../common/pureStyledComponents/IconWrapper'
-import { Text } from '../common/pureStyledComponents/Text'
 
 interface Props {
   isOpen: boolean
