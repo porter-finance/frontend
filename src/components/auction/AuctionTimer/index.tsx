@@ -8,9 +8,8 @@ import localizedFormat from 'dayjs/plugin/localizedFormat'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
-import Countdown from 'react-countdown'
 
-import { calculateTimeProgress, setLocale } from '../../../utils/tools'
+import { calculateTimeLeft, calculateTimeProgress, setLocale } from '../../../utils/tools'
 import Tooltip from '../../common/Tooltip'
 
 // Used for abbreviated named timezone offset 'z' when formatting.
@@ -80,6 +79,17 @@ export const AuctionTimer = ({
   text,
   ...restProps
 }: AuctionTimerProps) => {
+  const [timeLeft, setTimeLeft] = React.useState(calculateTimeLeft(endDate))
+
+  React.useEffect(() => {
+    const id = setInterval(() => {
+      setTimeLeft(calculateTimeLeft(endDate))
+    }, 1000)
+    return () => {
+      clearInterval(id)
+    }
+  }, [endDate])
+
   const progress = React.useMemo(() => {
     const progress = calculateTimeProgress(startDate, endDate)
     return progress === 100 ? progress : 100 - progress
@@ -88,9 +98,17 @@ export const AuctionTimer = ({
   return (
     <div className="" {...restProps}>
       <div className="flex flex-col place-items-start mb-7 space-y-1">
-        <Time className="flex flex-row items-center space-x-1 text-xs text-white">
-          <Countdown className="text-left" date={endDate * 1000} />
-        </Time>
+        <div className="flex flex-row items-center space-x-1 text-xs text-white">
+          {timeLeft && timeLeft > -1 ? (
+            <Time>
+              {dayjs(endDate * 1000)
+                .utc()
+                .toNow(true)}
+            </Time>
+          ) : (
+            <Time>0 days</Time>
+          )}
+        </div>
         <DateTitle>{text}</DateTitle>
       </div>
       <div className="flex justify-between mb-3">
