@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 
 import * as CSS from 'csstype'
@@ -59,7 +59,6 @@ export const Wrap = styled.div<Partial<CSS.Properties & WrapProps>>`
 
 export const OrderBookContainer = (props) => {
   const { auctionIdentifier, auctionStarted, derivedAuctionInfo } = props
-  const [showMyOrders, setShowMyOrders] = useState(false)
 
   // Always call this when they first load the page to see past prices when placing a new order
   // Can't allow them to place an order at a past price
