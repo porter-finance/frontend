@@ -1,5 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 
+import { isDev } from '../connectors'
 import { Order, decodeOrder, encodeOrder } from '../hooks/Order'
 import { Auction } from '../hooks/useAuction'
 import { AuctionInfoDetail } from '../hooks/useAuctionDetails'
@@ -102,6 +103,7 @@ function getAdditionalServiceUrl(baseUrl: string): string {
 }
 
 export type AdditionalServicesApiParams = AdditionalServicesEndpoint[]
+const networkId = isDev ? 4 : 1
 
 export class AdditionalServicesApiImpl implements AdditionalServicesApi {
   private urlsByNetwork: { [networkId: number]: string } = {}
@@ -118,7 +120,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
     })
   }
   public getOrderBookUrl(params: OrderBookParams): string {
-    const { auctionId, networkId } = params
+    const { auctionId } = params
 
     const baseUrl = this._getBaseUrl(networkId)
 
@@ -127,7 +129,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
   }
 
   public getClearingPriceOrderAndVolumeUrl(params: OrderBookParams): string {
-    const { auctionId, networkId } = params
+    const { auctionId } = params
 
     const baseUrl = this._getBaseUrl(networkId)
 
@@ -136,7 +138,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
   }
 
   public getPreviousOrderUrl(params: PreviousOrderParams): string {
-    const { auctionId, networkId, order } = params
+    const { auctionId, order } = params
 
     const baseUrl = this._getBaseUrl(networkId)
 
@@ -145,7 +147,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
   }
 
   public getAllUserOrdersUrl(params: UserOrderParams): string {
-    const { auctionId, networkId, user } = params
+    const { auctionId, user } = params
 
     const baseUrl = this._getBaseUrl(networkId)
 
@@ -154,7 +156,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
   }
 
   public getMostInterestingAuctionDetailsUrl(params: InterestingAuctionParams): string {
-    const { networkId, numberOfAuctions } = params
+    const { numberOfAuctions } = params
 
     const baseUrl = this._getBaseUrl(networkId)
 
@@ -163,7 +165,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
   }
 
   public getMostInterestingClosedAuctionDetailsUrl(params: InterestingAuctionParams): string {
-    const { networkId, numberOfAuctions } = params
+    const { numberOfAuctions } = params
 
     const baseUrl = this._getBaseUrl(networkId)
 
@@ -181,7 +183,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
   public getAllAuctionDetailsWithUserParticipationUrl(
     params: AuctionDetailWithUserParticipationParams,
   ): string {
-    const { account, networkId } = params
+    const { account } = params
     const baseUrl = this._getBaseUrl(networkId)
 
     const url = `${baseUrl}get_all_auction_with_details_with_user_participation/${account}`
@@ -189,7 +191,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
   }
 
   public getAuctionDetailsUrl(params: AuctionDetailParams): string {
-    const { auctionId, networkId } = params
+    const { auctionId } = params
     const baseUrl = this._getBaseUrl(networkId)
 
     return `${baseUrl}get_auction_with_details/${auctionId}`
@@ -240,7 +242,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
   }
 
   public getCurrentUserOrdersUrl(params: UserOrderParams): string {
-    const { auctionId, networkId, user } = params
+    const { auctionId, user } = params
 
     const baseUrl = this._getBaseUrl(networkId)
 
@@ -469,7 +471,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
   }
 
   public getSignatureUrl(params: GetSignatureParams): string {
-    const { address, auctionId, networkId } = params
+    const { address, auctionId } = params
     const baseUrl = this._getBaseUrl(networkId)
     return `${baseUrl}get_signature/${auctionId}/${address}`
   }
