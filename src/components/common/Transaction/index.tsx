@@ -26,8 +26,7 @@ const Wrapper = styled(ExternalLink)`
   width: 100%;
 
   &:hover,
-  &:active,
-  &:focus {
+  &:active {
     color: ${({ theme }) => theme.text5};
     background-color: ${({ theme }) => theme.bg6};
     text-decoration: none;
