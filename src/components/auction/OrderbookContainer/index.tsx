@@ -6,7 +6,6 @@ import * as CSS from 'csstype'
 import { useParticipatingAuctionBids } from '../../../hooks/useParticipatingAuctionBids'
 import { useOrderbookDataCallback } from '../../../state/orderbook/hooks'
 import { OrderBook } from '../Orderbook'
-import { OrderBookTable } from '../OrderbookTable'
 import OrdersTable from '../OrdersTable'
 
 interface WrapProps {
@@ -72,31 +71,12 @@ export const OrderBookContainer = (props) => {
     <>
       <OrderBook derivedAuctionInfo={derivedAuctionInfo} />
 
-      <div className="card ">
+      <div className="card">
         <div className="card-body">
           <div className="flex flex-wrap justify-between mb-5">
-            <h2 className="card-title">Orderbook</h2>
-
-            <div className="flex items-center">
-              {auctionStarted && (
-                <div className="btn-group">
-                  <button
-                    className={`btn ${!showMyOrders && 'btn-active'}`}
-                    onClick={() => showMyOrders && setShowMyOrders(false)}
-                  >
-                    Orders
-                  </button>
-                  <button
-                    className={`btn ${showMyOrders && 'btn-active'}`}
-                    onClick={() => !showMyOrders && setShowMyOrders(true)}
-                  >
-                    My Orders
-                  </button>
-                </div>
-              )}
-            </div>
+            <h2 className="card-title">Your orders</h2>
           </div>
-          {showMyOrders && auctionStarted && (
+          {auctionStarted && (
             <OrdersTable
               auctionIdentifier={auctionIdentifier}
               bids={bids}
@@ -104,8 +84,6 @@ export const OrderBookContainer = (props) => {
               loading={loading}
             />
           )}
-
-          {!showMyOrders && <OrderBookTable derivedAuctionInfo={derivedAuctionInfo} />}
         </div>
       </div>
     </>
