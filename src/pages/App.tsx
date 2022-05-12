@@ -7,6 +7,7 @@ import ReactTooltip from 'react-tooltip'
 
 import ChainWarning from '../components/ChainWarning'
 import ScrollToTop from '../components/ScrollToTop'
+import TermsModal from '../components/TermsModal'
 import { ErrorBoundaryWithFallback } from '../components/common/ErrorAndReload'
 import { Footer } from '../components/layout/Footer'
 import { Header } from '../components/layout/Header'
@@ -34,6 +35,7 @@ const App: React.FC = () => (
     <MainWrapper>
       <ScrollToTop />
       <ChainWarning />
+      <TermsModal />
       <Header />
       <ReactTooltip
         className="customTooltip"
