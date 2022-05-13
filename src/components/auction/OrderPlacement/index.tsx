@@ -279,6 +279,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     amount: Number(sellAmount),
     maturityDate: graphInfo?.bond?.maturityDate,
     price,
+    auctionEndDate: graphInfo?.end,
   })
 
   const refetchOrders = () =>

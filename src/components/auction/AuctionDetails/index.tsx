@@ -89,10 +89,12 @@ const AuctionDetails = (props: Props) => {
     currentBondAPR = calculateInterestRate({
       price: auctionCurrentPrice,
       maturityDate: graphInfo.bond.maturityDate,
+      startDate: graphInfo.end,
     }) as string
     maxBondAPR = calculateInterestRate({
       price: graphInfo.minimumBondPrice,
       maturityDate: graphInfo.bond.maturityDate,
+      startDate: graphInfo.end,
     }) as string
   }
 

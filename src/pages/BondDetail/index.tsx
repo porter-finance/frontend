@@ -135,6 +135,7 @@ const BondDetail: React.FC = () => {
     const fixedAPR = calculateInterestRate({
       price: bond.clearingPrice,
       maturityDate: bond.maturityDate,
+      startDate: bond?.auctions?.[0]?.end,
     })
     positionData = [
       {

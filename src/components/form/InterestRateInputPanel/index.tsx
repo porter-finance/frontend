@@ -59,10 +59,11 @@ export const calculateInterestRate = ({
 
 export const getReviewData = ({
   amount,
+  auctionEndDate,
   maturityDate,
   price,
 }): { apr: string | number; earn: string; receive: string; pay: string } => ({
-  apr: `${calculateInterestRate({ price, maturityDate })}+`,
+  apr: `${calculateInterestRate({ price, maturityDate, startDate: auctionEndDate })}+`,
   earn: `${round(amount - price * amount, 2).toLocaleString()}+`,
   receive: `${amount.toLocaleString()}+`,
   pay: `${round(price * amount, 2).toLocaleString()}`,
@@ -77,8 +78,8 @@ const InterestRateInputPanel = ({
   priceTokenDisplay,
   ...restProps
 }: Props) => {
-  const maturityDate = useBondMaturityForAuction()
-  const data = getReviewData({ price, amount, maturityDate })
+  const { auctionEndDate, maturityDate } = useBondMaturityForAuction()
+  const data = getReviewData({ price, amount, maturityDate, auctionEndDate })
 
   return (
     <FieldRowWrapper className="py-1 my-4 space-y-3" {...restProps}>

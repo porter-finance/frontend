@@ -10,6 +10,7 @@ const logger = getLogger('useBondMaturityForAuction')
 const bondsQuery = gql`
   query MaturityDateForAuction($auctionId: ID!) {
     auction(id: $auctionId) {
+      end
       bond {
         maturityDate
       }
@@ -17,7 +18,7 @@ const bondsQuery = gql`
   }
 `
 
-export const useBondMaturityForAuction = (): Maybe<number> => {
+export const useBondMaturityForAuction = (): { maturityDate: number; auctionEndDate: number } => {
   const { auctionId } = parseURL(useParams<RouteAuctionIdentifier>())
   const { data, error } = useQuery(bondsQuery, {
     variables: { auctionId: `${auctionId}` },
@@ -27,5 +28,5 @@ export const useBondMaturityForAuction = (): Maybe<number> => {
     logger.error('Error getting useBondMaturityForAuction info', error)
   }
 
-  return data?.auction?.bond?.maturityDate
+  return { maturityDate: data?.auction?.bond?.maturityDate, auctionEndDate: data?.auction?.end }
 }
