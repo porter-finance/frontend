@@ -23,7 +23,7 @@ const TermsModal = () => {
             Please read our{' '}
             <a
               className="text-[#6CADFB] hover:underline"
-              href="https://docs.porter.finance/"
+              href="https://www.porter.finance/terms-of-service"
               rel="noreferrer"
               target="_blank"
             >
@@ -31,12 +31,7 @@ const TermsModal = () => {
             </a>{' '}
             and review the list of restricted countries Porter Finance does not serve. If you live
             in one of these{' '}
-            <a
-              className="text-[#6CADFB] hover:underline"
-              href="https://docs.porter.finance/"
-              rel="noreferrer"
-              target="_blank"
-            >
+            <a className="text-[#6CADFB] hover:underline" href="#" rel="noreferrer" target="_blank">
               Restricted Countries
             </a>
             , you will not be able to use the Porter Finance platform.
@@ -46,19 +41,14 @@ const TermsModal = () => {
             By clicking “Accept” you agree to our{' '}
             <a
               className="text-[#6CADFB] hover:underline"
-              href="https://docs.porter.finance/"
+              href="https://www.porter.finance/terms-of-service"
               rel="noreferrer"
               target="_blank"
             >
               Terms of Service
             </a>{' '}
             and confirm you do not live in one of the{' '}
-            <a
-              className="text-[#6CADFB] hover:underline"
-              href="https://docs.porter.finance/"
-              rel="noreferrer"
-              target="_blank"
-            >
+            <a className="text-[#6CADFB] hover:underline" href="#" rel="noreferrer" target="_blank">
               Restricted Countries
             </a>{' '}
             Porter Finance does not serve.
