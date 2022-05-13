@@ -11,6 +11,7 @@ import { getBondStates } from '../../../pages/BondDetail'
 import { AuctionState, DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { forceDevData } from '../../Dev'
+import TokenLink from '../../token/TokenLink'
 import TokenLogo from '../../token/TokenLogo'
 import AuctionDetails from '../AuctionDetails'
 import AuctionSettle from '../AuctionSettle'
@@ -112,7 +113,7 @@ const BondCard = ({ graphInfo }: { graphInfo: Auction }) => {
                 {graphInfo?.bond.name.toLowerCase() || 'Bond Name'}
               </h2>
               <p className="text-xs font-normal text-[#9F9F9F] uppercase">
-                {graphInfo?.bond.symbol || 'Bond Symbol'}
+                <TokenLink token={graphInfo?.bond} withLink />
               </p>
             </div>
           </div>
