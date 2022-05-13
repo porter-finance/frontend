@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react'
 
-import { apolloClient } from '../../..'
+import { useApolloClient } from '@apollo/client'
+
 import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
 import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
 import { useParticipatingAuctionBids } from '../../../hooks/useParticipatingAuctionBids'
@@ -37,6 +38,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
     derivedAuctionInfo,
     derivedAuctionInfo: { auctionState },
   } = props
+  const apolloClient = useApolloClient()
   const maturityDate = useBondMaturityForAuction()
   const { bids, loading } = useParticipatingAuctionBids()
   const cancelOrderCallback = useCancelOrderCallback(

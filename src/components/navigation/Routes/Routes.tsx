@@ -12,7 +12,7 @@ import { BaseCard } from '../../pureStyledComponents/BaseCard'
 const AppRoutes: React.FC = () => {
   return (
     <Routes>
-      <Route element={<Auction />} path="/offerings/:auctionId/:chainId" />
+      <Route element={<Auction />} path="/offerings/:auctionId" />
       <Route element={<Offerings />} path="/offerings" />
       <Route element={<Products />} path="/products" />
       <Route element={<CreateBond />} path="/offerings/create" />

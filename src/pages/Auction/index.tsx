@@ -22,8 +22,8 @@ const GlobalStyle = createGlobalStyle`
   }
 `
 
-export const GhostButton = ({ children, ...props }) => {
-  if (props.active) {
+export const GhostButton = ({ active = false, children, ...props }) => {
+  if (active) {
     return <ActiveButton {...props}>{children}</ActiveButton>
   }
   return (
