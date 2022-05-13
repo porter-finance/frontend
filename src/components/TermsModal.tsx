@@ -16,9 +16,9 @@ const TermsModal = () => {
 
   return (
     <MyModal blockBackdropDismiss hideCloseIcon isOpen={showTerms} onDismiss={abortModal}>
-      <div className="mt-10 space-y-6 text-center">
+      <div className="mt-2 space-y-6 text-center">
         <h1 className="text-xl font-medium text-[#E0E0E0]">Terms of Service</h1>
-        <div className="space-y-4 text-[#D6D6D6]">
+        <div className="space-y-4 text-left text-[#D6D6D6]">
           <p>
             Please read our{' '}
             <a
