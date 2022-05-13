@@ -22,8 +22,8 @@ const GlobalStyle = createGlobalStyle`
   }
 `
 
-export const GhostButton = ({ children, ...props }) => {
-  if (props.active) {
+export const GhostButton = ({ active = false, children, ...props }) => {
+  if (active) {
     return <ActiveButton {...props}>{children}</ActiveButton>
   }
   return (
@@ -147,7 +147,7 @@ const AuctionPage = ({ data: { auctionIdentifier, derivedAuctionInfo, graphInfo 
         <WarningModal
           content={`This auction doesn't exist or it hasn't started yet.`}
           isOpen
-          onDismiss={() => navigate('/auctions')}
+          onDismiss={() => navigate('/offerings')}
           title="Warning!"
         />
       </>
