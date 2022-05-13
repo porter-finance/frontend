@@ -81,6 +81,7 @@ export const XYSimpleBondChart = (props: XYBondChartProps): am4charts.XYChart =>
   priceAxis.extraTooltipPrecision = 3
   priceAxis.adjustLabelPrecision = false
   priceAxis.tooltip.disabled = true
+  tooltipRender(priceAxis)
 
   const dateAxis = chart.xAxes.push(new am4charts.DateAxis())
   dateAxis.renderer.grid.template.strokeOpacity = 0
@@ -104,6 +105,7 @@ export const XYSimpleBondChart = (props: XYBondChartProps): am4charts.XYChart =>
     description:
       'Amount each bond is redeemable for at maturity assuming a default does not occur.',
   }
+  tooltipRender(faceValue)
 
   const collateralValue = chart.series.push(new am4charts.StepLineSeries())
   collateralValue.dataFields.dateX = 'date'
@@ -118,6 +120,7 @@ export const XYSimpleBondChart = (props: XYBondChartProps): am4charts.XYChart =>
     description:
       'Value of collateral securing each bond. If a bond is defaulted on, the bondholder is able to exchange each bond for these collateral tokens.',
   }
+  tooltipRender(collateralValue)
 
   // Add cursor
   chart.cursor = new am4charts.XYCursor()
@@ -159,6 +162,7 @@ export const XYConvertBondChart = (props: XYBondChartProps): am4charts.XYChart =
   convertibleTokenValue.dummyData = {
     description: 'Value of tokens each bond is convertible into up until the maturity date.',
   }
+  tooltipRender(convertibleTokenValue)
 
   return chart
 }
@@ -174,7 +178,6 @@ export const drawInformation = (props: DrawInformation) => {
   const convertibleTokenLabel = getDisplay(convertibleToken)
 
   const collateralValueSeries = chart.series.values[1]
-  tooltipRender(collateralValueSeries)
   collateralValueSeries.adapter.add('tooltipText', (text, target) => {
     const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
     const volume = round(valueY, 3)
@@ -183,7 +186,6 @@ export const drawInformation = (props: DrawInformation) => {
   })
 
   const faceValueSeries = chart.series.values[0]
-  tooltipRender(faceValueSeries)
   faceValueSeries.adapter.add('tooltipText', (text, target) => {
     const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
 
@@ -192,7 +194,6 @@ export const drawInformation = (props: DrawInformation) => {
 
   if (chart.series.values.length > 2) {
     const convertibleValueSeries = chart.series.values[2]
-    tooltipRender(convertibleValueSeries)
     convertibleValueSeries.adapter.add('tooltipText', (text, target) => {
       const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
       const convertibleValue = round(valueY, 3)
