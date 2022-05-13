@@ -101,7 +101,7 @@ const BondAction = ({
 
   const [tokenDetails, setTokenDetails] = useState({ BondAmount: null, payTok: null, tok: null })
 
-  const { isDefaulted, isMatured, isPaid, isPartiallyPaid } = getBondStates(bondInfo)
+  const { isActive, isDefaulted, isMatured, isPaid, isPartiallyPaid } = getBondStates(bondInfo)
 
   useEffect(() => {
     let BondAmount = null
@@ -141,6 +141,7 @@ const BondAction = ({
     if (componentType === BondActions.Redeem) {
       previewRedeem(BondAmount).then((r) => {
         const [paymentTokens, collateralTokens] = r
+        console.log({ paymentTokens }, collateralTokens)
         // returned in paymentTokens, collateralTokens
         setPreviewRedeemVal([
           formatUnits(paymentTokens, bondInfo?.paymentToken.decimals),
@@ -157,6 +158,7 @@ const BondAction = ({
   }, [
     isConvertComponent,
     componentType,
+    bondsToRedeem,
     bondInfo?.paymentToken.decimals,
     bondInfo?.collateralToken?.decimals,
     previewRedeem,
@@ -253,34 +255,51 @@ const BondAction = ({
 
   const assetsToReceive = []
 
-  if (isDefaulted) {
-    const value = isConvertComponent ? previewConvertVal : previewRedeemVal[1]
+  if (isActive) {
+    // This should only be shown when bond is in active state
+    const collateralTokensAmount = previewConvertVal
     assetsToReceive.push({
       token: bondInfo?.collateralToken,
-      value: Number(value).toLocaleString(undefined, {
+      value: Number(collateralTokensAmount).toLocaleString(undefined, {
         maximumSignificantDigits: bondInfo?.collateralToken?.decimals,
       }),
-      extra: `($${(convertibleValue * Number(value)).toLocaleString()})`,
     })
-  } else {
-    if (isPartiallyPaid) {
-      const partiallyPaidValue = isConvertComponent ? previewConvertVal : previewRedeemVal[1]
-      assetsToReceive.push({
-        token: bondInfo?.collateralToken,
-        value: Number(partiallyPaidValue).toLocaleString(undefined, {
-          maximumSignificantDigits: bondInfo?.collateralToken?.decimals,
-        }),
-        extra: `($${(convertibleValue * Number(partiallyPaidValue)).toLocaleString()})`,
-      })
-    }
-
-    const value = isConvertComponent ? previewConvertVal : previewRedeemVal[0]
-
+  } else if (isPaid) {
+    const [paymentTokensAmount] = previewRedeemVal
     assetsToReceive.push({
       token: bondInfo?.paymentToken,
-      value: Number(value).toLocaleString(undefined, {
+      value: Number(paymentTokensAmount).toLocaleString(undefined, {
         maximumSignificantDigits: bondInfo?.paymentToken?.decimals,
       }),
+    })
+  } else if (isDefaulted) {
+    console.log('defaulted')
+    const [paymentTokensAmount, collateralTokensAmount] = previewRedeemVal
+    console.log(collateralTokensAmount, paymentTokensAmount)
+    assetsToReceive.push({
+      token: bondInfo?.collateralToken,
+      value: Number(collateralTokensAmount).toLocaleString(undefined, {
+        maximumSignificantDigits: 2,
+      }),
+      extra: `($${(convertibleValue * Number(collateralTokensAmount)).toLocaleString()})`,
+    })
+  } else if (isPartiallyPaid) {
+    // TODO, correctly fetch this state from the graph
+    const [paymentTokensAmount, collateralTokensAmount] = previewRedeemVal
+    assetsToReceive.push({
+      token: bondInfo?.paymentToken,
+      value: Number(paymentTokensAmount).toLocaleString(undefined, {
+        maximumSignificantDigits: 2,
+      }),
+      extra: `($${(convertibleValue * Number(paymentTokensAmount)).toLocaleString()})`,
+    })
+
+    assetsToReceive.push({
+      token: bondInfo?.collateralToken,
+      value: Number(collateralTokensAmount).toLocaleString(undefined, {
+        maximumSignificantDigits: 2,
+      }),
+      extra: `($${(convertibleValue * Number(collateralTokensAmount)).toLocaleString()})`,
     })
   }
 

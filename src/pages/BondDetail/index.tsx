@@ -110,6 +110,7 @@ export const getBondStates = (bond: BondInfo) => {
   const isPartiallyPaid = false // TODO ADD THIS TO THE GRAPH
   const isDefaulted = bond?.state === 'defaulted'
   const isPaid = bond?.state === 'paidEarly' || bond?.state === 'paid'
+  const isActive = bond?.state === 'active'
   const isMatured = isDefaulted || isPaid
   return {
     isMatured,
@@ -117,6 +118,7 @@ export const getBondStates = (bond: BondInfo) => {
     isPartiallyPaid,
     isDefaulted,
     isPaid,
+    isActive,
   }
 }
 
