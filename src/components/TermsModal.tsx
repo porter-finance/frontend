@@ -30,7 +30,7 @@ const TermsModal = () => {
               Terms of Service
             </a>{' '}
             and review the list of restricted countries Porter Finance does not serve. If you live
-            in one of these Restricted Countries , you will not be able to use the Porter Finance
+            in one of the restricted countries, you will not be able to use the Porter Finance
             platform.
           </p>
 
@@ -44,7 +44,7 @@ const TermsModal = () => {
             >
               Terms of Service
             </a>{' '}
-            and confirm you do not live in one of the Restricted Countries Porter Finance does not
+            and confirm you do not live in one of the restricted countries Porter Finance does not
             serve.
           </p>
         </div>
