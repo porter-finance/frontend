@@ -220,7 +220,7 @@ export const drawInformation = (props: DrawInformation) => {
 
     const askPrice = round(valueX, 3)
     const volume = round(valueY, 3)
-    const interest = maturityDate && calculateInterestRate(valueX, maturityDate)
+    const interest = maturityDate && calculateInterestRate({ price: valueX, maturityDate })
 
     return `${market}<br/>
 Ask Price:  ${askPrice} ${quoteTokenLabel}<br/>
@@ -236,7 +236,7 @@ Interest:  ${interest}
 
     const bidPrice = round(valueX, 3)
     const volume = round(valueY, 3)
-    const interest = maturityDate && calculateInterestRate(valueX, maturityDate)
+    const interest = maturityDate && calculateInterestRate({ price: valueX, maturityDate })
 
     return `${market}<br/>
 Bid Price:  ${bidPrice} ${quoteTokenLabel}<br/>

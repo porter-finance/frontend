@@ -54,7 +54,7 @@ export const calculateRow = (row, paymentToken, maturityDate, derivedAuctionInfo
   if (row.canceltx) statusText = 'Cancelled'
   const status = statusText
   const price = `${(row.payable / row.size).toLocaleString()} ${paymentToken}`
-  const interest = `${calculateInterestRate(row.payable / row.size, maturityDate)} `
+  const interest = `${calculateInterestRate({ price: row.payable / row.size, maturityDate })} `
   const amount = `${round(
     Number(formatUnits(row.payable, derivedAuctionInfo.biddingToken.decimals)),
     2,

@@ -89,7 +89,11 @@ export const createTable = (data: BondInfo[]) => {
     } = bond
 
     const fixedAPR =
-      calculateInterestRate(clearingPrice, maturityDate, true, auctions?.[0]?.end) || '-'
+      calculateInterestRate({
+        price: clearingPrice,
+        maturityDate,
+        startDate: auctions?.[0]?.end,
+      }) || '-'
 
     return {
       id,
