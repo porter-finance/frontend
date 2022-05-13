@@ -166,7 +166,7 @@ const BondDetail: React.FC = () => {
         <WarningModal
           content={`This bond doesn't exist or it hasn't been created yet.`}
           isOpen
-          onDismiss={() => navigate('/auctions')}
+          onDismiss={() => navigate('/offerings')}
           title="Warning!"
         />
       </>
