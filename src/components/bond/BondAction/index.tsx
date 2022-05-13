@@ -141,7 +141,6 @@ const BondAction = ({
     if (componentType === BondActions.Redeem) {
       previewRedeem(BondAmount).then((r) => {
         const [paymentTokens, collateralTokens] = r
-        console.log({ paymentTokens }, collateralTokens)
         // returned in paymentTokens, collateralTokens
         setPreviewRedeemVal([
           formatUnits(paymentTokens, bondInfo?.paymentToken.decimals),
@@ -225,11 +224,9 @@ const BondAction = ({
 
   const isActionDisabled = useMemo(() => {
     if (isConvertComponent) {
-      console.log(isConvertable)
       return isConvertable !== true
     }
     if (componentType === BondActions.Redeem) {
-      console.log(isRedeemable)
       return isRedeemable !== true
     }
   }, [isConvertComponent, componentType, isConvertable, isRedeemable])
@@ -273,9 +270,7 @@ const BondAction = ({
       }),
     })
   } else if (isDefaulted) {
-    console.log('defaulted')
     const [paymentTokensAmount, collateralTokensAmount] = previewRedeemVal
-    console.log(collateralTokensAmount, paymentTokensAmount)
     assetsToReceive.push({
       token: bondInfo?.collateralToken,
       value: Number(collateralTokensAmount).toLocaleString(undefined, {
