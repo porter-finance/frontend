@@ -72,7 +72,6 @@ const columns = [
 ]
 
 const Offerings = () => {
-  const { chainId } = useActiveWeb3React()
   const { data: allAuctions, loading } = useAuctions()
   const [tableFilter, setTableFilter] = useState<TABLE_FILTERS>(TABLE_FILTERS.ALL)
 
@@ -129,7 +128,7 @@ const Offerings = () => {
           </div>
         </div>
       ),
-      url: `/offerings/${auction.id}/${chainId}`,
+      url: `/offerings/${auction.id}`,
     })
   })
 

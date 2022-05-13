@@ -116,7 +116,7 @@ export const XYSimpleBondChart = (props: XYBondChartProps): am4charts.XYChart =>
   collateralValue.name = 'COLLATERAL VALUE'
   collateralValue.dummyData = {
     description:
-      'Number of collateral tokens securing each bond. If a bond is defaulted on, the bondholder is able to exchange each bond for these collateral tokens.',
+      'Value of collateral securing each bond. If a bond is defaulted on, the bondholder is able to exchange each bond for these collateral tokens.',
   }
 
   // Add cursor
@@ -157,7 +157,7 @@ export const XYConvertBondChart = (props: XYBondChartProps): am4charts.XYChart =
   convertibleTokenValue.startLocation = 0.5
   convertibleTokenValue.name = 'CONVERTIBLE TOKEN VALUE'
   convertibleTokenValue.dummyData = {
-    description: 'Number of tokens each bond is convertible into up until the maturity date.',
+    description: 'Value of tokens each bond is convertible into up until the maturity date.',
   }
 
   return chart

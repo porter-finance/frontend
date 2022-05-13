@@ -4,7 +4,7 @@
   "extensions": {
     "endpoints": {
       "Remote SWAPI GraphQL Endpoint": {
-        "url": "https://api.thegraph.com/subgraphs/name/porter-finance/rinkeby001",
+        "url": "https://api.thegraph.com/subgraphs/name/porter-finance/porter-v1",
         "headers": {
           "user-agent": "JS GraphQL"
         },

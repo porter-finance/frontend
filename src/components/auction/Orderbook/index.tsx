@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 
 import { TokenAmount } from '@josojo/honeyswap-sdk'
 
+import { useActiveWeb3React } from '../../../hooks'
 import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
 import { LoadingBox } from '../../../pages/Auction'
 import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
@@ -27,9 +28,10 @@ export const OrderBook: React.FC<OrderbookGraphProps> = (props) => {
     userOrderVolume,
   } = useOrderbookState()
 
+  const { chainId } = useActiveWeb3React()
   const auctionIdentifier = parseURL(useParams())
   const { auctionDetails } = useAuctionDetails(auctionIdentifier)
-  const { auctionId, chainId } = auctionIdentifier
+  const { auctionId } = auctionIdentifier
 
   const { auctioningToken: baseToken, biddingToken: quoteToken } = derivedAuctionInfo
 
