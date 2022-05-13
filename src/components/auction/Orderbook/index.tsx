@@ -56,6 +56,7 @@ export const OrderBook: React.FC<OrderbookGraphProps> = (props) => {
 
   const isLoading = orderbookAuctionId != auctionId || chainId != orderbookChainId
   const hasError = error || !asks || asks.length === 0
+
   if (isLoading) {
     return <LoadingBox height={521} />
   }
