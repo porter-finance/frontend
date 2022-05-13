@@ -8,8 +8,9 @@ import localizedFormat from 'dayjs/plugin/localizedFormat'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
+import Countdown from 'react-countdown'
 
-import { calculateTimeLeft, calculateTimeProgress, setLocale } from '../../../utils/tools'
+import { calculateTimeProgress, setLocale } from '../../../utils/tools'
 import Tooltip from '../../common/Tooltip'
 
 // Used for abbreviated named timezone offset 'z' when formatting.
@@ -59,6 +60,7 @@ const Time = styled.div`
 interface AuctionTimerProps {
   startDate: number
   endDate: number
+  days?: boolean
   startTip?: string
   endTip?: string
   loading?: boolean
@@ -70,6 +72,7 @@ interface AuctionTimerProps {
 
 export const AuctionTimer = ({
   color,
+  days,
   endDate,
   endText,
   endTip,
@@ -79,17 +82,6 @@ export const AuctionTimer = ({
   text,
   ...restProps
 }: AuctionTimerProps) => {
-  const [timeLeft, setTimeLeft] = React.useState(calculateTimeLeft(endDate))
-
-  React.useEffect(() => {
-    const id = setInterval(() => {
-      setTimeLeft(calculateTimeLeft(endDate))
-    }, 1000)
-    return () => {
-      clearInterval(id)
-    }
-  }, [endDate])
-
   const progress = React.useMemo(() => {
     const progress = calculateTimeProgress(startDate, endDate)
     return progress === 100 ? progress : 100 - progress
@@ -102,7 +94,12 @@ export const AuctionTimer = ({
       <div className="flex flex-col place-items-start mb-7 space-y-1">
         <div className="flex flex-row items-center space-x-1 text-xs text-white">
           <Time>
-            {daysUntil} {daysUntil === 1 ? 'day' : 'days'}
+            {!days && <Countdown className="text-left" date={endDate * 1000} />}
+            {days && (
+              <>
+                {daysUntil} {daysUntil === 1 ? 'day' : 'days'}
+              </>
+            )}
           </Time>
         </div>
         <DateTitle>{text}</DateTitle>

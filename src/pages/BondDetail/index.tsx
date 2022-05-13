@@ -209,6 +209,7 @@ const BondDetail: React.FC = () => {
 
                   <AuctionTimer
                     color="purple"
+                    days
                     endDate={bond?.maturityDate}
                     endText="Maturity date"
                     endTip="Date each bond can be redeemed for $1 assuming no default. Convertible bonds cannot be converted after this date."
