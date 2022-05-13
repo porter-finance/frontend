@@ -80,7 +80,6 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
     bids.forEach((row) => {
       const items = calculateRow(row, paymentToken, maturityDate, derivedAuctionInfo)
 
-      // TODO: add way to check pending cancellations when they click cancel button
       items.transaction = (
         <div className="flex flex-row items-center space-x-5">
           <BidTransactionLink bid={row} />
