@@ -95,19 +95,15 @@ export const AuctionTimer = ({
     return progress === 100 ? progress : 100 - progress
   }, [startDate, endDate])
 
+  const daysUntil = dayjs(endDate * 1000).diff(new Date(), 'day')
+
   return (
     <div className="" {...restProps}>
       <div className="flex flex-col place-items-start mb-7 space-y-1">
         <div className="flex flex-row items-center space-x-1 text-xs text-white">
-          {timeLeft && timeLeft > -1 ? (
-            <Time>
-              {dayjs(endDate * 1000)
-                .utc()
-                .toNow(true)}
-            </Time>
-          ) : (
-            <Time>0 days</Time>
-          )}
+          <Time>
+            {daysUntil} {daysUntil === 1 ? 'day' : 'days'}
+          </Time>
         </div>
         <DateTitle>{text}</DateTitle>
       </div>
