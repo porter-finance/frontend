@@ -3,16 +3,14 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { createGlobalStyle } from 'styled-components'
 
 import { formatUnits } from '@ethersproject/units'
-import * as Sentry from '@sentry/react'
 import { useWeb3React } from '@web3-react/core'
 import dayjs from 'dayjs'
 
 import { ReactComponent as ConnectIcon } from '../../assets/svg/connect.svg'
 import { ReactComponent as WalletIcon } from '../../assets/svg/wallet.svg'
 import BondGraphCard from '../../components/BondGraphCard/BondGraphCard'
-import Dev, { forceDevData } from '../../components/Dev'
+import Dev from '../../components/Dev'
 import { AuctionTimer } from '../../components/auction/AuctionTimer'
-import { ActionButton } from '../../components/auction/Claimer'
 import { ExtraDetailsItem } from '../../components/auction/ExtraDetailsItem'
 import { ActiveStatusPill, TableDesign } from '../../components/auction/OrderbookTable'
 import BondAction from '../../components/bond/BondAction'
@@ -107,12 +105,11 @@ const positionColumns = [
 ]
 
 export const getBondStates = (bond: BondInfo) => {
-  const isMatured = forceDevData ? true : new Date() > new Date(bond?.maturityDate * 1000)
-  const isConvertBond = forceDevData ? false : bond?.type === 'convert'
-  const isPartiallyPaid = forceDevData ? true : false // TODO ADD THIS TO THE GRAPH
-  const isDefaulted = forceDevData ? false : bond?.state === 'defaulted'
-  const isPaid = forceDevData ? false : bond?.state === 'paidEarly' || bond?.state === 'paid'
-
+  const isConvertBond = bond?.type === 'convert'
+  const isPartiallyPaid = false // TODO ADD THIS TO THE GRAPH
+  const isDefaulted = bond?.state === 'defaulted'
+  const isPaid = bond?.state === 'paidEarly' || bond?.state === 'paid'
+  const isMatured = isDefaulted || isPaid
   return {
     isMatured,
     isConvertBond,
@@ -139,7 +136,7 @@ const BondDetail: React.FC = () => {
     positionData = [
       {
         amount: amount.toLocaleString(),
-        cost: (bond?.clearingPrice * amount).toLocaleString() || '-',
+        cost: (bond?.clearingPrice * amount || '-').toLocaleString(),
         price: bond?.clearingPrice ? bond?.clearingPrice : '-',
         fixedAPR,
         maturityDate: dayjs(bond.maturityDate * 1000)
@@ -166,7 +163,7 @@ const BondDetail: React.FC = () => {
         <WarningModal
           content={`This bond doesn't exist or it hasn't been created yet.`}
           isOpen
-          onDismiss={() => navigate('/auctions')}
+          onDismiss={() => navigate('/offerings')}
           title="Warning!"
         />
       </>
@@ -212,6 +209,7 @@ const BondDetail: React.FC = () => {
 
                   <AuctionTimer
                     color="purple"
+                    days
                     endDate={bond?.maturityDate}
                     endText="Maturity date"
                     endTip="Date each bond can be redeemed for $1 assuming no default. Convertible bonds cannot be converted after this date."

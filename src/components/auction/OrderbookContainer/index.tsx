@@ -1,12 +1,11 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 
 import * as CSS from 'csstype'
 
-import { useAuctionBids } from '../../../hooks/useAuctionBids'
+import { useParticipatingAuctionBids } from '../../../hooks/useParticipatingAuctionBids'
 import { useOrderbookDataCallback } from '../../../state/orderbook/hooks'
 import { OrderBook } from '../Orderbook'
-import { OrderBookTable } from '../OrderbookTable'
 import OrdersTable from '../OrdersTable'
 
 interface WrapProps {
@@ -60,7 +59,10 @@ export const Wrap = styled.div<Partial<CSS.Properties & WrapProps>>`
 
 export const OrderBookContainer = (props) => {
   const { auctionIdentifier, auctionStarted, derivedAuctionInfo } = props
-  const [showMyOrders, setShowMyOrders] = useState(false)
+
+  // Always call this when they first load the page to see past prices when placing a new order
+  // Can't allow them to place an order at a past price
+  const { bids, loading } = useParticipatingAuctionBids()
 
   useOrderbookDataCallback(auctionIdentifier)
 
@@ -68,38 +70,19 @@ export const OrderBookContainer = (props) => {
     <>
       <OrderBook derivedAuctionInfo={derivedAuctionInfo} />
 
-      <div className="card ">
+      <div className="card">
         <div className="card-body">
           <div className="flex flex-wrap justify-between mb-5">
-            <h2 className="card-title">Orderbook</h2>
-
-            <div className="flex items-center">
-              {auctionStarted && (
-                <div className="btn-group">
-                  <button
-                    className={`btn ${!showMyOrders && 'btn-active'}`}
-                    onClick={() => showMyOrders && setShowMyOrders(false)}
-                  >
-                    Orders
-                  </button>
-                  <button
-                    className={`btn ${showMyOrders && 'btn-active'}`}
-                    onClick={() => !showMyOrders && setShowMyOrders(true)}
-                  >
-                    My Orders
-                  </button>
-                </div>
-              )}
-            </div>
+            <h2 className="card-title">Your orders</h2>
           </div>
-          {showMyOrders && auctionStarted && (
+          {auctionStarted && (
             <OrdersTable
               auctionIdentifier={auctionIdentifier}
+              bids={bids}
               derivedAuctionInfo={derivedAuctionInfo}
+              loading={loading}
             />
           )}
-
-          {!showMyOrders && <OrderBookTable derivedAuctionInfo={derivedAuctionInfo} />}
         </div>
       </div>
     </>

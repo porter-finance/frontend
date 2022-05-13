@@ -1,6 +1,7 @@
 import React, { ReactElement, useEffect, useState } from 'react'
 
 import { ReactComponent as GreenCheckIcon } from '../../assets/svg/greencheck.svg'
+import { ReactComponent as PurplePorterIcon } from '../../assets/svg/porter-purple.svg'
 import { ReactComponent as PorterIcon } from '../../assets/svg/porter.svg'
 import { useActiveWeb3React } from '../../hooks'
 import { ApprovalState } from '../../hooks/useApproveCallback'
@@ -11,6 +12,29 @@ import { TokenInfo } from '../bond/BondAction'
 import Tooltip from '../common/Tooltip'
 import { unlockProps } from '../form/AmountInputPanel'
 import Modal, { DialogTitle } from './common/Modal'
+
+export const OopsWarning = ({
+  actionClick = null,
+  actionColor = 'blue',
+  actionText = 'Try again',
+  message,
+  title = 'Oops, something went wrong!',
+}) => (
+  <div className="mt-10 space-y-6 text-center">
+    <h1 className="text-xl text-[#E0E0E0]">{title}</h1>
+    <p className="overflow-hidden text-[#D6D6D6]">{message}</p>
+    {actionClick && (
+      <ActionButton
+        aria-label={actionText}
+        className="!mt-20"
+        color={actionColor}
+        onClick={actionClick}
+      >
+        {actionText}
+      </ActionButton>
+    )}
+  </div>
+)
 
 const GeneralWarning = ({ text }) => (
   <div className="space-y-3">
@@ -71,7 +95,7 @@ export const ReviewOrder = ({ amountToken, cancelCutoff, data, orderPlacingOnly,
       </div>
     </div>
     <div className="pb-4 space-y-2 text-xs text-[#696969] border-b border-b-[#D5D5D519]">
-      <TokenInfo extra={`(${data.apr}+)`} plus token={priceToken} value={data.earn} />
+      <TokenInfo extra={`(${data.apr})`} token={priceToken} value={data.earn} />
       <div className="text-xs text-[#696969]">
         <Tooltip
           left="Amount of interest you earn"
@@ -105,8 +129,8 @@ export const ReviewConvert = ({ amount, amountToken, assetsToReceive, type = 'co
       </div>
     </div>
     <div className="pb-4 space-y-2 text-xs text-[#696969] border-b border-b-[#D5D5D519]">
-      {assetsToReceive.map(({ token, value }, index) => (
-        <TokenInfo key={index} plus token={token} value={value} />
+      {assetsToReceive.map(({ extra, token, value }, index) => (
+        <TokenInfo extra={extra} key={index} plus token={token} value={value} />
       ))}
       <div className="flex flex-row items-center space-x-2 text-xs text-[#696969]">
         <Tooltip
@@ -123,12 +147,12 @@ export const ReviewConvert = ({ amount, amountToken, assetsToReceive, type = 'co
   </div>
 )
 
-const BodyPanel = ({ after, before, during }) => (
+const BodyPanel = ({ after, before, color = 'blue', during }) => (
   <>
     {before.show && before.display}
     {during.show && (
       <div className="flex flex-col items-center mt-20 animate-pulse">
-        <PorterIcon />
+        {color === 'blue' ? <PorterIcon /> : <PurplePorterIcon />}
         {during.display}
       </div>
     )}
@@ -158,11 +182,13 @@ const GhostTransactionLink = ({ chainId, hash }) => (
   </GhostActionLink>
 )
 const TokenApproval = ({
+  actionColor,
   beforeDisplay,
   setShowTokenTransactionComplete,
   showTokenTransactionComplete,
   unlock,
 }: {
+  actionColor: string
   beforeDisplay: ReactElement
   setShowTokenTransactionComplete: (hash: string) => void
   showTokenTransactionComplete: string
@@ -184,6 +210,7 @@ const TokenApproval = ({
             show: !isUnlocking && !showTokenTransactionComplete,
             display: beforeDisplay,
           }}
+          color={actionColor}
           during={{
             show: isUnlocking,
             display: <span>Approving {unlock.token}</span>,
@@ -250,7 +277,7 @@ const ConfirmationDialog = ({
 }: {
   placeOrder: () => Promise<any>
   actionColor?: string
-  actionText: string
+  actionText?: string
   onFinished?: () => void
   pendingText: string
   title?: string
@@ -294,16 +321,27 @@ const ConfirmationDialog = ({
 
   const onDismiss = () => {
     if (waitingTransactionToComplete) return false
-
-    if (orderComplete) {
-      setOrderComplete(false)
-      setShowOrderTransactionComplete('')
-    }
     onOpenChange(false)
+
+    // Prevent changing state during transition
+    setTimeout(() => {
+      if (transactionError) {
+        setTransactionError(null)
+      }
+
+      if (orderComplete) {
+        setOrderComplete(false)
+        setShowOrderTransactionComplete('')
+      }
+    }, 400)
   }
 
   return (
-    <Modal isOpen={open} onDismiss={onDismiss}>
+    <Modal
+      hideCloseIcon={showOrderTransactionComplete && !orderComplete}
+      isOpen={open}
+      onDismiss={onDismiss}
+    >
       {!transactionError && (
         <>
           {title &&
@@ -313,6 +351,7 @@ const ConfirmationDialog = ({
 
           {unlock && !showOrderTransactionComplete && !orderComplete && (
             <TokenApproval
+              actionColor={actionColor}
               beforeDisplay={beforeDisplay}
               setShowTokenTransactionComplete={setShowTokenTransactionComplete}
               showTokenTransactionComplete={showTokenTransactionComplete}
@@ -330,6 +369,7 @@ const ConfirmationDialog = ({
                 show: !unlock && !showOrderTransactionComplete && !orderComplete,
                 display: beforeDisplay,
               }}
+              color={actionColor}
               during={{
                 show: showOrderTransactionComplete && !orderComplete,
                 display: <span>{loadingText}</span>,
@@ -382,20 +422,13 @@ const ConfirmationDialog = ({
       )}
 
       {transactionError && (
-        <div className="mt-10 space-y-6 text-center">
-          <h1 className="text-xl text-[#E0E0E0]">Oops, something went wrong!</h1>
-          <p className="overflow-hidden text-[#D6D6D6]">{transactionError}</p>
-          <ActionButton
-            aria-label="Try again"
-            className="!mt-20"
-            color={actionColor}
-            onClick={() => {
-              setTransactionError(null)
-            }}
-          >
-            Try again
-          </ActionButton>
-        </div>
+        <OopsWarning
+          actionClick={() => {
+            setTransactionError(null)
+          }}
+          actionColor={actionColor}
+          message={transactionError}
+        />
       )}
     </Modal>
   )

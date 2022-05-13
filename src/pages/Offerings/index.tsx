@@ -11,7 +11,6 @@ import Table from '../../components/auctions/Table'
 import { ErrorBoundaryWithFallback } from '../../components/common/ErrorAndReload'
 import { calculateInterestRate } from '../../components/form/InterestRateInputPanel'
 import TokenLogo from '../../components/token/TokenLogo'
-import { useActiveWeb3React } from '../../hooks'
 import { useAuctions } from '../../hooks/useAuction'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import { AllButton, AuctionButtonOutline, OTCButtonOutline } from '../Auction'
@@ -72,7 +71,6 @@ const columns = [
 ]
 
 const Offerings = () => {
-  const { chainId } = useActiveWeb3React()
   const { data: allAuctions, loading } = useAuctions()
   const [tableFilter, setTableFilter] = useState<TABLE_FILTERS>(TABLE_FILTERS.ALL)
 
@@ -129,7 +127,7 @@ const Offerings = () => {
           </div>
         </div>
       ),
-      url: `/offerings/${auction.id}/${chainId}`,
+      url: `/offerings/${auction.id}`,
     })
   })
 

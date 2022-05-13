@@ -9,7 +9,6 @@ import { usePagination, useTable } from 'react-table'
 import { useActiveWeb3React } from '../../../hooks'
 import { useAuctionBids } from '../../../hooks/useAuctionBids'
 import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
-import { BidInfo } from '../../../hooks/useParticipatingAuctionBids'
 import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { OrderStatus } from '../../../state/orders/reducer'
 import { getExplorerLink, getTokenDisplay } from '../../../utils'
@@ -39,7 +38,7 @@ export const ordersTableColumns = [
     accessor: 'amount',
   },
   {
-    Header: 'Bonds',
+    Header: 'Amount',
     accessor: 'bonds',
   },
   {
@@ -131,7 +130,7 @@ export const TableDesign = ({
         </thead>
         <tbody {...getTableBodyProps()}>
           {loading &&
-            [...Array(10).keys()].map((z) => (
+            [...Array(4).keys()].map((z) => (
               <tr className="h-[57px] text-sm text-[#D2D2D2] bg-transparent" key={z}>
                 {[...Array(columns.length).keys()].map((i) => (
                   <td className="text-center text-[#696969] bg-transparent" key={i}>
@@ -213,8 +212,8 @@ export const TableDesign = ({
             })}
         </tbody>
       </table>
-      {!hidePagination && (
-        <div className="flex justify-end items-center space-x-2 text-[#696969] !border-none">
+      {!hidePagination && pageOptions.length > 0 && (
+        <div className="flex absolute right-6 bottom-7 justify-end items-center space-x-2 text-[#696969] !border-none">
           <button className="btn btn-xs" disabled={!canPreviousPage} onClick={previousPage}>
             <DoubleArrowLeftIcon />
           </button>
@@ -289,11 +288,9 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({ derivedAuctionIn
   const maturityDate = useBondMaturityForAuction()
   const paymentToken = getTokenDisplay(derivedAuctionInfo?.biddingToken)
   const noBids = !Array.isArray(bids) || bids.length === 0
-  const data = []
-  !noBids &&
-    bids.forEach((row) => {
-      data.push(calculateRow(row, paymentToken, maturityDate, derivedAuctionInfo))
-    })
+  const data = noBids
+    ? []
+    : bids.map((row) => calculateRow(row, paymentToken, maturityDate, derivedAuctionInfo))
 
   return <TableDesign columns={ordersTableColumns} data={data} loading={loading} />
 }

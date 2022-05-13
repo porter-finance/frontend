@@ -5,7 +5,7 @@ import { Cross2Icon } from '@radix-ui/react-icons'
 import { styled } from '@stitches/react'
 
 export const DialogTitle = ({ children }) => (
-  <Dialog.Title as="h3" className="text-2xl text-[#E0E0E0]">
+  <Dialog.Title as="h3" className="mb-5 text-2xl text-[#E0E0E0]">
     {children}
   </Dialog.Title>
 )
@@ -27,14 +27,25 @@ export const IconButton = styled('button', {
   '&:hover': { backgroundColor: '#ececec' },
 })
 
-export default function MyModal({ children, isOpen, onDismiss: onOpenChange }) {
+export default function MyModal({
+  blockBackdropDismiss = false,
+  children,
+  hideCloseIcon = false,
+  isOpen,
+  onDismiss: onOpenChange,
+}) {
   function closeModal() {
     onOpenChange(false)
   }
 
   return (
     <Transition appear as={Fragment} show={isOpen}>
-      <Dialog as="div" className="relative z-10" onClose={closeModal}>
+      <Dialog
+        as="div"
+        className="relative z-10"
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        onClose={!blockBackdropDismiss ? closeModal : () => {}}
+      >
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -61,9 +72,11 @@ export default function MyModal({ children, isOpen, onDismiss: onOpenChange }) {
               <Dialog.Panel className="overflow-hidden p-6 w-full max-w-md text-left align-middle bg-[#181A1C] rounded-lg border border-[#2c2c2c] shadow-xl transition-all">
                 <div className="mt-2">{children}</div>
 
-                <IconButton>
-                  <Cross2Icon />
-                </IconButton>
+                {!hideCloseIcon && (
+                  <IconButton onClick={closeModal}>
+                    <Cross2Icon />
+                  </IconButton>
+                )}
               </Dialog.Panel>
             </Transition.Child>
           </div>

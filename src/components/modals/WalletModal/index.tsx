@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { WalletConnectConnector } from '@anxolin/walletconnect-connector'
@@ -7,21 +6,23 @@ import { AbstractConnector } from '@web3-react/abstract-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { event } from 'react-ga'
 
+import { ReactComponent as PorterIcon } from '../../../assets/svg/porter.svg'
 import { injected } from '../../../connectors'
 import { SUPPORTED_WALLETS } from '../../../constants'
 import usePrevious from '../../../hooks/usePrevious'
-import { useWalletModalOpen, useWalletModalToggle } from '../../../state/application/hooks'
+import {
+  useWalletModalClose,
+  useWalletModalOpen,
+  useWalletModalToggle,
+} from '../../../state/application/hooks'
 import { useOrderPlacementState } from '../../../state/orderPlacement/hooks'
 import { ExternalLink } from '../../../theme'
 import { setupNetwork } from '../../../utils/setupNetwork'
-import { AlertIcon } from '../../icons/AlertIcon'
 import { NetworkError, useNetworkCheck } from '../../web3/Web3Status'
+import { OopsWarning } from '../ConfirmationDialog'
 import Modal, { DialogTitle } from '../common/Modal'
 import Option from '../common/Option'
-import PendingView from '../common/PendingView'
 import { Content } from '../common/pureStyledComponents/Content'
-import { IconWrapper } from '../common/pureStyledComponents/IconWrapper'
-import { Text } from '../common/pureStyledComponents/Text'
 
 const Footer = styled.div`
   color: ${({ theme }) => theme.text1};
@@ -55,6 +56,7 @@ const WalletModal: React.FC = () => {
   const [pendingError, setPendingError] = useState<boolean>()
   const walletModalOpen = useWalletModalOpen()
   const toggleWalletModal = useWalletModalToggle()
+  const closeWalletModal = useWalletModalClose()
   const previousAccount = usePrevious(account)
   const { errorWrongNetwork } = useNetworkCheck()
   const { chainId } = useOrderPlacementState()
@@ -221,16 +223,31 @@ const WalletModal: React.FC = () => {
   const showError = !error && !walletConnectChainError && connectingToWallet && pendingError
 
   return (
-    <Modal isOpen={walletModalOpen} onDismiss={toggleWalletModal}>
-      <div>
-        <DialogTitle>{showError ? 'Uh oh' : title}</DialogTitle>
+    <Modal
+      isOpen={walletModalOpen}
+      onDismiss={() => {
+        closeWalletModal()
 
-        {!showError && (
-          <p className="text-sm font-normal text-gray-500 dark:text-gray-400">
-            Connect with one of our available wallet providers or create a new one.
-          </p>
-        )}
-      </div>
+        setTimeout(() => {
+          resetModal()
+        }, 400)
+      }}
+    >
+      {showError && (
+        <OopsWarning actionClick={resetModal} message={pendingError || 'Error connecting.'} />
+      )}
+      {!showError && connectingToWallet && (
+        <div className="flex flex-col items-center animate-pulse">
+          <PorterIcon />
+          Connecting to wallet
+        </div>
+      )}
+      {!showError && !connectingToWallet && (
+        <>
+          <DialogTitle>{title}</DialogTitle>
+          <p>Connect with one of our available wallet providers.</p>
+        </>
+      )}
       <Content>
         {!error && !connectingToWallet && (
           <>
@@ -260,15 +277,6 @@ const WalletModal: React.FC = () => {
               </ExternalLink>
             </Footer>
           </>
-        )}
-        {showError && (
-          <PendingView
-            connector={pendingWallet}
-            error={pendingError}
-            reset={resetModal}
-            setPendingError={setPendingError}
-            tryActivation={tryActivation}
-          />
         )}
       </Content>
     </Modal>

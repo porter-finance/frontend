@@ -1,14 +1,16 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { TokenAmount } from '@josojo/honeyswap-sdk'
 
+import { useActiveWeb3React } from '../../../hooks'
 import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
 import { LoadingBox } from '../../../pages/Auction'
 import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { parseURL } from '../../../state/orderPlacement/reducer'
 import { useOrderbookState } from '../../../state/orderbook/hooks'
 import OrderBookChart, { OrderBookError } from '../OrderbookChart'
+import { OrderBookTable } from '../OrderbookTable'
 import { processOrderbookData } from '../OrderbookWidget'
 
 interface OrderbookGraphProps {
@@ -27,9 +29,11 @@ export const OrderBook: React.FC<OrderbookGraphProps> = (props) => {
     userOrderVolume,
   } = useOrderbookState()
 
+  const [showOrderList, setShowOrderList] = useState(false)
+  const { chainId } = useActiveWeb3React()
   const auctionIdentifier = parseURL(useParams())
   const { auctionDetails } = useAuctionDetails(auctionIdentifier)
-  const { auctionId, chainId } = auctionIdentifier
+  const { auctionId } = auctionIdentifier
 
   const { auctioningToken: baseToken, biddingToken: quoteToken } = derivedAuctionInfo
 
@@ -57,11 +61,30 @@ export const OrderBook: React.FC<OrderbookGraphProps> = (props) => {
   }
 
   return (
-    <div className="card ">
+    <div className="card">
       <div className="card-body">
-        <h2 className="card-title ">Orderbook graph</h2>
+        <div className="flex flex-wrap justify-between mb-5">
+          <h2 className="card-title">Orderbook</h2>
+          <div className="flex items-center">
+            <div className="btn-group">
+              <button
+                className={`btn ${!showOrderList && 'btn-active'} w-[85px]`}
+                onClick={() => showOrderList && setShowOrderList(false)}
+              >
+                Graph
+              </button>
+              <button
+                className={`btn ${showOrderList && 'btn-active'} w-[85px]`}
+                onClick={() => !showOrderList && setShowOrderList(true)}
+              >
+                List
+              </button>
+            </div>
+          </div>
+        </div>
+
         {hasError && <OrderBookError error={error} />}
-        {!hasError && (
+        {!hasError && !showOrderList && (
           <OrderBookChart
             baseToken={baseToken}
             chainId={chainId}
@@ -69,6 +92,8 @@ export const OrderBook: React.FC<OrderbookGraphProps> = (props) => {
             quoteToken={quoteToken}
           />
         )}
+
+        {showOrderList && <OrderBookTable derivedAuctionInfo={derivedAuctionInfo} />}
       </div>
     </div>
   )

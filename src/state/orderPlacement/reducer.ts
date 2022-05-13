@@ -1,6 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit'
 
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../constants/config'
+import { useActiveWeb3React } from '../../hooks'
 import { getInverse } from '../../utils/prices'
 import {
   interestRateInput,
@@ -34,7 +35,8 @@ function parseAuctionIdParameter(urlParam: any): number {
 export default createReducer<OrderPlacementState>(initialState, (builder) =>
   builder
     .addCase(setDefaultsFromURLSearch, () => {
-      const { chainId } = useParams()
+      const { chainId } = useActiveWeb3React()
+
       return {
         ...initialState,
         chainId,

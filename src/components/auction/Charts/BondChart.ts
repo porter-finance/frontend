@@ -116,7 +116,7 @@ export const XYSimpleBondChart = (props: XYBondChartProps): am4charts.XYChart =>
   collateralValue.name = 'COLLATERAL VALUE'
   collateralValue.dummyData = {
     description:
-      'Number of collateral tokens securing each bond. If a bond is defaulted on, the bondholder is able to exchange each bond for these collateral tokens.',
+      'Value of collateral securing each bond. If a bond is defaulted on, the bondholder is able to exchange each bond for these collateral tokens.',
   }
 
   // Add cursor
@@ -157,7 +157,7 @@ export const XYConvertBondChart = (props: XYBondChartProps): am4charts.XYChart =
   convertibleTokenValue.startLocation = 0.5
   convertibleTokenValue.name = 'CONVERTIBLE TOKEN VALUE'
   convertibleTokenValue.dummyData = {
-    description: 'Number of tokens each bond is convertible into up until the maturity date.',
+    description: 'Value of tokens each bond is convertible into up until the maturity date.',
   }
 
   return chart
@@ -174,7 +174,6 @@ export const drawInformation = (props: DrawInformation) => {
   const convertibleTokenLabel = getDisplay(convertibleToken)
 
   const collateralValueSeries = chart.series.values[1]
-  collateralValueSeries.dy = -15
   tooltipRender(collateralValueSeries)
   collateralValueSeries.adapter.add('tooltipText', (text, target) => {
     const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
@@ -183,10 +182,17 @@ export const drawInformation = (props: DrawInformation) => {
     return `Collateral value:  ${volume} ${convertibleTokenLabel}`
   })
 
+  const faceValueSeries = chart.series.values[0]
+  tooltipRender(faceValueSeries)
+  faceValueSeries.adapter.add('tooltipText', (text, target) => {
+    const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
+
+    return `Face value: ${valueY} ${convertibleTokenLabel}`
+  })
+
   if (chart.series.values.length > 2) {
     const convertibleValueSeries = chart.series.values[2]
     tooltipRender(convertibleValueSeries)
-    convertibleValueSeries.dy = -15
     convertibleValueSeries.adapter.add('tooltipText', (text, target) => {
       const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
       const convertibleValue = round(valueY, 3)

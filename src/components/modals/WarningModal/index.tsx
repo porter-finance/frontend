@@ -1,9 +1,7 @@
 import React from 'react'
 
-import { AlertIcon } from '../../icons/AlertIcon'
-import Modal, { DialogTitle } from '../common/Modal'
-import { IconWrapper } from '../common/pureStyledComponents/IconWrapper'
-import { Text } from '../common/pureStyledComponents/Text'
+import { OopsWarning } from '../ConfirmationDialog'
+import Modal from '../common/Modal'
 
 interface Props {
   content: string
@@ -17,13 +15,7 @@ const WarningModal: React.FC<Props> = (props) => {
 
   return (
     <Modal isOpen={isOpen} onDismiss={onDismiss}>
-      <DialogTitle>{title}</DialogTitle>
-      <IconWrapper>
-        <AlertIcon />
-      </IconWrapper>
-      <Text fontSize="18px" textAlign="center">
-        {content}
-      </Text>
+      <OopsWarning actionClick={onDismiss} message={content} />
     </Modal>
   )
 }

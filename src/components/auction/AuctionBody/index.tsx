@@ -70,7 +70,7 @@ const WarningCard = () => {
             </button>
             <a
               className="text-sm font-normal normal-case"
-              href="https://docs.porter.finance/"
+              href="https://docs.porter.finance/portal/resources/risks"
               rel="noreferrer"
               target="_blank"
             >

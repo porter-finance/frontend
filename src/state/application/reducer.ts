@@ -3,6 +3,7 @@ import { createReducer, nanoid } from '@reduxjs/toolkit'
 import {
   PopupContent,
   addPopup,
+  closeWalletModal,
   removePopup,
   toggleWalletModal,
   updateBlockNumber,
@@ -34,6 +35,9 @@ export default createReducer(initialState, (builder) =>
     })
     .addCase(toggleWalletModal, (state) => {
       state.walletModalOpen = !state.walletModalOpen
+    })
+    .addCase(closeWalletModal, (state) => {
+      state.walletModalOpen = false
     })
     .addCase(addPopup, (state, { payload: { content } }) => {
       state.popupList.push({

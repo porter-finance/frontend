@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { useWeb3React } from '@web3-react/core'
@@ -161,9 +161,9 @@ export const Component = (props) => {
         <Inner className="fullPage">
           <ButtonMenuStyled className={mobileMenuVisible && 'active'} onClick={mobileMenuToggle} />
           {mobileMenuVisible && <Mobilemenu onClose={() => setMobileMenuVisible(false)} />}
-          <LogoLink className="logoLink" to="/">
+          <Link to="/offerings">
             <Logo />
-          </LogoLink>
+          </Link>
           <Menu />
           {!isConnected && <ButtonConnectStyled onClick={toggleWalletModal} />}
           {isConnected && chainMismatch && (

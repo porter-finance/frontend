@@ -39,6 +39,7 @@ const singleBondQuery = gql`
     bond(id: $bondId) {
       id
       name
+      state
       symbol
       type
       owner
@@ -70,6 +71,7 @@ const singleBondQuery = gql`
 const allBondsQuery = gql`
   query BondList {
     bonds(first: 100) {
+      state
       id
       name
       symbol
