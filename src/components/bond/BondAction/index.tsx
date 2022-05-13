@@ -183,7 +183,10 @@ const BondAction = ({
     if (!validInput) return { error: 'Input must be > 0' }
 
     const notEnoughBalance =
-      Number(bondsToRedeem) && parseUnits(bondsToRedeem, bondInfo?.decimals).gt(bondTokenBalance)
+      Number(bondsToRedeem) &&
+      parseUnits(bondsToRedeem, bondInfo?.decimals).gt(
+        parseUnits(bondTokenBalance, bondInfo?.decimals),
+      )
     if (notEnoughBalance) return { error: 'Bonds to convert exceeds balance' }
 
     return true
@@ -200,7 +203,10 @@ const BondAction = ({
     if (!validInput) return { error: 'Input must be > 0' }
 
     const notEnoughBalance =
-      Number(bondsToRedeem) && parseUnits(bondsToRedeem, bondInfo?.decimals).gt(bondTokenBalance)
+      Number(bondsToRedeem) &&
+      parseUnits(bondsToRedeem, bondInfo?.decimals).gt(
+        parseUnits(bondTokenBalance, bondInfo?.decimals),
+      )
     if (notEnoughBalance) return { error: 'Bonds to redeem exceeds balance' }
 
     return true
@@ -319,7 +325,7 @@ const BondAction = ({
                 disabled={!account}
                 maxTitle={`${getActionText(componentType)} all`}
                 onMax={() => {
-                  setBondsToRedeem(formatUnits(Number(bondTokenBalance), bondInfo?.decimals))
+                  setBondsToRedeem(formatUnits(bondTokenBalance, bondInfo?.decimals))
                 }}
                 onUserSellAmountInput={setBondsToRedeem}
                 token={tok}
