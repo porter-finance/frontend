@@ -263,14 +263,17 @@ const BondAction = ({
     })
   } else if (isPaid) {
     const [paymentTokensAmount] = previewRedeemVal
+    const value = isConvertComponent ? previewConvertVal : paymentTokensAmount
+
     assetsToReceive.push({
       token: bondInfo?.paymentToken,
-      value: Number(paymentTokensAmount).toLocaleString(undefined, {
+      value: Number(value).toLocaleString(undefined, {
         maximumSignificantDigits: bondInfo?.paymentToken?.decimals,
       }),
     })
   } else if (isDefaulted) {
     const [paymentTokensAmount, collateralTokensAmount] = previewRedeemVal
+
     assetsToReceive.push({
       token: bondInfo?.collateralToken,
       value: Number(collateralTokensAmount).toLocaleString(undefined, {
