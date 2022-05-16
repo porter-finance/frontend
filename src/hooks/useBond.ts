@@ -70,6 +70,7 @@ const allBondsQuery = gql`
     bonds(first: 100) {
       state
       id
+      createdAt
       name
       symbol
       decimals
