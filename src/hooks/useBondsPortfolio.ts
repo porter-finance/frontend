@@ -32,6 +32,9 @@ const bondsQuery = gql`
           convertibleRatio
           maxSupply
           clearingPrice
+          auctions {
+            end
+          }
         }
       }
     }
