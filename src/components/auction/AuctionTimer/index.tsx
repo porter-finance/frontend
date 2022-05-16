@@ -87,7 +87,7 @@ export const AuctionTimer = ({
     return progress === 100 ? progress : 100 - progress
   }, [startDate, endDate])
 
-  const daysUntil = dayjs(endDate * 1000).diff(new Date(), 'day')
+  const daysUntil = progress === 100 ? 0 : dayjs(endDate * 1000).diff(new Date(), 'day')
 
   return (
     <div className="" {...restProps}>
