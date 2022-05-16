@@ -4,6 +4,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
 import { formatUnits, parseUnits } from '@ethersproject/units'
 import { Fraction, JSBI, Token, TokenAmount } from '@josojo/honeyswap-sdk'
+import { round } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { additionalServiceApi } from '../../api'
@@ -186,7 +187,11 @@ export function tryParseAmount(value?: string, token?: Token): TokenAmount | und
     return
   }
   try {
-    const sellAmountParsed = parseUnits(value, token.decimals).toString()
+    // Force round to fix "Error: fractional component exceeds decimals" ??
+    const sellAmountParsed = parseUnits(
+      `${round(Number(value), token.decimals)}`,
+      token.decimals,
+    ).toString()
     if (sellAmountParsed !== '0') {
       return new TokenAmount(token, JSBI.BigInt(sellAmountParsed))
     }

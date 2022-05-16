@@ -51,6 +51,7 @@ const auctionQuery = gql`
         collateralRatio
         convertibleRatio
         maxSupply
+        state
         type
       }
       bidding {
@@ -106,6 +107,7 @@ const auctionsQuery = gql`
         type
         id
         name
+        state
         symbol
         collateralToken {
           id

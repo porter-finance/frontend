@@ -4,7 +4,7 @@ import { useApolloClient } from '@apollo/client'
 
 import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
 import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
-import { useParticipatingAuctionBids } from '../../../hooks/useParticipatingAuctionBids'
+import { BidInfo } from '../../../hooks/useParticipatingAuctionBids'
 import {
   AuctionState,
   DerivedAuctionInfo,
@@ -13,7 +13,7 @@ import {
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { OrderStatus } from '../../../state/orders/reducer'
 import { getTokenDisplay } from '../../../utils'
-import ConfirmationDialog from '../../modals/ConfirmationDialog'
+import ConfirmationDialog, { OopsWarning } from '../../modals/ConfirmationDialog'
 import {
   BidTransactionLink,
   TableDesign,
@@ -22,6 +22,8 @@ import {
 } from '../OrderbookTable'
 
 interface OrdersTableProps {
+  bids: BidInfo[]
+  loading: boolean
   auctionIdentifier: AuctionIdentifier
   derivedAuctionInfo: DerivedAuctionInfo
 }
@@ -35,12 +37,13 @@ export const orderStatusText = {
 const OrdersTable: React.FC<OrdersTableProps> = (props) => {
   const {
     auctionIdentifier,
+    bids,
     derivedAuctionInfo,
     derivedAuctionInfo: { auctionState },
+    loading,
   } = props
   const apolloClient = useApolloClient()
-  const maturityDate = useBondMaturityForAuction()
-  const { bids, loading } = useParticipatingAuctionBids()
+  const { auctionEndDate, maturityDate } = useBondMaturityForAuction()
   const cancelOrderCallback = useCancelOrderCallback(
     auctionIdentifier,
     derivedAuctionInfo?.biddingToken,
@@ -75,9 +78,14 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
 
   !ordersEmpty &&
     bids.forEach((row) => {
-      const items = calculateRow(row, paymentToken, maturityDate, derivedAuctionInfo)
+      const items = calculateRow(
+        row,
+        paymentToken,
+        maturityDate,
+        derivedAuctionInfo,
+        auctionEndDate,
+      )
 
-      // TODO: add way to check pending cancellations when they click cancel button
       items.transaction = (
         <div className="flex flex-row items-center space-x-5">
           <BidTransactionLink bid={row} />
@@ -108,9 +116,10 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
       <ConfirmationDialog
         actionText="Cancel order"
         beforeDisplay={
-          <span>
-            You will need to place a new order if you still want to participate in this auction.
-          </span>
+          <OopsWarning
+            message="Your order will be cancelled and your funds will be returned."
+            title="Are you sure?"
+          />
         }
         finishedText="Order cancelled"
         loadingText="Cancelling order"
@@ -119,7 +128,6 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
         open={showConfirm}
         pendingText="Confirm cancellation in wallet"
         placeOrder={onCancelOrder}
-        title="Review cancellation"
       />
     </>
   )

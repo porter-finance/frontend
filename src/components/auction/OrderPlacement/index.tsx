@@ -34,7 +34,6 @@ import {
   ChainId,
   EASY_AUCTION_NETWORKS,
   getFullTokenDisplay,
-  getTokenDisplay,
   isTokenWETH,
   isTokenWMATIC,
   isTokenXDAI,
@@ -280,6 +279,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     amount: Number(sellAmount),
     maturityDate: graphInfo?.bond?.maturityDate,
     price,
+    auctionEndDate: graphInfo?.end,
   })
 
   const refetchOrders = () =>
@@ -437,7 +437,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
           )}
         </Wrapper>
         <WarningModal
-          content={`Pick a different price, you already have an order for ${price} ${biddingTokenDisplay} per ${auctioningTokenDisplay}`}
+          content={`Please pick a different price. You already have an order for ${price} ${biddingTokenDisplay} per ${auctioningTokenDisplay}`}
           isOpen={showWarning}
           onDismiss={() => {
             setShowWarning(false)

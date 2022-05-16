@@ -10,10 +10,12 @@ import { ReactComponent as SimpleIcon } from '../../assets/svg/simple.svg'
 import { ActiveStatusPill } from '../../components/auction/OrderbookTable'
 import Table from '../../components/auctions/Table'
 import { ErrorBoundaryWithFallback } from '../../components/common/ErrorAndReload'
+import { calculateInterestRate } from '../../components/form/InterestRateInputPanel'
 import TokenLogo from '../../components/token/TokenLogo'
 import { BondInfo, useBonds } from '../../hooks/useBond'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import { AllButton, ConvertButtonOutline, SimpleButtonOutline } from '../Auction'
+import { getBondStates } from '../BondDetail'
 import { TABLE_FILTERS } from '../Portfolio'
 
 const GlobalStyle = createGlobalStyle`
@@ -73,6 +75,7 @@ export const createTable = (data: BondInfo[]) => {
   return data.map((bond: BondInfo) => {
     const {
       amount,
+      auctions,
       clearingPrice,
       createdAt,
       decimals,
@@ -85,19 +88,24 @@ export const createTable = (data: BondInfo[]) => {
       type,
     } = bond
 
+    const fixedAPR =
+      calculateInterestRate({
+        price: clearingPrice,
+        maturityDate,
+        startDate: auctions?.[0]?.end,
+      }) || '-'
+
     return {
       id,
       search: JSON.stringify(bond),
       type,
-      issuanceDate: (
-        <span className="uppercase">{dayjs(createdAt).utc().format('DD MMM YYYY')}</span>
-      ),
+      issuanceDate: <span className="uppercase">{dayjs(createdAt).utc().tz().format('LL')}</span>,
       cost: clearingPrice
         ? `${Number(formatUnits(clearingPrice * amount, decimals)).toLocaleString()} ${
             paymentToken.symbol
           }`
         : '-',
-      fixedAPR: '-',
+      fixedAPR,
       bond: (
         <div className="flex flex-row items-center space-x-4">
           <div className="flex">
@@ -126,12 +134,11 @@ export const createTable = (data: BondInfo[]) => {
         ? `${Number(formatUnits(amount, decimals)).toLocaleString()} ${paymentToken.symbol}`
         : `1 ${paymentToken.symbol}`,
 
-      status:
-        new Date() >= new Date(maturityDate * 1000) ? (
-          <ActiveStatusPill disabled dot={false} title="Matured" />
-        ) : (
-          <ActiveStatusPill dot={false} title="Active" />
-        ),
+      status: getBondStates(bond).isMatured ? (
+        <ActiveStatusPill disabled dot={false} title="Matured" />
+      ) : (
+        <ActiveStatusPill dot={false} title="Active" />
+      ),
       maturityDate: (
         <span className="uppercase">
           {dayjs(maturityDate * 1000)

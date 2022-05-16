@@ -13,6 +13,7 @@ const bondsQuery = gql`
         amount
         bond {
           id
+          state
           name
           symbol
           decimals
@@ -31,6 +32,9 @@ const bondsQuery = gql`
           convertibleRatio
           maxSupply
           clearingPrice
+          auctions {
+            end
+          }
         }
       }
     }

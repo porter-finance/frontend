@@ -172,7 +172,7 @@ const Table = ({
       </div>
 
       <div
-        className="overflow-auto overscroll-contain min-h-[492px] scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-zinc-700"
+        className="overflow-auto overscroll-contain min-h-[492px] scrollbar-thin scrollbar-track-zinc-800 scrollbar-thumb-zinc-700"
         style={{
           maxHeight: !rows.length ? '100%' : 'calc(100vh - 391px)',
           height: !rows.length ? 'calc(100vh - 391px)' : 'inherit',

@@ -28,6 +28,7 @@ module.exports = {
     'sort-imports-es6-autofix',
     'sort-destructure-keys',
     'prettier',
+    'unused-imports',
   ],
   extends: [
     'eslint:recommended',
@@ -42,6 +43,17 @@ module.exports = {
     'plugin:tailwindcss/recommended',
   ],
   rules: {
+    'no-unused-vars': 'off',
+    'unused-imports/no-unused-imports': 'error',
+    'unused-imports/no-unused-vars': [
+      'warn',
+      {
+        vars: 'all',
+        varsIgnorePattern: '^_',
+        args: 'after-used',
+        argsIgnorePattern: '^_',
+      },
+    ],
     '@typescript-eslint/explicit-function-return-type': 'off',
     'prettier/prettier': ['error', { endOfLine: 'auto' }],
     'import/no-extraneous-dependencies': [

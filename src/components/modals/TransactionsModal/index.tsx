@@ -3,11 +3,8 @@ import React from 'react'
 import { isTransactionRecent, useAllTransactions } from '../../../state/transactions/hooks'
 import { TransactionDetails } from '../../../state/transactions/reducer'
 import Transaction from '../../common/Transaction'
-import { InfoIcon } from '../../icons/InfoIcon'
 import Modal, { DialogTitle } from '../common/Modal'
 import { Content } from '../common/pureStyledComponents/Content'
-import { IconWrapper } from '../common/pureStyledComponents/IconWrapper'
-import { Text } from '../common/pureStyledComponents/Text'
 
 interface Props {
   isOpen: boolean
@@ -46,18 +43,14 @@ export const TransactionsModal: React.FC<Props> = (props) => {
     <Modal isOpen={isOpen} onDismiss={onDismiss}>
       <Content>
         <DialogTitle>Transactions</DialogTitle>
-        {pending.length > 0 && renderTransactions(pending)}
-        {confirmed.length > 0 && renderTransactions(confirmed)}
-        {noTransactions && (
+
+        {!noTransactions && (
           <>
-            <IconWrapper>
-              <InfoIcon />
-            </IconWrapper>
-            <Text fontSize="18px" textAlign="center">
-              The connected wallet has no transactions.
-            </Text>
+            {pending.length > 0 && renderTransactions(pending)}
+            {confirmed.length > 0 && renderTransactions(confirmed)}
           </>
         )}
+        {noTransactions && <span>The connected wallet has no transactions</span>}
       </Content>
     </Modal>
   )

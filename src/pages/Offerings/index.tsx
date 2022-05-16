@@ -11,7 +11,6 @@ import Table from '../../components/auctions/Table'
 import { ErrorBoundaryWithFallback } from '../../components/common/ErrorAndReload'
 import { calculateInterestRate } from '../../components/form/InterestRateInputPanel'
 import TokenLogo from '../../components/token/TokenLogo'
-import { useActiveWeb3React } from '../../hooks'
 import { useAuctions } from '../../hooks/useAuction'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import { AllButton, AuctionButtonOutline, OTCButtonOutline } from '../Auction'
@@ -87,12 +86,11 @@ const Offerings = () => {
       auctionId: `#${auction.id}`,
       type: 'auction', // TODO: currently hardcoded since no OTC exists
       price: `1 ${auction?.bidding?.symbol}`,
-      fixedAPR: calculateInterestRate(
-        auction.clearingPrice,
-        auction.bond.maturityDate,
-        true,
-        auction.end,
-      ),
+      fixedAPR: calculateInterestRate({
+        price: auction.clearingPrice,
+        maturityDate: auction.bond.maturityDate,
+        startDate: auction.end,
+      }),
       status: auction.live ? (
         <ActiveStatusPill title="Ongoing" />
       ) : (

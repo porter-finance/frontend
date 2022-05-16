@@ -21,7 +21,7 @@ const doProcess = (bond: BondInfo, prices) => {
   prices?.forEach(([timestamp, value]) => {
     data.push({
       date: new Date(timestamp),
-      faceValueY: 1,
+      faceValueY: 1.0,
       collateralValueY: collateralPerBond * value,
       convertibleValueY: bond.type === 'convert' && convertiblePerBond * value,
     })

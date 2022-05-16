@@ -5,12 +5,15 @@ import { formatUnits, parseUnits } from '@ethersproject/units'
 import { Token, TokenAmount } from '@josojo/honeyswap-sdk'
 import { useWeb3React } from '@web3-react/core'
 import dayjs from 'dayjs'
+import { round } from 'lodash'
 
 import { useActiveWeb3React } from '../../../hooks'
 import { useBond } from '../../../hooks/useBond'
+import { getValuePerBond } from '../../../hooks/useBondExtraDetails'
 import { useConvertBond } from '../../../hooks/useConvertBond'
 import { usePreviewBond } from '../../../hooks/usePreviewBond'
 import { useRedeemBond } from '../../../hooks/useRedeemBond'
+import { useTokenPrice } from '../../../hooks/useTokenPrice'
 import { BondActions, getBondStates } from '../../../pages/BondDetail'
 import { useActivePopups, useWalletModalToggle } from '../../../state/application/hooks'
 import { getExplorerLink, getTokenDisplay } from '../../../utils'
@@ -90,7 +93,7 @@ const BondAction = ({
   const { data: bondInfo } = useBond(bondId)
   const bondTokenBalance = bondInfo?.tokenBalances?.[0]?.amount || 0
 
-  const [bondsToRedeem, setBondsToRedeem] = useState('0.00')
+  const [bondsToRedeem, setBondsToRedeem] = useState(null)
   const [openReviewModal, setOpenReviewModal] = useState<boolean>(false)
   const [previewRedeemVal, setPreviewRedeemVal] = useState<string[]>(['0', '0'])
   const [previewConvertVal, setPreviewConvertVal] = useState<string>('0')
@@ -106,7 +109,8 @@ const BondAction = ({
     let payTok = null
 
     if (bondInfo) {
-      const bondsToRedeemBigNumber = parseUnits(bondsToRedeem, bondInfo.decimals)
+      const bondsToRedeemBigNumber =
+        Number(bondsToRedeem) && parseUnits(bondsToRedeem, bondInfo.decimals)
       tok = new Token(chainId, bondInfo.id, bondInfo.decimals, bondInfo.symbol, bondInfo.name)
       payTok = new Token(
         chainId,
@@ -127,6 +131,9 @@ const BondAction = ({
   const { convert } = useConvertBond(BondAmount, bondId)
   const { previewConvert, previewRedeem } = usePreviewBond(bondId)
   const toggleWalletModal = useWalletModalToggle()
+  const convertiblePerBond = getValuePerBond(bondInfo, bondInfo?.convertibleRatio)
+  const { data: collateralTokenPrice } = useTokenPrice(bondInfo?.collateralToken.id)
+  const convertibleValue = round(convertiblePerBond * collateralTokenPrice, 3)
 
   useEffect(() => {
     if (!BondAmount) return
@@ -172,10 +179,11 @@ const BondAction = ({
 
     if (!account) return { error: 'Not logged in' }
 
-    const validInput = parseUnits(bondsToRedeem, bondInfo?.decimals).gt(0)
+    const validInput = Number(bondsToRedeem) && parseUnits(bondsToRedeem, bondInfo?.decimals).gt(0)
     if (!validInput) return { error: 'Input must be > 0' }
 
-    const notEnoughBalance = parseUnits(bondsToRedeem, bondInfo?.decimals).gt(bondTokenBalance)
+    const notEnoughBalance =
+      Number(bondsToRedeem) && parseUnits(bondsToRedeem, bondInfo?.decimals).gt(bondTokenBalance)
     if (notEnoughBalance) return { error: 'Bonds to convert exceeds balance' }
 
     return true
@@ -188,10 +196,11 @@ const BondAction = ({
       return { error: 'Must be fully paid, matured, or defaulted' }
     }
 
-    const validInput = parseUnits(bondsToRedeem, bondInfo?.decimals).gt(0)
+    const validInput = Number(bondsToRedeem) && parseUnits(bondsToRedeem, bondInfo?.decimals).gt(0)
     if (!validInput) return { error: 'Input must be > 0' }
 
-    const notEnoughBalance = parseUnits(bondsToRedeem, bondInfo?.decimals).gt(bondTokenBalance)
+    const notEnoughBalance =
+      Number(bondsToRedeem) && parseUnits(bondsToRedeem, bondInfo?.decimals).gt(bondTokenBalance)
     if (notEnoughBalance) return { error: 'Bonds to redeem exceeds balance' }
 
     return true
@@ -217,15 +226,19 @@ const BondAction = ({
     }
   }, [isConvertComponent, componentType, isConvertable, isRedeemable])
 
-  const Status = () => {
-    if (isDefaulted && componentType === BondActions.Redeem) {
-      return <ActiveStatusPill className="!bg-[#DB3635]" dot={false} title="Defaulted" />
+  const BondStatus = () => {
+    if (componentType !== BondActions.Redeem) return null
+
+    if (isDefaulted) {
+      return (
+        <ActiveStatusPill className="!text-white !bg-[#DB3635]" dot={false} title="Defaulted" />
+      )
     }
-    if (isPaid && componentType === BondActions.Redeem) {
+    if (isPaid) {
       return <ActiveStatusPill dot={false} title="Repaid" />
     }
 
-    if (!isPaid && isPartiallyPaid && isMatured && componentType === BondActions.Redeem) {
+    if (!isPaid && isPartiallyPaid && isMatured) {
       return <ActiveStatusPill className="!bg-[#EDA651]" dot={false} title="Partially repaid" />
     }
 
@@ -233,17 +246,36 @@ const BondAction = ({
   }
 
   const assetsToReceive = []
+
   if (isDefaulted) {
     const value = isConvertComponent ? previewConvertVal : previewRedeemVal[1]
-    assetsToReceive.push({ token: bondInfo?.collateralToken, value: value })
+    assetsToReceive.push({
+      token: bondInfo?.collateralToken,
+      value: Number(value).toLocaleString(undefined, {
+        maximumSignificantDigits: bondInfo?.collateralToken?.decimals,
+      }),
+      extra: `($${(convertibleValue * Number(value)).toLocaleString()})`,
+    })
   } else {
     if (isPartiallyPaid) {
       const partiallyPaidValue = isConvertComponent ? previewConvertVal : previewRedeemVal[1]
-      assetsToReceive.push({ token: bondInfo?.collateralToken, value: partiallyPaidValue })
+      assetsToReceive.push({
+        token: bondInfo?.collateralToken,
+        value: Number(partiallyPaidValue).toLocaleString(undefined, {
+          maximumSignificantDigits: bondInfo?.collateralToken?.decimals,
+        }),
+        extra: `($${(convertibleValue * Number(partiallyPaidValue)).toLocaleString()})`,
+      })
     }
 
     const value = isConvertComponent ? previewConvertVal : previewRedeemVal[0]
-    assetsToReceive.push({ token: bondInfo?.paymentToken, value })
+
+    assetsToReceive.push({
+      token: bondInfo?.paymentToken,
+      value: Number(value).toLocaleString(undefined, {
+        maximumSignificantDigits: bondInfo?.paymentToken?.decimals,
+      }),
+    })
   }
 
   return (
@@ -251,7 +283,7 @@ const BondAction = ({
       <div className="card-body">
         <div className="flex flex-row justify-between items-start">
           <h2 className="card-title">{getActionText(componentType)}</h2>
-          {Status()}
+          <BondStatus />
         </div>
         {isConvertComponent && !isMatured && bondInfo && (
           <div className="mb-1 space-y-1">
@@ -286,6 +318,9 @@ const BondAction = ({
                 chainId={chainId}
                 disabled={!account}
                 maxTitle={`${getActionText(componentType)} all`}
+                onMax={() => {
+                  setBondsToRedeem(formatUnits(Number(bondTokenBalance), bondInfo?.decimals))
+                }}
                 onUserSellAmountInput={setBondsToRedeem}
                 token={tok}
                 value={bondsToRedeem}
@@ -295,8 +330,14 @@ const BondAction = ({
             <div className="space-y-6 text-xs text-[#696969]">
               {(isConvertComponent || componentType === BondActions.Redeem) && (
                 <div className="space-y-2">
-                  {assetsToReceive.map(({ token, value }, index) => (
-                    <TokenInfo disabled={!account} key={index} token={token} value={value} />
+                  {assetsToReceive.map(({ extra, token, value }, index) => (
+                    <TokenInfo
+                      disabled={!account}
+                      extra={extra}
+                      key={index}
+                      token={token}
+                      value={value}
+                    />
                   ))}
 
                   <div className="text-xs text-[#696969]">
@@ -334,7 +375,7 @@ const BondAction = ({
             actionText={`${getActionText(componentType)} bonds`}
             beforeDisplay={
               <ReviewConvert
-                amount={Number(bondsToRedeem)}
+                amount={Number(bondsToRedeem).toLocaleString()}
                 amountToken={tok}
                 assetsToReceive={assetsToReceive}
                 type={getActionText(componentType).toLowerCase()}
