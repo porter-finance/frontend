@@ -43,7 +43,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
     loading,
   } = props
   const apolloClient = useApolloClient()
-  const maturityDate = useBondMaturityForAuction()
+  const { auctionEndDate, maturityDate } = useBondMaturityForAuction()
   const cancelOrderCallback = useCancelOrderCallback(
     auctionIdentifier,
     derivedAuctionInfo?.biddingToken,
@@ -78,9 +78,14 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
 
   !ordersEmpty &&
     bids.forEach((row) => {
-      const items = calculateRow(row, paymentToken, maturityDate, derivedAuctionInfo)
+      const items = calculateRow(
+        row,
+        paymentToken,
+        maturityDate,
+        derivedAuctionInfo,
+        auctionEndDate,
+      )
 
-      // TODO: add way to check pending cancellations when they click cancel button
       items.transaction = (
         <div className="flex flex-row items-center space-x-5">
           <BidTransactionLink bid={row} />

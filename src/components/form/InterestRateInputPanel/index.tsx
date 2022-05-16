@@ -38,12 +38,12 @@ interface Props {
 }
 
 // Interest rate = (1-Price) / Price / (years to maturity)
-export const calculateInterestRate = (
-  price: number | string,
-  maturityDate: number,
+export const calculateInterestRate = ({
   display = true,
+  maturityDate,
+  price,
   startDate = 0,
-): string | number => {
+}): string | number => {
   if (!maturityDate || !price) return '-'
   const startingDate = startDate ? dayjs(startDate * 1000) : dayjs().utc()
   const years = Math.abs(startingDate.diff(maturityDate * 1000, 'year', true))
@@ -59,10 +59,11 @@ export const calculateInterestRate = (
 
 export const getReviewData = ({
   amount,
+  auctionEndDate,
   maturityDate,
   price,
 }): { apr: string | number; earn: string; receive: string; pay: string } => ({
-  apr: `${calculateInterestRate(price, maturityDate)}+`,
+  apr: `${calculateInterestRate({ price, maturityDate, startDate: auctionEndDate })}+`,
   earn: `${round(amount - price * amount, 2).toLocaleString()}+`,
   receive: `${amount.toLocaleString()}+`,
   pay: `${round(price * amount, 2).toLocaleString()}`,
@@ -77,8 +78,8 @@ const InterestRateInputPanel = ({
   priceTokenDisplay,
   ...restProps
 }: Props) => {
-  const maturityDate = useBondMaturityForAuction()
-  const data = getReviewData({ price, amount, maturityDate })
+  const { auctionEndDate, maturityDate } = useBondMaturityForAuction()
+  const data = getReviewData({ price, amount, maturityDate, auctionEndDate })
 
   return (
     <FieldRowWrapper className="py-1 my-4 space-y-3" {...restProps}>

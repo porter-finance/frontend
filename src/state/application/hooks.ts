@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import { useActiveWeb3React } from '../../hooks'
 import { AppState } from '../index'
-import { PopupContent, addPopup, removePopup, toggleWalletModal } from './actions'
+import { PopupContent, addPopup, closeWalletModal, removePopup, toggleWalletModal } from './actions'
 
 export function useBlockNumber(): number | undefined {
   const { chainId } = useActiveWeb3React()
@@ -19,6 +19,11 @@ export function useWalletModalOpen(): boolean {
 export function useWalletModalToggle(): () => void {
   const dispatch = useDispatch()
   return useCallback(() => dispatch(toggleWalletModal()), [dispatch])
+}
+
+export function useWalletModalClose(): () => void {
+  const dispatch = useDispatch()
+  return useCallback(() => dispatch(closeWalletModal()), [dispatch])
 }
 
 // returns a function that allows adding a popup

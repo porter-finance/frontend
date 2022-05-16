@@ -10,7 +10,11 @@ import { ReactComponent as PorterIcon } from '../../../assets/svg/porter.svg'
 import { injected } from '../../../connectors'
 import { SUPPORTED_WALLETS } from '../../../constants'
 import usePrevious from '../../../hooks/usePrevious'
-import { useWalletModalOpen, useWalletModalToggle } from '../../../state/application/hooks'
+import {
+  useWalletModalClose,
+  useWalletModalOpen,
+  useWalletModalToggle,
+} from '../../../state/application/hooks'
 import { useOrderPlacementState } from '../../../state/orderPlacement/hooks'
 import { ExternalLink } from '../../../theme'
 import { setupNetwork } from '../../../utils/setupNetwork'
@@ -52,6 +56,7 @@ const WalletModal: React.FC = () => {
   const [pendingError, setPendingError] = useState<boolean>()
   const walletModalOpen = useWalletModalOpen()
   const toggleWalletModal = useWalletModalToggle()
+  const closeWalletModal = useWalletModalClose()
   const previousAccount = usePrevious(account)
   const { errorWrongNetwork } = useNetworkCheck()
   const { chainId } = useOrderPlacementState()
@@ -221,7 +226,7 @@ const WalletModal: React.FC = () => {
     <Modal
       isOpen={walletModalOpen}
       onDismiss={() => {
-        toggleWalletModal()
+        closeWalletModal()
 
         setTimeout(() => {
           resetModal()

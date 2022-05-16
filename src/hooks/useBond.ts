@@ -2,6 +2,7 @@ import { gql, useQuery } from '@apollo/client'
 import { useWeb3React } from '@web3-react/core'
 
 import { getLogger } from '../utils/logger'
+import { Auction } from './useAuction'
 
 const logger = getLogger('useBond')
 
@@ -23,7 +24,9 @@ export interface BondInfo {
   maxSupply: number
   tokenBalances: any
   clearingPrice?: number
+  auctions: Auction[]
 }
+
 export interface Token {
   id: string
   name: string

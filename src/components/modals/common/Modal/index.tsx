@@ -28,6 +28,7 @@ export const IconButton = styled('button', {
 })
 
 export default function MyModal({
+  blockBackdropDismiss = false,
   children,
   hideCloseIcon = false,
   isOpen,
@@ -39,7 +40,12 @@ export default function MyModal({
 
   return (
     <Transition appear as={Fragment} show={isOpen}>
-      <Dialog as="div" className="relative z-10" onClose={closeModal}>
+      <Dialog
+        as="div"
+        className="relative z-10"
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        onClose={!blockBackdropDismiss ? closeModal : () => {}}
+      >
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
