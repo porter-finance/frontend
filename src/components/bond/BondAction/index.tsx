@@ -272,7 +272,7 @@ const BondAction = ({
       }),
     })
   } else if (isDefaulted) {
-    const [paymentTokensAmount, collateralTokensAmount] = previewRedeemVal
+    const [, collateralTokensAmount] = previewRedeemVal
 
     assetsToReceive.push({
       token: bondInfo?.collateralToken,
