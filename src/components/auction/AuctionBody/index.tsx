@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { Transition } from '@headlessui/react'
+import { DoubleArrowRightIcon } from '@radix-ui/react-icons'
 import useGeoLocation from 'react-ipgeolocation'
 
 import { Auction } from '../../../hooks/useAuction'
@@ -60,15 +61,7 @@ const WarningCard = () => {
           <div className="text-sm text-[#9F9F9F]">
             Purchasing bonds is risky and may lead to complete or partial loss of funds. Do conduct
             your own due diligence and consult your financial advisor before making any investment
-            decisions.
-          </div>
-          <div className="flex items-center mt-6 space-x-2 card-actions">
-            <button
-              className="!text-sm font-normal normal-case btn btn-sm btn-warning"
-              onClick={() => setShow(false)}
-            >
-              Ok, I understand
-            </button>
+            decisions.{' '}
             <a
               className="text-sm font-normal normal-case"
               href="https://docs.porter.finance/portal/resources/risks"
@@ -90,12 +83,20 @@ const BondCard = ({ graphInfo }: { graphInfo: Auction }) => {
   const { isConvertBond } = getBondStates(graphInfo?.bond)
 
   return (
-    <div
-      className="shadow-sm transition-all cursor-pointer card card-bordered bond-card-color"
-      onClick={() => navigate(`/products/${graphInfo?.bond.id || ''}`)}
-    >
+    <div className="shadow-sm card card-bordered bond-card-color">
       <div className="card-body">
-        <h2 className="card-title">Bond information</h2>
+        <div className="flex justify-between items-center">
+          <h2 className="card-title">Bond information</h2>
+          <button
+            className="space-x-2 !text-xxs font-normal bg-[#532DBE] rounded-md btn btn-sm btn-primary"
+            onClick={() => navigate(`/products/${graphInfo?.bond.id || ''}`)}
+          >
+            <span>Learn more</span>
+            <span>
+              <DoubleArrowRightIcon />
+            </span>
+          </button>
+        </div>
 
         <div className="flex justify-between items-end text-sm text-[#9F9F9F]">
           <div className="flex items-center space-x-4 cursor-pointer">

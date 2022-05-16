@@ -81,11 +81,6 @@ html {
   @apply border-[#404eed];
 }
 
-.card.bond-card-color:hover {
-  @apply card-bordered;
-  @apply border-[#532dbe];
-}
-
 .card.redeem-card-color {
   @apply card-bordered;
   @apply border-[#532dbe];
