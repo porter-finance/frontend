@@ -18,7 +18,7 @@ interface Props {
 
 const useChart = (props: Props) => {
   const { baseToken, chainId, createChart, data, quoteToken } = props
-  const maturityDate = useBondMaturityForAuction()
+  const { auctionEndDate, maturityDate } = useBondMaturityForAuction()
 
   const [loading, setLoading] = useState(false)
 
@@ -57,10 +57,11 @@ const useChart = (props: Props) => {
       quoteToken,
       chainId,
       maturityDate,
+      auctionEndDate,
     })
 
     chartRef.current.data = data
-  }, [baseToken, quoteToken, data, chainId, maturityDate])
+  }, [baseToken, quoteToken, data, chainId, maturityDate, auctionEndDate])
 
   return { chartRef, mountPoint, loading }
 }
