@@ -47,14 +47,24 @@ export const ordersTableColumns = [
   },
 ]
 
-export const calculateRow = (row, paymentToken, maturityDate, derivedAuctionInfo) => {
+export const calculateRow = (
+  row,
+  paymentToken,
+  maturityDate,
+  derivedAuctionInfo,
+  auctionEndDate,
+) => {
   let statusText = ''
   if (row.createtx) statusText = orderStatusText[OrderStatus.PLACED]
   if (!row.createtx) statusText = orderStatusText[OrderStatus.PENDING]
   if (row.canceltx) statusText = 'Cancelled'
   const status = statusText
   const price = `${(row.payable / row.size).toLocaleString()} ${paymentToken}`
-  const interest = `${calculateInterestRate(row.payable / row.size, maturityDate)} `
+  const interest = `${calculateInterestRate({
+    price: row.payable / row.size,
+    maturityDate,
+    startDate: auctionEndDate,
+  })} `
   const amount = `${round(
     Number(formatUnits(row.payable, derivedAuctionInfo.biddingToken.decimals)),
     2,
@@ -285,12 +295,14 @@ export const BidTransactionLink = ({ bid }) => {
 export const OrderBookTable: React.FC<OrderBookTableProps> = ({ derivedAuctionInfo }) => {
   const { bids, loading } = useAuctionBids()
 
-  const maturityDate = useBondMaturityForAuction()
+  const { auctionEndDate, maturityDate } = useBondMaturityForAuction()
   const paymentToken = getTokenDisplay(derivedAuctionInfo?.biddingToken)
   const noBids = !Array.isArray(bids) || bids.length === 0
   const data = noBids
     ? []
-    : bids.map((row) => calculateRow(row, paymentToken, maturityDate, derivedAuctionInfo))
+    : bids.map((row) =>
+        calculateRow(row, paymentToken, maturityDate, derivedAuctionInfo, auctionEndDate),
+      )
 
   return <TableDesign columns={ordersTableColumns} data={data} loading={loading} />
 }
