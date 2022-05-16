@@ -41,7 +41,7 @@ export default function TokenLink({
   withLink?: boolean
 }): ReactElement {
   if (!token?.symbol) return <span>-</span>
-  const symbol = token.symbol.slice(0, 7)
+  const symbol = token.symbol
 
   if (withLink) {
     return <AddressLink hash={token?.id}>{symbol}</AddressLink>

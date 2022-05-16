@@ -17,6 +17,7 @@ import BondAction from '../../components/bond/BondAction'
 import { ErrorBoundaryWithFallback } from '../../components/common/ErrorAndReload'
 import { calculateInterestRate } from '../../components/form/InterestRateInputPanel'
 import WarningModal from '../../components/modals/WarningModal'
+import TokenLink from '../../components/token/TokenLink'
 import TokenLogo from '../../components/token/TokenLogo'
 import { BondInfo, useBond } from '../../hooks/useBond'
 import { useBondExtraDetails } from '../../hooks/useBondExtraDetails'
@@ -109,6 +110,7 @@ export const getBondStates = (bond: BondInfo) => {
   const isPartiallyPaid = false // TODO ADD THIS TO THE GRAPH
   const isDefaulted = bond?.state === 'defaulted'
   const isPaid = bond?.state === 'paidEarly' || bond?.state === 'paid'
+  const isActive = bond?.state === 'active'
   const isMatured = isDefaulted || isPaid
   return {
     isMatured,
@@ -116,6 +118,7 @@ export const getBondStates = (bond: BondInfo) => {
     isPartiallyPaid,
     isDefaulted,
     isPaid,
+    isActive,
   }
 }
 
@@ -191,7 +194,9 @@ const BondDetail: React.FC = () => {
             </div>
             <div>
               <h1 className="text-3xl text-white capitalize">{bond?.name.toLowerCase()}</h1>
-              <p className="text-sm text-blue-100">{bond?.symbol}</p>
+              <p className="text-sm text-blue-100">
+                <TokenLink token={bond} withLink />
+              </p>
             </div>
           </div>
           <div>{isConvertBond ? <ConvertButtonOutline /> : <SimpleButtonOutline />}</div>

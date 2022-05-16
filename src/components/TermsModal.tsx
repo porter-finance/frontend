@@ -16,52 +16,36 @@ const TermsModal = () => {
 
   return (
     <MyModal blockBackdropDismiss hideCloseIcon isOpen={showTerms} onDismiss={abortModal}>
-      <div className="mt-10 space-y-6 text-center">
+      <div className="mt-2 space-y-6 text-center">
         <h1 className="text-xl font-medium text-[#E0E0E0]">Terms of Service</h1>
-        <div className="space-y-4 text-[#D6D6D6]">
+        <div className="space-y-4 text-left text-[#D6D6D6]">
           <p>
             Please read our{' '}
             <a
               className="text-[#6CADFB] hover:underline"
-              href="https://docs.porter.finance/"
+              href="https://www.porter.finance/terms-of-service"
               rel="noreferrer"
               target="_blank"
             >
               Terms of Service
             </a>{' '}
             and review the list of restricted countries Porter Finance does not serve. If you live
-            in one of these{' '}
-            <a
-              className="text-[#6CADFB] hover:underline"
-              href="https://docs.porter.finance/"
-              rel="noreferrer"
-              target="_blank"
-            >
-              Restricted Countries
-            </a>
-            , you will not be able to use the Porter Finance platform.
+            in one of the restricted countries, you will not be able to use the Porter Finance
+            platform.
           </p>
 
           <p>
             By clicking “Accept” you agree to our{' '}
             <a
               className="text-[#6CADFB] hover:underline"
-              href="https://docs.porter.finance/"
+              href="https://www.porter.finance/terms-of-service"
               rel="noreferrer"
               target="_blank"
             >
               Terms of Service
             </a>{' '}
-            and confirm you do not live in one of the{' '}
-            <a
-              className="text-[#6CADFB] hover:underline"
-              href="https://docs.porter.finance/"
-              rel="noreferrer"
-              target="_blank"
-            >
-              Restricted Countries
-            </a>{' '}
-            Porter Finance does not serve.
+            and confirm you do not live in one of the restricted countries Porter Finance does not
+            serve.
           </p>
         </div>
 
