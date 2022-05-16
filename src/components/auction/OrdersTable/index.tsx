@@ -101,7 +101,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
 
   const refetchBids = () =>
     apolloClient.refetchQueries({
-      include: 'active',
+      include: 'all',
     })
 
   return (

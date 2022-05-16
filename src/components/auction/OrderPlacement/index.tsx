@@ -283,7 +283,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
 
   const refetchOrders = () =>
     apolloClient.refetchQueries({
-      include: 'active',
+      include: 'all',
     })
 
   return (
