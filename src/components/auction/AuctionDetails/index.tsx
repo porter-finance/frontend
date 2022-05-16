@@ -86,14 +86,16 @@ const AuctionDetails = (props: Props) => {
       ).toLocaleString(),
       value: <TokenInfoWithLink value={graphInfo.minimumBidSize} withLink={false} />,
     }
-    currentBondAPR = calculateInterestRate(
-      auctionCurrentPrice,
-      graphInfo.bond.maturityDate,
-    ) as string
-    maxBondAPR = calculateInterestRate(
-      graphInfo.minimumBondPrice,
-      graphInfo.bond.maturityDate,
-    ) as string
+    currentBondAPR = calculateInterestRate({
+      price: auctionCurrentPrice,
+      maturityDate: graphInfo.bond.maturityDate,
+      startDate: graphInfo.end,
+    }) as string
+    maxBondAPR = calculateInterestRate({
+      price: graphInfo.minimumBondPrice,
+      maturityDate: graphInfo.bond.maturityDate,
+      startDate: graphInfo.end,
+    }) as string
   }
 
   const currentBondPrice = {
