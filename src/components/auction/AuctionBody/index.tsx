@@ -63,7 +63,7 @@ const WarningCard = () => {
             your own due diligence and consult your financial advisor before making any investment
             decisions.{' '}
             <a
-              className="text-sm font-normal normal-case"
+              className="text-sm font-normal underline normal-case"
               href="https://docs.porter.finance/portal/resources/risks"
               rel="noreferrer"
               target="_blank"
