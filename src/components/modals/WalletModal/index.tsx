@@ -18,6 +18,7 @@ import {
 import { useOrderPlacementState } from '../../../state/orderPlacement/hooks'
 import { ExternalLink } from '../../../theme'
 import { setupNetwork } from '../../../utils/setupNetwork'
+import { requiredChain } from '../../ChainWarning'
 import { NetworkError, useNetworkCheck } from '../../web3/Web3Status'
 import { OopsWarning } from '../ConfirmationDialog'
 import Modal, { DialogTitle } from '../common/Modal'
@@ -58,7 +59,7 @@ const WalletModal: React.FC = () => {
   const toggleWalletModal = useWalletModalToggle()
   const closeWalletModal = useWalletModalClose()
   const previousAccount = usePrevious(account)
-  const { errorWrongNetwork } = useNetworkCheck()
+  const { errorWrongNetwork } = useNetworkCheck(requiredChain.chainId)
   const { chainId } = useOrderPlacementState()
   const [walletConnectChainError, setWalletConnectChainError] = useState<NetworkError>()
 
@@ -216,9 +217,7 @@ const WalletModal: React.FC = () => {
   const errorMessage =
     error instanceof UnsupportedChainIdError || walletConnectChainError
       ? 'Please connect to the appropriate Ethereum network.'
-      : errorWrongNetwork
-      ? errorWrongNetwork
-      : 'Error connecting. Try refreshing the page.'
+      : null
 
   const showError = !error && !walletConnectChainError && connectingToWallet && pendingError
 
@@ -233,8 +232,11 @@ const WalletModal: React.FC = () => {
         }, 400)
       }}
     >
-      {showError && (
-        <OopsWarning actionClick={resetModal} message={pendingError || 'Error connecting.'} />
+      {(showError || errorMessage) && (
+        <OopsWarning
+          actionClick={resetModal}
+          message={pendingError || errorMessage || 'Error connecting.'}
+        />
       )}
       {!showError && connectingToWallet && (
         <div className="flex flex-col items-center animate-pulse">
@@ -242,7 +244,7 @@ const WalletModal: React.FC = () => {
           Connecting to wallet
         </div>
       )}
-      {!showError && !connectingToWallet && (
+      {!showError && !errorMessage && !connectingToWallet && (
         <>
           <DialogTitle>{title}</DialogTitle>
           <p>Connect with one of our available wallet providers.</p>
