@@ -216,7 +216,7 @@ const WalletModal: React.FC = () => {
       : 'Connect a wallet'
   const errorMessage =
     error instanceof UnsupportedChainIdError || walletConnectChainError
-      ? 'Please connect to the appropriate Ethereum network.'
+      ? `Please connect to the ${requiredChain.chainName} Ethereum network.`
       : null
 
   const showError = !error && !walletConnectChainError && connectingToWallet && pendingError
@@ -234,11 +234,11 @@ const WalletModal: React.FC = () => {
     >
       {(showError || errorMessage) && (
         <OopsWarning
-          actionClick={resetModal}
+          actionClick={!errorMessage && resetModal}
           message={pendingError || errorMessage || 'Error connecting.'}
         />
       )}
-      {!showError && connectingToWallet && (
+      {!(showError || errorMessage) && connectingToWallet && (
         <div className="flex flex-col items-center animate-pulse">
           <PorterIcon />
           Connecting to wallet

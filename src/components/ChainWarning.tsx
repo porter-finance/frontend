@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 
+import { Transition } from '@headlessui/react'
 import { Chain, Mainnet, Rinkeby } from '@usedapp/core'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 
@@ -64,15 +65,23 @@ const Warning = ({ chain }: { chain: Chain }) => {
 export const requiredChain = isDev ? Rinkeby : Mainnet
 
 const ChainWarning = () => {
-  const { chainId, error } = useWeb3React()
+  const { account, chainId, error } = useWeb3React()
   const { errorWrongNetwork } = useNetworkCheck(requiredChain.chainId)
   const networkError = error instanceof UnsupportedChainIdError || errorWrongNetwork
 
-  if (networkError || !chainId || chainId !== requiredChain.chainId) {
-    return <Warning chain={requiredChain} />
-  }
-
-  return null
+  return (
+    <Transition
+      enter="transition-opacity duration-75"
+      enterFrom="opacity-0"
+      enterTo="opacity-100"
+      leave="transition-opacity duration-150"
+      leaveFrom="opacity-100"
+      leaveTo="opacity-0"
+      show={!!account && (!!networkError || !chainId || chainId !== requiredChain.chainId)}
+    >
+      <Warning chain={requiredChain} />
+    </Transition>
+  )
 }
 
 export default ChainWarning
