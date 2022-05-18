@@ -1,10 +1,8 @@
-import { isDev } from './src/connectors'
-
-export const client = {
-  service: {
-    name: 'porter-finance-graphql-server',
-    url: isDev
-      ? process.env.REACT_APP_SUBGRAPH_URL_RINKEBY
-      : process.env.REACT_APP_SUBGRAPH_URL_MAINNET,
+module.exports = {
+  client: {
+    service: {
+      name: 'porter-finance-graphql-server',
+      url: process.env.REACT_APP_SUBGRAPH_URL_RINKEBY,
+    },
   },
 }
