@@ -91,7 +91,7 @@ export const useAuction = (auctionId?: number): AuctionResponse => {
 
 const auctionsQuery = gql`
   query AllAuctions {
-    auctions(orderBy: end, orderDirection: desc, first: 100) {
+    auctions(orderBy: end, orderDirection: asc, first: 100) {
       id
       offeringSize
       end
