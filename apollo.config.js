@@ -1,8 +1,10 @@
-module.exports = {
-  client: {
-    service: {
-      name: 'your-service-name',
-      url: 'https://api.thegraph.com/subgraphs/name/porter-finance/porter-v1',
-    },
+import { isDev } from './src/connectors'
+
+export const client = {
+  service: {
+    name: 'porter-finance-graphql-server',
+    url: isDev
+      ? process.env.REACT_APP_SUBGRAPH_URL_RINKEBY
+      : process.env.REACT_APP_SUBGRAPH_URL_MAINNET,
   },
 }
