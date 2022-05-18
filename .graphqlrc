@@ -1,1 +1,1 @@
-schema: 'https://api.thegraph.com/subgraphs/name/porter-finance/porter-v1'
+schema: './graphql.schema.json'
