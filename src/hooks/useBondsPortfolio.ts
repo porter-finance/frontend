@@ -7,7 +7,7 @@ import { BondInfo } from './useBond'
 const logger = getLogger('useBondsPortfolio')
 
 const bondsQuery = gql`
-  query BondList($account: ID!) {
+  query MyBonds($account: ID!) {
     account(id: $account) {
       tokenBalances {
         amount

@@ -69,7 +69,7 @@ const singleBondQuery = gql`
   }
 `
 const allBondsQuery = gql`
-  query BondList {
+  query AllBonds {
     bonds(first: 100) {
       state
       id
