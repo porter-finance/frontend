@@ -12,3 +12,7 @@ generates:
   ./graphql.schema.json:
     plugins:
       - 'introspection'
+hooks:
+  afterAllFileWrite:
+    - yarn prettier --write
+    - yarn eslint --fix
