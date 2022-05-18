@@ -1,13 +1,13 @@
 import { gql, useQuery } from '@apollo/client'
 import { useWeb3React } from '@web3-react/core'
 
+import { Bond } from '../generated/graphql'
 import { getLogger } from '../utils/logger'
-import { BondInfo } from './useBond'
 
 const logger = getLogger('useBondsPortfolio')
 
 const bondsQuery = gql`
-  query MyBonds($account: ID!) {
+  query AccountDetails($account: ID!) {
     account(id: $account) {
       tokenBalances {
         amount
@@ -43,11 +43,11 @@ const bondsQuery = gql`
 
 export interface TokenBalance {
   amount: number
-  bond: BondInfo
+  bond: Bond
 }
 
 interface Portfolio {
-  data: BondInfo[]
+  data: Bond[]
   loading: boolean
 }
 export const useBondsPortfolio = (): Portfolio => {

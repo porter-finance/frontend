@@ -1,12 +1,14 @@
 overwrite: true
 schema: ${REACT_APP_SUBGRAPH_URL_RINKEBY}
+documents: './src/**/*.ts'
 generates:
   src/generated/graphql.tsx:
     plugins:
       - 'typescript'
       - 'typescript-operations'
-      - 'typescript-react-apollo'
-      - 'fragment-matcher'
+      - 'typed-document-node'
+    config:
+      fetcher: fetch
   ./graphql.schema.json:
     plugins:
       - 'introspection'

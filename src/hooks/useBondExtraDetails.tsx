@@ -6,13 +6,15 @@ import { round } from 'lodash'
 
 import { Props as ExtraDetailsItemProps } from '../components/auction/ExtraDetailsItem'
 import TokenLink from '../components/token/TokenLink'
-import { BondInfo, useBond } from './useBond'
+import { useBond } from './useBond'
 import { useTokenPrice } from './useTokenPrice'
+
+import { Bond } from '@/generated/graphql'
 
 const WADDecimals = 18
 const paymentTokenPrice = 1
 
-export const getValuePerBond = (bond: BondInfo, value: number) => {
+export const getValuePerBond = (bond: Bond, value: number) => {
   return bond
     ? round(
         Number(

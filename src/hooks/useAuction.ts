@@ -1,7 +1,8 @@
 import { gql, useQuery } from '@apollo/client'
 
 import { getLogger } from '../utils/logger'
-import { BondInfo } from './useBond'
+
+import { Bond } from '@/generated/graphql'
 
 const logger = getLogger('useAuctions')
 
@@ -12,7 +13,7 @@ export interface Auction {
   end: number
   orderCancellationEndDate: number
   clearingPrice: number
-  bond: BondInfo
+  bond: Bond
   bidding: {
     id: string
     decimals: number
@@ -29,7 +30,7 @@ export interface Auction {
 }
 
 const auctionQuery = gql`
-  query Auction($auctionId: ID!) {
+  query SingleAuction($auctionId: ID!) {
     auction(id: $auctionId) {
       id
       bond {

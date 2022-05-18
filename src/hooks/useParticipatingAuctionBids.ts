@@ -44,7 +44,7 @@ export interface BidInfo {
 }
 
 const bidsQuery = gql`
-  query ParticipatingAuctionBids($account: String!, $auctionId: Int!) {
+  query BidsForAccount($account: String!, $auctionId: Int!) {
     bids(
       orderBy: timestamp
       orderDirection: desc

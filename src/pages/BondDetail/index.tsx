@@ -19,9 +19,11 @@ import { calculateInterestRate } from '../../components/form/InterestRateInputPa
 import WarningModal from '../../components/modals/WarningModal'
 import TokenLink from '../../components/token/TokenLink'
 import TokenLogo from '../../components/token/TokenLogo'
-import { BondInfo, useBond } from '../../hooks/useBond'
+import { useBond } from '../../hooks/useBond'
 import { useBondExtraDetails } from '../../hooks/useBondExtraDetails'
 import { ConvertButtonOutline, LoadingTwoGrid, SimpleButtonOutline, TwoGridPage } from '../Auction'
+
+import { Bond } from '@/generated/graphql'
 
 export enum BondActions {
   Redeem,
@@ -105,7 +107,7 @@ const positionColumns = [
   },
 ]
 
-export const getBondStates = (bond: BondInfo) => {
+export const getBondStates = (bond: Bond) => {
   const isConvertBond = bond?.type === 'convert'
   const isPartiallyPaid = false // TODO ADD THIS TO THE GRAPH
   const isDefaulted = bond?.state === 'defaulted'

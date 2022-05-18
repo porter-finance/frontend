@@ -12,11 +12,13 @@ import Table from '../../components/auctions/Table'
 import { ErrorBoundaryWithFallback } from '../../components/common/ErrorAndReload'
 import { calculateInterestRate } from '../../components/form/InterestRateInputPanel'
 import TokenLogo from '../../components/token/TokenLogo'
-import { BondInfo, useBonds } from '../../hooks/useBond'
+import { useBonds } from '../../hooks/useBond'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import { AllButton, ConvertButtonOutline, SimpleButtonOutline } from '../Auction'
 import { getBondStates } from '../BondDetail'
 import { TABLE_FILTERS } from '../Portfolio'
+
+import { Bond } from '@/generated/graphql'
 
 const GlobalStyle = createGlobalStyle`
   .siteHeader {
@@ -71,8 +73,8 @@ export const columns = (showAmount = false) => [
   },
 ]
 
-export const createTable = (data: BondInfo[]) => {
-  return data.map((bond: BondInfo) => {
+export const createTable = (data: Bond[]) => {
+  return data.map((bond: Bond) => {
     const {
       amount,
       auctions,

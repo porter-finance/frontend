@@ -1,35 +1,13 @@
 import { gql, useQuery } from '@apollo/client'
 import { useWeb3React } from '@web3-react/core'
 
-import { Token } from '../generated/graphql'
+import { AllBondsDocument, Bond, SingleBondDocument } from '../../src/generated/graphql'
 import { getLogger } from '../utils/logger'
-import { Auction } from './useAuction'
 
 const logger = getLogger('useBond')
 
-export interface BondInfo {
-  id: string
-  name: string
-  symbol: string
-  decimals: number
-  owner: string
-  type: string
-  amount?: number
-  state: 'active' | 'paidEarly' | 'defaulted' | 'paid'
-  maturityDate: number
-  createdAt: number
-  paymentToken: Token
-  collateralToken: Token
-  collateralRatio: number
-  convertibleRatio: number
-  maxSupply: number
-  tokenBalances: any
-  clearingPrice?: number
-  auctions: Auction[]
-}
-
 const singleBondQuery = gql`
-  query Bond($bondId: ID!, $accountId: String!) {
+  query SingleBond($bondId: ID!, $accountId: String!) {
     bond(id: $bondId) {
       id
       name
@@ -94,13 +72,13 @@ const allBondsQuery = gql`
 `
 
 interface SingleBond {
-  data: BondInfo
+  data: Bond
   loading: boolean
 }
 export const useBond = (bondId: string): SingleBond => {
   const { account } = useWeb3React()
 
-  const { data, error, loading } = useQuery(singleBondQuery, {
+  const { data, error, loading } = useQuery<SingleBond>(SingleBondDocument, {
     variables: { bondId: bondId.toLowerCase(), accountId: account?.toLowerCase() || '0x00' },
   })
 
@@ -108,19 +86,23 @@ export const useBond = (bondId: string): SingleBond => {
     logger.error('Error getting useBond info', error)
   }
 
+  console.log(data)
+
   const info = data?.bond
   return { data: info, loading }
 }
 
 interface AllBonds {
-  data: BondInfo[]
+  data: Bond[]
   loading: boolean
 }
 export const useBonds = (): AllBonds => {
-  const { data, error, loading } = useQuery(allBondsQuery)
+  const { data, error, loading } = useQuery<AllBonds>(AllBondsDocument)
+
+  console.log(data)
 
   if (error) {
     logger.error('Error getting useAllBondInfo info', error)
   }
-  return { data: data?.bonds, loading }
+  return { data: data?.data?.bonds, loading }
 }
