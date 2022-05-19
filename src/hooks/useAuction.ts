@@ -1,8 +1,7 @@
 import { gql, useQuery } from '@apollo/client'
 
+import { AllAuctionsDocument, SingleAuctionDocument } from '../generated/graphql'
 import { getLogger } from '../utils/logger'
-
-import { AllAuctionsDocument, SingleAuctionDocument } from '@/generated/graphql'
 
 const logger = getLogger('useAuctions')
 
