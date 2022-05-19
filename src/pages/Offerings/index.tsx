@@ -16,6 +16,45 @@ import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import { AllButton, AuctionButtonOutline, OTCButtonOutline } from '../Auction'
 import { TABLE_FILTERS } from '../Portfolio'
 
+import { Auction } from '@/generated/graphql'
+
+export const getAuctionStates = (auction: Auction) => {
+  const { clearingPrice, end, orderCancellationEndDate } = auction
+  // open for orders
+  const atStageOrderPlacement = end > dayjs(new Date()).utc()
+
+  // cancellable (can be open for orders and cancellable.
+  // This isn't an auction status rather an ability to cancel your bid or not.)
+  const atStageOrderPlacementAndCancelation = orderCancellationEndDate >= dayjs(new Date()).utc()
+
+  // AKA settling (can be settled, but not yet)
+  const atStageSolutionSubmission = end <= dayjs(new Date()).utc() && clearingPrice == 0
+
+  // claiming (settled)
+  const atStageFinished = !!clearingPrice
+
+  let status = ''
+  // Orders can be placed
+  if (atStageOrderPlacement || atStageOrderPlacementAndCancelation) status = 'ready for orders'
+
+  // Auction can be settled
+  if (atStageSolutionSubmission) status = 'waiting for someone to settle this damn thing'
+
+  // Orders can be claimed
+  if (atStageFinished) status = 'ready to claim'
+
+  // 1. status = 'all claimed'
+  // 2. status = 'partially claimed'
+  // 3. status = 'no more actions allowed, auction ended'
+
+  return {
+    atStageOrderPlacement,
+    atStageOrderPlacementAndCancelation,
+    atStageSolutionSubmission,
+    atStageFinished,
+  }
+}
+
 const GlobalStyle = createGlobalStyle`
   .siteHeader {
     background: #404eed !important;
