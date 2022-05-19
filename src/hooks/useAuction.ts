@@ -2,32 +2,9 @@ import { gql, useQuery } from '@apollo/client'
 
 import { getLogger } from '../utils/logger'
 
-import { Bond } from '@/generated/graphql'
+import { AllAuctionsDocument, SingleAuctionDocument } from '@/generated/graphql'
 
 const logger = getLogger('useAuctions')
-
-export interface Auction {
-  id: string
-  live: boolean
-  start: number
-  end: number
-  orderCancellationEndDate: number
-  clearingPrice: number
-  bond: Bond
-  bidding: {
-    id: string
-    decimals: number
-    symbol: string
-    name: string
-  }
-  bondsSold: number
-  totalPaid: number
-  offeringSize: number
-  totalBidVolume: number
-  minimumFundingThreshold: number
-  minimumBidSize: number
-  minimumBondPrice: number
-}
 
 const auctionQuery = gql`
   query SingleAuction($auctionId: ID!) {
@@ -76,12 +53,10 @@ const auctionQuery = gql`
   }
 `
 
-interface AuctionResponse {
-  data: Auction
-  loading: boolean
-}
-export const useAuction = (auctionId?: number): AuctionResponse => {
-  const { data, error, loading } = useQuery(auctionQuery, { variables: { auctionId } })
+export const useAuction = (auctionId?: number) => {
+  const { data, error, loading } = useQuery(SingleAuctionDocument, {
+    variables: { auctionId: `${auctionId}` },
+  })
 
   if (error) {
     logger.error('Error getting useAuction info', error)
@@ -128,12 +103,8 @@ const auctionsQuery = gql`
   }
 `
 
-interface AuctionsReponse {
-  data: Auction[]
-  loading: boolean
-}
-export const useAuctions = (): AuctionsReponse => {
-  const { data, error, loading } = useQuery(auctionsQuery)
+export const useAuctions = () => {
+  const { data, error, loading } = useQuery(AllAuctionsDocument)
 
   if (error) {
     logger.error('Error getting useAuctions info', error)

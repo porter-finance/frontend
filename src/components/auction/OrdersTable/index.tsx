@@ -4,7 +4,6 @@ import { useApolloClient } from '@apollo/client'
 
 import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
 import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
-import { BidInfo } from '../../../hooks/useParticipatingAuctionBids'
 import {
   AuctionState,
   DerivedAuctionInfo,
@@ -21,8 +20,10 @@ import {
   ordersTableColumns,
 } from '../OrderbookTable'
 
+import { Bid } from '@/generated/graphql'
+
 interface OrdersTableProps {
-  bids: BidInfo[]
+  bids: Bid[]
   loading: boolean
   auctionIdentifier: AuctionIdentifier
   derivedAuctionInfo: DerivedAuctionInfo
