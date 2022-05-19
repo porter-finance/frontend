@@ -138,7 +138,13 @@ const Offerings = () => {
         maturityDate: auction.bond.maturityDate,
         startDate: auction.end,
       }),
-      status: <ActiveStatusPill disabled={state.status === 'ended'} title={state.status} />,
+      status: (
+        <ActiveStatusPill
+          className={state.status === 'claiming' && '!text-gray-800 bg-orange-300'}
+          disabled={state.status === 'ended'}
+          title={state.status}
+        />
+      ),
       maturityValue: `1 ${auction?.bond.paymentToken.symbol}`,
       endDate: (
         <span className="uppercase">
