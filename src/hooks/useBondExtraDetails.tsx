@@ -35,8 +35,8 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
   // TODO - use this value, its value should always be close to 1 tho since its a stable
   // const { data: paymentTokenPrice } = useTokenPrice(bond?.paymentToken.id)
 
-  const collateralPerBond = getValuePerBond(bond, bond?.collateralRatio)
-  const convertiblePerBond = getValuePerBond(bond, bond?.convertibleRatio)
+  const collateralPerBond = getValuePerBond(bond as Bond, bond?.collateralRatio)
+  const convertiblePerBond = getValuePerBond(bond as Bond, bond?.convertibleRatio)
   const collateralValue = round(collateralPerBond * collateralTokenPrice, 3)
   const convertibleValue = round(convertiblePerBond * collateralTokenPrice, 3)
 

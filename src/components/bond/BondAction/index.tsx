@@ -135,7 +135,7 @@ const BondAction = ({
   const { convert } = useConvertBond(BondAmount, bondId)
   const { previewConvert, previewRedeem } = usePreviewBond(bondId)
   const toggleWalletModal = useWalletModalToggle()
-  const convertiblePerBond = getValuePerBond(bondInfo, bondInfo?.convertibleRatio)
+  const convertiblePerBond = getValuePerBond(bondInfo as Bond, bondInfo?.convertibleRatio)
   const { data: collateralTokenPrice } = useTokenPrice(bondInfo?.collateralToken.id)
   const convertibleValue = round(convertiblePerBond * collateralTokenPrice, 3)
 

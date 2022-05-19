@@ -76,24 +76,26 @@ const GlobalStyle = createGlobalStyle`
   }
 `
 
-export enum TABLE_FILTERS {
-  ALL = '',
-  CONVERT = 'convert',
-  SIMPLE = 'simple',
-  AUCTION = 'auction',
-  OTC = 'otc',
+export const TABLE_FILTERS = {
+  ALL: '',
+  CONVERT: 'convert',
+  SIMPLE: 'simple',
+  AUCTION: 'auction',
+  OTC: 'otc',
 }
 
 const Portfolio = () => {
   const { account } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
   const navigate = useNavigate()
-  const [tableFilter, setTableFilter] = useState<TABLE_FILTERS>(TABLE_FILTERS.ALL)
+  const [tableFilter, setTableFilter] = useState(TABLE_FILTERS.ALL)
 
   const { data, loading } = useBondsPortfolio()
-  const tableData = data
-    ? createTable(data).filter(({ type }) => (tableFilter ? type === tableFilter : true))
-    : []
+  const tableData = !data
+    ? []
+    : !tableFilter
+    ? createTable(data)
+    : createTable(data).filter(({ type }) => type === tableFilter)
 
   const emptyActionText = account ? 'Go to offerings' : 'Connect wallet'
   const emptyActionClick = account ? () => navigate('/offerings') : toggleWalletModal

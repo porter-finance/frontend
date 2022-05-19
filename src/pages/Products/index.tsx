@@ -73,10 +73,9 @@ export const columns = (showAmount = false) => [
   },
 ]
 
-export const createTable = (data: Bond[]) => {
-  return data.map((bond: Bond) => {
+export const createTable = (data: Bond[]) =>
+  data.map((bond: Bond) => {
     const {
-      amount,
       auctions,
       clearingPrice,
       createdAt,
@@ -110,7 +109,7 @@ export const createTable = (data: Bond[]) => {
         </span>
       ),
       cost: clearingPrice
-        ? `${Number(formatUnits(clearingPrice * amount, decimals)).toLocaleString()} ${
+        ? `${Number(formatUnits(clearingPrice * maxSupply, decimals)).toLocaleString()} ${
             paymentToken.symbol
           }`
         : '-',
@@ -138,9 +137,9 @@ export const createTable = (data: Bond[]) => {
       ),
 
       amountIssued: maxSupply ? Number(formatUnits(maxSupply, decimals)).toLocaleString() : '-',
-      amount: amount ? `${Number(formatUnits(amount, decimals)).toLocaleString()}` : '-',
-      maturityValue: amount
-        ? `${Number(formatUnits(amount, decimals)).toLocaleString()} ${paymentToken.symbol}`
+      amount: maxSupply ? `${Number(formatUnits(maxSupply, decimals)).toLocaleString()}` : '-',
+      maturityValue: maxSupply
+        ? `${Number(formatUnits(maxSupply, decimals)).toLocaleString()} ${paymentToken.symbol}`
         : `1 ${paymentToken.symbol}`,
 
       status: getBondStates(bond).isMatured ? (
@@ -160,13 +159,16 @@ export const createTable = (data: Bond[]) => {
       url: `/products/${id}`,
     }
   })
-}
 
 const Products = () => {
   const { data, loading } = useBonds()
-  const [tableFilter, setTableFilter] = useState<TABLE_FILTERS>(TABLE_FILTERS.ALL)
+  const [tableFilter, setTableFilter] = useState(TABLE_FILTERS.ALL)
 
-  const tableData = data ? createTable(data).filter(({ type }) => type === tableFilter) : []
+  const tableData = !data
+    ? []
+    : !tableFilter
+    ? createTable(data as Bond[])
+    : createTable(data as Bond[]).filter(({ type }) => type === tableFilter)
   useSetNoDefaultNetworkId()
 
   return (

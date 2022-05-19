@@ -39,6 +39,9 @@ const singleBondQuery = gql`
       tokenBalances(where: { account: $accountId }) {
         amount
       }
+      auctions {
+        end
+      }
       collateralRatio
       convertibleRatio
       clearingPrice

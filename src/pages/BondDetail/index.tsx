@@ -132,7 +132,9 @@ const BondDetail: React.FC = () => {
   const extraDetails = useBondExtraDetails(bondId)
   const { data: bond, loading: isLoading } = useBond(bondId)
   const invalidBond = React.useMemo(() => !bondId || !bond, [bondId, bond])
-  const { isConvertBond, isDefaulted, isMatured, isPaid, isPartiallyPaid } = getBondStates(bond)
+  const { isConvertBond, isDefaulted, isMatured, isPaid, isPartiallyPaid } = getBondStates(
+    bond as Bond,
+  )
 
   let positionData
   if (bond && Array.isArray(bond.tokenBalances) && bond.tokenBalances.length) {
@@ -242,7 +244,7 @@ const BondDetail: React.FC = () => {
                 </div>
               </div>
 
-              <BondGraphCard bond={bond} />
+              <BondGraphCard bond={bond as Bond} />
 
               <div className="card">
                 <div className="card-body">
