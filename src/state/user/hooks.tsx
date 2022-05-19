@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react'
 
 import { JSBI, Pair, Token, TokenAmount, WETH } from '@josojo/honeyswap-sdk'
-import flatMap from 'lodash.flatmap'
+import { flatMap } from 'lodash'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 
 import { useActiveWeb3React } from '../../hooks'
