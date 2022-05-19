@@ -22,8 +22,10 @@ import {
 
 import { Bid } from '@/generated/graphql'
 
+type PartiallyOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
+
 interface OrdersTableProps {
-  bids: Bid[]
+  bids: PartiallyOptional<Bid, 'account'>[]
   loading: boolean
   auctionIdentifier: AuctionIdentifier
   derivedAuctionInfo: DerivedAuctionInfo
