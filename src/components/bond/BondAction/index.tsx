@@ -25,6 +25,8 @@ import ConfirmationDialog, { ReviewConvert } from '../../modals/ConfirmationDial
 import { FieldRowTokenSymbol } from '../../pureStyledComponents/FieldRow'
 import TokenLogo from '../../token/TokenLogo'
 
+import { Bond } from '@/generated/graphql'
+
 export const TokenPill = ({ token }) => {
   const { chainId } = useActiveWeb3React()
   const noPropagation = (e) => e.stopPropagation()
@@ -101,7 +103,9 @@ const BondAction = ({
 
   const [tokenDetails, setTokenDetails] = useState({ BondAmount: null, payTok: null, tok: null })
 
-  const { isActive, isDefaulted, isMatured, isPaid, isPartiallyPaid } = getBondStates(bondInfo)
+  const { isActive, isDefaulted, isMatured, isPaid, isPartiallyPaid } = getBondStates(
+    bondInfo as Bond,
+  )
 
   useEffect(() => {
     let BondAmount = null

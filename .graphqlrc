@@ -8,7 +8,8 @@ generates:
       - 'typescript-operations'
       - 'typed-document-node'
     config:
-      fetcher: fetch
+      skipTypeNameForRoot: true
+      skipTypename: true
   ./graphql.schema.json:
     plugins:
       - 'introspection'

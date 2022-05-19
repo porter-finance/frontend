@@ -166,9 +166,7 @@ const Products = () => {
   const { data, loading } = useBonds()
   const [tableFilter, setTableFilter] = useState<TABLE_FILTERS>(TABLE_FILTERS.ALL)
 
-  const tableData = data
-    ? createTable(data).filter(({ type }) => (tableFilter ? type === tableFilter : true))
-    : []
+  const tableData = data ? createTable(data).filter(({ type }) => type === tableFilter) : []
   useSetNoDefaultNetworkId()
 
   return (

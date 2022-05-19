@@ -50,7 +50,7 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
       title: 'Face value',
       value: (
         <span className="flex items-center space-x-1">
-          <span>1</span> <TokenLink token={bond?.paymentToken} withLink />
+          <span>1</span> {bond && <TokenLink token={bond.paymentToken} withLink />}
         </span>
       ),
       tooltip: 'Amount each bond is redeemable for at maturity assuming a default does not occur.',
@@ -60,7 +60,7 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
       value: (
         <span className="flex items-center space-x-1">
           <span>{collateralPerBond.toLocaleString()}</span>
-          <TokenLink token={bond?.collateralToken} withLink />
+          {bond && <TokenLink token={bond.collateralToken} withLink />}
         </span>
       ),
       hint: `($${round(collateralValue, 2).toLocaleString()})`,
@@ -72,7 +72,7 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
       value: (
         <span className="flex items-center space-x-1">
           <span>{convertiblePerBond.toLocaleString()}</span>
-          <TokenLink token={bond?.collateralToken} withLink />
+          {bond && <TokenLink token={bond.collateralToken} withLink />}
         </span>
       ),
       hint: `($${convertibleValue})`,
@@ -99,9 +99,9 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
       value: (
         <span className="flex items-center space-x-1">
           <span>{strikePrice.toLocaleString()}</span>
-          <TokenLink token={bond?.paymentToken} />
+          {bond && <TokenLink token={bond.paymentToken} />}
           <span>/</span>
-          <TokenLink token={bond?.collateralToken} />
+          {bond && <TokenLink token={bond.collateralToken} />}
         </span>
       ),
 

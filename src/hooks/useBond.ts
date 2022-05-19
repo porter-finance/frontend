@@ -1,7 +1,12 @@
 import { gql, useQuery } from '@apollo/client'
 import { useWeb3React } from '@web3-react/core'
 
-import { AllBondsDocument, Bond, SingleBondDocument } from '../../src/generated/graphql'
+import {
+  AllBondsDocument,
+  AllBondsQuery,
+  SingleBondDocument,
+  SingleBondQuery,
+} from '../../src/generated/graphql'
 import { getLogger } from '../utils/logger'
 
 const logger = getLogger('useBond')
@@ -71,14 +76,10 @@ const allBondsQuery = gql`
   }
 `
 
-interface SingleBond {
-  data: Bond
-  loading: boolean
-}
-export const useBond = (bondId: string): SingleBond => {
+export const useBond = (bondId: string) => {
   const { account } = useWeb3React()
 
-  const { data, error, loading } = useQuery<SingleBond>(SingleBondDocument, {
+  const { data, error, loading } = useQuery<SingleBondQuery>(SingleBondDocument, {
     variables: { bondId: bondId.toLowerCase(), accountId: account?.toLowerCase() || '0x00' },
   })
 
@@ -86,23 +87,15 @@ export const useBond = (bondId: string): SingleBond => {
     logger.error('Error getting useBond info', error)
   }
 
-  console.log(data)
-
   const info = data?.bond
   return { data: info, loading }
 }
 
-interface AllBonds {
-  data: Bond[]
-  loading: boolean
-}
-export const useBonds = (): AllBonds => {
-  const { data, error, loading } = useQuery<AllBonds>(AllBondsDocument)
-
-  console.log(data)
+export const useBonds = () => {
+  const { data, error, loading } = useQuery<AllBondsQuery>(AllBondsDocument)
 
   if (error) {
     logger.error('Error getting useAllBondInfo info', error)
   }
-  return { data: data?.data?.bonds, loading }
+  return { data: data?.bonds, loading }
 }
