@@ -68,6 +68,7 @@ const auctionsQuery = gql`
   query AllAuctions {
     auctions(orderBy: end, orderDirection: asc, first: 100) {
       id
+      orderCancellationEndDate
       offeringSize
       end
       live

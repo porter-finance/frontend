@@ -18,40 +18,45 @@ import { TABLE_FILTERS } from '../Portfolio'
 
 import { Auction } from '@/generated/graphql'
 
-export const getAuctionStates = (auction: Auction) => {
+export const getAuctionStates = (
+  auction: Pick<Auction, 'end' | 'orderCancellationEndDate' | 'clearingPrice'>,
+) => {
   const { clearingPrice, end, orderCancellationEndDate } = auction
   // open for orders
-  const atStageOrderPlacement = end > dayjs(new Date()).utc()
+  const atStageOrderPlacement = end * 1000 > dayjs(new Date()).utc().valueOf()
 
   // cancellable (can be open for orders and cancellable.
   // This isn't an auction status rather an ability to cancel your bid or not.)
-  const atStageOrderPlacementAndCancelation = orderCancellationEndDate >= dayjs(new Date()).utc()
+  const atStageOrderPlacementAndCancelation =
+    orderCancellationEndDate >= dayjs(new Date()).utc().valueOf()
 
   // AKA settling (can be settled, but not yet)
-  const atStageSolutionSubmission = end <= dayjs(new Date()).utc() && clearingPrice == 0
+  const atStageSolutionSubmission =
+    end * 1000 <= dayjs(new Date()).utc().valueOf() && clearingPrice == 0
 
   // claiming (settled)
   const atStageFinished = !!clearingPrice
 
-  const atStageEnded = dayjs(new Date()).utc() >= end
+  const atStageEnded = dayjs(new Date()).utc().valueOf() >= end * 1000
 
   let status = 'Unknown'
+  if (atStageEnded) status = 'ended'
+
+  // Orders can be claimed
+  if (atStageFinished) status = 'claiming'
+
   // Orders can be placed
   if (atStageOrderPlacement || atStageOrderPlacementAndCancelation) status = 'ongoing'
 
   // Auction can be settled
   if (atStageSolutionSubmission) status = 'settlement'
 
-  // Orders can be claimed
-  if (atStageFinished) status = 'claiming'
-
-  if (atStageEnded) status = 'ended'
-
   return {
     atStageOrderPlacement,
     atStageOrderPlacementAndCancelation,
     atStageSolutionSubmission,
     atStageFinished,
+    atStageEnded,
     status,
   }
 }
@@ -119,6 +124,8 @@ const Offerings = () => {
   useSetNoDefaultNetworkId()
 
   allAuctions?.forEach((auction) => {
+    const state = getAuctionStates(auction)
+
     tableData.push({
       id: auction.id,
       currentPrice: auction.clearingPrice ? auction.clearingPrice : '-',
@@ -131,11 +138,7 @@ const Offerings = () => {
         maturityDate: auction.bond.maturityDate,
         startDate: auction.end,
       }),
-      status: auction.live ? (
-        <ActiveStatusPill title="Ongoing" />
-      ) : (
-        <ActiveStatusPill disabled dot={false} title="Ended" />
-      ),
+      status: <ActiveStatusPill title={state.status} />,
       maturityValue: `1 ${auction?.bond.paymentToken.symbol}`,
       endDate: (
         <span className="uppercase">
