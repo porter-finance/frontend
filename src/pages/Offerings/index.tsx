@@ -33,25 +33,26 @@ export const getAuctionStates = (auction: Auction) => {
   // claiming (settled)
   const atStageFinished = !!clearingPrice
 
-  let status = ''
+  const atStageEnded = dayjs(new Date()).utc() >= end
+
+  let status = 'Unknown'
   // Orders can be placed
-  if (atStageOrderPlacement || atStageOrderPlacementAndCancelation) status = 'ready for orders'
+  if (atStageOrderPlacement || atStageOrderPlacementAndCancelation) status = 'ongoing'
 
   // Auction can be settled
-  if (atStageSolutionSubmission) status = 'waiting for someone to settle this damn thing'
+  if (atStageSolutionSubmission) status = 'settlement'
 
   // Orders can be claimed
-  if (atStageFinished) status = 'ready to claim'
+  if (atStageFinished) status = 'claiming'
 
-  // 1. status = 'all claimed'
-  // 2. status = 'partially claimed'
-  // 3. status = 'no more actions allowed, auction ended'
+  if (atStageEnded) status = 'ended'
 
   return {
     atStageOrderPlacement,
     atStageOrderPlacementAndCancelation,
     atStageSolutionSubmission,
     atStageFinished,
+    status,
   }
 }
 
