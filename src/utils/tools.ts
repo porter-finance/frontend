@@ -1,7 +1,10 @@
 import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
 
 import { ChainId } from '.'
 import { SUPPORTED_LOCALES } from '../constants'
+
+dayjs.extend(utc)
 
 export const truncateStringInTheMiddle = (
   str: string,
