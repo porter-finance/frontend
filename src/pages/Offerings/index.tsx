@@ -6,7 +6,7 @@ import dayjs from 'dayjs'
 import { ReactComponent as AuctionsIcon } from '../../assets/svg/auctions.svg'
 import { ReactComponent as DividerIcon } from '../../assets/svg/divider.svg'
 import { ReactComponent as OTCIcon } from '../../assets/svg/otc.svg'
-import { ActiveStatusPill } from '../../components/auction/OrderbookTable'
+import { AuctionStatusPill } from '../../components/auction/OrderbookTable'
 import Table from '../../components/auctions/Table'
 import { ErrorBoundaryWithFallback } from '../../components/common/ErrorAndReload'
 import { calculateInterestRate } from '../../components/form/InterestRateInputPanel'
@@ -124,8 +124,6 @@ const Offerings = () => {
   useSetNoDefaultNetworkId()
 
   allAuctions?.forEach((auction) => {
-    const state = getAuctionStates(auction)
-
     tableData.push({
       id: auction.id,
       currentPrice: auction.clearingPrice ? auction.clearingPrice : '-',
@@ -138,13 +136,7 @@ const Offerings = () => {
         maturityDate: auction.bond.maturityDate,
         startDate: auction.end,
       }),
-      status: (
-        <ActiveStatusPill
-          className={state.status === 'claiming' && '!text-gray-800 bg-orange-300'}
-          disabled={state.status === 'ended'}
-          title={state.status}
-        />
-      ),
+      status: <AuctionStatusPill auction={auction} />,
       maturityValue: `1 ${auction?.bond.paymentToken.symbol}`,
       endDate: (
         <span className="uppercase">
