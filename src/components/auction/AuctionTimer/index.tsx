@@ -10,7 +10,7 @@ import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
 import Countdown from 'react-countdown'
 
-import { calculateTimeProgress, setLocale } from '../../../utils/tools'
+import { calculateTimeProgress, currentTimeInUTC, setLocale } from '../../../utils/tools'
 import Tooltip from '../../common/Tooltip'
 
 // Used for abbreviated named timezone offset 'z' when formatting.
@@ -87,7 +87,7 @@ export const AuctionTimer = ({
     return progress === 100 ? progress : 100 - progress
   }, [startDate, endDate])
 
-  const daysUntil = progress === 100 ? 0 : dayjs(endDate * 1000).diff(new Date(), 'day')
+  const daysUntil = progress === 100 ? 0 : dayjs(endDate * 1000).diff(currentTimeInUTC(), 'day')
 
   return (
     <div className="" {...restProps}>
