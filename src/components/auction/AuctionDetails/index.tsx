@@ -15,6 +15,8 @@ import { AuctionTimer } from '../AuctionTimer'
 import { ExtraDetailsItem, Props as ExtraDetailsItemProps } from '../ExtraDetailsItem'
 import { ActiveStatusPill } from '../OrderbookTable'
 
+import { currentTimeInUTC } from '@/utils/tools'
+
 const TokenValue = styled.span`
   line-height: 1.2;
   display: flex;
@@ -164,7 +166,8 @@ const AuctionDetails = (props: Props) => {
     },
   ]
 
-  const hasEnded = new Date() > new Date(derivedAuctionInfo?.auctionEndDate * 1000)
+  const hasEnded =
+    currentTimeInUTC() > new Date(derivedAuctionInfo?.auctionEndDate * 1000).getTime()
   const statusLabel = settling ? 'Settling' : hasEnded ? 'Ended' : 'Ongoing'
 
   return (
