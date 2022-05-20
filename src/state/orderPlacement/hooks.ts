@@ -46,7 +46,6 @@ export interface SellOrder {
 export enum AuctionState {
   ORDER_PLACING_AND_CANCELING,
   ORDER_PLACING,
-  PRICE_SUBMISSION,
   CLAIMING,
   NEEDS_SETTLED,
 }
@@ -512,9 +511,7 @@ export function useDeriveAuctionState(
           auctionState = AuctionState.ORDER_PLACING_AND_CANCELING
         }
       } else {
-        if (clearingPriceSellOrder?.buyAmount?.toSignificant(1) == '0') {
-          auctionState = AuctionState.PRICE_SUBMISSION
-        } else {
+        if (clearingPriceSellOrder?.buyAmount?.toSignificant(1) != '0') {
           auctionState = AuctionState.CLAIMING
         }
       }

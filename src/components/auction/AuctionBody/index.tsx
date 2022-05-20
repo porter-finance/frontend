@@ -178,8 +178,7 @@ const AuctionBody = (props: AuctionBodyProps) => {
                 <WarningCard />
               </>
             )}
-            {(auctionState === AuctionState.CLAIMING ||
-              auctionState === AuctionState.PRICE_SUBMISSION) && (
+            {auctionState === AuctionState.CLAIMING && (
               <Claimer
                 auctionIdentifier={auctionIdentifier}
                 derivedAuctionInfo={derivedAuctionInfo}

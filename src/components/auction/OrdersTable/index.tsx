@@ -64,8 +64,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
   const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
   const isOrderCancellationExpired =
     hasLastCancellationDate && now > orderCancellationEndMilliseconds && orderPlacingOnly
-  const orderSubmissionFinished =
-    auctionState === AuctionState.CLAIMING || auctionState === AuctionState.PRICE_SUBMISSION
+  const orderSubmissionFinished = auctionState === AuctionState.CLAIMING
   const hideCancelButton = orderPlacingOnly || orderSubmissionFinished
 
   useAllUserOrders(auctionIdentifier, derivedAuctionInfo)
