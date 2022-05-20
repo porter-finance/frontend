@@ -2,9 +2,9 @@ import { useParams } from 'react-router-dom'
 
 import { gql, useQuery } from '@apollo/client'
 
-import { BidsForSingleAuctionDocument, BidsForSingleAuctionQuery } from '../generated/graphql'
-import { RouteAuctionIdentifier, parseURL } from '../state/orderPlacement/reducer'
-import { getLogger } from '../utils/logger'
+import { BidsForSingleAuctionDocument, BidsForSingleAuctionQuery } from '@/generated/graphql'
+import { RouteAuctionIdentifier, parseURL } from '@/state/orderPlacement/reducer'
+import { getLogger } from '@/utils/logger'
 
 const logger = getLogger('useAuctionBids')
 
