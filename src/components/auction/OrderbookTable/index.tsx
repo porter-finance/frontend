@@ -280,7 +280,7 @@ export const AuctionStatusPill = ({
 
   return (
     <ActiveStatusPill
-      className={status === 'claiming' && '!text-gray-800 bg-orange-300'}
+      className={status === 'claiming' && '!text-gray-800 !bg-blue-300'}
       disabled={status === 'ended'}
       title={status}
     />
