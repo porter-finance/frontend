@@ -30,9 +30,8 @@ export const getAuctionStates = (
   const atStageOrderPlacementAndCancelation =
     orderCancellationEndDate >= dayjs(new Date()).utc().valueOf()
 
-  // AKA settling (can be settled, but not yet)
-  const atStageSolutionSubmission =
-    end * 1000 <= dayjs(new Date()).utc().valueOf() && clearingPrice == 0
+  // AKA settling (can be settled, but not yet done so)
+  const atStageNeedsSettled = dayjs(new Date()).utc().valueOf() >= end * 1000
 
   // claiming (settled)
   const atStageFinished = !!clearingPrice
@@ -42,19 +41,19 @@ export const getAuctionStates = (
   let status = 'Unknown'
   if (atStageEnded) status = 'ended'
 
+  // Auction can be settled
+  if (atStageNeedsSettled) status = 'settlement'
+
   // Orders can be claimed
   if (atStageFinished) status = 'claiming'
 
   // Orders can be placed
   if (atStageOrderPlacement || atStageOrderPlacementAndCancelation) status = 'ongoing'
 
-  // Auction can be settled
-  if (atStageSolutionSubmission) status = 'settlement'
-
   return {
     atStageOrderPlacement,
     atStageOrderPlacementAndCancelation,
-    atStageSolutionSubmission,
+    atStageNeedsSettled,
     atStageFinished,
     atStageEnded,
     status,
