@@ -277,14 +277,11 @@ export const AuctionStatusPill = ({
   auction: Pick<Auction, 'end' | 'orderCancellationEndDate' | 'clearingPrice'>
 }) => {
   const { status } = getAuctionStates(auction)
+  let colors = ''
+  if (status === 'claiming') colors = '!text-gray-800 !bg-blue-300'
+  if (status === 'settlement') colors = '!text-gray-800 !bg-orange-300'
 
-  return (
-    <ActiveStatusPill
-      className={status === 'claiming' && '!text-gray-800 !bg-blue-300'}
-      disabled={status === 'ended'}
-      title={status}
-    />
-  )
+  return <ActiveStatusPill className={colors} disabled={status === 'ended'} title={status} />
 }
 
 export const BidTransactionLink = ({ bid }) => {
