@@ -16,6 +16,9 @@ import Tooltip from '../../common/Tooltip'
 import { calculateInterestRate } from '../../form/InterestRateInputPanel'
 import { orderStatusText } from '../OrdersTable'
 
+import { Auction } from '@/generated/graphql'
+import { getAuctionStates } from '@/pages/Offerings'
+
 export const OverflowWrap = styled.div`
   max-width: 100%;
   flex-grow: 1;
@@ -265,6 +268,22 @@ export const ActiveStatusPill = ({
       )}
       <span>{title}</span>
     </button>
+  )
+}
+
+export const AuctionStatusPill = ({
+  auction,
+}: {
+  auction: Pick<Auction, 'end' | 'orderCancellationEndDate' | 'clearingPrice'>
+}) => {
+  const { status } = getAuctionStates(auction)
+
+  return (
+    <ActiveStatusPill
+      className={status === 'claiming' && '!text-gray-800 bg-orange-300'}
+      disabled={status === 'ended'}
+      title={status}
+    />
   )
 }
 

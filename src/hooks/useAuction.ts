@@ -9,6 +9,7 @@ const auctionQuery = gql`
   query SingleAuction($auctionId: ID!) {
     auction(id: $auctionId) {
       id
+      orderCancellationEndDate
       bond {
         id
         name

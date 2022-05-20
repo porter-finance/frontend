@@ -13,7 +13,7 @@ import { calculateInterestRate } from '../../form/InterestRateInputPanel'
 import TokenLink from '../../token/TokenLink'
 import { AuctionTimer } from '../AuctionTimer'
 import { ExtraDetailsItem, Props as ExtraDetailsItemProps } from '../ExtraDetailsItem'
-import { ActiveStatusPill } from '../OrderbookTable'
+import { AuctionStatusPill } from '../OrderbookTable'
 
 const TokenValue = styled.span`
   line-height: 1.2;
@@ -172,7 +172,7 @@ const AuctionDetails = (props: Props) => {
       <div className="card-body">
         <h2 className="flex justify-between card-title">
           <span>Auction information</span>
-          <ActiveStatusPill disabled={hasEnded || settling} title={statusLabel} />
+          <AuctionStatusPill auction={graphInfo} />
         </h2>
         <AuctionTimer
           color="blue"
