@@ -53,6 +53,6 @@ export const Mainmenu = ({ children, ...props }) => (
         {item.title}
       </Item>
     ))}
-    <div className="flex justify-center items-center w-full h-[32px]">{children}</div>
+    {children}
   </Wrapper>
 )

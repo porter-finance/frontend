@@ -205,7 +205,7 @@ export const UserDropdown: React.FC<Props> = ({ disabled = false }) => {
   }
 
   return (
-    <div className="w-56">
+    <div className="w-[130px] h-[32px]">
       <HeadlessDropdown>
         <UserDropdownContent />
       </HeadlessDropdown>

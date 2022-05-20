@@ -68,15 +68,7 @@ const ButtonConnectStyled = styled(ButtonConnect)`
   }
 `
 
-const UserDropdownStyled = styled(UserDropdown)`
-  margin-left: auto;
-  position: relative;
-  z-index: 5;
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    margin-left: 0;
-  }
-`
+const UserDropdownStyled = styled(UserDropdown)``
 
 const Menu = styled(Mainmenu)`
   display: none;
@@ -172,7 +164,11 @@ export const Component = (props) => {
                 <Tooltip tip={`Supported networks are: ${chainNamesFormatted}`} />
               </Error>
             )}
-            {isConnected && !chainMismatch && <UserDropdownStyled disabled={mobileMenuVisible} />}
+            {isConnected && !chainMismatch && (
+              <div className="flex justify-center items-center">
+                <UserDropdownStyled disabled={mobileMenuVisible} />
+              </div>
+            )}
           </Menu>
         </Inner>
       </Wrapper>
