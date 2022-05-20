@@ -164,15 +164,16 @@ export const Component = (props) => {
           <Link to="/offerings">
             <Logo />
           </Link>
-          <Menu />
-          {!isConnected && <ButtonConnectStyled onClick={toggleWalletModal} />}
-          {isConnected && chainMismatch && (
-            <Error>
-              <ErrorText>Connect to the {getChainName(chainId)} network</ErrorText>
-              <Tooltip tip={`Supported networks are: ${chainNamesFormatted}`} />
-            </Error>
-          )}
-          {isConnected && !chainMismatch && <UserDropdownStyled disabled={mobileMenuVisible} />}
+          <Menu>
+            {!isConnected && <ButtonConnectStyled onClick={toggleWalletModal} />}
+            {isConnected && chainMismatch && (
+              <Error>
+                <ErrorText>Connect to the {getChainName(chainId)} network</ErrorText>
+                <Tooltip tip={`Supported networks are: ${chainNamesFormatted}`} />
+              </Error>
+            )}
+            {isConnected && !chainMismatch && <UserDropdownStyled disabled={mobileMenuVisible} />}
+          </Menu>
         </Inner>
       </Wrapper>
       <WalletModal />

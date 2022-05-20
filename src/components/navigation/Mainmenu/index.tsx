@@ -42,18 +42,17 @@ const Item = styled(NavLink)`
   }
 `
 
-export const Mainmenu: React.FC = (props) => {
-  return (
-    <Wrapper {...props}>
-      {navItems.map((item, index) => (
-        <Item
-          className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')}
-          key={index}
-          to={item.url}
-        >
-          {item.title}
-        </Item>
-      ))}
-    </Wrapper>
-  )
-}
+export const Mainmenu = ({ children, ...props }) => (
+  <Wrapper {...props}>
+    {navItems.map((item, index) => (
+      <Item
+        className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')}
+        key={index}
+        to={item.url}
+      >
+        {item.title}
+      </Item>
+    ))}
+    <div className="flex justify-center items-center w-full h-[32px]">{children}</div>
+  </Wrapper>
+)

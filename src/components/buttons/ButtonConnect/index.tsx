@@ -24,10 +24,10 @@ const Wrapper = styled.div`
 
 export const ButtonConnect: React.FC<ButtonHTMLAttributes<HTMLButtonElement>> = ({
   className,
-  ...restProps
+  onClick,
 }) => (
   <Wrapper className={`buttonConnect ${className}`}>
-    <DropdownButton {...restProps} className="normal-case btn btn-sm">
+    <DropdownButton className="normal-case btn btn-sm" onClick={onClick}>
       Connect wallet
     </DropdownButton>
   </Wrapper>
