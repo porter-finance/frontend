@@ -3,20 +3,20 @@ import { createGlobalStyle } from 'styled-components'
 
 import dayjs from 'dayjs'
 
-import { ReactComponent as AuctionsIcon } from '../../assets/svg/auctions.svg'
-import { ReactComponent as DividerIcon } from '../../assets/svg/divider.svg'
-import { ReactComponent as OTCIcon } from '../../assets/svg/otc.svg'
-import { AuctionStatusPill } from '../../components/auction/OrderbookTable'
-import Table from '../../components/auctions/Table'
-import { ErrorBoundaryWithFallback } from '../../components/common/ErrorAndReload'
-import { calculateInterestRate } from '../../components/form/InterestRateInputPanel'
-import TokenLogo from '../../components/token/TokenLogo'
-import { useAuctions } from '../../hooks/useAuction'
-import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import { AllButton, AuctionButtonOutline, OTCButtonOutline } from '../Auction'
 import { TABLE_FILTERS } from '../Portfolio'
 
+import { ReactComponent as AuctionsIcon } from '@/assets/svg/auctions.svg'
+import { ReactComponent as DividerIcon } from '@/assets/svg/divider.svg'
+import { ReactComponent as OTCIcon } from '@/assets/svg/otc.svg'
+import { AuctionStatusPill } from '@/components/auction/OrderbookTable'
+import Table from '@/components/auctions/Table'
+import { ErrorBoundaryWithFallback } from '@/components/common/ErrorAndReload'
+import { calculateInterestRate } from '@/components/form/InterestRateInputPanel'
+import TokenLogo from '@/components/token/TokenLogo'
 import { Auction } from '@/generated/graphql'
+import { useAuctions } from '@/hooks/useAuction'
+import { useSetNoDefaultNetworkId } from '@/state/orderPlacement/hooks'
 
 export const getAuctionStates = (
   auction: Pick<Auction, 'end' | 'orderCancellationEndDate' | 'clearingPrice'>,
