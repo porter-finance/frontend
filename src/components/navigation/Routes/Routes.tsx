@@ -1,14 +1,13 @@
 import React from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 
+import Auction from '../../../pages/Auction'
+import BondDetail from '../../../pages/BondDetail'
+import CreateBond from '../../../pages/CreateBond'
+import Offerings from '../../../pages/Offerings'
+import Portfolio from '../../../pages/Portfolio'
+import Products from '../../../pages/Products'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
-
-import Auction from '@/pages/Auction'
-import BondDetail from '@/pages/BondDetail'
-import CreateBond from '@/pages/CreateBond'
-import Offerings from '@/pages/Offerings'
-import Portfolio from '@/pages/Portfolio'
-import Products from '@/pages/Products'
 
 const AppRoutes: React.FC = () => {
   return (
