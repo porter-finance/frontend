@@ -121,13 +121,19 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
 
   // Setting the name from graphql to the token from gnosis
   const auctioningToken = new Token(
-    derivedAuctionInfo?.auctioningToken.chainId,
-    derivedAuctionInfo?.auctioningToken.address,
-    derivedAuctionInfo?.auctioningToken.decimals,
-    derivedAuctionInfo?.auctioningToken.symbol,
+    chainId,
+    graphInfo?.bond.id,
+    graphInfo?.bond.decimals,
+    graphInfo?.bond.symbol,
     graphInfo?.bond?.name,
   )
-  const biddingToken = derivedAuctionInfo?.biddingToken
+  const biddingToken = new Token(
+    chainId,
+    graphInfo?.bidding.id,
+    graphInfo?.bidding.decimals,
+    graphInfo?.bidding.symbol,
+    graphInfo?.bidding?.name,
+  )
 
   const parsedBiddingAmount = tryParseAmount(sellAmount, biddingToken)
   const approvalTokenAmount: TokenAmount | undefined = parsedBiddingAmount
@@ -144,12 +150,12 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
 
   useEffect(() => {
     onUserPriceInput(price)
-    if (price == '-' && derivedAuctionInfo?.clearingPrice) {
+    if (price == '-' && graphInfo?.clearingPrice) {
       onUserPriceInput(
-        derivedAuctionInfo?.clearingPrice.multiply(new Fraction('1001', '1000')).toSignificant(4),
+        graphInfo?.clearingPrice.multiply(new Fraction('1001', '1000')).toSignificant(4),
       )
     }
-  }, [onUserPriceInput, price, derivedAuctionInfo])
+  }, [onUserPriceInput, price, graphInfo?.clearingPrice])
 
   const placeOrderCallback = usePlaceOrderCallback(
     auctionIdentifier,
@@ -159,7 +165,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   )
 
   const biddingTokenDisplay = getFullTokenDisplay(biddingToken, chainId)
-  const auctioningTokenDisplay = graphInfo?.bond?.name
+  const auctioningTokenDisplay = auctioningToken.name
   const notApproved = approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING
 
   const handleShowConfirm = () => {
@@ -180,11 +186,11 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
 
   const cancelDate = React.useMemo(
     () =>
-      derivedAuctionInfo?.auctionEndDate !== derivedAuctionInfo?.orderCancellationEndDate &&
-      derivedAuctionInfo?.orderCancellationEndDate !== 0
-        ? new Date(derivedAuctionInfo?.orderCancellationEndDate * 1000).toLocaleString()
+      graphInfo?.end !== graphInfo?.orderCancellationEndDate &&
+      graphInfo?.orderCancellationEndDate !== 0
+        ? new Date(graphInfo?.orderCancellationEndDate * 1000).toLocaleString()
         : undefined,
-    [derivedAuctionInfo?.auctionEndDate, derivedAuctionInfo?.orderCancellationEndDate],
+    [graphInfo?.end, graphInfo?.orderCancellationEndDate],
   )
   const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
   const isPrivate = React.useMemo(
@@ -270,8 +276,8 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   }
 
   const cancelCutoff =
-    derivedAuctionInfo?.orderCancellationEndDate &&
-    dayjs(derivedAuctionInfo?.orderCancellationEndDate * 1000)
+    graphInfo?.orderCancellationEndDate &&
+    dayjs(graphInfo?.orderCancellationEndDate * 1000)
       .utc()
       .tz()
       .format('LL HH:mm z')
@@ -292,7 +298,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
       <div className="card-body">
         <h2 className="card-title">Place order</h2>
 
-        {cancelDate && derivedAuctionInfo && (
+        {cancelDate && graphInfo && (
           <div className="space-y-1">
             <div className="text-sm text-[#EEEFEB]">{cancelCutoff}</div>
             <div className="text-xs text-[#696969]">
