@@ -68,6 +68,17 @@ const ChainWarning = () => {
   const { account, chainId, error } = useWeb3React()
   const { errorWrongNetwork } = useNetworkCheck(requiredChain.chainId)
   const networkError = error instanceof UnsupportedChainIdError || errorWrongNetwork
+  let showError = false
+  if (account) {
+    // Account was found
+    if (
+      !!networkError || // There was a problem with the network
+      !chainId || // There is not a recognized chain connected
+      chainId !== requiredChain.chainId // An unsupported chain is connected
+    ) {
+      showError = true
+    }
+  }
 
   return (
     <Transition
@@ -77,7 +88,7 @@ const ChainWarning = () => {
       leave="transition-opacity duration-150"
       leaveFrom="opacity-100"
       leaveTo="opacity-0"
-      show={!!account && (!!networkError || !chainId || chainId !== requiredChain.chainId)}
+      show={showError}
     >
       <Warning chain={requiredChain} />
     </Transition>
