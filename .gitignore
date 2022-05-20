@@ -38,3 +38,5 @@ cypress/fixtures/example.json
 .project
 .vercel
 gen
+graphql.schema.json
+src/generated

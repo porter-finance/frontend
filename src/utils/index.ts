@@ -17,8 +17,9 @@ import {
   NETWORK_URL_RINKEBY,
   NETWORK_URL_XDAI,
 } from '../constants/config'
-import { Token as GraphToken } from '../hooks/useBond'
 import { getLogger } from '../utils/logger'
+
+import { Token as GraphToken } from '@/generated/graphql'
 
 const logger = getLogger('utils/index')
 

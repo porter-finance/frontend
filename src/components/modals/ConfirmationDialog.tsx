@@ -331,6 +331,7 @@ const ConfirmationDialog = ({
 
       if (orderComplete) {
         setOrderComplete(false)
+        setShowTokenTransactionComplete('')
         setShowOrderTransactionComplete('')
       }
     }, 400)

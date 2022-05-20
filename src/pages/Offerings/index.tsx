@@ -47,8 +47,8 @@ const columns = [
     filter: 'searchInTags',
   },
   {
-    Header: 'Maturity Date',
-    accessor: 'maturityDate',
+    Header: 'End Date',
+    accessor: 'endDate',
     align: 'flex-start',
     style: {},
     filter: 'searchInTags',
@@ -72,7 +72,7 @@ const columns = [
 
 const Offerings = () => {
   const { data: allAuctions, loading } = useAuctions()
-  const [tableFilter, setTableFilter] = useState<TABLE_FILTERS>(TABLE_FILTERS.ALL)
+  const [tableFilter, setTableFilter] = useState(TABLE_FILTERS.ALL)
 
   const tableData = []
 
@@ -97,9 +97,9 @@ const Offerings = () => {
         <ActiveStatusPill disabled dot={false} title="Ended" />
       ),
       maturityValue: `1 ${auction?.bond.paymentToken.symbol}`,
-      maturityDate: (
+      endDate: (
         <span className="uppercase">
-          {dayjs(auction?.bond?.maturityDate * 1000)
+          {dayjs(auction?.end * 1000)
             .utc()
             .tz()
             .format('ll')}

@@ -1,7 +1,10 @@
 import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
 
 import { ChainId } from '.'
 import { SUPPORTED_LOCALES } from '../constants'
+
+dayjs.extend(utc)
 
 export const truncateStringInTheMiddle = (
   str: string,
@@ -17,6 +20,8 @@ export const truncateStringInTheMiddle = (
   }
   return str
 }
+
+export const currentTimeInUTC = (): number => dayjs(new Date()).utc().valueOf()
 
 export const getDays = (seconds: number): number => {
   return Math.floor(seconds / 24 / 60 / 60) % 360

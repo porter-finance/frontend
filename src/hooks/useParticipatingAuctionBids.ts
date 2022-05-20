@@ -1,50 +1,16 @@
 import { useParams } from 'react-router-dom'
 
-import { ApolloError, gql, useQuery } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 
+import { BidsForAccountDocument } from '../generated/graphql'
 import { RouteAuctionIdentifier, parseURL } from '../state/orderPlacement/reducer'
 import { getLogger } from '../utils/logger'
 import { useActiveWeb3React } from './index'
 
 const logger = getLogger('useParticipatingAuctionBids')
 
-export interface BidInfo {
-  // Concatenation of Gnosis Auction ID, user ID, bid buy amount and bid sell amount
-  id: string
-
-  // Bid timestamp
-  timestamp: number
-
-  // Gnosis Auction ID
-  auction: number
-
-  // Object reference to Account
-  account: {
-    id: string
-    userid: string
-  }
-
-  // Quantity of bonds
-  size: number
-
-  // Total amount of paymentToken paid by bidder
-  payable: number
-
-  // Encoding of user ID, bid buy amount and bid sell amount
-  bytes: string
-
-  // Transaction hash of bid creation
-  createtx: string
-
-  // Transaction hash of bid cancellation
-  canceltx: string
-
-  // Transaction hash of bid claim
-  claimtx: string
-}
-
 const bidsQuery = gql`
-  query ParticipatingAuctionBids($account: String!, $auctionId: Int!) {
+  query BidsForAccount($account: String!, $auctionId: Int!) {
     bids(
       orderBy: timestamp
       orderDirection: desc
@@ -64,19 +30,13 @@ const bidsQuery = gql`
   }
 `
 
-export const useParticipatingAuctionBids = (
-  auctionId?: number,
-): Maybe<{
-  bids: BidInfo[]
-  loading: boolean
-  error: ApolloError | undefined
-}> => {
+export const useParticipatingAuctionBids = (auctionId?: number) => {
   const { auctionId: urlAuctionId } = parseURL(useParams<RouteAuctionIdentifier>())
   const { account } = useActiveWeb3React()
 
-  const { data, error, loading } = useQuery(bidsQuery, {
+  const { data, error, loading } = useQuery(BidsForAccountDocument, {
     variables: {
-      auctionId: auctionId || urlAuctionId,
+      auctionId: Number(auctionId || urlAuctionId),
       account: (account && account?.toLowerCase()) || '0x00',
     },
   })

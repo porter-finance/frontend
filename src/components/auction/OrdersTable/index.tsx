@@ -4,7 +4,6 @@ import { useApolloClient } from '@apollo/client'
 
 import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
 import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
-import { BidInfo } from '../../../hooks/useParticipatingAuctionBids'
 import {
   AuctionState,
   DerivedAuctionInfo,
@@ -21,8 +20,12 @@ import {
   ordersTableColumns,
 } from '../OrderbookTable'
 
+import { Bid } from '@/generated/graphql'
+
+type PartiallyOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
+
 interface OrdersTableProps {
-  bids: BidInfo[]
+  bids: PartiallyOptional<Bid, 'account'>[]
   loading: boolean
   auctionIdentifier: AuctionIdentifier
   derivedAuctionInfo: DerivedAuctionInfo
@@ -107,7 +110,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
 
   const refetchBids = () =>
     apolloClient.refetchQueries({
-      include: 'active',
+      include: 'all',
     })
 
   return (

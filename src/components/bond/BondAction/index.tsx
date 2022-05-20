@@ -25,6 +25,8 @@ import ConfirmationDialog, { ReviewConvert } from '../../modals/ConfirmationDial
 import { FieldRowTokenSymbol } from '../../pureStyledComponents/FieldRow'
 import TokenLogo from '../../token/TokenLogo'
 
+import { Bond } from '@/generated/graphql'
+
 export const TokenPill = ({ token }) => {
   const { chainId } = useActiveWeb3React()
   const noPropagation = (e) => e.stopPropagation()
@@ -101,7 +103,9 @@ const BondAction = ({
 
   const [tokenDetails, setTokenDetails] = useState({ BondAmount: null, payTok: null, tok: null })
 
-  const { isActive, isDefaulted, isMatured, isPaid, isPartiallyPaid } = getBondStates(bondInfo)
+  const { isActive, isDefaulted, isMatured, isPaid, isPartiallyPaid } = getBondStates(
+    bondInfo as Bond,
+  )
 
   useEffect(() => {
     let BondAmount = null
@@ -131,7 +135,7 @@ const BondAction = ({
   const { convert } = useConvertBond(BondAmount, bondId)
   const { previewConvert, previewRedeem } = usePreviewBond(bondId)
   const toggleWalletModal = useWalletModalToggle()
-  const convertiblePerBond = getValuePerBond(bondInfo, bondInfo?.convertibleRatio)
+  const convertiblePerBond = getValuePerBond(bondInfo as Bond, bondInfo?.convertibleRatio)
   const { data: collateralTokenPrice } = useTokenPrice(bondInfo?.collateralToken.id)
   const convertibleValue = round(convertiblePerBond * collateralTokenPrice, 3)
 
@@ -272,7 +276,7 @@ const BondAction = ({
       }),
     })
   } else if (isDefaulted) {
-    const [paymentTokensAmount, collateralTokensAmount] = previewRedeemVal
+    const [, collateralTokensAmount] = previewRedeemVal
 
     assetsToReceive.push({
       token: bondInfo?.collateralToken,

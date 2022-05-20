@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom'
 
 import { gql, useQuery } from '@apollo/client'
 
+import { MaturityDateForAuctionDocument } from '../generated/graphql'
 import { RouteAuctionIdentifier, parseURL } from '../state/orderPlacement/reducer'
 import { getLogger } from '../utils/logger'
 
@@ -20,7 +21,7 @@ const bondsQuery = gql`
 
 export const useBondMaturityForAuction = (): { maturityDate: number; auctionEndDate: number } => {
   const { auctionId } = parseURL(useParams<RouteAuctionIdentifier>())
-  const { data, error } = useQuery(bondsQuery, {
+  const { data, error } = useQuery(MaturityDateForAuctionDocument, {
     variables: { auctionId: `${auctionId}` },
   })
 

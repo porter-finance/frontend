@@ -1,0 +1,19 @@
+overwrite: true
+schema: ${REACT_APP_SUBGRAPH_URL_RINKEBY}
+documents: './src/**/*.ts'
+generates:
+  src/generated/graphql.tsx:
+    plugins:
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typed-document-node'
+    config:
+      skipTypeNameForRoot: true
+      skipTypename: true
+  ./graphql.schema.json:
+    plugins:
+      - 'introspection'
+hooks:
+  afterAllFileWrite:
+    - yarn prettier --write
+    - yarn eslint --fix

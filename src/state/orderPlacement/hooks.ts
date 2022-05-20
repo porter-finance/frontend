@@ -19,7 +19,7 @@ import { useClearingPriceInfo } from '../../hooks/useCurrentClearingOrderAndVolu
 import { ChainId, EASY_AUCTION_NETWORKS, getFullTokenDisplay, isTimeout } from '../../utils'
 import { getLogger } from '../../utils/logger'
 import { convertPriceIntoBuyAndSellAmount } from '../../utils/prices'
-import { calculateTimeLeft } from '../../utils/tools'
+import { calculateTimeLeft, currentTimeInUTC } from '../../utils/tools'
 import { AppDispatch, AppState } from '../index'
 import { useSingleCallResult } from '../multicall/hooks'
 import { resetUserInterestRate, resetUserPrice, resetUserVolume } from '../orderbook/actions'
@@ -501,7 +501,7 @@ export function useDeriveAuctionState(
       auctionState = AuctionState.NOT_YET_STARTED
     } else if (
       auctionDetails?.endTimeTimestamp &&
-      new Date() >= new Date(auctionDetails?.endTimeTimestamp * 1000) &&
+      currentTimeInUTC() >= new Date(auctionDetails?.endTimeTimestamp * 1000).getTime() &&
       clearingPriceSellOrder?.buyAmount?.toSignificant(1) == '0'
     ) {
       auctionState = AuctionState.NEEDS_SETTLED
@@ -509,9 +509,9 @@ export function useDeriveAuctionState(
       const auctionEndDate = auctionDetails?.endTimeTimestamp
       const orderCancellationEndDate = auctionDetails?.orderCancellationEndDate
 
-      if (auctionEndDate && auctionEndDate > new Date().getTime() / 1000) {
+      if (auctionEndDate && auctionEndDate > currentTimeInUTC() / 1000) {
         auctionState = AuctionState.ORDER_PLACING
-        if (orderCancellationEndDate && orderCancellationEndDate >= new Date().getTime() / 1000) {
+        if (orderCancellationEndDate && orderCancellationEndDate >= currentTimeInUTC() / 1000) {
           auctionState = AuctionState.ORDER_PLACING_AND_CANCELING
         }
       } else {

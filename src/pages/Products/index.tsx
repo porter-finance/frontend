@@ -12,11 +12,13 @@ import Table from '../../components/auctions/Table'
 import { ErrorBoundaryWithFallback } from '../../components/common/ErrorAndReload'
 import { calculateInterestRate } from '../../components/form/InterestRateInputPanel'
 import TokenLogo from '../../components/token/TokenLogo'
-import { BondInfo, useBonds } from '../../hooks/useBond'
+import { useBonds } from '../../hooks/useBond'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import { AllButton, ConvertButtonOutline, SimpleButtonOutline } from '../Auction'
 import { getBondStates } from '../BondDetail'
 import { TABLE_FILTERS } from '../Portfolio'
+
+import { Bond } from '@/generated/graphql'
 
 const GlobalStyle = createGlobalStyle`
   .siteHeader {
@@ -71,10 +73,9 @@ export const columns = (showAmount = false) => [
   },
 ]
 
-export const createTable = (data: BondInfo[]) => {
-  return data.map((bond: BondInfo) => {
+export const createTable = (data: Bond[]) =>
+  data.map((bond: Bond) => {
     const {
-      amount,
       auctions,
       clearingPrice,
       createdAt,
@@ -99,9 +100,16 @@ export const createTable = (data: BondInfo[]) => {
       id,
       search: JSON.stringify(bond),
       type,
-      issuanceDate: <span className="uppercase">{dayjs(createdAt).utc().tz().format('LL')}</span>,
+      issuanceDate: (
+        <span className="uppercase">
+          {dayjs(createdAt * 1000)
+            .utc()
+            .tz()
+            .format('LL')}
+        </span>
+      ),
       cost: clearingPrice
-        ? `${Number(formatUnits(clearingPrice * amount, decimals)).toLocaleString()} ${
+        ? `${Number(formatUnits(clearingPrice * maxSupply, decimals)).toLocaleString()} ${
             paymentToken.symbol
           }`
         : '-',
@@ -129,9 +137,9 @@ export const createTable = (data: BondInfo[]) => {
       ),
 
       amountIssued: maxSupply ? Number(formatUnits(maxSupply, decimals)).toLocaleString() : '-',
-      amount: amount ? `${Number(formatUnits(amount, decimals)).toLocaleString()}` : '-',
-      maturityValue: amount
-        ? `${Number(formatUnits(amount, decimals)).toLocaleString()} ${paymentToken.symbol}`
+      amount: maxSupply ? `${Number(formatUnits(maxSupply, decimals)).toLocaleString()}` : '-',
+      maturityValue: maxSupply
+        ? `${Number(formatUnits(maxSupply, decimals)).toLocaleString()} ${paymentToken.symbol}`
         : `1 ${paymentToken.symbol}`,
 
       status: getBondStates(bond).isMatured ? (
@@ -151,15 +159,16 @@ export const createTable = (data: BondInfo[]) => {
       url: `/products/${id}`,
     }
   })
-}
 
 const Products = () => {
   const { data, loading } = useBonds()
-  const [tableFilter, setTableFilter] = useState<TABLE_FILTERS>(TABLE_FILTERS.ALL)
+  const [tableFilter, setTableFilter] = useState(TABLE_FILTERS.ALL)
 
-  const tableData = data
-    ? createTable(data).filter(({ type }) => (tableFilter ? type === tableFilter : true))
-    : []
+  const tableData = !data
+    ? []
+    : !tableFilter
+    ? createTable(data as Bond[])
+    : createTable(data as Bond[]).filter(({ type }) => type === tableFilter)
   useSetNoDefaultNetworkId()
 
   return (
