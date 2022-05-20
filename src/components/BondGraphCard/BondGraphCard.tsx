@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 
-import { BondInfo } from '../../hooks/useBond'
 import { getValuePerBond } from '../../hooks/useBondExtraDetails'
 import { useHistoricTokenPrice } from '../../hooks/useTokenPrice'
 import { LoadingBox } from '../../pages/Auction'
 import BondChart from '../auction/BondChart'
+
+import { Bond } from '@/generated/graphql'
 
 const durations: [[number, string], [number, string], [number, string], [number, string]] = [
   [7, '1 week'],
@@ -13,7 +14,7 @@ const durations: [[number, string], [number, string], [number, string], [number,
   [365, '1 year'],
 ]
 
-const doProcess = (bond: BondInfo, prices) => {
+const doProcess = (bond: Bond, prices) => {
   const collateralPerBond = getValuePerBond(bond, bond?.collateralRatio)
   const convertiblePerBond = getValuePerBond(bond, bond?.convertibleRatio)
 
@@ -30,7 +31,7 @@ const doProcess = (bond: BondInfo, prices) => {
   return data
 }
 
-const BondGraphCard = ({ bond }: { bond: BondInfo }) => {
+const BondGraphCard = ({ bond }: { bond: Bond }) => {
   const [daysToShow, setDaysToShow] = useState(durations[2][0])
   const { data, loading } = useHistoricTokenPrice(bond?.collateralToken?.id, daysToShow)
   const processedData = doProcess(bond, data)

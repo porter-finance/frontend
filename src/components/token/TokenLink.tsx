@@ -1,8 +1,9 @@
 import React, { ReactElement } from 'react'
 
 import { useActiveWeb3React } from '../../hooks'
-import { Token } from '../../hooks/useBond'
 import { getExplorerLink } from '../../utils'
+
+import { Token } from '@/generated/graphql'
 
 export const AddressLink = ({ children, hash }) => {
   const { chainId } = useActiveWeb3React()

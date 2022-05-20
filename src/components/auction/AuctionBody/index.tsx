@@ -5,7 +5,6 @@ import { Transition } from '@headlessui/react'
 import { DoubleArrowRightIcon } from '@radix-ui/react-icons'
 import useGeoLocation from 'react-ipgeolocation'
 
-import { Auction } from '../../../hooks/useAuction'
 import { useBondExtraDetails } from '../../../hooks/useBondExtraDetails'
 import { TwoGridPage } from '../../../pages/Auction'
 import { getBondStates } from '../../../pages/BondDetail'
@@ -20,6 +19,8 @@ import Claimer from '../Claimer'
 import { ExtraDetailsItem } from '../ExtraDetailsItem'
 import OrderPlacement from '../OrderPlacement'
 import { OrderBookContainer } from '../OrderbookContainer'
+
+import { Auction } from '@/generated/graphql'
 
 interface AuctionBodyProps {
   auctionIdentifier: AuctionIdentifier

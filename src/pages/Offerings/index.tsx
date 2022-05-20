@@ -72,7 +72,7 @@ const columns = [
 
 const Offerings = () => {
   const { data: allAuctions, loading } = useAuctions()
-  const [tableFilter, setTableFilter] = useState<TABLE_FILTERS>(TABLE_FILTERS.ALL)
+  const [tableFilter, setTableFilter] = useState(TABLE_FILTERS.ALL)
 
   const tableData = []
 

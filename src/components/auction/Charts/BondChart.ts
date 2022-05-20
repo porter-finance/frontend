@@ -3,8 +3,9 @@ import * as am4core from '@amcharts/amcharts4/core'
 import am4themesSpiritedaway from '@amcharts/amcharts4/themes/spiritedaway'
 import { round } from 'lodash'
 
-import { Token } from '../../../hooks/useBond'
 import { getDisplay } from '../../../utils'
+
+import { Token } from '@/generated/graphql'
 
 export const createGradient = (color) => {
   const gradient = new am4core.LinearGradient()

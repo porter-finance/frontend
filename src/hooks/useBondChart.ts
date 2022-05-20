@@ -3,7 +3,8 @@ import { useEffect, useRef, useState } from 'react'
 import * as am4charts from '@amcharts/amcharts4/charts'
 
 import { XYBondChartProps, drawInformation } from '../components/auction/Charts/BondChart'
-import { Token } from './useBond'
+
+import { Token } from '@/generated/graphql'
 
 interface Props {
   createChart: (props: XYBondChartProps) => am4charts.XYChart

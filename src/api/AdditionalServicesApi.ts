@@ -3,9 +3,10 @@ import { Mainnet, Rinkeby } from '@usedapp/core'
 
 import { isDev } from '../connectors'
 import { Order, decodeOrder, encodeOrder } from '../hooks/Order'
-import { Auction } from '../hooks/useAuction'
 import { AuctionInfoDetail } from '../hooks/useAuctionDetails'
 import { getLogger } from '../utils/logger'
+
+import { Auction } from '@/generated/graphql'
 
 const logger = getLogger('AdditionalServicesApi')
 
