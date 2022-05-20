@@ -44,7 +44,6 @@ export interface SellOrder {
 }
 
 export enum AuctionState {
-  NOT_YET_STARTED,
   ORDER_PLACING_AND_CANCELING,
   ORDER_PLACING,
   PRICE_SUBMISSION,
@@ -497,9 +496,7 @@ export function useDeriveAuctionState(
   const getCurrentState = useCallback(() => {
     const auctioningTokenAddress: string | undefined = auctionDetails?.addressAuctioningToken
     let auctionState: Maybe<AuctionState> = null
-    if (!auctioningTokenAddress) {
-      auctionState = AuctionState.NOT_YET_STARTED
-    } else if (
+    if (
       auctionDetails?.endTimeTimestamp &&
       new Date() >= new Date(auctionDetails?.endTimeTimestamp * 1000) &&
       clearingPriceSellOrder?.buyAmount?.toSignificant(1) == '0'
