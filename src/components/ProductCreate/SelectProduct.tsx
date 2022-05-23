@@ -1,10 +1,12 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import ConvertCreateIcon from './ConvertCreateIcon'
 import SimpleCreateIcon from './SimpleCreateIcon'
 
-const CreateModal = () => {
-  const [isOpen, setIsOpen] = useState(true)
+const SelectProduct = () => {
+  const navigate = useNavigate()
+
   return (
     <>
       <div className="flex justify-center space-x-8">
@@ -14,7 +16,10 @@ const CreateModal = () => {
 
             <div className="text-3xl font-medium text-white">Convertible Bond</div>
             <p className="text-[#696969]">A convertible bond built for DeFi.</p>
-            <button className="flex self-start mt-4 !text-2sm font-normal text-white normal-case bg-[#181A1C] !border-[#2A2B2C] btn btn-sm">
+            <button
+              className="flex self-start mt-4 !text-2sm font-normal text-white normal-case bg-[#181A1C] !border-[#2A2B2C] btn btn-sm"
+              onClick={() => navigate('/products/create/convertible')}
+            >
               Learn more
             </button>
           </div>
@@ -26,7 +31,10 @@ const CreateModal = () => {
             <div className="text-3xl font-medium text-white">Simple Bond</div>
             <p className="text-[#696969]">A simple bond built for DeFi.</p>
 
-            <button className="flex self-start mt-4 !text-2sm font-normal text-white normal-case bg-[#181A1C] !border-[#2A2B2C] btn btn-sm">
+            <button
+              className="flex self-start mt-4 !text-2sm font-normal text-white normal-case bg-[#181A1C] !border-[#2A2B2C] btn btn-sm"
+              onClick={() => navigate('/products/create/simple')}
+            >
               Learn more
             </button>
           </div>
@@ -36,4 +44,4 @@ const CreateModal = () => {
   )
 }
 
-export default CreateModal
+export default SelectProduct

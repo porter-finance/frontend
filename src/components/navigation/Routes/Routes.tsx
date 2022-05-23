@@ -1,7 +1,8 @@
 import React from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 
-import CreateModal from '@/components/ProductCreate/modal'
+import SelectProduct from '@/components/ProductCreate/SelectProduct'
+import SetupProduct from '@/components/ProductCreate/SetupProduct'
 import { BaseCard } from '@/components/pureStyledComponents/BaseCard'
 import Auction from '@/pages/Auction'
 import BondDetail from '@/pages/BondDetail'
@@ -17,7 +18,9 @@ const AppRoutes: React.FC = () => {
       <Route element={<Offerings />} path="/offerings" />
       <Route element={<Products />} path="/products" />
       <Route element={<CreateBond />} path="/offerings/create" />
-      <Route element={<CreateModal />} path="/products/create" />
+      <Route element={<SelectProduct />} path="/products/create" />
+      <Route element={<SetupProduct />} path="/products/create/convertible" />
+      <Route element={<SetupProduct />} path="/products/create/simple" />
       <Route element={<BondDetail />} path="/products/:bondId" />
       <Route element={<Portfolio />} path="/portfolio" />
       <Route element={<Navigate replace to="/offerings" />} path="/start" />

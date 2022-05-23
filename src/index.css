@@ -134,3 +134,54 @@ svg text tspan {
 g[role='tooltip'] {
   @apply ease-in-out duration-150;
 }
+
+/* Steps */
+
+.steps .step:after {
+  color: #d6d6d6;
+  background: #2c2c2c;
+}
+
+.steps .step-primary + .step-primary:before,
+.steps .step-primary:after {
+  background-color: #532dbe;
+}
+.steps-vertical .step.step-primary:before {
+  background: linear-gradient(180deg, #532dbe 0%, rgba(83, 45, 190, 0) 100%);
+}
+.steps-vertical .step:before {
+  width: 2px;
+  background: #1f2123;
+}
+
+.step.step-primary {
+  @apply text-white;
+}
+
+.step {
+  @apply text-2sm;
+  color: #696969;
+}
+
+/* Input */
+
+.label-text {
+  @apply text-2sm;
+  @apply text-white;
+}
+
+.input::placeholder {
+  @apply text-2sm;
+  color: #696969;
+}
+
+.input {
+  color-scheme: dark;
+  @apply text-white;
+  background-color: transparent;
+  height: 40px;
+}
+
+.input.input-bordered {
+  border-color: #2c2c2c;
+}

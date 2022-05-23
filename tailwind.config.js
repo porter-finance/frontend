@@ -35,7 +35,7 @@ module.exports = {
           },
         ],
         '2sm': [
-          '',
+          '14px',
           {
             letterSpacing: '0.1em',
             fontWeight: 400,
