@@ -6,9 +6,11 @@ import { ActionButton } from '../auction/Claimer'
 import TooltipElement from '../common/Tooltip'
 import { FieldRowLabelStyledText, FieldRowWrapper } from '../form/InterestRateInputPanel'
 
+import { ReactComponent as UnicornSvg } from '@/assets/svg/simple-bond.svg'
+
 const StepOne = ({ formValues }) => (
   <>
-    <div className="w-full max-w-xs form-control">
+    <div className="w-full form-control">
       <label className="label">
         <TooltipElement
           left={<span className="label-text">Issuer name</span>}
@@ -16,29 +18,29 @@ const StepOne = ({ formValues }) => (
         />
       </label>
       <input
-        className="w-full max-w-xs input input-bordered"
+        className="w-full input input-bordered"
         name="issuerName"
         placeholder="Insert issuer name"
         type="text"
         value={formValues?.issuerName}
       />
     </div>
-    <div className="w-full max-w-xs form-control">
+    <div className="w-full form-control">
       <label className="label">
         <TooltipElement
           left={<span className="label-text">Amount of bonds to mint</span>}
-          tip="Number of bonds you will issue."
+          tip="Number of bonds you will issue"
         />
       </label>
       <input
-        className="w-full max-w-xs input input-bordered"
+        className="w-full input input-bordered"
         name="amountOfBonds"
         placeholder="0"
         type="number"
         value={formValues?.amountOfBonds}
       />
     </div>
-    <div className="w-full max-w-xs form-control">
+    <div className="w-full form-control">
       <label className="label">
         <TooltipElement
           left={<span className="label-text">Borrow token</span>}
@@ -46,14 +48,14 @@ const StepOne = ({ formValues }) => (
         />
       </label>
       <input
-        className="w-full max-w-xs input input-bordered"
+        className="w-full input input-bordered"
         name="token"
         placeholder="Pick a token"
         type="text"
         value={formValues?.token}
       />
     </div>
-    <div className="w-full max-w-xs form-control">
+    <div className="w-full form-control">
       <label className="label">
         <TooltipElement
           left={<span className="label-text">Bond maturity date</span>}
@@ -61,7 +63,7 @@ const StepOne = ({ formValues }) => (
         />
       </label>
       <input
-        className="w-full max-w-xs input input-bordered"
+        className="w-full input input-bordered"
         name="maturityDate"
         placeholder="DD/MM/YYYY"
         type="date"
@@ -73,7 +75,7 @@ const StepOne = ({ formValues }) => (
 
 const StepTwo = ({ formValues }) => (
   <>
-    <div className="w-full max-w-xs form-control">
+    <div className="w-full form-control">
       <label className="label">
         <TooltipElement
           left={<span className="label-text">Collateral token</span>}
@@ -81,14 +83,14 @@ const StepTwo = ({ formValues }) => (
         />
       </label>
       <input
-        className="w-full max-w-xs input input-bordered"
+        className="w-full input input-bordered"
         name="collateralToken"
         placeholder="Pick a token"
         type="text"
         value={formValues?.collateralToken}
       />
     </div>
-    <div className="w-full max-w-xs form-control">
+    <div className="w-full form-control">
       <label className="label">
         <TooltipElement
           left={<span className="label-text">Amount of collateral tokens</span>}
@@ -96,7 +98,7 @@ const StepTwo = ({ formValues }) => (
         />
       </label>
       <input
-        className="w-full max-w-xs input input-bordered"
+        className="w-full input input-bordered"
         name="amountOfCollateral"
         placeholder="0"
         type="number"
@@ -131,15 +133,42 @@ const StepTwo = ({ formValues }) => (
 
 const StepThree = ({ formValues }) => (
   <>
-    <div className="w-full max-w-xs form-control">
+    <div className="w-full form-control">
+      <label className="label">
+        <TooltipElement
+          left={<span className="label-text">Convertible token</span>}
+          tip="Token that each bond will be convertible into"
+        />
+      </label>
+      <div className="p-4 space-y-2 w-full text-xs text-white rounded-md border border-[#2C2C2C] form-control">
+        <div className="flex justify-between">
+          <span className="flex items-center space-x-2">
+            <UnicornSvg height={20} width={20} />
+            <span>UNI</span>
+          </span>
+          <span>
+            <span className="text-[#696969]">Price:</span> 10.00 USDC
+          </span>
+        </div>
+        <div className="flex justify-between">
+          <span>
+            <span className="text-[#696969]">Balance:</span> 1,000,000
+          </span>
+          <span>
+            <span className="text-[#696969]">Value:</span> 10,000,000 USDC
+          </span>
+        </div>
+      </div>
+    </div>
+    <div className="w-full form-control">
       <label className="label">
         <TooltipElement
           left={<span className="label-text">Amount of convertible tokens</span>}
-          tip="Number of tokens the whole bond issuance will be convertible into."
+          tip="Number of tokens the whole bond issuance will be convertible into"
         />
       </label>
       <input
-        className="w-full max-w-xs input input-bordered"
+        className="w-full input input-bordered"
         name="amountOfConvertible"
         placeholder="0"
         type="number"
@@ -155,7 +184,7 @@ const StepThree = ({ formValues }) => (
 
         <TooltipElement
           left={<FieldRowLabelStyledText>Convertible token value</FieldRowLabelStyledText>}
-          tip="Current value of all the convertible tokens for the bond issuance."
+          tip="Current value of all the convertible tokens for the bond issuance"
         />
       </div>
       <div className="flex flex-row justify-between">
@@ -165,7 +194,7 @@ const StepThree = ({ formValues }) => (
 
         <TooltipElement
           left={<FieldRowLabelStyledText>Strike price</FieldRowLabelStyledText>}
-          tip="Price at which the value of the convertible tokens equals the amount owed at maturity."
+          tip="Price at which the value of the convertible tokens equals the amount owed at maturity"
         />
       </div>
     </FieldRowWrapper>

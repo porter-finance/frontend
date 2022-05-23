@@ -178,6 +178,7 @@ g[role='tooltip'] {
 .input {
   color-scheme: dark;
   @apply text-white;
+  @apply text-2sm;
   background-color: transparent;
   height: 40px;
 }
