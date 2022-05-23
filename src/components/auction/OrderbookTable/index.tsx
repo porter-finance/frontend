@@ -305,19 +305,17 @@ export const BidTransactionLink = ({ bid }) => {
 }
 
 export const OrderBookTable: React.FC<OrderBookTableProps> = ({ derivedAuctionInfo }) => {
-  const {
-    data: { bids },
-    loading,
-  } = useAuctionBids()
+  const { data, loading } = useAuctionBids()
 
+  const bids = data?.bids
   const { auctionEndDate, maturityDate } = useBondMaturityForAuction()
   const paymentToken = getTokenDisplay(derivedAuctionInfo?.biddingToken)
   const noBids = !Array.isArray(bids) || bids.length === 0
-  const data = noBids
+  const tableData = noBids
     ? []
     : bids.map((row) =>
         calculateRow(row, paymentToken, maturityDate, derivedAuctionInfo, auctionEndDate),
       )
 
-  return <TableDesign columns={ordersTableColumns} data={data} loading={loading} />
+  return <TableDesign columns={ordersTableColumns} data={tableData} loading={loading} />
 }
