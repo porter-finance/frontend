@@ -4,4 +4,3 @@ declare module '*.woff2'
 declare module '*.otf'
 declare module './theme'
 declare module "*.md"
-

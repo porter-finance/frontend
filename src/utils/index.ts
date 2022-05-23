@@ -276,3 +276,5 @@ export function isTokenWMATIC(tokenAddress?: string, chainId?: ChainId): boolean
 export function isTimeout(timeId: NodeJS.Timeout | undefined): timeId is NodeJS.Timeout {
   return typeof timeId !== 'undefined'
 }
+
+export type PartiallyOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>

@@ -9,12 +9,13 @@ const fetcher = (url: string) => fetch(url).then((r) => r.json())
 const coinGekoBaseUrl = 'https://api.coingecko.com/api/v3'
 const uniswapToken = '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984'
 
-export const useTokenPrice = (tokenContractAddress: string): { data: any; loading: boolean } => {
+export const useTokenPrice = (tokenContractAddress?: string): { data: any; loading: boolean } => {
   const { chainId } = useWeb3React()
+
   // The tokens used on the testnet will not exist so no price will be returned
   // this uses rocketpool token instead of the real tokens on any network
   // other than mainnet so we have pricing data
-  const realOrTestToken = chainId === 1 ? tokenContractAddress : uniswapToken
+  const realOrTestToken = chainId === 1 ? tokenContractAddress || '' : uniswapToken
   const { data, error } = useSWR(
     `${coinGekoBaseUrl}/simple/token_price/ethereum?vs_currencies=usd&contract_addresses=${realOrTestToken}`,
     fetcher,

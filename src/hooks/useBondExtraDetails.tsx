@@ -14,7 +14,10 @@ import { Bond } from '@/generated/graphql'
 const WADDecimals = 18
 const paymentTokenPrice = 1
 
-export const getValuePerBond = (bond: Bond, value: number) => {
+export const getValuePerBond = (
+  bond: Pick<Bond, 'collateralToken' | 'paymentToken'>,
+  value: number,
+) => {
   return bond
     ? round(
         Number(
@@ -35,8 +38,8 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
   // TODO - use this value, its value should always be close to 1 tho since its a stable
   // const { data: paymentTokenPrice } = useTokenPrice(bond?.paymentToken.id)
 
-  const collateralPerBond = getValuePerBond(bond as Bond, bond?.collateralRatio)
-  const convertiblePerBond = getValuePerBond(bond as Bond, bond?.convertibleRatio)
+  const collateralPerBond = bond ? getValuePerBond(bond, bond?.collateralRatio) : 0
+  const convertiblePerBond = bond ? getValuePerBond(bond, bond?.convertibleRatio) : 0
   const collateralValue = round(collateralPerBond * collateralTokenPrice, 3)
   const convertibleValue = round(convertiblePerBond * collateralTokenPrice, 3)
 

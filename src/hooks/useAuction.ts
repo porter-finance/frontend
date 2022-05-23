@@ -1,7 +1,7 @@
 import { gql, useQuery } from '@apollo/client'
 
-import { AllAuctionsDocument, SingleAuctionDocument } from '../generated/graphql'
-import { getLogger } from '../utils/logger'
+import { AllAuctionsDocument, SingleAuctionDocument } from '@/generated/graphql'
+import { getLogger } from '@/utils/logger'
 
 const logger = getLogger('useAuctions')
 
@@ -9,6 +9,7 @@ const auctionQuery = gql`
   query SingleAuction($auctionId: ID!) {
     auction(id: $auctionId) {
       id
+      orderCancellationEndDate
       bond {
         id
         name
@@ -68,6 +69,7 @@ const auctionsQuery = gql`
   query AllAuctions {
     auctions(orderBy: end, orderDirection: asc, first: 100) {
       id
+      orderCancellationEndDate
       offeringSize
       end
       live

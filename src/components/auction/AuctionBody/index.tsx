@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 
 import { Transition } from '@headlessui/react'
 import { DoubleArrowRightIcon } from '@radix-ui/react-icons'
-import useGeoLocation from 'react-ipgeolocation'
 
 import { useBondExtraDetails } from '../../../hooks/useBondExtraDetails'
 import { TwoGridPage } from '../../../pages/Auction'
@@ -142,8 +141,6 @@ const AuctionBody = (props: AuctionBodyProps) => {
     derivedAuctionInfo,
     graphInfo,
   } = props
-  const location = useGeoLocation()
-  const auctionStarted = auctionState !== undefined && auctionState !== AuctionState.NOT_YET_STARTED
   const settling = derivedAuctionInfo?.auctionState === AuctionState.NEEDS_SETTLED
 
   const placeAndCancel =
@@ -152,48 +149,44 @@ const AuctionBody = (props: AuctionBodyProps) => {
 
   return (
     <>
-      {auctionStarted && (
-        <TwoGridPage
-          leftChildren={
-            <>
-              <AuctionDetails
-                auctionIdentifier={auctionIdentifier}
-                derivedAuctionInfo={derivedAuctionInfo}
-              />
+      <TwoGridPage
+        leftChildren={
+          <>
+            <AuctionDetails
+              auctionIdentifier={auctionIdentifier}
+              derivedAuctionInfo={derivedAuctionInfo}
+            />
 
-              {graphInfo && <BondCard graphInfo={graphInfo} />}
+            {graphInfo && <BondCard graphInfo={graphInfo} />}
 
-              <OrderBookContainer
-                auctionIdentifier={auctionIdentifier}
-                auctionStarted={auctionStarted}
-                auctionState={auctionState}
-                derivedAuctionInfo={derivedAuctionInfo}
-              />
-            </>
-          }
-          rightChildren={
-            <>
-              {settling && <AuctionSettle />}
-              {placeAndCancel && (
-                <>
-                  <OrderPlacement
-                    auctionIdentifier={auctionIdentifier}
-                    derivedAuctionInfo={derivedAuctionInfo}
-                  />
-                  <WarningCard />
-                </>
-              )}
-              {(auctionState === AuctionState.CLAIMING ||
-                auctionState === AuctionState.PRICE_SUBMISSION) && (
-                <Claimer
+            <OrderBookContainer
+              auctionIdentifier={auctionIdentifier}
+              auctionState={auctionState}
+              derivedAuctionInfo={derivedAuctionInfo}
+            />
+          </>
+        }
+        rightChildren={
+          <>
+            {settling && <AuctionSettle />}
+            {placeAndCancel && (
+              <>
+                <OrderPlacement
                   auctionIdentifier={auctionIdentifier}
                   derivedAuctionInfo={derivedAuctionInfo}
                 />
-              )}
-            </>
-          }
-        />
-      )}
+                <WarningCard />
+              </>
+            )}
+            {auctionState === AuctionState.CLAIMING && (
+              <Claimer
+                auctionIdentifier={auctionIdentifier}
+                derivedAuctionInfo={derivedAuctionInfo}
+              />
+            )}
+          </>
+        }
+      />
     </>
   )
 }

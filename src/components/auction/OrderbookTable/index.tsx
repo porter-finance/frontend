@@ -16,6 +16,9 @@ import Tooltip from '../../common/Tooltip'
 import { calculateInterestRate } from '../../form/InterestRateInputPanel'
 import { orderStatusText } from '../OrdersTable'
 
+import { Auction } from '@/generated/graphql'
+import { getAuctionStates } from '@/pages/Offerings'
+
 export const OverflowWrap = styled.div`
   max-width: 100%;
   flex-grow: 1;
@@ -268,6 +271,15 @@ export const ActiveStatusPill = ({
   )
 }
 
+export const AuctionStatusPill = ({
+  auction,
+}: {
+  auction: Pick<Auction, 'end' | 'orderCancellationEndDate' | 'clearingPrice'>
+}) => {
+  const { atStageEnded, status } = getAuctionStates(auction)
+  return <ActiveStatusPill disabled={atStageEnded} title={atStageEnded ? 'ended' : status} />
+}
+
 export const BidTransactionLink = ({ bid }) => {
   const { chainId } = useActiveWeb3React()
   const hash = bid.canceltx || bid.claimtx || bid.createtx
@@ -293,19 +305,17 @@ export const BidTransactionLink = ({ bid }) => {
 }
 
 export const OrderBookTable: React.FC<OrderBookTableProps> = ({ derivedAuctionInfo }) => {
-  const {
-    data: { bids },
-    loading,
-  } = useAuctionBids()
+  const { data, loading } = useAuctionBids()
 
+  const bids = data?.bids
   const { auctionEndDate, maturityDate } = useBondMaturityForAuction()
   const paymentToken = getTokenDisplay(derivedAuctionInfo?.biddingToken)
   const noBids = !Array.isArray(bids) || bids.length === 0
-  const data = noBids
+  const tableData = noBids
     ? []
     : bids.map((row) =>
         calculateRow(row, paymentToken, maturityDate, derivedAuctionInfo, auctionEndDate),
       )
 
-  return <TableDesign columns={ordersTableColumns} data={data} loading={loading} />
+  return <TableDesign columns={ordersTableColumns} data={tableData} loading={loading} />
 }

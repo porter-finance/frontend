@@ -107,7 +107,7 @@ const positionColumns = [
   },
 ]
 
-export const getBondStates = (bond: Bond) => {
+export const getBondStates = (bond: Pick<Bond, 'type' | 'state'>) => {
   const isConvertBond = bond?.type === 'convert'
   const isPartiallyPaid = false // TODO ADD THIS TO THE GRAPH
   const isDefaulted = bond?.state === 'defaulted'
@@ -132,9 +132,7 @@ const BondDetail: React.FC = () => {
   const extraDetails = useBondExtraDetails(bondId)
   const { data: bond, loading: isLoading } = useBond(bondId)
   const invalidBond = React.useMemo(() => !bondId || !bond, [bondId, bond])
-  const { isConvertBond, isDefaulted, isMatured, isPaid, isPartiallyPaid } = getBondStates(
-    bond as Bond,
-  )
+  const { isConvertBond, isDefaulted, isMatured, isPaid, isPartiallyPaid } = getBondStates(bond)
 
   let positionData
   if (bond && Array.isArray(bond.tokenBalances) && bond.tokenBalances.length) {

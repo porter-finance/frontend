@@ -44,10 +44,8 @@ export interface SellOrder {
 }
 
 export enum AuctionState {
-  NOT_YET_STARTED,
   ORDER_PLACING_AND_CANCELING,
   ORDER_PLACING,
-  PRICE_SUBMISSION,
   CLAIMING,
   NEEDS_SETTLED,
 }
@@ -497,9 +495,7 @@ export function useDeriveAuctionState(
   const getCurrentState = useCallback(() => {
     const auctioningTokenAddress: string | undefined = auctionDetails?.addressAuctioningToken
     let auctionState: Maybe<AuctionState> = null
-    if (!auctioningTokenAddress) {
-      auctionState = AuctionState.NOT_YET_STARTED
-    } else if (
+    if (
       auctionDetails?.endTimeTimestamp &&
       currentTimeInUTC() >= new Date(auctionDetails?.endTimeTimestamp * 1000).getTime() &&
       clearingPriceSellOrder?.buyAmount?.toSignificant(1) == '0'
@@ -515,9 +511,7 @@ export function useDeriveAuctionState(
           auctionState = AuctionState.ORDER_PLACING_AND_CANCELING
         }
       } else {
-        if (clearingPriceSellOrder?.buyAmount?.toSignificant(1) == '0') {
-          auctionState = AuctionState.PRICE_SUBMISSION
-        } else {
+        if (clearingPriceSellOrder?.buyAmount?.toSignificant(1) != '0') {
           auctionState = AuctionState.CLAIMING
         }
       }

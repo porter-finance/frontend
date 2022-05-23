@@ -3,18 +3,62 @@ import { createGlobalStyle } from 'styled-components'
 
 import dayjs from 'dayjs'
 
-import { ReactComponent as AuctionsIcon } from '../../assets/svg/auctions.svg'
-import { ReactComponent as DividerIcon } from '../../assets/svg/divider.svg'
-import { ReactComponent as OTCIcon } from '../../assets/svg/otc.svg'
-import { ActiveStatusPill } from '../../components/auction/OrderbookTable'
-import Table from '../../components/auctions/Table'
-import { ErrorBoundaryWithFallback } from '../../components/common/ErrorAndReload'
-import { calculateInterestRate } from '../../components/form/InterestRateInputPanel'
-import TokenLogo from '../../components/token/TokenLogo'
-import { useAuctions } from '../../hooks/useAuction'
-import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import { AllButton, AuctionButtonOutline, OTCButtonOutline } from '../Auction'
 import { TABLE_FILTERS } from '../Portfolio'
+
+import { ReactComponent as AuctionsIcon } from '@/assets/svg/auctions.svg'
+import { ReactComponent as DividerIcon } from '@/assets/svg/divider.svg'
+import { ReactComponent as OTCIcon } from '@/assets/svg/otc.svg'
+import { AuctionStatusPill } from '@/components/auction/OrderbookTable'
+import Table from '@/components/auctions/Table'
+import { ErrorBoundaryWithFallback } from '@/components/common/ErrorAndReload'
+import { calculateInterestRate } from '@/components/form/InterestRateInputPanel'
+import TokenLogo from '@/components/token/TokenLogo'
+import { Auction } from '@/generated/graphql'
+import { useAuctions } from '@/hooks/useAuction'
+import { useSetNoDefaultNetworkId } from '@/state/orderPlacement/hooks'
+import { currentTimeInUTC } from '@/utils/tools'
+
+export const getAuctionStates = (
+  auction: Pick<Auction, 'end' | 'orderCancellationEndDate' | 'clearingPrice'>,
+) => {
+  const { clearingPrice, end, orderCancellationEndDate } = auction
+  // open for orders
+  const atStageOrderPlacement = currentTimeInUTC() <= end * 1000
+
+  // cancellable (can be open for orders and cancellable.
+  // This isn't an auction status rather an ability to cancel your bid or not.)
+  const atStageOrderPlacementAndCancelation = currentTimeInUTC() <= orderCancellationEndDate
+
+  // AKA settling (can be settled, but not yet done so)
+  const atStageNeedsSettled = currentTimeInUTC() >= end * 1000
+
+  // claiming (settled)
+  const atStageFinished = !!clearingPrice
+
+  const atStageEnded = currentTimeInUTC() >= end * 1000
+
+  let status = 'Unknown'
+  if (atStageEnded) status = 'ended'
+
+  // Auction can be settled
+  if (atStageNeedsSettled) status = 'settlement'
+
+  // Orders can be claimed
+  if (atStageFinished) status = 'claiming'
+
+  // Orders can be placed
+  if (atStageOrderPlacement) status = 'ongoing'
+
+  return {
+    atStageOrderPlacement,
+    atStageOrderPlacementAndCancelation,
+    atStageNeedsSettled,
+    atStageFinished,
+    atStageEnded,
+    status,
+  }
+}
 
 const GlobalStyle = createGlobalStyle`
   .siteHeader {
@@ -91,11 +135,7 @@ const Offerings = () => {
         maturityDate: auction.bond.maturityDate,
         startDate: auction.end,
       }),
-      status: auction.live ? (
-        <ActiveStatusPill title="Ongoing" />
-      ) : (
-        <ActiveStatusPill disabled dot={false} title="Ended" />
-      ),
+      status: <AuctionStatusPill auction={auction} />,
       maturityValue: `1 ${auction?.bond.paymentToken.symbol}`,
       endDate: (
         <span className="uppercase">

@@ -1,4 +1,8 @@
-/* config-overrides.js */
+// config-overrides.js
+
+/* eslint-disable @typescript-eslint/no-var-requires */
+const path = require('path')
+// eslint-disable-next-line import/no-extraneous-dependencies
 const webpack = require('webpack')
 
 module.exports = {
@@ -19,6 +23,13 @@ module.exports = {
         process: 'process/browser',
       }),
     )
+    config.resolve = {
+      ...config.resolve,
+      alias: {
+        ...config.alias,
+        '@': path.resolve(__dirname, 'src'),
+      },
+    }
     config.module.rules = [
       ...config.module.rules,
       {

@@ -103,9 +103,7 @@ const BondAction = ({
 
   const [tokenDetails, setTokenDetails] = useState({ BondAmount: null, payTok: null, tok: null })
 
-  const { isActive, isDefaulted, isMatured, isPaid, isPartiallyPaid } = getBondStates(
-    bondInfo as Bond,
-  )
+  const { isActive, isDefaulted, isMatured, isPaid, isPartiallyPaid } = getBondStates(bondInfo)
 
   useEffect(() => {
     let BondAmount = null

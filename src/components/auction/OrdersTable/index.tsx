@@ -2,17 +2,6 @@ import React, { useCallback, useState } from 'react'
 
 import { useApolloClient } from '@apollo/client'
 
-import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
-import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
-import {
-  AuctionState,
-  DerivedAuctionInfo,
-  useAllUserOrders,
-} from '../../../state/orderPlacement/hooks'
-import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
-import { OrderStatus } from '../../../state/orders/reducer'
-import { getTokenDisplay } from '../../../utils'
-import ConfirmationDialog, { OopsWarning } from '../../modals/ConfirmationDialog'
 import {
   BidTransactionLink,
   TableDesign,
@@ -20,9 +9,14 @@ import {
   ordersTableColumns,
 } from '../OrderbookTable'
 
+import ConfirmationDialog, { OopsWarning } from '@/components/modals/ConfirmationDialog'
 import { Bid } from '@/generated/graphql'
-
-type PartiallyOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
+import { useBondMaturityForAuction } from '@/hooks/useBondMaturityForAuction'
+import { useCancelOrderCallback } from '@/hooks/useCancelOrderCallback'
+import { AuctionState, DerivedAuctionInfo, useAllUserOrders } from '@/state/orderPlacement/hooks'
+import { AuctionIdentifier } from '@/state/orderPlacement/reducer'
+import { OrderStatus } from '@/state/orders/reducer'
+import { PartiallyOptional, getTokenDisplay } from '@/utils'
 
 interface OrdersTableProps {
   bids: PartiallyOptional<Bid, 'account'>[]
@@ -70,8 +64,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
   const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
   const isOrderCancellationExpired =
     hasLastCancellationDate && now > orderCancellationEndMilliseconds && orderPlacingOnly
-  const orderSubmissionFinished =
-    auctionState === AuctionState.CLAIMING || auctionState === AuctionState.PRICE_SUBMISSION
+  const orderSubmissionFinished = auctionState === AuctionState.CLAIMING
   const hideCancelButton = orderPlacingOnly || orderSubmissionFinished
 
   useAllUserOrders(auctionIdentifier, derivedAuctionInfo)
