@@ -24,11 +24,11 @@ export const getAuctionStates = (
 ) => {
   const { clearingPrice, end, orderCancellationEndDate } = auction
   // open for orders
-  const atStageOrderPlacement = end * 1000 > currentTimeInUTC()
+  const atStageOrderPlacement = currentTimeInUTC() <= end * 1000
 
   // cancellable (can be open for orders and cancellable.
   // This isn't an auction status rather an ability to cancel your bid or not.)
-  const atStageOrderPlacementAndCancelation = orderCancellationEndDate >= currentTimeInUTC()
+  const atStageOrderPlacementAndCancelation = currentTimeInUTC() <= orderCancellationEndDate
 
   // AKA settling (can be settled, but not yet done so)
   const atStageNeedsSettled = currentTimeInUTC() >= end * 1000
@@ -48,7 +48,7 @@ export const getAuctionStates = (
   if (atStageFinished) status = 'claiming'
 
   // Orders can be placed
-  if (atStageOrderPlacement || atStageOrderPlacementAndCancelation) status = 'ongoing'
+  if (atStageOrderPlacement) status = 'ongoing'
 
   return {
     atStageOrderPlacement,
