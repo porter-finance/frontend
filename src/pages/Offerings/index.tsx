@@ -17,26 +17,26 @@ import TokenLogo from '@/components/token/TokenLogo'
 import { Auction } from '@/generated/graphql'
 import { useAuctions } from '@/hooks/useAuction'
 import { useSetNoDefaultNetworkId } from '@/state/orderPlacement/hooks'
+import { currentTimeInUTC } from '@/utils/tools'
 
 export const getAuctionStates = (
   auction: Pick<Auction, 'end' | 'orderCancellationEndDate' | 'clearingPrice'>,
 ) => {
   const { clearingPrice, end, orderCancellationEndDate } = auction
   // open for orders
-  const atStageOrderPlacement = end * 1000 > dayjs(new Date()).utc().valueOf()
+  const atStageOrderPlacement = end * 1000 > currentTimeInUTC()
 
   // cancellable (can be open for orders and cancellable.
   // This isn't an auction status rather an ability to cancel your bid or not.)
-  const atStageOrderPlacementAndCancelation =
-    orderCancellationEndDate >= dayjs(new Date()).utc().valueOf()
+  const atStageOrderPlacementAndCancelation = orderCancellationEndDate >= currentTimeInUTC()
 
   // AKA settling (can be settled, but not yet done so)
-  const atStageNeedsSettled = dayjs(new Date()).utc().valueOf() >= end * 1000
+  const atStageNeedsSettled = currentTimeInUTC() >= end * 1000
 
   // claiming (settled)
   const atStageFinished = !!clearingPrice
 
-  const atStageEnded = dayjs(new Date()).utc().valueOf() >= end * 1000
+  const atStageEnded = currentTimeInUTC() >= end * 1000
 
   let status = 'Unknown'
   if (atStageEnded) status = 'ended'
