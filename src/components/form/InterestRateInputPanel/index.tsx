@@ -7,7 +7,7 @@ import { round } from 'lodash'
 import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
 import Tooltip from '../../common/Tooltip'
 
-const FieldRowLabelStyledText = styled.span`
+export const FieldRowLabelStyledText = styled.span`
   margin-right: 5px;
   font-weight: 400;
   font-size: 12px;
@@ -15,7 +15,7 @@ const FieldRowLabelStyledText = styled.span`
   letter-spacing: 0.06em;
 `
 
-const FieldRowWrapper = styled.div<{ error?: boolean }>`
+export const FieldRowWrapper = styled.div<{ error?: boolean }>`
   border-style: solid;
   border-width: 1px;
   border-color: ${(props) => (props.error ? ({ theme }) => theme.error : 'transparent')} !important;

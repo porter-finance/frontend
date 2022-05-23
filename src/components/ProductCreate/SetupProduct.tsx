@@ -1,15 +1,248 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useState } from 'react'
 
 import { DoubleArrowRightIcon } from '@radix-ui/react-icons'
 
+import { ActionButton } from '../auction/Claimer'
 import TooltipElement from '../common/Tooltip'
+import { FieldRowLabelStyledText, FieldRowWrapper } from '../form/InterestRateInputPanel'
 
+const StepOne = ({ formValues }) => (
+  <>
+    <div className="w-full max-w-xs form-control">
+      <label className="label">
+        <TooltipElement
+          left={<span className="label-text">Issuer name</span>}
+          tip="Name of the issuing organization"
+        />
+      </label>
+      <input
+        className="w-full max-w-xs input input-bordered"
+        name="issuerName"
+        placeholder="Insert issuer name"
+        type="text"
+        value={formValues?.issuerName}
+      />
+    </div>
+    <div className="w-full max-w-xs form-control">
+      <label className="label">
+        <TooltipElement
+          left={<span className="label-text">Amount of bonds to mint</span>}
+          tip="Number of bonds you will issue."
+        />
+      </label>
+      <input
+        className="w-full max-w-xs input input-bordered"
+        name="amountOfBonds"
+        placeholder="0"
+        type="number"
+        value={formValues?.amountOfBonds}
+      />
+    </div>
+    <div className="w-full max-w-xs form-control">
+      <label className="label">
+        <TooltipElement
+          left={<span className="label-text">Borrow token</span>}
+          tip="Token that will be borrowed and used for repayment"
+        />
+      </label>
+      <input
+        className="w-full max-w-xs input input-bordered"
+        name="token"
+        placeholder="Pick a token"
+        type="text"
+        value={formValues?.token}
+      />
+    </div>
+    <div className="w-full max-w-xs form-control">
+      <label className="label">
+        <TooltipElement
+          left={<span className="label-text">Bond maturity date</span>}
+          tip="Date the bond will need to be paid by"
+        />
+      </label>
+      <input
+        className="w-full max-w-xs input input-bordered"
+        name="maturityDate"
+        placeholder="DD/MM/YYYY"
+        type="date"
+        value={formValues?.maturityDate}
+      />
+    </div>
+  </>
+)
+
+const StepTwo = ({ formValues }) => (
+  <>
+    <div className="w-full max-w-xs form-control">
+      <label className="label">
+        <TooltipElement
+          left={<span className="label-text">Collateral token</span>}
+          tip="Collateral token that will be used"
+        />
+      </label>
+      <input
+        className="w-full max-w-xs input input-bordered"
+        name="collateralToken"
+        placeholder="Pick a token"
+        type="text"
+        value={formValues?.collateralToken}
+      />
+    </div>
+    <div className="w-full max-w-xs form-control">
+      <label className="label">
+        <TooltipElement
+          left={<span className="label-text">Amount of collateral tokens</span>}
+          tip="Amount of collateral tokens that will be used to secure the whole bond issuance"
+        />
+      </label>
+      <input
+        className="w-full max-w-xs input input-bordered"
+        name="amountOfCollateral"
+        placeholder="0"
+        type="number"
+        value={formValues?.amountOfCollateral}
+      />
+    </div>
+
+    <FieldRowWrapper className="py-1 my-4 space-y-3">
+      <div className="flex flex-row justify-between">
+        <div className="text-sm text-[#E0E0E0]">
+          <p>-</p>
+        </div>
+
+        <TooltipElement
+          left={<FieldRowLabelStyledText>Collateral value</FieldRowLabelStyledText>}
+          tip="Value of the collateral in the borrow token"
+        />
+      </div>
+      <div className="flex flex-row justify-between">
+        <div className="text-sm text-[#E0E0E0]">
+          <p>-</p>
+        </div>
+
+        <TooltipElement
+          left={<FieldRowLabelStyledText>Collateralization value</FieldRowLabelStyledText>}
+          tip="Value of the collateral divided by the amount owed at maturity"
+        />
+      </div>
+    </FieldRowWrapper>
+  </>
+)
+
+const StepThree = ({ formValues }) => (
+  <>
+    <div className="w-full max-w-xs form-control">
+      <label className="label">
+        <TooltipElement
+          left={<span className="label-text">Amount of convertible tokens</span>}
+          tip="Number of tokens the whole bond issuance will be convertible into."
+        />
+      </label>
+      <input
+        className="w-full max-w-xs input input-bordered"
+        name="amountOfConvertible"
+        placeholder="0"
+        type="number"
+        value={formValues?.amountOfConvertible}
+      />
+    </div>
+
+    <FieldRowWrapper className="py-1 my-4 space-y-3">
+      <div className="flex flex-row justify-between">
+        <div className="text-sm text-[#E0E0E0]">
+          <p>-</p>
+        </div>
+
+        <TooltipElement
+          left={<FieldRowLabelStyledText>Convertible token value</FieldRowLabelStyledText>}
+          tip="Current value of all the convertible tokens for the bond issuance."
+        />
+      </div>
+      <div className="flex flex-row justify-between">
+        <div className="text-sm text-[#E0E0E0]">
+          <p>-</p>
+        </div>
+
+        <TooltipElement
+          left={<FieldRowLabelStyledText>Strike price</FieldRowLabelStyledText>}
+          tip="Price at which the value of the convertible tokens equals the amount owed at maturity."
+        />
+      </div>
+    </FieldRowWrapper>
+  </>
+)
+
+const confirmSteps = [
+  {
+    text: 'Approve UNI as collateral',
+    tip: 'The collateral token needs to be approved so it can be transferred into the bond contract and used as collateral.',
+  },
+  { text: 'Mint Uniswap Convertible Bonds', tip: 'Mint the bonds to the connected wallet.' },
+]
+const steps = ['Setup product', 'Choose collateral', 'Set convertibility', 'Confirm creation']
+
+const SummaryItem = ({ text, tip, title }) => (
+  <div className="pb-4 space-y-2 border-b border-[#2C2C2C]">
+    <div className="text-base text-white">{text}</div>
+    <div className="text-xs text-[#696969]">
+      <TooltipElement left={title} tip={tip} />
+    </div>
+  </div>
+)
+
+const Summary = ({ currentStep }) => (
+  <div className="w-[425px] card">
+    <div className="card-body">
+      <h1 className="pb-4 !text-xs uppercase border-b border-[#2C2C2C] card-title">Summary</h1>
+      <div className="space-y-4">
+        <SummaryItem text="Uniswap Convertible Bond" tip="Name" title="Name" />
+        <SummaryItem text="400,000" tip="Supply" title="Supply" />
+        <SummaryItem text="400,000 USDC" tip="Owed at maturity" title="Owed at maturity" />
+        <SummaryItem text="07/01/2022" tip="Maturity date" title="Maturity date" />
+
+        {currentStep >= 2 && (
+          <>
+            <SummaryItem text="400,000 UNI" tip="Collateral tokens" title="Collateral tokens" />
+            <SummaryItem text="1,000%" tip="Collateral tokens" title="Collateral tokens" />
+          </>
+        )}
+        {currentStep >= 3 && (
+          <>
+            <SummaryItem text="10,000 UNI" tip="Convertible tokens" title="Collateral tokens" />
+            <SummaryItem text="40 USDC/UNI" tip="Strike price" title="Strike price" />
+          </>
+        )}
+      </div>
+    </div>
+  </div>
+)
 const SetupProduct = () => {
-  const navigate = useNavigate()
+  const [currentStep, setCurrentStep] = useState(0)
+  const [currentConfirmStep, setCurrentConfirmStep] = useState(0)
+  const [formValues, setFormValues] = useState({})
+  const midComponents = [
+    <StepOne formValues={formValues} key={0} />,
+    <StepTwo formValues={formValues} key={1} />,
+    <StepThree formValues={formValues} key={2} />,
+  ]
+
+  console.log(formValues)
 
   return (
-    <>
+    <form
+      onChange={(e) => {
+        const data = new FormData(e.currentTarget)
+        const values = {}
+        for (const [key, value] of data.entries()) {
+          values[key] = value
+        }
+
+        setFormValues({ ...formValues, ...values })
+      }}
+      onSubmit={(e) => {
+        e.preventDefault()
+      }}
+    >
       <div className="flex justify-center space-x-8">
         <div className="w-[326px] card">
           <div className="card-body">
@@ -19,74 +252,62 @@ const SetupProduct = () => {
             </div>
 
             <ul className="steps steps-vertical">
-              <li className="step step-primary">Setup product</li>
-              <li className="step step-primary">Choose collateral</li>
-              <li className="step">Set convertibility</li>
-              <li className="step">Confirm creation</li>
+              {steps.map((step, i) => (
+                <li
+                  className={`step ${
+                    i <= currentStep ? 'step-primary hover:underline hover:cursor-pointer' : ''
+                  }`}
+                  key={i}
+                  onClick={() => {
+                    if (i !== currentStep && i <= currentStep) setCurrentStep(i)
+                  }}
+                >
+                  {step}
+                </li>
+              ))}
             </ul>
           </div>
         </div>
         <div className="w-[425px] card">
           <div className="card-body">
-            <h1 className="!text-2xl card-title">Setup product</h1>
+            <h1 className="!text-2xl card-title">{steps[currentStep]}</h1>
             <div className="space-y-4">
-              <div className="w-full max-w-xs form-control">
-                <label className="label">
-                  <TooltipElement
-                    left={<span className="label-text">Issuer name</span>}
-                    tip="Name of the issuing organization"
-                  />
-                </label>
-                <input
-                  className="w-full max-w-xs input input-bordered"
-                  placeholder="Insert issuer name"
-                  type="text"
-                />
-              </div>
-              <div className="w-full max-w-xs form-control">
-                <label className="label">
-                  <TooltipElement
-                    left={<span className="label-text">Amount of bonds to mint</span>}
-                    tip="Number of bonds you will issue."
-                  />
-                </label>
-                <input
-                  className="w-full max-w-xs input input-bordered"
-                  placeholder="0"
-                  type="number"
-                />
-              </div>
-              <div className="w-full max-w-xs form-control">
-                <label className="label">
-                  <TooltipElement
-                    left={<span className="label-text">Borrow token</span>}
-                    tip="Token that will be borrowed and used for repayment"
-                  />
-                </label>
-                <input
-                  className="w-full max-w-xs input input-bordered"
-                  placeholder="Pick a token"
-                  type="text"
-                />
-              </div>
-              <div className="w-full max-w-xs form-control">
-                <label className="label">
-                  <TooltipElement
-                    left={<span className="label-text">Bond maturity date</span>}
-                    tip="Date the bond will need to be paid by"
-                  />
-                </label>
-                <input
-                  className="w-full max-w-xs input input-bordered"
-                  placeholder="DD/MM/YYYY"
-                  type="date"
-                />
-              </div>
+              {midComponents[currentStep]}
+
+              {currentStep < 3 && (
+                <ActionButton color="purple" onClick={() => setCurrentStep(currentStep + 1)}>
+                  Continue
+                </ActionButton>
+              )}
+              {currentStep === 3 && (
+                <>
+                  <ul className="steps steps-vertical">
+                    {confirmSteps.map((step, i) => (
+                      <li
+                        className={`step ${i <= currentConfirmStep ? 'step-primary' : ''}`}
+                        key={i}
+                      >
+                        <TooltipElement left={step.text} tip={step.tip} />
+                      </li>
+                    ))}
+                  </ul>
+
+                  <ActionButton
+                    color="purple"
+                    onClick={() => {
+                      console.log('click')
+                    }}
+                  >
+                    Approve UNI as collateral
+                  </ActionButton>
+                </>
+              )}
             </div>
           </div>
         </div>
+        {currentStep >= 1 && <Summary currentStep={currentStep} />}
       </div>
-    </>
+    </form>
   )
 }
 
