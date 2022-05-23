@@ -174,7 +174,7 @@ const AuctionPage = ({ data: { auctionIdentifier, derivedAuctionInfo, graphInfo 
                   />
                 </div>
                 <div>
-                  <h1 className="text-3xl text-white capitalize">{graphInfo?.bond.name} Auction</h1>
+                  <h1 className="text-4xl text-white capitalize">{graphInfo?.bond.name} Auction</h1>
                   <p className="text-2sm text-[#E0E0E0]">{graphInfo?.bond.symbol}</p>
                 </div>
               </div>

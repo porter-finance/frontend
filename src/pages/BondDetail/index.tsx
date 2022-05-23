@@ -195,7 +195,7 @@ const BondDetail: React.FC = () => {
               />
             </div>
             <div>
-              <h1 className="text-3xl text-white capitalize">{bond?.name.toLowerCase()}</h1>
+              <h1 className="text-4xl text-white capitalize">{bond?.name.toLowerCase()}</h1>
               <p className="text-sm text-blue-100">
                 <TokenLink token={bond} withLink />
               </p>

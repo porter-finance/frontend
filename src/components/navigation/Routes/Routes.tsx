@@ -1,13 +1,14 @@
 import React from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 
-import Auction from '../../../pages/Auction'
-import BondDetail from '../../../pages/BondDetail'
-import CreateBond from '../../../pages/CreateBond'
-import Offerings from '../../../pages/Offerings'
-import Portfolio from '../../../pages/Portfolio'
-import Products from '../../../pages/Products'
-import { BaseCard } from '../../pureStyledComponents/BaseCard'
+import CreateModal from '@/components/ProductCreate/modal'
+import { BaseCard } from '@/components/pureStyledComponents/BaseCard'
+import Auction from '@/pages/Auction'
+import BondDetail from '@/pages/BondDetail'
+import CreateBond from '@/pages/CreateBond'
+import Offerings from '@/pages/Offerings'
+import Portfolio from '@/pages/Portfolio'
+import Products from '@/pages/Products'
 
 const AppRoutes: React.FC = () => {
   return (
@@ -16,6 +17,7 @@ const AppRoutes: React.FC = () => {
       <Route element={<Offerings />} path="/offerings" />
       <Route element={<Products />} path="/products" />
       <Route element={<CreateBond />} path="/offerings/create" />
+      <Route element={<CreateModal />} path="/products/create" />
       <Route element={<BondDetail />} path="/products/:bondId" />
       <Route element={<Portfolio />} path="/portfolio" />
       <Route element={<Navigate replace to="/offerings" />} path="/start" />
