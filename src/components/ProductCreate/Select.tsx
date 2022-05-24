@@ -89,7 +89,7 @@ const tokens = [
   },
 ]
 
-export default function Example() {
+export default function TokenSelector() {
   const [selected, setSelected] = useState(tokens[0])
 
   return (

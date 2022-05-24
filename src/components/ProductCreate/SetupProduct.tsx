@@ -5,7 +5,7 @@ import { DoubleArrowRightIcon } from '@radix-ui/react-icons'
 import { ActionButton } from '../auction/Claimer'
 import TooltipElement from '../common/Tooltip'
 import { FieldRowLabelStyledText, FieldRowWrapper } from '../form/InterestRateInputPanel'
-import Example from './Select'
+import TokenSelector from './Select'
 
 import { ReactComponent as UnicornSvg } from '@/assets/svg/simple-bond.svg'
 
@@ -70,7 +70,7 @@ const StepOne = ({ formValues }) => (
           tip="Token that will be borrowed and used for repayment"
         />
       </label>
-      <Example />
+      <TokenSelector />
     </div>
     <div className="w-full form-control">
       <label className="label">
