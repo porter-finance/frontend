@@ -5,7 +5,7 @@ import { DoubleArrowRightIcon } from '@radix-ui/react-icons'
 import { ActionButton } from '../auction/Claimer'
 import TooltipElement from '../common/Tooltip'
 import { FieldRowLabelStyledText, FieldRowWrapper } from '../form/InterestRateInputPanel'
-import TokenSelector from './Select'
+import TokenSelector from './BorrowTokenSelector'
 
 import { ReactComponent as UnicornSvg } from '@/assets/svg/simple-bond.svg'
 
@@ -71,39 +71,6 @@ const StepOne = ({ formValues }) => (
         />
       </label>
       <TokenSelector />
-    </div>
-    <div className="w-full form-control">
-      <label className="label">
-        <TooltipElement
-          left={<span className="label-text">Borrow token</span>}
-          tip="Token that will be borrowed and used for repayment"
-        />
-      </label>
-
-      <div className="z-0 dropdown">
-        <label tabIndex={0}>
-          <input
-            className="w-full input input-bordered"
-            name="token"
-            placeholder="Pick a token"
-            type="text"
-            value={formValues?.token}
-          />
-        </label>
-        <ul
-          className="overflow-auto p-3 w-full max-h-64 bg-[#1F2123] rounded-lg border border-[#2A2B2C] shadow scrollbar-thin scrollbar-track-zinc-800 scrollbar-thumb-zinc-700 dropdown-content menu"
-          tabIndex={0}
-        >
-          {[...Array(10).keys()].map((z) => (
-            <li className="" key={z}>
-              <span className="flex items-center space-x-2">
-                <UnicornSvg height={20} width={20} />
-                <span>UNI</span>
-              </span>
-            </li>
-          ))}
-        </ul>
-      </div>
     </div>
     <div className="w-full form-control">
       <label className="label">

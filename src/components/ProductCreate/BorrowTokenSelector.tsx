@@ -89,14 +89,14 @@ const tokens = [
   },
 ]
 
-export default function TokenSelector() {
+export default function BorrowTokenSelector() {
   const [selected, setSelected] = useState(tokens[0])
 
   return (
     <div className="">
       <Listbox onChange={setSelected} value={selected}>
         <div className="relative mt-1">
-          <Listbox.Button className="relative py-2 pr-10 pl-3 w-full text-sm text-left text-white bg-transparent rounded-lg border border-[#2A2B2C] focus-visible:border-indigo-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 shadow-md cursor-default">
+          <Listbox.Button className="relative py-2 pr-10 pl-3 w-full text-sm text-left text-white bg-transparent rounded-lg border border-[#2A2B2C] shadow-md cursor-default">
             <span className="block truncate">{selected.name}</span>
             <span className="flex absolute inset-y-0 right-0 items-center pr-2 pointer-events-none">
               <CaretSortIcon aria-hidden="true" className="w-5 h-5 text-gray-400" />
@@ -126,7 +126,7 @@ export default function TokenSelector() {
                         <span>{token.name}</span>
                       </span>
                       {selected ? (
-                        <span className="flex absolute inset-y-0 right-0 items-center pl-3 text-[#532DBE]">
+                        <span className="flex absolute inset-y-0 right-2 items-center pl-3 text-[#532DBE]">
                           <CheckIcon aria-hidden="true" className="w-5 h-5" />
                         </span>
                       ) : null}
