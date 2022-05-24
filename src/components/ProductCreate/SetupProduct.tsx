@@ -5,8 +5,31 @@ import { DoubleArrowRightIcon } from '@radix-ui/react-icons'
 import { ActionButton } from '../auction/Claimer'
 import TooltipElement from '../common/Tooltip'
 import { FieldRowLabelStyledText, FieldRowWrapper } from '../form/InterestRateInputPanel'
+import Example from './Select'
 
 import { ReactComponent as UnicornSvg } from '@/assets/svg/simple-bond.svg'
+
+export const TokenDetails = () => (
+  <div className="p-4 space-y-1 w-full text-xs text-white rounded-md form-control">
+    <div className="flex justify-between w-full">
+      <span className="flex items-center space-x-2">
+        <UnicornSvg height={20} width={20} />
+        <span>UNI</span>
+      </span>
+      <span>
+        <span className="text-[#696969]">Price:</span> 10.00 USDC
+      </span>
+    </div>
+    <div className="flex justify-between w-full">
+      <span>
+        <span className="text-[#696969]">Balance:</span> 1,000,000
+      </span>
+      <span>
+        <span className="text-[#696969]">Value:</span> 10,000,000 USDC
+      </span>
+    </div>
+  </div>
+)
 
 const StepOne = ({ formValues }) => (
   <>
@@ -47,13 +70,40 @@ const StepOne = ({ formValues }) => (
           tip="Token that will be borrowed and used for repayment"
         />
       </label>
-      <input
-        className="w-full input input-bordered"
-        name="token"
-        placeholder="Pick a token"
-        type="text"
-        value={formValues?.token}
-      />
+      <Example />
+    </div>
+    <div className="w-full form-control">
+      <label className="label">
+        <TooltipElement
+          left={<span className="label-text">Borrow token</span>}
+          tip="Token that will be borrowed and used for repayment"
+        />
+      </label>
+
+      <div className="z-0 dropdown">
+        <label tabIndex={0}>
+          <input
+            className="w-full input input-bordered"
+            name="token"
+            placeholder="Pick a token"
+            type="text"
+            value={formValues?.token}
+          />
+        </label>
+        <ul
+          className="overflow-auto p-3 w-full max-h-64 bg-[#1F2123] rounded-lg border border-[#2A2B2C] shadow scrollbar-thin scrollbar-track-zinc-800 scrollbar-thumb-zinc-700 dropdown-content menu"
+          tabIndex={0}
+        >
+          {[...Array(10).keys()].map((z) => (
+            <li className="" key={z}>
+              <span className="flex items-center space-x-2">
+                <UnicornSvg height={20} width={20} />
+                <span>UNI</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
     <div className="w-full form-control">
       <label className="label">
@@ -82,13 +132,28 @@ const StepTwo = ({ formValues }) => (
           tip="Collateral token that will be used"
         />
       </label>
-      <input
-        className="w-full input input-bordered"
-        name="collateralToken"
-        placeholder="Pick a token"
-        type="text"
-        value={formValues?.collateralToken}
-      />
+
+      <div className="dropdown">
+        <label tabIndex={0}>
+          <input
+            className="w-full input input-bordered"
+            name="collateralToken"
+            placeholder="Pick a token"
+            type="text"
+            value={formValues?.collateralToken}
+          />
+        </label>
+        <ul
+          className="overflow-auto p-3 w-full max-h-64 bg-[#1F2123] rounded-lg border border-[#2A2B2C] shadow scrollbar-thin scrollbar-track-zinc-800 scrollbar-thumb-zinc-700 dropdown-content menu"
+          tabIndex={0}
+        >
+          {[...Array(10).keys()].map((z) => (
+            <li className="" key={z}>
+              <TokenDetails />
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
     <div className="w-full form-control">
       <label className="label">
@@ -140,24 +205,8 @@ const StepThree = ({ formValues }) => (
           tip="Token that each bond will be convertible into"
         />
       </label>
-      <div className="p-4 space-y-2 w-full text-xs text-white rounded-md border border-[#2C2C2C] form-control">
-        <div className="flex justify-between">
-          <span className="flex items-center space-x-2">
-            <UnicornSvg height={20} width={20} />
-            <span>UNI</span>
-          </span>
-          <span>
-            <span className="text-[#696969]">Price:</span> 10.00 USDC
-          </span>
-        </div>
-        <div className="flex justify-between">
-          <span>
-            <span className="text-[#696969]">Balance:</span> 1,000,000
-          </span>
-          <span>
-            <span className="text-[#696969]">Value:</span> 10,000,000 USDC
-          </span>
-        </div>
+      <div className="border border-[#2C2C2C]">
+        <TokenDetails />
       </div>
     </div>
     <div className="w-full form-control">
@@ -220,7 +269,7 @@ const SummaryItem = ({ text, tip, title }) => (
 )
 
 const Summary = ({ currentStep }) => (
-  <div className="w-[425px] card">
+  <div className="overflow-visible w-[425px] card">
     <div className="card-body">
       <h1 className="pb-4 !text-xs uppercase border-b border-[#2C2C2C] card-title">Summary</h1>
       <div className="space-y-4">
@@ -273,7 +322,7 @@ const SetupProduct = () => {
       }}
     >
       <div className="flex justify-center space-x-8">
-        <div className="w-[326px] card">
+        <div className="overflow-visible w-[326px] card">
           <div className="card-body">
             <div className="flex items-center pb-4 space-x-4 border-b border-[#2C2C2C]">
               <DoubleArrowRightIcon className="p-1 w-6 h-6 bg-[#532DBE] rounded-md border border-[#ffffff22]" />
@@ -297,7 +346,7 @@ const SetupProduct = () => {
             </ul>
           </div>
         </div>
-        <div className="w-[425px] card">
+        <div className="overflow-visible w-[425px] card">
           <div className="card-body">
             <h1 className="!text-2xl card-title">{steps[currentStep]}</h1>
             <div className="space-y-4">
