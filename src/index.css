@@ -134,3 +134,14 @@ svg text tspan {
 g[role='tooltip'] {
   @apply ease-in-out duration-150;
 }
+
+/* daisy Swap fixes */
+.swap {
+  user-select: inherit;
+  place-content: inherit;
+  cursor: inherit;
+}
+
+.swap-active .swap-off {
+  z-index: -1;
+}
