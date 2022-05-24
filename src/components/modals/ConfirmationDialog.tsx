@@ -181,89 +181,11 @@ const GhostTransactionLink = ({ chainId, hash }) => (
     </svg>
   </GhostActionLink>
 )
-const TokenApproval = ({
-  actionColor,
-  beforeDisplay,
-  setTokenTransactionCreated,
-  tokenTransactionCreated,
-  unlock,
-}: {
-  actionColor: string
-  beforeDisplay: ReactElement
-  setTokenTransactionCreated: (hash: string) => void
-  tokenTransactionCreated: string
-  unlock: unlockProps
-}) => {
-  const { chainId } = useActiveWeb3React()
-  const [transactionPendingWalletConfirm, setTransactionPendingWalletConfirm] = useState(false)
-  const isUnlocking = unlock?.unlockState === ApprovalState.PENDING
-
-  return (
-    <>
-      <div>
-        <BodyPanel
-          after={{
-            show: !isUnlocking && tokenTransactionCreated,
-            display: <span>{unlock.token} Approved</span>,
-          }}
-          before={{
-            show: !isUnlocking && !tokenTransactionCreated,
-            display: beforeDisplay,
-          }}
-          color={actionColor}
-          during={{
-            show: isUnlocking,
-            display: <span>Approving {unlock.token}</span>,
-          }}
-        />
-        {!tokenTransactionCreated && unlock?.isLocked && (
-          <div className="mt-10">
-            <ActionButton
-              aria-label={`Approve ${unlock.token}`}
-              className={transactionPendingWalletConfirm || isUnlocking ? 'loading' : ''}
-              onClick={() => {
-                setTransactionPendingWalletConfirm(true)
-                unlock
-                  .onUnlock()
-                  .then((response) => {
-                    setTransactionPendingWalletConfirm(false)
-                    setTokenTransactionCreated(response?.hash || response)
-                  })
-                  .catch(() => {
-                    setTransactionPendingWalletConfirm(false)
-                  })
-              }}
-            >
-              {!isUnlocking && !transactionPendingWalletConfirm && `Approve ${unlock.token}`}
-              {!isUnlocking && transactionPendingWalletConfirm && 'Confirm approval in wallet'}
-              {isUnlocking && !transactionPendingWalletConfirm && `Approving ${unlock.token}`}
-            </ActionButton>
-          </div>
-        )}
-        {tokenTransactionCreated && (
-          <div className="flex flex-col justify-center items-center mt-20 space-y-4">
-            <GhostTransactionLink chainId={chainId} hash={tokenTransactionCreated} />
-
-            {!isUnlocking && (
-              <ActionButton
-                aria-label="Review order"
-                onClick={() => {
-                  setTokenTransactionCreated('')
-                }}
-              >
-                Review order
-              </ActionButton>
-            )}
-          </div>
-        )}
-      </div>
-    </>
-  )
-}
 
 const ConfirmationDialog = ({
   actionColor = 'blue',
   actionText,
+  actionTextDone = 'Done',
   beforeDisplay,
   finishedText,
   loadingText,
@@ -277,6 +199,7 @@ const ConfirmationDialog = ({
 }: {
   placeOrder: () => Promise<any>
   actionColor?: string
+  actionTextDone?: string
   actionText?: string
   onFinished?: () => void
   pendingText: string
@@ -292,8 +215,6 @@ const ConfirmationDialog = ({
   const allTransactions = useAllTransactions()
 
   const [transactionError, setTransactionError] = useState(false)
-  const [tokenTransactionCreated, setTokenTransactionCreated] = useState('')
-
   const [transactionPendingWalletConfirm, setTransactionPendingWalletConfirm] = useState(false)
   const [transactionComplete, setTransactionComplete] = useState(false)
   const [showTransactionCreated, setShowTransactionCreated] = useState('')
@@ -335,7 +256,6 @@ const ConfirmationDialog = ({
 
       if (transactionComplete) {
         setTransactionComplete(false)
-        setTokenTransactionCreated('')
         setShowTransactionCreated('')
       }
     }, 400)
@@ -345,18 +265,8 @@ const ConfirmationDialog = ({
     <Modal hideCloseIcon={waitingTransactionToComplete} isOpen={open} onDismiss={onDismiss}>
       {!transactionError && (
         <>
-          {title && !showTransactionCreated && !transactionComplete && !tokenTransactionCreated && (
+          {title && !showTransactionCreated && !transactionComplete && (
             <DialogTitle>{title}</DialogTitle>
-          )}
-
-          {unlock && !showTransactionCreated && !transactionComplete && (
-            <TokenApproval
-              actionColor={actionColor}
-              beforeDisplay={beforeDisplay}
-              setTokenTransactionCreated={setTokenTransactionCreated}
-              tokenTransactionCreated={tokenTransactionCreated}
-              unlock={unlock}
-            />
           )}
 
           <div>
@@ -376,33 +286,30 @@ const ConfirmationDialog = ({
               }}
             />
 
-            {!transactionComplete &&
-              !tokenTransactionCreated &&
-              !showTransactionCreated &&
-              !unlock?.isLocked && (
-                <div className="mt-10 mb-0">
-                  <ActionButton
-                    aria-label={actionText}
-                    className={transactionPendingWalletConfirm ? 'loading' : ''}
-                    color={actionColor}
-                    onClick={() => {
-                      setTransactionPendingWalletConfirm(true)
-                      placeOrder()
-                        .then((response) => {
-                          setTransactionPendingWalletConfirm(false)
-                          setShowTransactionCreated(response?.hash || response)
-                        })
-                        .catch((e) => {
-                          setTransactionError(e?.message || e)
-                          setTransactionPendingWalletConfirm(false)
-                        })
-                    }}
-                  >
-                    {transactionPendingWalletConfirm && pendingText}
-                    {!transactionPendingWalletConfirm && actionText}
-                  </ActionButton>
-                </div>
-              )}
+            {!transactionComplete && !showTransactionCreated && !unlock?.isLocked && (
+              <div className="mt-10 mb-0">
+                <ActionButton
+                  aria-label={actionText}
+                  className={transactionPendingWalletConfirm ? 'loading' : ''}
+                  color={actionColor}
+                  onClick={() => {
+                    setTransactionPendingWalletConfirm(true)
+                    placeOrder()
+                      .then((response) => {
+                        setTransactionPendingWalletConfirm(false)
+                        setShowTransactionCreated(response?.hash || response)
+                      })
+                      .catch((e) => {
+                        setTransactionError(e?.message || e)
+                        setTransactionPendingWalletConfirm(false)
+                      })
+                  }}
+                >
+                  {transactionPendingWalletConfirm && pendingText}
+                  {!transactionPendingWalletConfirm && actionText}
+                </ActionButton>
+              </div>
+            )}
           </div>
 
           {(showTransactionCreated || transactionComplete) && (
@@ -413,7 +320,7 @@ const ConfirmationDialog = ({
 
               {transactionComplete && (
                 <ActionButton aria-label="Done" color={actionColor} onClick={onDismiss}>
-                  Done
+                  {actionTextDone}
                 </ActionButton>
               )}
             </div>

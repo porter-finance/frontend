@@ -119,6 +119,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const { auctionDetails, auctionInfoLoading } = useAuctionDetails(auctionIdentifier)
   const { signature } = useSignature(auctionIdentifier, account)
 
+  const [showTokenConfirm, setShowTokenConfirm] = useState<boolean>(false)
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [showWarning, setShowWarning] = useState<boolean>(false)
   const [showWarningWrongChainId, setShowWarningWrongChainId] = useState<boolean>(false)
@@ -179,12 +180,17 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     }
 
     const sameOrder = orders.orders.find((order) => order.price === price)
-
-    if (!sameOrder) {
-      setShowConfirm(true)
-    } else {
+    if (sameOrder) {
       setShowWarning(true)
+      return
     }
+
+    if (notApproved) {
+      setShowTokenConfirm(true)
+      return
+    }
+
+    setShowConfirm(true)
   }
 
   const cancelDate = React.useMemo(
@@ -231,6 +237,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
       showWarning ||
       showWarningWrongChainId ||
       showConfirm ||
+      showTokenConfirm ||
       sellAmount === '' ||
       price === '') &&
     true
@@ -412,49 +419,52 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                     </div>
                   </Modal>
 
-                  {notApproved && (
-                    <ConfirmationDialog
-                      actionText={`Approve ${biddingTokenDisplay}`}
-                      beforeDisplay={
-                        <ReviewOrder
-                          amountToken={graphInfo?.bond}
-                          cancelCutoff={cancelCutoff}
-                          data={reviewData}
-                          orderPlacingOnly={orderPlacingOnly}
-                          priceToken={graphInfo?.bond?.paymentToken}
-                        />
+                  <ConfirmationDialog
+                    actionText={`Approve ${biddingTokenDisplay}`}
+                    actionTextDone="Review order"
+                    beforeDisplay={
+                      <ReviewOrder
+                        amountToken={graphInfo?.bond}
+                        cancelCutoff={cancelCutoff}
+                        data={reviewData}
+                        orderPlacingOnly={orderPlacingOnly}
+                        priceToken={graphInfo?.bond?.paymentToken}
+                      />
+                    }
+                    finishedText={`${biddingTokenDisplay} Approved`}
+                    loadingText={`Approving ${biddingTokenDisplay}`}
+                    onOpenChange={(to) => {
+                      setShowTokenConfirm(to)
+
+                      if (!notApproved) {
+                        setShowConfirm(true)
                       }
-                      finishedText="Review order"
-                      loadingText="Placing order"
-                      onOpenChange={setShowConfirm}
-                      open={showConfirm}
-                      pendingText="Confirm approval in wallet"
-                      placeOrder={approveCallback}
-                      title="Review order"
-                    />
-                  )}
-                  {!notApproved && (
-                    <ConfirmationDialog
-                      actionText="Place order"
-                      beforeDisplay={
-                        <ReviewOrder
-                          amountToken={graphInfo?.bond}
-                          cancelCutoff={cancelCutoff}
-                          data={reviewData}
-                          orderPlacingOnly={orderPlacingOnly}
-                          priceToken={graphInfo?.bond?.paymentToken}
-                        />
-                      }
-                      finishedText="Order placed"
-                      loadingText="Placing order"
-                      onFinished={refetchOrders}
-                      onOpenChange={setShowConfirm}
-                      open={showConfirm}
-                      pendingText="Confirm order in wallet"
-                      placeOrder={placeOrderCallback}
-                      title="Review order"
-                    />
-                  )}
+                    }}
+                    open={showTokenConfirm}
+                    pendingText="Confirm approval in wallet"
+                    placeOrder={approveCallback}
+                    title="Review order"
+                  />
+                  <ConfirmationDialog
+                    actionText="Place order"
+                    beforeDisplay={
+                      <ReviewOrder
+                        amountToken={graphInfo?.bond}
+                        cancelCutoff={cancelCutoff}
+                        data={reviewData}
+                        orderPlacingOnly={orderPlacingOnly}
+                        priceToken={graphInfo?.bond?.paymentToken}
+                      />
+                    }
+                    finishedText="Order placed"
+                    loadingText="Placing order"
+                    onFinished={refetchOrders}
+                    onOpenChange={setShowConfirm}
+                    open={showConfirm}
+                    pendingText="Confirm order in wallet"
+                    placeOrder={placeOrderCallback}
+                    title="Review order"
+                  />
                   <div className="flex flex-row justify-between items-center mt-4 mb-3 text-xs text-[#9F9F9F]">
                     <div>{biddingTokenDisplay} Balance</div>
                     <div>
