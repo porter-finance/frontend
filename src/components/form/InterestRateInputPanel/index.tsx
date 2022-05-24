@@ -122,7 +122,7 @@ const InterestRateInputPanel = ({
         <div className="w-60 text-sm text-[#E0E0E0]">{!account ? '-' : data.apr}</div>
         <Tooltip
           left={<FieldRowLabelStyledText>Your APR</FieldRowLabelStyledText>}
-          tip="APR you will earn assuming no default. If the final price is lower than your bid price, you will receive more bonds than ordered and, therefore, earn a higher APR."
+          tip="APR you will earn assuming no default. If the final price is lower than your bid price, you will receive more bonds than ordered at a lower price, therefore, earning a higher APR."
         />
       </div>
     </FieldRowWrapper>
