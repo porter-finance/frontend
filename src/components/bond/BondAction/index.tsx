@@ -361,7 +361,7 @@ const BondAction = ({
                       extra={extra}
                       key={index}
                       token={token}
-                      value={value}
+                      value={value === '0' || !value ? '-' : value}
                     />
                   ))}
 
