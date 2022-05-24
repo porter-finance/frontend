@@ -46,7 +46,7 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
   const collateralizationRatio = ((collateralValue / paymentTokenPrice) * 100).toLocaleString()
 
   const strikePrice =
-    collateralPerBond > 0 ? (paymentTokenPrice / collateralPerBond).toLocaleString() : 0
+    convertiblePerBond > 0 ? (paymentTokenPrice / convertiblePerBond).toLocaleString() : 0
 
   return [
     {
