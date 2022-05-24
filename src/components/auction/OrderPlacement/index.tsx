@@ -12,7 +12,11 @@ import kycLinks from '../../../assets/links/kycLinks.json'
 import { ReactComponent as PrivateIcon } from '../../../assets/svg/private.svg'
 import { isDev } from '../../../connectors'
 import { useActiveWeb3React } from '../../../hooks'
-import { ApprovalState, useApproveCallback } from '../../../hooks/useApproveCallback'
+import {
+  ApprovalState,
+  useApproveCallback,
+  useUnapproveCallback,
+} from '../../../hooks/useApproveCallback'
 import { useAuction } from '../../../hooks/useAuction'
 import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
 import { usePlaceOrderCallback } from '../../../hooks/usePlaceOrderCallback'
@@ -132,6 +136,11 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const parsedBiddingAmount = tryParseAmount(sellAmount, biddingToken)
   const approvalTokenAmount: TokenAmount | undefined = parsedBiddingAmount
   const [approval, approveCallback] = useApproveCallback(
+    approvalTokenAmount,
+    EASY_AUCTION_NETWORKS[chainId as ChainId],
+    chainIdFromWeb3 as ChainId,
+  )
+  const [, unapproveCallback] = useUnapproveCallback(
     approvalTokenAmount,
     EASY_AUCTION_NETWORKS[chainId as ChainId],
     chainIdFromWeb3 as ChainId,
@@ -364,6 +373,12 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                     Review order
                   </ActionButton>
 
+                  {isDev && !notApproved && (
+                    <a className="mt-2 text-xs text-white" href="#" onClick={unapproveCallback}>
+                      Unapprove token (DEV ONLY)
+                    </a>
+                  )}
+
                   <Modal isOpen={showCountry} onDismiss={setShowCountryDisabledModal}>
                     <div className="mt-10 space-y-6 text-center">
                       <h1 className="text-xl text-[#E0E0E0]">Access restriction warning</h1>
@@ -397,32 +412,49 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                     </div>
                   </Modal>
 
-                  <ConfirmationDialog
-                    actionText="Place order"
-                    beforeDisplay={
-                      <ReviewOrder
-                        amountToken={graphInfo?.bond}
-                        cancelCutoff={cancelCutoff}
-                        data={reviewData}
-                        orderPlacingOnly={orderPlacingOnly}
-                        priceToken={graphInfo?.bond?.paymentToken}
-                      />
-                    }
-                    finishedText="Order placed"
-                    loadingText="Placing order"
-                    onFinished={refetchOrders}
-                    onOpenChange={setShowConfirm}
-                    open={showConfirm}
-                    pendingText="Confirm order in wallet"
-                    placeOrder={placeOrderCallback}
-                    title="Review order"
-                    unlock={{
-                      token: biddingTokenDisplay,
-                      isLocked: notApproved,
-                      onUnlock: approveCallback,
-                      unlockState: approval,
-                    }}
-                  />
+                  {notApproved && (
+                    <ConfirmationDialog
+                      actionText={`Approve ${biddingTokenDisplay}`}
+                      beforeDisplay={
+                        <ReviewOrder
+                          amountToken={graphInfo?.bond}
+                          cancelCutoff={cancelCutoff}
+                          data={reviewData}
+                          orderPlacingOnly={orderPlacingOnly}
+                          priceToken={graphInfo?.bond?.paymentToken}
+                        />
+                      }
+                      finishedText="Review order"
+                      loadingText="Placing order"
+                      onOpenChange={setShowConfirm}
+                      open={showConfirm}
+                      pendingText="Confirm approval in wallet"
+                      placeOrder={approveCallback}
+                      title="Review order"
+                    />
+                  )}
+                  {!notApproved && (
+                    <ConfirmationDialog
+                      actionText="Place order"
+                      beforeDisplay={
+                        <ReviewOrder
+                          amountToken={graphInfo?.bond}
+                          cancelCutoff={cancelCutoff}
+                          data={reviewData}
+                          orderPlacingOnly={orderPlacingOnly}
+                          priceToken={graphInfo?.bond?.paymentToken}
+                        />
+                      }
+                      finishedText="Order placed"
+                      loadingText="Placing order"
+                      onFinished={refetchOrders}
+                      onOpenChange={setShowConfirm}
+                      open={showConfirm}
+                      pendingText="Confirm order in wallet"
+                      placeOrder={placeOrderCallback}
+                      title="Review order"
+                    />
+                  )}
                   <div className="flex flex-row justify-between items-center mt-4 mb-3 text-xs text-[#9F9F9F]">
                     <div>{biddingTokenDisplay} Balance</div>
                     <div>
