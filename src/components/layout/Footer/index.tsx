@@ -42,7 +42,7 @@ export const Footer: React.FC = ({ ...restProps }) => {
           </FooterLogo>
           <FooterLinks className="grid-flow-col gap-4 md:justify-self-end md:place-self-center">
             <a href="https://docs.porter.finance/portal/faq">Faq</a>
-            <a href="https://medium.com/@porterfinance_">Blog</a>
+            <a href="https://blog.porter.finance">Blog</a>
             <a href="https://docs.porter.finance">Docs</a>
             <a href="https://discord.gg/mx8tsEaNut">Discord</a>
             <a href="https://twitter.com/porterfinance_">Twitter</a>
