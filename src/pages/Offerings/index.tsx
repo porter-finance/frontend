@@ -12,6 +12,7 @@ import { ReactComponent as OTCIcon } from '@/assets/svg/otc.svg'
 import { AuctionStatusPill } from '@/components/auction/OrderbookTable'
 import Table from '@/components/auctions/Table'
 import { ErrorBoundaryWithFallback } from '@/components/common/ErrorAndReload'
+import TooltipElement from '@/components/common/Tooltip'
 import { calculateInterestRate } from '@/components/form/InterestRateInputPanel'
 import TokenLogo from '@/components/token/TokenLogo'
 import { Auction } from '@/generated/graphql'
@@ -82,17 +83,17 @@ const columns = [
     filter: 'searchInTags',
   },
   {
-    Header: 'End Date',
-    accessor: 'endDate',
+    Header: 'Maximum APR',
+    tooltip:
+      'Maximum APR the issuer is willing to pay. This is calculated using the minimum bond price.',
+    accessor: 'maximumAPR',
     align: 'flex-start',
     style: {},
     filter: 'searchInTags',
   },
   {
-    Header: 'Maximum APR',
-    tooltip:
-      'Maximum APR the issuer is willing to pay. This is calculated using the minimum bond price.',
-    accessor: 'maximumAPR',
+    Header: 'End Date',
+    accessor: 'endDate',
     align: 'flex-start',
     style: {},
     filter: 'searchInTags',
@@ -131,10 +132,18 @@ const Offerings = () => {
       maturityValue: `1 ${auction?.bond.paymentToken.symbol}`,
       endDate: (
         <span className="uppercase">
-          {dayjs(auction?.end * 1000)
-            .utc()
-            .tz()
-            .format('ll')}
+          {
+            <TooltipElement
+              left={dayjs(auction?.end * 1000)
+                .utc()
+                .tz()
+                .format('ll')}
+              tip={dayjs(auction?.end * 1000)
+                .utc()
+                .tz()
+                .format('LLLL z ZZ (zzz)')}
+            />
+          }
         </span>
       ),
       offering: (
