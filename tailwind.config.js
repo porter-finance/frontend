@@ -1,13 +1,9 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 const defaultTheme = require('tailwindcss/defaultTheme')
 
 module.exports = {
   content: ['./src/**/*.{js,ts,jsx,tsx}', './public/index.html'],
   theme: {
     extend: {
-      transitionProperty: {
-        height: 'height',
-      },
       colors: {
         white: '#e0e0e0',
         'base-100': '#131415',

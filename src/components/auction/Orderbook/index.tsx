@@ -84,22 +84,17 @@ export const OrderBook: React.FC<OrderbookGraphProps> = (props) => {
           </div>
         </div>
 
-        <div className={`swap ${!showOrderList ? 'swap-active' : ''}`}>
-          <div className="swap-on">
-            {hasError && <OrderBookError error={error} />}
-            {!hasError && (
-              <OrderBookChart
-                baseToken={baseToken}
-                chainId={chainId}
-                data={processedOrderbook}
-                quoteToken={quoteToken}
-              />
-            )}
-          </div>
-          <div className="swap-off">
-            <OrderBookTable derivedAuctionInfo={derivedAuctionInfo} />
-          </div>
-        </div>
+        {hasError && <OrderBookError error={error} />}
+        {!hasError && !showOrderList && (
+          <OrderBookChart
+            baseToken={baseToken}
+            chainId={chainId}
+            data={processedOrderbook}
+            quoteToken={quoteToken}
+          />
+        )}
+
+        {showOrderList && <OrderBookTable derivedAuctionInfo={derivedAuctionInfo} />}
       </div>
     </div>
   )
