@@ -16,6 +16,7 @@ const singleBondQuery = gql`
     bond(id: $bondId) {
       id
       name
+      maxSupply
       state
       symbol
       type
