@@ -142,7 +142,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     chainIdFromWeb3 as ChainId,
   )
   const [, unapproveCallback] = useUnapproveCallback(
-    approvalTokenAmount,
+    new TokenAmount(biddingToken, '0'),
     EASY_AUCTION_NETWORKS[chainId as ChainId],
     chainIdFromWeb3 as ChainId,
   )
