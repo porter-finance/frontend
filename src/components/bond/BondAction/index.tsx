@@ -385,6 +385,14 @@ const BondAction = ({
                   Review {isConvertComponent ? 'conversion' : 'redemption'}
                 </ActionButton>
               )}
+              <div className="flex justify-between">
+                <span>Balance</span>
+                <span>
+                  {`${Number(formatUnits(bondTokenBalance, bond?.decimals)).toLocaleString()} ${
+                    bond?.name
+                  }`}
+                </span>
+              </div>
             </div>
           </div>
           <ConfirmationDialog
