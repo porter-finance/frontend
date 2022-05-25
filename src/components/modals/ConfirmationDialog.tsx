@@ -4,13 +4,11 @@ import { ReactComponent as GreenCheckIcon } from '../../assets/svg/greencheck.sv
 import { ReactComponent as PurplePorterIcon } from '../../assets/svg/porter-purple.svg'
 import { ReactComponent as PorterIcon } from '../../assets/svg/porter.svg'
 import { useActiveWeb3React } from '../../hooks'
-import { ApprovalState } from '../../hooks/useApproveCallback'
 import { useAllTransactions } from '../../state/transactions/hooks'
 import { getExplorerLink } from '../../utils'
 import { ActionButton, GhostActionLink } from '../auction/Claimer'
 import { TokenInfo } from '../bond/BondAction'
 import Tooltip from '../common/Tooltip'
-import { unlockProps } from '../form/AmountInputPanel'
 import Modal, { DialogTitle } from './common/Modal'
 
 export const OopsWarning = ({
@@ -195,7 +193,6 @@ const ConfirmationDialog = ({
   pendingText,
   placeOrder,
   title,
-  unlock,
 }: {
   placeOrder: () => Promise<any>
   actionColor?: string
@@ -207,7 +204,6 @@ const ConfirmationDialog = ({
   loadingText: string
   finishedText: string
   beforeDisplay: ReactElement
-  unlock?: unlockProps
   onOpenChange: (open: boolean) => void
   open: boolean
 }) => {
@@ -218,9 +214,6 @@ const ConfirmationDialog = ({
   const [transactionPendingWalletConfirm, setTransactionPendingWalletConfirm] = useState(false)
   const [transactionComplete, setTransactionComplete] = useState(false)
   const [showTransactionCreated, setShowTransactionCreated] = useState('')
-
-  // For token state only
-  const isUnlocking = unlock?.unlockState === ApprovalState.PENDING
 
   // get the latest transaction that created the bond
   // TODO: so bad, should wagmi/usedapp instead
@@ -241,8 +234,7 @@ const ConfirmationDialog = ({
       })
   }, [showTransactionCreated, onFinished, allTransactions])
 
-  const waitingTransactionToComplete =
-    (showTransactionCreated || isUnlocking) && !transactionComplete
+  const waitingTransactionToComplete = showTransactionCreated && !transactionComplete
 
   const onDismiss = () => {
     if (waitingTransactionToComplete) return false
@@ -276,7 +268,7 @@ const ConfirmationDialog = ({
                 display: <span>{finishedText}</span>,
               }}
               before={{
-                show: !unlock && !showTransactionCreated && !transactionComplete,
+                show: !showTransactionCreated && !transactionComplete,
                 display: beforeDisplay,
               }}
               color={actionColor}
@@ -286,7 +278,7 @@ const ConfirmationDialog = ({
               }}
             />
 
-            {!transactionComplete && !showTransactionCreated && !unlock?.isLocked && (
+            {!transactionComplete && !showTransactionCreated && (
               <div className="mt-10 mb-0">
                 <ActionButton
                   aria-label={actionText}
