@@ -1,4 +1,5 @@
 import React from 'react'
+import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { formatUnits } from '@ethersproject/units'
@@ -9,7 +10,7 @@ import { usePagination, useTable } from 'react-table'
 import { useActiveWeb3React } from '../../../hooks'
 import { useAuctionBids } from '../../../hooks/useAuctionBids'
 import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
-import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
+import { AuctionState, DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { OrderStatus } from '../../../state/orders/reducer'
 import { getExplorerLink, getTokenDisplay } from '../../../utils'
 import Tooltip from '../../common/Tooltip'
@@ -17,7 +18,9 @@ import { calculateInterestRate } from '../../form/InterestRateInputPanel'
 import { orderStatusText } from '../OrdersTable'
 
 import { Auction } from '@/generated/graphql'
+import { useGetAuctionProceeds } from '@/hooks/useClaimOrderCallback'
 import { getAuctionStates } from '@/pages/Offerings'
+import { RouteAuctionIdentifier, parseURL } from '@/state/orderPlacement/reducer'
 
 export const OverflowWrap = styled.div`
   max-width: 100%;
@@ -56,10 +59,12 @@ export const calculateRow = (
   maturityDate,
   derivedAuctionInfo,
   auctionEndDate,
+  bidStatus = '',
 ) => {
   let statusText = ''
   if (row.createtx) statusText = orderStatusText[OrderStatus.PLACED]
   if (!row.createtx) statusText = orderStatusText[OrderStatus.PENDING]
+  if (bidStatus) statusText = bidStatus
   if (row.canceltx) statusText = 'Cancelled'
   const status = statusText
   const price = `${(row.payable / row.size).toLocaleString()} ${paymentToken}`
@@ -304,9 +309,28 @@ export const BidTransactionLink = ({ bid }) => {
   )
 }
 
+export const useBidStatus = (derivedAuctionInfo: DerivedAuctionInfo) => {
+  const auctionIdentifier = parseURL(useParams<RouteAuctionIdentifier>())
+  const { claimableBidFunds, claimableBonds } = useGetAuctionProceeds(
+    auctionIdentifier,
+    derivedAuctionInfo,
+  )
+
+  if (derivedAuctionInfo?.auctionState !== AuctionState.CLAIMING) return ''
+
+  const claimBid = claimableBidFunds && Number(claimableBidFunds.toSignificant(6))
+  const claimBond = claimableBonds && Number(claimableBonds.toSignificant(6))
+
+  let bidStatus = ''
+  if (!claimBid && claimBond) bidStatus = 'Fully filled'
+  if (claimBid && claimBond) bidStatus = 'Partially filled'
+  if (claimBid && !claimBond) bidStatus = 'Unfilled'
+
+  return bidStatus
+}
+
 export const OrderBookTable: React.FC<OrderBookTableProps> = ({ derivedAuctionInfo }) => {
   const { data, loading } = useAuctionBids()
-
   const bids = data?.bids
   const { auctionEndDate, maturityDate } = useBondMaturityForAuction()
   const paymentToken = getTokenDisplay(derivedAuctionInfo?.biddingToken)
