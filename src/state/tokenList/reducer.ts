@@ -10,7 +10,7 @@ const initialState: TokenListState = {
   tokens: {},
 }
 
-const hardCodedForDev = [
+export const usdcForDevUseOnly = [
   '0x0572bef658972cb2b573210faf9756d20cea78a5',
   '0x02debf352c81339a92ba137489a72885c6a12376',
 ]
@@ -20,7 +20,7 @@ export default createReducer<TokenListState>(initialState, (builder) =>
     const tokens = tokenList ?? {}
 
     // USDC used in dev for a pretty logo
-    hardCodedForDev.forEach(
+    usdcForDevUseOnly.forEach(
       (token) => (tokens[token] = 'https://etherscan.io/token/images/centre-usdc_28.png'),
     )
 
