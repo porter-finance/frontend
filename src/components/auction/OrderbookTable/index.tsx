@@ -322,7 +322,7 @@ export const useBidStatus = (derivedAuctionInfo: DerivedAuctionInfo) => {
   const claimBond = claimableBonds && Number(claimableBonds.toSignificant(6))
 
   let bidStatus = ''
-  if (!claimBid && claimBond) bidStatus = 'Fully filled'
+  if (!claimBid && claimBond) bidStatus = 'Filled'
   if (claimBid && claimBond) bidStatus = 'Partially filled'
   if (claimBid && !claimBond) bidStatus = 'Unfilled'
 
