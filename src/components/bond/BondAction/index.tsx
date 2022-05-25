@@ -5,15 +5,12 @@ import { formatUnits, parseUnits } from '@ethersproject/units'
 import { Token, TokenAmount } from '@josojo/honeyswap-sdk'
 import { useWeb3React } from '@web3-react/core'
 import dayjs from 'dayjs'
-import { round } from 'lodash'
 
 import { useActiveWeb3React } from '../../../hooks'
 import { useBond } from '../../../hooks/useBond'
-import { getValuePerBond } from '../../../hooks/useBondExtraDetails'
 import { useConvertBond } from '../../../hooks/useConvertBond'
 import { usePreviewBond } from '../../../hooks/usePreviewBond'
 import { useRedeemBond } from '../../../hooks/useRedeemBond'
-import { useTokenPrice } from '../../../hooks/useTokenPrice'
 import { BondActions, getBondStates } from '../../../pages/BondDetail'
 import { useActivePopups, useWalletModalToggle } from '../../../state/application/hooks'
 import { getExplorerLink, getTokenDisplay } from '../../../utils'
@@ -25,7 +22,7 @@ import ConfirmationDialog, { ReviewConvert } from '../../modals/ConfirmationDial
 import { FieldRowTokenSymbol } from '../../pureStyledComponents/FieldRow'
 import TokenLogo from '../../token/TokenLogo'
 
-import { Bond } from '@/generated/graphql'
+import { useUSDPerBond } from '@/hooks/useBondExtraDetails'
 
 export const TokenPill = ({ token }) => {
   const { chainId } = useActiveWeb3React()
@@ -93,6 +90,7 @@ const BondAction = ({
 
   const bondId = overwriteBondId || params?.bondId
   const { data: bond } = useBond(bondId)
+  const { convertibleValue } = useUSDPerBond(bond || undefined)
   const bondTokenBalance = bond?.tokenBalances?.[0]?.amount || 0
 
   const [bondsToRedeem, setBondsToRedeem] = useState(null)
@@ -112,7 +110,7 @@ const BondAction = ({
 
     if (bond) {
       const bondsToRedeemBigNumber =
-        Number(bondsToRedeem) && parseUnits(bondsToRedeem, bond.decimals)
+        (Number(bondsToRedeem) && parseUnits(bondsToRedeem, bond.decimals)) || 0
       tok = new Token(chainId, bond.id, bond.decimals, bond.symbol, bond.name)
       payTok = new Token(
         chainId,
@@ -133,9 +131,6 @@ const BondAction = ({
   const { convert } = useConvertBond(BondAmount, bondId)
   const { previewConvert, previewRedeem } = usePreviewBond(bondId)
   const toggleWalletModal = useWalletModalToggle()
-  const convertiblePerBond = getValuePerBond(bond as Bond, bond?.convertibleRatio)
-  const { data: collateralTokenPrice } = useTokenPrice(bond?.collateralToken.id)
-  const convertibleValue = round(convertiblePerBond * collateralTokenPrice, 3)
 
   useEffect(() => {
     if (!BondAmount) return
@@ -254,6 +249,7 @@ const BondAction = ({
     // This should only be shown when bond is in active state
     const collateralTokensAmount = previewConvertVal
     assetsToReceive.push({
+      extra: `($${(convertibleValue * Number(collateralTokensAmount)).toLocaleString()})`,
       token: bond?.collateralToken,
       value: Number(collateralTokensAmount).toLocaleString(undefined, {
         maximumSignificantDigits: bond?.collateralToken?.decimals,
