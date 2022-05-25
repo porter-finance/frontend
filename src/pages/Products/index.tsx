@@ -109,7 +109,7 @@ export const createTable = (data: Bond[]) =>
         </span>
       ),
       cost: clearingPrice
-        ? `${Number(formatUnits(clearingPrice * maxSupply, decimals)).toLocaleString()} ${
+        ? `${Number(formatUnits(BigInt(clearingPrice * maxSupply), decimals)).toLocaleString()} ${
             paymentToken.symbol
           }`
         : '-',
