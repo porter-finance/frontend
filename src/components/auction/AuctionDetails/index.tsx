@@ -5,7 +5,7 @@ import { isBigNumberish } from '@ethersproject/bignumber/lib/bignumber'
 import { formatUnits } from '@ethersproject/units'
 
 import { useAuction } from '../../../hooks/useAuction'
-import { AuctionState, DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
+import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderbookState } from '../../../state/orderbook/hooks'
 import { abbreviation } from '../../../utils/numeral'
@@ -15,7 +15,7 @@ import { AuctionTimer } from '../AuctionTimer'
 import { ExtraDetailsItem, Props as ExtraDetailsItemProps } from '../ExtraDetailsItem'
 import { AuctionStatusPill } from '../OrderbookTable'
 
-import { currentTimeInUTC } from '@/utils/tools'
+import { Auction } from '@/generated/graphql'
 
 const TokenValue = styled.span`
   line-height: 1.2;
@@ -31,13 +31,30 @@ interface Props {
   derivedAuctionInfo: DerivedAuctionInfo
 }
 
+export const TokenInfoWithLink = ({
+  auction,
+  value,
+  withLink = true,
+}: {
+  auction: Pick<Auction, 'bidding'>
+  value: number
+  withLink: boolean
+}) => (
+  <TokenValue className="space-x-1">
+    <span>
+      {isBigNumberish(value)
+        ? abbreviation(formatUnits(value, auction?.bidding?.decimals))
+        : Number(value).toLocaleString()}
+    </span>
+    <TokenLink token={auction?.bidding} withLink={withLink} />
+  </TokenValue>
+)
+
 const AuctionDetails = (props: Props) => {
-  const { auctionIdentifier, derivedAuctionInfo } = props
+  const { auctionIdentifier } = props
 
-  const { data: graphInfo } = useAuction(auctionIdentifier?.auctionId)
+  const { data: auction } = useAuction(auctionIdentifier?.auctionId)
   const { orderbookPrice: auctionCurrentPrice } = useOrderbookState()
-
-  const settling = derivedAuctionInfo?.auctionState === AuctionState.NEEDS_SETTLED
 
   let totalBidVolume,
     offeringSize,
@@ -48,55 +65,56 @@ const AuctionDetails = (props: Props) => {
   let currentBondAPR,
     maxBondAPR = '-'
 
-  if (graphInfo) {
-    const TokenInfoWithLink = ({ value, withLink = true }) => (
-      <TokenValue className="space-x-1">
-        <span>
-          {isBigNumberish(value)
-            ? abbreviation(formatUnits(value, graphInfo?.bidding?.decimals))
-            : Number(value).toLocaleString()}
-        </span>
-        <TokenLink token={graphInfo?.bidding} withLink={withLink} />
-      </TokenValue>
-    )
-
+  if (auction) {
     offeringSize = {
       fullNumberHint: Number(
-        formatUnits(graphInfo.offeringSize, graphInfo.bond.decimals),
+        formatUnits(auction.offeringSize, auction.bond.decimals),
       ).toLocaleString(),
-      value: `${abbreviation(formatUnits(graphInfo.offeringSize, graphInfo.bond.decimals))} bonds`,
+      value: `${abbreviation(formatUnits(auction.offeringSize, auction.bond.decimals))} bonds`,
     }
     totalBidVolume = {
       fullNumberHint: Number(
-        formatUnits(graphInfo.totalBidVolume, graphInfo.bidding.decimals),
+        formatUnits(auction.totalBidVolume, auction.bidding.decimals),
       ).toLocaleString(),
-      value: <TokenInfoWithLink value={graphInfo.totalBidVolume} withLink={false} />,
+      value: (
+        <TokenInfoWithLink auction={auction} value={auction.totalBidVolume} withLink={false} />
+      ),
     }
     minimumFundingThreshold = {
       fullNumberHint: Number(
-        formatUnits(graphInfo.minimumFundingThreshold, graphInfo.bidding.decimals),
+        formatUnits(auction.minimumFundingThreshold, auction.bidding.decimals),
       ).toLocaleString(),
-      value: <TokenInfoWithLink value={graphInfo.minimumFundingThreshold} withLink={false} />,
+      value: (
+        <TokenInfoWithLink
+          auction={auction}
+          value={auction.minimumFundingThreshold}
+          withLink={false}
+        />
+      ),
     }
     minimumBondPrice = {
-      fullNumberHint: graphInfo?.minimumBondPrice.toLocaleString(),
-      value: <TokenInfoWithLink value={graphInfo.minimumBondPrice} withLink={false} />,
+      fullNumberHint: auction?.minimumBondPrice.toLocaleString(),
+      value: (
+        <TokenInfoWithLink auction={auction} value={auction.minimumBondPrice} withLink={false} />
+      ),
     }
     minimumBidSize = {
       fullNumberHint: Number(
-        formatUnits(graphInfo.minimumBidSize, graphInfo.bidding.decimals),
+        formatUnits(auction.minimumBidSize, auction.bidding.decimals),
       ).toLocaleString(),
-      value: <TokenInfoWithLink value={graphInfo.minimumBidSize} withLink={false} />,
+      value: (
+        <TokenInfoWithLink auction={auction} value={auction.minimumBidSize} withLink={false} />
+      ),
     }
     currentBondAPR = calculateInterestRate({
       price: auctionCurrentPrice,
-      maturityDate: graphInfo.bond.maturityDate,
-      startDate: graphInfo.end,
+      maturityDate: auction.bond.maturityDate,
+      startDate: auction.end,
     }) as string
     maxBondAPR = calculateInterestRate({
-      price: graphInfo.minimumBondPrice,
-      maturityDate: graphInfo.bond.maturityDate,
-      startDate: graphInfo.end,
+      price: auction.minimumBondPrice,
+      maturityDate: auction.bond.maturityDate,
+      startDate: auction.end,
     }) as string
   }
 
@@ -105,7 +123,7 @@ const AuctionDetails = (props: Props) => {
     value: auctionCurrentPrice ? (
       <TokenValue className="space-x-1">
         <span>{auctionCurrentPrice.toLocaleString()}</span>
-        <TokenLink token={graphInfo?.bidding} />
+        <TokenLink token={auction?.bidding} />
       </TokenValue>
     ) : (
       '-'
@@ -140,7 +158,7 @@ const AuctionDetails = (props: Props) => {
     },
     {
       title: 'Current bond price',
-      tooltip: `Current auction clearing price for a single bond. If the auction ended now, this would be the price set.`,
+      tooltip: `Current auction clearing price for a single auction. If the auction ended now, this would be the price set.`,
       value: '-',
       ...currentBondPrice,
       bordered: 'blue',
@@ -166,22 +184,18 @@ const AuctionDetails = (props: Props) => {
     },
   ]
 
-  const hasEnded =
-    currentTimeInUTC() > new Date(derivedAuctionInfo?.auctionEndDate * 1000).getTime()
-  const statusLabel = settling ? 'Settling' : hasEnded ? 'Ended' : 'Ongoing'
-
   return (
     <div className="card">
       <div className="card-body">
         <h2 className="flex justify-between card-title">
           <span>Auction information</span>
-          <AuctionStatusPill auction={graphInfo} />
+          <AuctionStatusPill auction={auction} />
         </h2>
         <AuctionTimer
           color="blue"
-          endDate={graphInfo?.end}
+          endDate={auction?.end}
           endText="End date"
-          startDate={graphInfo?.start}
+          startDate={auction?.start}
           startText="Start date"
           text="Ends in"
         />

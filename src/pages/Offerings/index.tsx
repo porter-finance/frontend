@@ -9,6 +9,7 @@ import { TABLE_FILTERS } from '../Portfolio'
 import { ReactComponent as AuctionsIcon } from '@/assets/svg/auctions.svg'
 import { ReactComponent as DividerIcon } from '@/assets/svg/divider.svg'
 import { ReactComponent as OTCIcon } from '@/assets/svg/otc.svg'
+import { TokenInfoWithLink } from '@/components/auction/AuctionDetails'
 import { AuctionStatusPill } from '@/components/auction/OrderbookTable'
 import Table from '@/components/auctions/Table'
 import { ErrorBoundaryWithFallback } from '@/components/common/ErrorAndReload'
@@ -76,8 +77,9 @@ const columns = [
     filter: 'searchInTags',
   },
   {
-    Header: 'Current Price',
-    accessor: 'currentPrice',
+    Header: 'Minimum Price',
+    tooltip: 'Minimum price a bond can be sold for. Bids below this price will not be accepted.',
+    accessor: 'minimumPrice',
     align: 'flex-start',
     style: {},
     filter: 'searchInTags',
@@ -118,7 +120,9 @@ const Offerings = () => {
   allAuctions?.forEach((auction) => {
     tableData.push({
       id: auction.id,
-      currentPrice: auction.clearingPrice ? auction.clearingPrice : '-',
+      minimumPrice: (
+        <TokenInfoWithLink auction={auction} value={auction.minimumBondPrice} withLink={false} />
+      ),
       search: JSON.stringify(auction),
       auctionId: `#${auction.id}`,
       type: 'auction', // TODO: currently hardcoded since no OTC exists
