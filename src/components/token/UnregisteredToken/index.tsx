@@ -19,8 +19,7 @@ export const UnregisteredToken: React.FC<Props> = (props) => {
   const { size, symbol, ...restProps } = props
 
   return (
-    <Wrapper className="indicator" size={size} {...restProps}>
-      <span className="z-10 indicator-item indicator-top indicator-end badge">?</span>
+    <Wrapper className="" size={size} {...restProps}>
       <TooltipElementFull
         el={<UnicornSvg height={size} style={{ borderRadius: '50%' }} width={size} />}
         tip={
