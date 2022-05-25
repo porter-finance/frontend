@@ -71,6 +71,7 @@ const auctionsQuery = gql`
       id
       orderCancellationEndDate
       offeringSize
+      minimumBondPrice
       end
       live
       clearingPrice

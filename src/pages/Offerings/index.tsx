@@ -89,9 +89,10 @@ const columns = [
     filter: 'searchInTags',
   },
   {
-    Header: 'Fixed APR',
-    tooltip: 'This APR is calculated using the current price of the bond offering.',
-    accessor: 'fixedAPR',
+    Header: 'Maximum APR',
+    tooltip:
+      'Maximum APR the issuer is willing to pay. This is calculated using the minimum bond price.',
+    accessor: 'maximumAPR',
     align: 'flex-start',
     style: {},
     filter: 'searchInTags',
@@ -121,8 +122,8 @@ const Offerings = () => {
       auctionId: `#${auction.id}`,
       type: 'auction', // TODO: currently hardcoded since no OTC exists
       price: `1 ${auction?.bidding?.symbol}`,
-      fixedAPR: calculateInterestRate({
-        price: auction.clearingPrice,
+      maximumAPR: calculateInterestRate({
+        price: auction.minimumBondPrice,
         maturityDate: auction.bond.maturityDate,
         startDate: auction.end,
       }),
