@@ -6,6 +6,8 @@ import { useTokenListState } from '../../../state/tokenList/hooks'
 import { isAddress } from '../../../utils'
 import { UnregisteredToken } from '../UnregisteredToken'
 
+import { DEV_bondImage } from '@/state/tokenList/reducer'
+
 const Wrapper = styled.div<{ size: string }>`
   background-color: #e0e0e0;
   border-radius: 50%;
@@ -56,9 +58,7 @@ const TokenLogo: React.FC<TokenLogoProps> = (props) => {
 
   // Example used in dev
   let forceSvg = false
-  if (address === '0xf16aaab318b61a0820a95207b54b7598b1eadc0c') {
-    forceSvg = true
-  }
+  if (DEV_bondImage.includes(address)) forceSvg = true
 
   const UnTok = !imageURL && (
     <UnregisteredToken size={sizeToUse} symbol={token?.symbol} {...restProps} />
