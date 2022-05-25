@@ -100,7 +100,7 @@ const InterestRateInputPanel = ({
       </div>
       <div className="flex flex-row justify-between">
         <div className="w-60 text-sm text-[#E0E0E0]">
-          {!account || !amount ? '-' : `${data.receive} ${amountToken}`}
+          {!account || !amount ? '-' : `${data.receive} bonds`}
         </div>
 
         <Tooltip
