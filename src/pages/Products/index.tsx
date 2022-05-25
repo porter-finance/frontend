@@ -26,7 +26,7 @@ const GlobalStyle = createGlobalStyle`
   }
 `
 
-export const columns = (showAmount = false) => [
+const columns = (showAmount = false) => [
   {
     Header: 'Offering',
     accessor: 'bond',
@@ -58,8 +58,8 @@ export const columns = (showAmount = false) => [
     filter: 'searchInTags',
   },
   {
-    Header: 'Value at maturity',
-    accessor: 'maturityValue',
+    Header: 'Currency',
+    accessor: 'currency',
     align: 'flex-start',
     style: {},
     filter: 'searchInTags',
@@ -141,6 +141,8 @@ export const createTable = (data: Bond[]) =>
       maturityValue: maxSupply
         ? `${Number(formatUnits(maxSupply, decimals)).toLocaleString()} ${paymentToken.symbol}`
         : `1 ${paymentToken.symbol}`,
+
+      currency: paymentToken.symbol,
 
       status: getBondStates(bond).isMatured ? (
         <ActiveStatusPill disabled dot={false} title="Matured" />
