@@ -10,7 +10,7 @@ import { DEV_bondImage } from '@/state/tokenList/reducer'
 
 const Wrapper = styled.div<{ size: string }>`
   background-color: #e0e0e0;
-  border-radius: 50%;
+  border-radius: 100%;
   border-width: ${({ size }) => (parseInt(size, 10) < 20 ? '1px' : '3px')};
   border-style: solid;
   overflow: visible !important;
@@ -23,7 +23,7 @@ const Wrapper = styled.div<{ size: string }>`
 
 const Image = styled.img`
   background: #e0e0e0;
-  border-radius: 50%;
+  border-radius: 100%;
   display: block;
   height: 100%;
   width: 100%;
@@ -38,11 +38,7 @@ interface TokenLogoProps {
 const SquareHolder = ({ children, size }) => {
   const defaultSize = size === '24px'
   return (
-    <div
-      className={`avatar placeholder w-${defaultSize ? '14' : '10'} bg-[#e0e0e0] ${
-        Number(size.replace('px', '')) > 30 ? 'rounded-2xl' : 'rounded-md'
-      }`}
-    >
+    <div className={`avatar placeholder w-${defaultSize ? '14' : '10'} bg-[#e0e0e0] rounded-full`}>
       {children}
     </div>
   )
@@ -64,7 +60,7 @@ const TokenLogo: React.FC<TokenLogoProps> = (props) => {
   const ImageToken = (
     <Wrapper className="tokenLogo" size={sizeToUse} {...restProps}>
       {forceSvg && (
-        <UnicornSvg height={sizeToUse} style={{ borderRadius: '50%' }} width={sizeToUse} />
+        <UnicornSvg height={sizeToUse} style={{ borderRadius: '100%' }} width={sizeToUse} />
       )}
       {!forceSvg && UnTok}
       {imageURL && <Image src={imageURL} />}

@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
+import { QuestionMarkIcon } from '@radix-ui/react-icons'
 
 import { TooltipElementFull } from '@/components/common/Tooltip'
 
@@ -22,7 +22,7 @@ export const UnregisteredToken: React.FC<Props> = (props) => {
   return (
     <Wrapper className="" size={size} {...restProps}>
       <TooltipElementFull
-        el={<ExclamationTriangleIcon height={size} width={size} />}
+        el={<QuestionMarkIcon color="#ff5454" height={size} width={size} />}
         tip={
           <div className="space-y-1">
             <p className="font-medium">Unregistered token</p>

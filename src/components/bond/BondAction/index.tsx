@@ -276,7 +276,6 @@ const BondAction = ({
       extra: `($${(convertibleValue * Number(collateralTokensAmount)).toLocaleString()})`,
     })
   } else if (isPartiallyPaid) {
-    // TODO, correctly fetch this state from the graph
     const [paymentTokensAmount, collateralTokensAmount] = previewRedeemVal
     assetsToReceive.push({
       token: bond?.paymentToken,
@@ -345,30 +344,28 @@ const BondAction = ({
               />
             )}
             <div className="space-y-6 text-xs text-[#696969]">
-              {(isConvertComponent || componentType === BondActions.Redeem) && (
-                <div className="space-y-2">
-                  {assetsToReceive.map(({ extra, token, value }, index) => (
-                    <TokenInfo
-                      disabled={!account}
-                      extra={extra}
-                      key={index}
-                      token={token}
-                      value={value === '0' || !value ? '-' : value}
-                    />
-                  ))}
+              <div className="space-y-2">
+                {assetsToReceive.map(({ extra, token, value }, index) => (
+                  <TokenInfo
+                    disabled={!account}
+                    extra={extra}
+                    key={index}
+                    token={token}
+                    value={value === '0' || !value ? '-' : value}
+                  />
+                ))}
 
-                  <div className="text-xs text-[#696969]">
-                    <Tooltip
-                      left="Amount of assets to receive"
-                      tip={
-                        isConvertComponent
-                          ? 'Amount of convertible tokens you will receive in exchange for your bonds.'
-                          : 'Amount of assets you are receiving for your bonds.'
-                      }
-                    />
-                  </div>
+                <div className="text-xs text-[#696969]">
+                  <Tooltip
+                    left="Amount of assets to receive"
+                    tip={
+                      isConvertComponent
+                        ? 'Amount of convertible tokens you will receive in exchange for your bonds.'
+                        : 'Amount of assets you are receiving for your bonds.'
+                    }
+                  />
                 </div>
-              )}
+              </div>
 
               {!account ? (
                 <ActionButton color="purple" onClick={toggleWalletModal}>
