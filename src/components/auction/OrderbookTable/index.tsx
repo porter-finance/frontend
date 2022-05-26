@@ -28,10 +28,6 @@ export const OverflowWrap = styled.div`
 `
 export const ordersTableColumns = [
   {
-    Header: 'Status',
-    accessor: 'status',
-  },
-  {
     Header: 'Price',
     accessor: 'price',
   },
