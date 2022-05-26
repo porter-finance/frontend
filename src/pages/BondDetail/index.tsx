@@ -24,6 +24,7 @@ import { useBondExtraDetails } from '../../hooks/useBondExtraDetails'
 import { ConvertButtonOutline, LoadingTwoGrid, SimpleButtonOutline, TwoGridPage } from '../Auction'
 
 import { Bond } from '@/generated/graphql'
+import { currentTimeInUTC } from '@/utils/tools'
 
 export enum BondActions {
   Redeem,
@@ -107,13 +108,13 @@ const positionColumns = [
   },
 ]
 
-export const getBondStates = (bond: Pick<Bond, 'type' | 'state'>) => {
+export const getBondStates = (bond: Pick<Bond, 'type' | 'state' | 'maturityDate'>) => {
   const isConvertBond = bond?.type === 'convert'
   const isPartiallyPaid = false // TODO ADD THIS TO THE GRAPH
   const isDefaulted = bond?.state === 'defaulted'
   const isPaid = bond?.state === 'paidEarly' || bond?.state === 'paid'
   const isActive = bond?.state === 'active'
-  const isMatured = isDefaulted || isPaid
+  const isMatured = currentTimeInUTC() >= bond?.maturityDate * 1000
   return {
     isMatured,
     isConvertBond,
