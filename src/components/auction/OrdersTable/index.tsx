@@ -2,13 +2,7 @@ import React, { useCallback, useState } from 'react'
 
 import { useApolloClient } from '@apollo/client'
 
-import {
-  BidTransactionLink,
-  TableDesign,
-  calculateRow,
-  ordersTableColumns,
-  useBidStatus,
-} from '../OrderbookTable'
+import { BidTransactionLink, TableDesign, calculateRow, useBidStatus } from '../OrderbookTable'
 
 import ConfirmationDialog, { OopsWarning } from '@/components/modals/ConfirmationDialog'
 import { Bid } from '@/generated/graphql'
@@ -31,6 +25,33 @@ export const orderStatusText = {
   [OrderStatus.PENDING]: 'Pending',
   [OrderStatus.PENDING_CANCELLATION]: 'Cancelling',
 }
+
+const yourOrdersTableColumns = [
+  {
+    Header: 'Status',
+    accessor: 'status',
+  },
+  {
+    Header: 'Price',
+    accessor: 'price',
+  },
+  {
+    Header: 'Interest rate',
+    accessor: 'interest',
+  },
+  {
+    Header: 'Total cost',
+    accessor: 'amount',
+  },
+  {
+    Header: 'Amount',
+    accessor: 'bonds',
+  },
+  {
+    Header: 'Transaction',
+    accessor: 'transaction',
+  },
+]
 
 const OrdersTable: React.FC<OrdersTableProps> = (props) => {
   const {
@@ -111,7 +132,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
 
   return (
     <>
-      <TableDesign columns={ordersTableColumns} data={data} loading={loading} showConnect />
+      <TableDesign columns={yourOrdersTableColumns} data={data} loading={loading} showConnect />
       <ConfirmationDialog
         actionText="Cancel order"
         beforeDisplay={
