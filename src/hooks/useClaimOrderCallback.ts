@@ -70,7 +70,7 @@ export const useGetClaimInfo = (auctionIdentifier: AuctionIdentifier): UseGetCla
           setLoading(true)
         }
 
-        const sellOrdersFormUser = await additionalServiceApi.getAllUserOrders({
+        const sellOrdersFormUser = await additionalServiceApi.getCurrentUserOrders({
           networkId: chainId,
           auctionId,
           user: account,
