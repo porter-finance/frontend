@@ -24,7 +24,6 @@ import { useBondExtraDetails } from '../../hooks/useBondExtraDetails'
 import { ConvertButtonOutline, LoadingTwoGrid, SimpleButtonOutline, TwoGridPage } from '../Auction'
 
 import { Bond } from '@/generated/graphql'
-import { currentTimeInUTC } from '@/utils/tools'
 
 export enum BondActions {
   Redeem,
@@ -125,6 +124,39 @@ export const getBondStates = (bond: Pick<Bond, 'type' | 'state' | 'maturityDate'
   }
 }
 
+export const calculatePortfolioRow = (
+  bond: Pick<
+    Bond,
+    'maturityDate' | 'tokenBalances' | 'clearingPrice' | 'decimals' | 'paymentToken' | 'auctions'
+  > & { auctions: Pick<Bond['auctions'][0], 'end'>[] },
+) => {
+  if (bond && Array.isArray(bond.tokenBalances) && bond.tokenBalances.length) {
+    const amount = Number(formatUnits(bond?.tokenBalances[0].amount, bond.decimals)) || 0
+    const fixedAPR = calculateInterestRate({
+      price: bond.clearingPrice,
+      maturityDate: bond.maturityDate,
+      startDate: bond?.auctions?.[0]?.end,
+    })
+
+    return {
+      amount: amount.toLocaleString(),
+      cost:
+        bond?.clearingPrice * amount
+          ? `${(bond?.clearingPrice * amount).toLocaleString()} ${bond.paymentToken.symbol}`
+          : '-',
+      price: bond?.clearingPrice ? bond?.clearingPrice : '-',
+      fixedAPR,
+      maturityDate: dayjs(bond.maturityDate * 1000)
+        .utc()
+        .tz()
+        .format('ll'),
+      maturityValue: amount ? `${amount.toLocaleString()} ${bond.paymentToken.symbol}` : '-',
+    }
+  }
+
+  return null
+}
+
 const BondDetail: React.FC = () => {
   const { account } = useWeb3React()
   const navigate = useNavigate()
@@ -135,32 +167,11 @@ const BondDetail: React.FC = () => {
   const invalidBond = React.useMemo(() => !bondId || !bond, [bondId, bond])
   const { isConvertBond, isDefaulted, isMatured, isPaid, isPartiallyPaid } = getBondStates(bond)
 
-  let positionData
-  if (bond && Array.isArray(bond.tokenBalances) && bond.tokenBalances.length) {
-    const amount = Number(formatUnits(bond?.tokenBalances[0].amount, bond.decimals)) || 0
-    const fixedAPR = calculateInterestRate({
-      price: bond.clearingPrice,
-      maturityDate: bond.maturityDate,
-      startDate: bond?.auctions?.[0]?.end,
-    })
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //@ts-ignore idk how to fix this but calculate..() is expecting just auctions[end] not the full Auctions[] thing its complaining about
+  const data = calculatePortfolioRow(bond)
+  const positionData = data && [data]
 
-    positionData = [
-      {
-        amount: amount.toLocaleString(),
-        cost:
-          bond?.clearingPrice * amount
-            ? `${(bond?.clearingPrice * amount).toLocaleString()} ${bond.paymentToken.symbol}`
-            : '-',
-        price: bond?.clearingPrice ? bond?.clearingPrice : '-',
-        fixedAPR,
-        maturityDate: dayjs(bond.maturityDate * 1000)
-          .utc()
-          .tz()
-          .format('ll'),
-        maturityValue: amount ? `${amount.toLocaleString()} ${bond.paymentToken.symbol}` : '-',
-      },
-    ]
-  }
   if (isLoading) {
     return (
       <>

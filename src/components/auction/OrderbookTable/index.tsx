@@ -77,7 +77,7 @@ export const calculateRow = (
   const amount = `${round(
     Number(formatUnits(row.payable, derivedAuctionInfo.biddingToken.decimals)),
     2,
-  ).toLocaleString()} ${paymentToken} `
+  ).toLocaleString()} ${paymentToken}`
 
   const bonds = `${round(
     Number(formatUnits(row.size, derivedAuctionInfo.auctioningToken.decimals)),

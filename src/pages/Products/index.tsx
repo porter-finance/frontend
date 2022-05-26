@@ -73,7 +73,29 @@ const columns = (showAmount = false) => [
   },
 ]
 
-export const createTable = (data: Bond[]) =>
+export const BondIcon = ({ id, name, symbol, type }) => (
+  <div className="flex flex-row items-center space-x-4">
+    <div className="flex">
+      <TokenLogo
+        size="41px"
+        square
+        token={{
+          address: id,
+          symbol: name,
+        }}
+      />
+    </div>
+    <div className="flex flex-col text-lg text-[#EEEFEB]">
+      <div className="flex items-center space-x-2 capitalize">
+        <span>{name.toLowerCase()} </span>
+        {type === 'convert' ? <ConvertIcon width={15} /> : <SimpleIcon width={15} />}
+      </div>
+      <p className="text-sm text-[#9F9F9F] uppercase">{symbol}</p>
+    </div>
+  </div>
+)
+
+export const createTable = (data?: Bond[]) =>
   data.map((bond: Bond) => {
     const {
       auctions,
@@ -114,27 +136,7 @@ export const createTable = (data: Bond[]) =>
           }`
         : '-',
       fixedAPR,
-      bond: (
-        <div className="flex flex-row items-center space-x-4">
-          <div className="flex">
-            <TokenLogo
-              size="41px"
-              square
-              token={{
-                address: id,
-                symbol: name,
-              }}
-            />
-          </div>
-          <div className="flex flex-col text-lg text-[#EEEFEB]">
-            <div className="flex items-center space-x-2 capitalize">
-              <span>{name.toLowerCase()} </span>
-              {type === 'convert' ? <ConvertIcon width={15} /> : <SimpleIcon width={15} />}
-            </div>
-            <p className="text-sm text-[#9F9F9F] uppercase">{symbol}</p>
-          </div>
-        </div>
-      ),
+      bond: <BondIcon id={id} name={name} symbol={symbol} type={type} />,
 
       amountIssued: maxSupply ? Number(formatUnits(maxSupply, decimals)).toLocaleString() : '-',
       amount: maxSupply ? `${Number(formatUnits(maxSupply, decimals)).toLocaleString()}` : '-',
