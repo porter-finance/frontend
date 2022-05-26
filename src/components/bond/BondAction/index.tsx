@@ -244,15 +244,15 @@ const BondAction = ({
   }
 
   const assetsToReceive = []
+  const collateralToken = bond?.collateralToken
 
   if (isActive) {
-    // This should only be shown when bond is in active state
     const collateralTokensAmount = previewConvertVal
     assetsToReceive.push({
       extra: `($${(convertibleValue * Number(collateralTokensAmount)).toLocaleString()})`,
-      token: bond?.collateralToken,
+      token: collateralToken,
       value: Number(collateralTokensAmount).toLocaleString(undefined, {
-        maximumSignificantDigits: bond?.collateralToken?.decimals,
+        maximumSignificantDigits: collateralToken?.decimals,
       }),
     })
   } else if (isPaid) {
@@ -260,7 +260,7 @@ const BondAction = ({
     const value = isConvertComponent ? previewConvertVal : paymentTokensAmount
 
     assetsToReceive.push({
-      token: bond?.paymentToken,
+      token: isConvertComponent ? collateralToken : bond?.paymentToken,
       value: Number(value).toLocaleString(undefined, {
         maximumSignificantDigits: bond?.paymentToken?.decimals,
       }),
@@ -269,7 +269,7 @@ const BondAction = ({
     const [, collateralTokensAmount] = previewRedeemVal
 
     assetsToReceive.push({
-      token: bond?.collateralToken,
+      token: collateralToken,
       value: Number(collateralTokensAmount).toLocaleString(undefined, {
         maximumSignificantDigits: 2,
       }),
@@ -277,16 +277,19 @@ const BondAction = ({
     })
   } else if (isPartiallyPaid) {
     const [paymentTokensAmount, collateralTokensAmount] = previewRedeemVal
-    assetsToReceive.push({
-      token: bond?.paymentToken,
-      value: Number(paymentTokensAmount).toLocaleString(undefined, {
-        maximumSignificantDigits: 2,
-      }),
-      extra: `($${(convertibleValue * Number(paymentTokensAmount)).toLocaleString()})`,
-    })
+
+    if (!isConvertComponent) {
+      assetsToReceive.push({
+        token: bond?.paymentToken,
+        value: Number(paymentTokensAmount).toLocaleString(undefined, {
+          maximumSignificantDigits: 2,
+        }),
+        extra: `($${(convertibleValue * Number(paymentTokensAmount)).toLocaleString()})`,
+      })
+    }
 
     assetsToReceive.push({
-      token: bond?.collateralToken,
+      token: collateralToken,
       value: Number(collateralTokensAmount).toLocaleString(undefined, {
         maximumSignificantDigits: 2,
       }),
