@@ -114,7 +114,7 @@ export const getBondStates = (bond: Pick<Bond, 'type' | 'state' | 'maturityDate'
   const isDefaulted = bond?.state === 'defaulted'
   const isPaid = bond?.state === 'paidEarly' || bond?.state === 'paid'
   const isActive = bond?.state === 'active'
-  const isMatured = currentTimeInUTC() >= bond?.maturityDate * 1000
+  const isMatured = isDefaulted || bond?.state === 'paid'
   return {
     isMatured,
     isConvertBond,
