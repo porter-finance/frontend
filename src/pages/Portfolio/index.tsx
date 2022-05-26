@@ -92,13 +92,15 @@ const Portfolio = () => {
   const [tableFilter, setTableFilter] = useState(TABLE_FILTERS.ALL)
 
   const { data, loading } = useBondsPortfolio()
-  const tableData =
-    data?.map((row) => {
-      return {
-        ...calculatePortfolioRow(row),
-        bond: <BondIcon id={row?.id} name={row?.name} symbol={row?.symbol} type={row?.type} />,
-      }
-    }) || []
+  const tableData = (
+    data?.map((row) => ({
+      ...calculatePortfolioRow(row),
+      bond: <BondIcon id={row?.id} name={row?.name} symbol={row?.symbol} type={row?.type} />,
+      type: row.type,
+      url: `/products/${row.id}`,
+      search: JSON.stringify(row),
+    })) || []
+  ).filter(({ type }) => (!tableFilter ? true : type === tableFilter))
 
   const emptyActionText = account ? 'Go to offerings' : 'Connect wallet'
   const emptyActionClick = account ? () => navigate('/offerings') : toggleWalletModal
