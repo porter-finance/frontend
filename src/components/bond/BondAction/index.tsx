@@ -368,9 +368,12 @@ const BondAction = ({
               </div>
 
               {!account ? (
-                <ActionButton color="purple" onClick={toggleWalletModal}>
-                  Connect wallet
-                </ActionButton>
+                <>
+                  <ActionButton color="purple" onClick={toggleWalletModal}>
+                    Connect wallet
+                  </ActionButton>
+                  <div className="mt-4 text-xs text-[#9F9F9F]">Wallet not connected</div>
+                </>
               ) : (
                 <ActionButton
                   color="purple"
@@ -382,14 +385,16 @@ const BondAction = ({
                   Review {isConvertComponent ? 'conversion' : 'redemption'}
                 </ActionButton>
               )}
-              <div className="flex justify-between">
-                <span>Balance</span>
-                <span>
-                  {`${Number(formatUnits(bondTokenBalance, bond?.decimals)).toLocaleString()} ${
-                    bond?.name
-                  }`}
-                </span>
-              </div>
+              {account && (
+                <div className="flex justify-between">
+                  <span>Balance</span>
+                  <span>
+                    {`${Number(formatUnits(bondTokenBalance, bond?.decimals)).toLocaleString()} ${
+                      bond?.name
+                    }`}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
           <ConfirmationDialog
