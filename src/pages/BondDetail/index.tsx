@@ -111,8 +111,8 @@ export const getBondStates = (
   bond: Pick<Bond, 'type' | 'state' | 'maturityDate' | 'maxSupply' | 'amountUnpaid'>,
 ) => {
   const isConvertBond = bond?.type === 'convert'
-  const isPartiallyPaid = bond?.maxSupply - bond?.amountUnpaid > 0 && bond?.state === 'defaulted'
   const isDefaulted = bond?.state === 'defaulted'
+  const isPartiallyPaid = bond?.maxSupply - bond?.amountUnpaid > 0 && isDefaulted
   const isPaid = bond?.state === 'paidEarly' || bond?.state === 'paid'
   const isActive = bond?.state === 'active'
   const isMatured = isDefaulted || bond?.state === 'paid'
