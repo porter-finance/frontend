@@ -107,9 +107,11 @@ const positionColumns = [
   },
 ]
 
-export const getBondStates = (bond: Pick<Bond, 'type' | 'state' | 'maturityDate'>) => {
+export const getBondStates = (
+  bond: Pick<Bond, 'type' | 'state' | 'maturityDate' | 'maxSupply' | 'amountUnpaid'>,
+) => {
   const isConvertBond = bond?.type === 'convert'
-  const isPartiallyPaid = false // TODO ADD THIS TO THE GRAPH
+  const isPartiallyPaid = bond?.maxSupply - bond?.amountUnpaid > 0 && bond?.state === 'defaulted'
   const isDefaulted = bond?.state === 'defaulted'
   const isPaid = bond?.state === 'paidEarly' || bond?.state === 'paid'
   const isActive = bond?.state === 'active'
