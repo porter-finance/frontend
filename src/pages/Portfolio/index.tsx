@@ -92,6 +92,7 @@ const Portfolio = () => {
   const [tableFilter, setTableFilter] = useState(TABLE_FILTERS.ALL)
 
   const { data, loading } = useBondsPortfolio()
+
   const tableData = (
     data?.map((row) => ({
       ...calculatePortfolioRow(row),

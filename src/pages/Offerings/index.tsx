@@ -5,6 +5,7 @@ import dayjs from 'dayjs'
 
 import { AllButton, AuctionButtonOutline, OTCButtonOutline } from '../Auction'
 import { TABLE_FILTERS } from '../Portfolio'
+import { BondIcon } from '../Products'
 
 import { ReactComponent as AuctionsIcon } from '@/assets/svg/auctions.svg'
 import { ReactComponent as DividerIcon } from '@/assets/svg/divider.svg'
@@ -15,7 +16,6 @@ import Table from '@/components/auctions/Table'
 import { ErrorBoundaryWithFallback } from '@/components/common/ErrorAndReload'
 import TooltipElement from '@/components/common/Tooltip'
 import { calculateInterestRate } from '@/components/form/InterestRateInputPanel'
-import TokenLogo from '@/components/token/TokenLogo'
 import { Auction } from '@/generated/graphql'
 import { useAuctions } from '@/hooks/useAuction'
 import { useSetNoDefaultNetworkId } from '@/state/orderPlacement/hooks'
@@ -151,25 +151,13 @@ const Offerings = () => {
         </span>
       ),
       offering: (
-        <div className="flex flex-row items-center space-x-4">
-          <div className="flex">
-            <TokenLogo
-              size="41px"
-              square
-              token={{
-                address: auction?.bond?.id,
-                symbol: auction?.bond?.name,
-              }}
-            />
-          </div>
-          <div className="flex flex-col text-lg text-[#EEEFEB]">
-            <div className="flex items-center space-x-2 capitalize">
-              <span>{auction?.bond.name.toLowerCase()}</span>
-              <AuctionsIcon width={15} />
-            </div>
-            <p className="text-sm text-[#9F9F9F] uppercase">{auction?.bond.symbol}</p>
-          </div>
-        </div>
+        <BondIcon
+          auctionId={auction?.id}
+          icon
+          id={auction?.bond?.id}
+          name={auction?.bond?.name}
+          symbol={auction?.bond.symbol}
+        />
       ),
       url: `/offerings/${auction.id}`,
     })
