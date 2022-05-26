@@ -1,7 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { ReactComponent as UnicornSvg } from '@/assets/svg/unicorn-thumb.svg'
+import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
+
 import { TooltipElementFull } from '@/components/common/Tooltip'
 
 const Wrapper = styled.div<{ size: string }>`
@@ -12,24 +13,25 @@ const Wrapper = styled.div<{ size: string }>`
 
 interface Props {
   size?: string
-  symbol: string
+  token: { address: string; symbol?: string }
 }
 
 export const UnregisteredToken: React.FC<Props> = (props) => {
-  const { size, symbol, ...restProps } = props
+  const { size, token, ...restProps } = props
 
   return (
     <Wrapper className="" size={size} {...restProps}>
       <TooltipElementFull
-        el={<UnicornSvg height={size} style={{ borderRadius: '50%' }} width={size} />}
+        el={<ExclamationTriangleIcon height={size} width={size} />}
         tip={
-          <>
+          <div className="space-y-1">
+            <p className="font-medium">Unregistered token</p>
             <p>
-              <strong>Unregistered token (${symbol}):</strong> This token is unrecognized, and it
-              could even be a fake version of an existing token.
+              This token is unrecognized, and it could even be a fake version of an existing token.
+              Use it at your own risk. Caution is advised.
             </p>
-            <p>Use it at your own risk. Caution is advised.</p>
-          </>
+            <p>{token.address}</p>
+          </div>
         }
       />
     </Wrapper>

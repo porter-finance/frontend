@@ -60,17 +60,13 @@ const TokenLogo: React.FC<TokenLogoProps> = (props) => {
   let forceSvg = false
   if (DEV_bondImage.includes(address)) forceSvg = true
 
-  const UnTok = !imageURL && (
-    <UnregisteredToken size={sizeToUse} symbol={token?.symbol} {...restProps} />
-  )
+  const UnTok = !imageURL && <UnregisteredToken size={sizeToUse} token={token} {...restProps} />
   const ImageToken = (
     <Wrapper className="tokenLogo" size={sizeToUse} {...restProps}>
       {forceSvg && (
         <UnicornSvg height={sizeToUse} style={{ borderRadius: '50%' }} width={sizeToUse} />
       )}
-      {!forceSvg && UnTok && (
-        <UnregisteredToken size={sizeToUse} symbol={token?.symbol} {...restProps} />
-      )}
+      {!forceSvg && UnTok}
       {imageURL && <Image src={imageURL} />}
     </Wrapper>
   )
