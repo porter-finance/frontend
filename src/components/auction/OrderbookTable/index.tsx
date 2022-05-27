@@ -62,6 +62,7 @@ export const calculateRow = (
   if (!row.createtx) statusText = orderStatusText[OrderStatus.PENDING]
   if (bidStatus) statusText = bidStatus
   if (row.canceltx) statusText = 'Cancelled'
+  if (row.claimtx) statusText = 'Claimed'
   const status = statusText
   const price = `${(row.payable / row.size).toLocaleString()} ${paymentToken}`
   const interestRate = calculateInterestRate({
