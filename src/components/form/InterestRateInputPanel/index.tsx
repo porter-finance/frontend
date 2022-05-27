@@ -64,8 +64,8 @@ export const getReviewData = ({
   auctionEndDate,
   maturityDate,
   price,
-}): { apr: string | number; earn: string; receive: string; pay: string } => ({
-  apr: `${calculateInterestRate({ price, maturityDate, startDate: auctionEndDate })}+`,
+}): { apy: string | number; earn: string; receive: string; pay: string } => ({
+  apy: `${calculateInterestRate({ price, maturityDate, startDate: auctionEndDate })}+`,
   earn: `${round(amount - price * amount, 2).toLocaleString()}+`,
   receive: `${amount.toLocaleString()}+`,
   pay: `${round(price * amount, 2).toLocaleString()}`,
@@ -121,10 +121,10 @@ const InterestRateInputPanel = ({
         />
       </div>
       <div className="flex flex-row justify-between">
-        <div className="w-60 text-sm text-[#E0E0E0]">{!account ? '-' : data.apr}</div>
+        <div className="w-60 text-sm text-[#E0E0E0]">{!account ? '-' : data.apy}</div>
         <Tooltip
-          left={<FieldRowLabelStyledText>Your APR</FieldRowLabelStyledText>}
-          tip="APR you will earn assuming no default. If the final price is lower than your bid price, you will receive more bonds than ordered at a lower price, therefore, earning a higher APR."
+          left={<FieldRowLabelStyledText>Your APY</FieldRowLabelStyledText>}
+          tip="APY you will earn assuming no default. If the final price is lower than your bid price, you will receive more bonds than ordered at a lower price, therefore, earning a higher APY."
         />
       </div>
     </FieldRowWrapper>

@@ -56,8 +56,8 @@ const columns = [
     filter: 'searchInTags',
   },
   {
-    Header: 'Fixed APR',
-    accessor: 'fixedAPR',
+    Header: 'Fixed APY',
+    accessor: 'fixedAPY',
     align: 'flex-start',
     style: {},
     filter: 'searchInTags',

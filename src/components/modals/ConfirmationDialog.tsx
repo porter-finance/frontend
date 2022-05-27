@@ -93,7 +93,7 @@ export const ReviewOrder = ({ amountToken, cancelCutoff, data, orderPlacingOnly,
       </div>
     </div>
     <div className="pb-4 space-y-2 text-xs text-[#696969] border-b border-b-[#D5D5D519]">
-      <TokenInfo extra={`(${data.apr})`} token={priceToken} value={data.earn} />
+      <TokenInfo extra={`(${data.apy})`} token={priceToken} value={data.earn} />
       <div className="text-xs text-[#696969]">
         <Tooltip
           left="Amount of interest you earn"

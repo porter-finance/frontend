@@ -85,10 +85,10 @@ const columns = [
     filter: 'searchInTags',
   },
   {
-    Header: 'Maximum APR',
+    Header: 'Maximum APY',
     tooltip:
-      'Maximum APR the issuer is willing to pay. This is calculated using the minimum bond price.',
-    accessor: 'maximumAPR',
+      'Maximum APY the issuer is willing to pay. This is calculated using the minimum bond price.',
+    accessor: 'maximumAPY',
     align: 'flex-start',
     style: {},
     filter: 'searchInTags',
@@ -127,7 +127,7 @@ const Offerings = () => {
       auctionId: `#${auction.id}`,
       type: 'auction', // TODO: currently hardcoded since no OTC exists
       price: `1 ${auction?.bidding?.symbol}`,
-      maximumAPR: calculateInterestRate({
+      maximumAPY: calculateInterestRate({
         price: auction.minimumBondPrice,
         maturityDate: auction.bond.maturityDate,
         startDate: auction.end,
