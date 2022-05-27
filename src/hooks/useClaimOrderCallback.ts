@@ -1,19 +1,26 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useParams } from 'react-router-dom'
 
+import { gql, useQuery } from '@apollo/client'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
 import { Token, TokenAmount } from '@josojo/honeyswap-sdk'
 
 import { DerivedAuctionInfo } from '../state/orderPlacement/hooks'
-import { AuctionIdentifier } from '../state/orderPlacement/reducer'
+import {
+  AuctionIdentifier,
+  RouteAuctionIdentifier,
+  parseURL,
+} from '../state/orderPlacement/reducer'
 import { useHasPendingClaim, useTransactionAdder } from '../state/transactions/hooks'
 import { ChainId, calculateGasMargin, getEasyAuctionContract } from '../utils'
 import { getLogger } from '../utils/logger'
-import { additionalServiceApi } from './../api'
 import { Order, decodeOrder } from './Order'
 import { useActiveWeb3React } from './index'
 import { useAuctionDetails } from './useAuctionDetails'
 import { useGasPrice } from './useGasPrice'
+
+import { BidsForAccountNoCancelledDocument } from '@/generated/graphql'
 
 const logger = getLogger('useClaimOrderCallback')
 
@@ -30,12 +37,6 @@ export interface ClaimInformation {
   sellOrdersFormUser: string[]
 }
 
-export interface UseGetClaimInfoReturn {
-  claimInfo: Maybe<ClaimInformation>
-  loading: boolean
-  error: Maybe<Error>
-}
-
 export enum ClaimState {
   UNKNOWN,
   NOT_APPLICABLE,
@@ -44,56 +45,33 @@ export enum ClaimState {
   CLAIMED,
 }
 
+gql`
+  query BidsForAccountNoCancelled($account: String!, $auctionId: Int!) {
+    bids(
+      orderBy: timestamp
+      orderDirection: desc
+      first: 100
+      where: { account: $account, auction: $auctionId, canceltx: null }
+    ) {
+      id
+      bytes
+    }
+  }
+`
+
 // returns the coded orders that participated in the auction for the current account
-export const useGetClaimInfo = (auctionIdentifier: AuctionIdentifier): UseGetClaimInfoReturn => {
-  const { account, library } = useActiveWeb3React()
-  const [claimInfo, setClaimInfo] = useState<ClaimInformation>({ sellOrdersFormUser: [] })
-  const [error, setError] = useState<Maybe<Error>>(null)
-  const [loading, setLoading] = useState<boolean>(false)
-  const { auctionId, chainId } = auctionIdentifier
-
-  useEffect(() => {
-    setClaimInfo({ sellOrdersFormUser: [] })
-    setError(null)
-    setLoading(false)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auctionId, chainId])
-
-  useEffect(() => {
-    let cancelled = false
-
-    const fetchApiData = async (): Promise<void> => {
-      try {
-        if (!chainId || !library || !account || !auctionId || !additionalServiceApi) return
-
-        if (!cancelled) {
-          setLoading(true)
-        }
-
-        const sellOrdersFormUser = await additionalServiceApi.getCurrentUserOrders({
-          networkId: chainId,
-          auctionId,
-          user: account,
-        })
-
-        if (!cancelled) {
-          setClaimInfo({ sellOrdersFormUser })
-          setLoading(false)
-        }
-      } catch (error) {
-        if (cancelled) return
-        setError(error)
-      }
-    }
-    fetchApiData()
-
-    return (): void => {
-      cancelled = true
-    }
-  }, [account, chainId, library, auctionId, setClaimInfo])
+export const useGetClaimInfo = () => {
+  const { auctionId: urlAuctionId } = parseURL(useParams<RouteAuctionIdentifier>())
+  const { account } = useActiveWeb3React()
+  const { data, error, loading } = useQuery(BidsForAccountNoCancelledDocument, {
+    variables: {
+      auctionId: Number(urlAuctionId),
+      account: (account && account?.toLowerCase()) || '0x00',
+    },
+  })
 
   return {
-    claimInfo,
+    claimInfo: { sellOrdersFormUser: data?.bids.map((bid) => bid.bytes) || [] },
     loading,
     error,
   }
@@ -195,7 +173,7 @@ export function useGetAuctionProceeds(
   derivedAuctionInfo: DerivedAuctionInfo,
 ): AuctionProceedings {
   const { auctionDetails, auctionInfoLoading } = useAuctionDetails(auctionIdentifier)
-  const { claimInfo } = useGetClaimInfo(auctionIdentifier)
+  const { claimInfo } = useGetClaimInfo()
   const {
     auctioningToken,
     biddingToken,
@@ -252,7 +230,7 @@ export const useClaimOrderCallback = (
   const addTransaction = useTransactionAdder()
 
   const { auctionId, chainId } = auctionIdentifier
-  const { claimInfo, error } = useGetClaimInfo(auctionIdentifier)
+  const { claimInfo, error } = useGetClaimInfo()
   const gasPrice = useGasPrice(chainId)
 
   const claimCallback = useCallback(async (): Promise<Maybe<string>> => {
