@@ -66,15 +66,9 @@ export const getReviewData = ({
   price,
 }): { apy: string | number; earn: string; receive: string; pay: string } => ({
   apy: `${calculateInterestRate({ price, maturityDate, startDate: auctionEndDate })}+`,
-  earn: `${round(amount - price * amount, 2).toLocaleString(undefined, {
-    maximumFractionDigits: 16, // TODO: get decimals
-  })}+`,
-  receive: `${amount.toLocaleString(undefined, {
-    maximumFractionDigits: 16, // TODO: get decimals
-  })}+`,
-  pay: `${round(price * amount, 2).toLocaleString(undefined, {
-    maximumFractionDigits: 16, // TODO: get decimals
-  })}`,
+  earn: `${round(amount - price * amount, 2).toLocaleString()}+`,
+  receive: `${amount.toLocaleString()}+`,
+  pay: `${round(price * amount, 2).toLocaleString()}`,
 })
 
 const InterestRateInputPanel = ({

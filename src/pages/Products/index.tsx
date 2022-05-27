@@ -137,30 +137,17 @@ export const createTable = (data?: Bond[]) =>
         </span>
       ),
       cost: clearingPrice
-        ? `${Number(formatUnits(BigInt(clearingPrice * maxSupply), decimals)).toLocaleString(
-            undefined,
-            {
-              maximumFractionDigits: paymentToken.decimals,
-            },
-          )} ${paymentToken.symbol}`
+        ? `${Number(formatUnits(BigInt(clearingPrice * maxSupply), decimals)).toLocaleString()} ${
+            paymentToken.symbol
+          }`
         : '-',
       fixedAPY,
       bond: <BondIcon id={id} name={name} symbol={symbol} type={type} />,
 
-      amountIssued: maxSupply
-        ? Number(formatUnits(maxSupply, decimals)).toLocaleString(undefined, {
-            maximumFractionDigits: decimals,
-          })
-        : '-',
-      amount: maxSupply
-        ? `${Number(formatUnits(maxSupply, decimals)).toLocaleString(undefined, {
-            maximumFractionDigits: decimals,
-          })}`
-        : '-',
+      amountIssued: maxSupply ? Number(formatUnits(maxSupply, decimals)).toLocaleString() : '-',
+      amount: maxSupply ? `${Number(formatUnits(maxSupply, decimals)).toLocaleString()}` : '-',
       maturityValue: maxSupply
-        ? `${Number(formatUnits(maxSupply, decimals)).toLocaleString(undefined, {
-            maximumFractionDigits: decimals,
-          })} ${paymentToken.symbol}`
+        ? `${Number(formatUnits(maxSupply, decimals)).toLocaleString()} ${paymentToken.symbol}`
         : `1 ${paymentToken.symbol}`,
 
       currency: paymentToken.symbol,

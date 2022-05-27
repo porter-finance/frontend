@@ -11,7 +11,7 @@ import { getLogger } from '../utils/logger'
 
 const logger = getLogger('useBond')
 
-gql`
+const singleBondQuery = gql`
   query SingleBond($bondId: ID!, $accountId: String!) {
     bond(id: $bondId) {
       id
@@ -38,7 +38,7 @@ gql`
         name
         decimals
       }
-      tokenBalances(where: { account: $accountId, amount_gt: 0 }) {
+      tokenBalances(where: { account: $accountId }) {
         amount
       }
       auctions {
@@ -50,7 +50,7 @@ gql`
     }
   }
 `
-gql`
+const allBondsQuery = gql`
   query AllBonds {
     bonds(first: 100) {
       state

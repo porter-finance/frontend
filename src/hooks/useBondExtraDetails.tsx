@@ -54,19 +54,10 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
   // TODO - use this value, its value should always be close to 1 tho since its a stable
   // const { data: paymentTokenPrice } = useTokenPrice(bond?.paymentToken.id)
   const collateralPerBond = bond ? getValuePerBond(bond, bond?.collateralRatio) : 0
-  const collateralizationRatio = ((collateralValue / paymentTokenPrice) * 100).toLocaleString(
-    undefined,
-    {
-      maximumFractionDigits: bond?.collateralToken?.decimals,
-    },
-  )
+  const collateralizationRatio = ((collateralValue / paymentTokenPrice) * 100).toLocaleString()
 
   const strikePrice =
-    convertiblePerBond > 0
-      ? (paymentTokenPrice / convertiblePerBond).toLocaleString(undefined, {
-          maximumFractionDigits: bond?.collateralToken?.decimals,
-        })
-      : 0
+    convertiblePerBond > 0 ? (paymentTokenPrice / convertiblePerBond).toLocaleString() : 0
   const isConvertBond = bond?.type === 'convert'
 
   return [
@@ -83,17 +74,11 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
       title: 'Collateral tokens',
       value: (
         <span className="flex items-center space-x-1">
-          <span>
-            {collateralPerBond.toLocaleString(undefined, {
-              maximumFractionDigits: bond?.collateralToken?.decimals,
-            })}
-          </span>
+          <span>{collateralPerBond.toLocaleString()}</span>
           {bond && <TokenLink token={bond.collateralToken} withLink />}
         </span>
       ),
-      hint: `($${round(collateralValue, 2).toLocaleString(undefined, {
-        maximumFractionDigits: bond?.collateralToken?.decimals,
-      })})`,
+      hint: `($${round(collateralValue, 2).toLocaleString()})`,
       tooltip:
         'Value of collateral securing each bond. If a bond is defaulted on, the bondholder is able to exchange each bond for these collateral tokens.',
     },
@@ -101,17 +86,11 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
       title: 'Convertible tokens',
       value: (
         <span className="flex items-center space-x-1">
-          <span>
-            {convertiblePerBond.toLocaleString(undefined, {
-              maximumFractionDigits: bond?.collateralToken?.decimals,
-            })}
-          </span>
+          <span>{convertiblePerBond.toLocaleString()}</span>
           {bond && <TokenLink token={bond.collateralToken} withLink />}
         </span>
       ),
-      hint: `($${round(convertibleValue, 2).toLocaleString(undefined, {
-        maximumFractionDigits: bond?.collateralToken?.decimals,
-      })})`,
+      hint: `($${round(convertibleValue, 2).toLocaleString()})`,
       tooltip: 'Value of tokens each bond is convertible into up until the maturity date.',
       show: isConvertBond,
     },
@@ -134,11 +113,7 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
       tooltip: 'Price where the convertible tokens for a bond are equal to its face value.',
       value: (
         <span className="flex items-center space-x-1">
-          <span>
-            {strikePrice.toLocaleString(undefined, {
-              maximumFractionDigits: bond?.paymentToken?.decimals,
-            })}
-          </span>
+          <span>{strikePrice.toLocaleString()}</span>
           {bond && <TokenLink token={bond.paymentToken} />}
           <span>/</span>
           {bond && <TokenLink token={bond.collateralToken} />}

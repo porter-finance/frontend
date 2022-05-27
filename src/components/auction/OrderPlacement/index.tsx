@@ -147,9 +147,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
 
   const biddingTokenBalance = useTokenBalance(biddingToken.address, account, { chainId })
   const balanceString = biddingTokenBalance
-    ? Number(formatUnits(biddingTokenBalance, biddingToken.decimals)).toLocaleString(undefined, {
-        maximumFractionDigits: biddingToken.decimals,
-      })
+    ? Number(formatUnits(biddingTokenBalance, biddingToken.decimals)).toLocaleString()
     : '0.00'
 
   useEffect(() => {

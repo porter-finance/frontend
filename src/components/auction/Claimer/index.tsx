@@ -148,11 +148,7 @@ const Claimer: React.FC<Props> = (props) => {
                 <TokenItem>
                   <div className="text-base text-white">
                     {claimStatus !== ClaimState.CLAIMED && claimableBonds
-                      ? `${Number(
-                          claimableBonds.toSignificant(claimableBonds.token.decimals),
-                        ).toLocaleString(undefined, {
-                          maximumFractionDigits: claimableBonds.token.decimals,
-                        })}`
+                      ? `${Number(claimableBonds.toSignificant(6)).toLocaleString()}`
                       : `-`}
                   </div>
                   <TokenPill token={bondToken} />
@@ -169,11 +165,7 @@ const Claimer: React.FC<Props> = (props) => {
             <TokenItem>
               <div className="text-base text-white">
                 {claimStatus !== ClaimState.CLAIMED && claimableBidFunds
-                  ? `${Number(
-                      claimableBidFunds.toSignificant(claimableBidFunds.token.decimals),
-                    ).toLocaleString(undefined, {
-                      maximumFractionDigits: claimableBidFunds.token.decimals,
-                    })}`
+                  ? `${Number(claimableBidFunds.toSignificant(6)).toLocaleString()}`
                   : `-`}
               </div>
               <TokenPill token={biddingToken} />
@@ -209,11 +201,7 @@ const Claimer: React.FC<Props> = (props) => {
                 <div className="pb-4 space-y-2 text-xs text-[#696969] border-b border-b-[#D5D5D519]">
                   <TokenInfo
                     token={bondToken}
-                    value={Number(
-                      claimableBonds.toSignificant(claimableBonds.token.decimals),
-                    ).toLocaleString(undefined, {
-                      maximumFractionDigits: claimableBonds.token.decimals,
-                    })}
+                    value={Number(claimableBonds.toSignificant(6)).toLocaleString()}
                   />
                   <div className="text-xs text-[#696969]">
                     <Tooltip left="Amount of bonds to claim" />
@@ -222,11 +210,7 @@ const Claimer: React.FC<Props> = (props) => {
                 <div className="pb-4 space-y-2 text-xs text-[#696969] border-b border-b-[#D5D5D519]">
                   <TokenInfo
                     token={biddingToken}
-                    value={Number(
-                      claimableBidFunds.toSignificant(claimableBidFunds.token.decimals),
-                    ).toLocaleString(undefined, {
-                      maximumFractionDigits: claimableBidFunds.token.decimals,
-                    })}
+                    value={Number(claimableBidFunds.toSignificant(6)).toLocaleString()}
                   />
                   <div className="text-xs text-[#696969]">
                     <Tooltip left="Amount of bidding funds to claim" />
