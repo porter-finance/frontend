@@ -147,7 +147,7 @@ const Claimer: React.FC<Props> = (props) => {
               <>
                 <TokenItem>
                   <div className="text-base text-white">
-                    {claimableBonds
+                    {claimStatus !== ClaimState.CLAIMED && claimableBonds
                       ? `${Number(
                           claimableBonds.toSignificant(claimableBonds.token.decimals),
                         ).toLocaleString(undefined, {
@@ -168,7 +168,7 @@ const Claimer: React.FC<Props> = (props) => {
 
             <TokenItem>
               <div className="text-base text-white">
-                {claimableBidFunds
+                {claimStatus !== ClaimState.CLAIMED && claimableBidFunds
                   ? `${Number(
                       claimableBidFunds.toSignificant(claimableBidFunds.token.decimals),
                     ).toLocaleString(undefined, {
