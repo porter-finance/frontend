@@ -23,7 +23,6 @@ const Wrapper = styled.nav`
 const Inner = styled.div`
   background-color: ${({ theme }) => theme.mainBackground};
   border-top: 1px solid ${({ theme }) => theme.border};
-  box-shadow: 0 20px 25px 0 rgb(0 34 73 / 40%);
 `
 
 const Item = styled(NavLink)`

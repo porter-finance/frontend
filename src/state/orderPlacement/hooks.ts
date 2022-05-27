@@ -181,9 +181,7 @@ function isNumeric(str: string) {
 }
 
 export function tryParseAmount(value?: string, token?: Token): TokenAmount | undefined {
-  if (!value || !token) {
-    return
-  }
+  if (!token || !value) return
   try {
     // Force round to fix "Error: fractional component exceeds decimals" ??
     const sellAmountParsed = parseUnits(

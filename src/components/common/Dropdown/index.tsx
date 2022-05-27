@@ -67,7 +67,6 @@ const Items = styled(BaseCard)<{
   background: ${({ theme }) => theme.dropdown.bg2};
   border-radius: ${({ theme }) => theme.dropdown.borderRadius};
   border: 1px solid ${({ theme }) => theme.dropdown.border};
-  box-shadow: ${({ theme }) => theme.dropdown.boxShadow};
   display: ${(props) => (props.isOpen ? 'block' : 'none')};
   min-width: 160px;
   position: absolute;

@@ -101,19 +101,21 @@ const positionColumns = [
     accessor: 'maturityDate',
   },
   {
-    Header: 'Fixed APR',
-    tooltip: 'This APR is calculated using the closing price of the initial offering.',
-    accessor: 'fixedAPR',
+    Header: 'Fixed APY',
+    tooltip: 'This APY is calculated using the closing price of the initial offering.',
+    accessor: 'fixedAPY',
   },
 ]
 
-export const getBondStates = (bond: Pick<Bond, 'type' | 'state'>) => {
+export const getBondStates = (
+  bond: Pick<Bond, 'type' | 'state' | 'maturityDate' | 'maxSupply' | 'amountUnpaid'>,
+) => {
   const isConvertBond = bond?.type === 'convert'
-  const isPartiallyPaid = false // TODO ADD THIS TO THE GRAPH
   const isDefaulted = bond?.state === 'defaulted'
+  const isPartiallyPaid = bond?.maxSupply - bond?.amountUnpaid > 0 && isDefaulted
   const isPaid = bond?.state === 'paidEarly' || bond?.state === 'paid'
   const isActive = bond?.state === 'active'
-  const isMatured = isDefaulted || isPaid
+  const isMatured = isDefaulted || bond?.state === 'paid'
   return {
     isMatured,
     isConvertBond,
@@ -122,6 +124,39 @@ export const getBondStates = (bond: Pick<Bond, 'type' | 'state'>) => {
     isPaid,
     isActive,
   }
+}
+
+export const calculatePortfolioRow = (
+  bond: Pick<
+    Bond,
+    'maturityDate' | 'tokenBalances' | 'clearingPrice' | 'decimals' | 'paymentToken' | 'auctions'
+  > & { auctions: Pick<Bond['auctions'][0], 'end'>[] },
+) => {
+  if (bond && Array.isArray(bond.tokenBalances) && bond.tokenBalances.length) {
+    const amount = Number(formatUnits(bond?.tokenBalances[0].amount, bond.decimals)) || 0
+    const fixedAPY = calculateInterestRate({
+      price: bond.clearingPrice,
+      maturityDate: bond.maturityDate,
+      startDate: bond?.auctions?.[0]?.end,
+    })
+
+    return {
+      amount: amount.toLocaleString(),
+      cost:
+        bond?.clearingPrice * amount
+          ? `${(bond?.clearingPrice * amount).toLocaleString()} ${bond.paymentToken.symbol}`
+          : '-',
+      price: bond?.clearingPrice ? bond?.clearingPrice : '-',
+      fixedAPY,
+      maturityDate: dayjs(bond.maturityDate * 1000)
+        .utc()
+        .tz()
+        .format('ll'),
+      maturityValue: amount ? `${amount.toLocaleString()} ${bond.paymentToken.symbol}` : '-',
+    }
+  }
+
+  return null
 }
 
 const BondDetail: React.FC = () => {
@@ -134,28 +169,11 @@ const BondDetail: React.FC = () => {
   const invalidBond = React.useMemo(() => !bondId || !bond, [bondId, bond])
   const { isConvertBond, isDefaulted, isMatured, isPaid, isPartiallyPaid } = getBondStates(bond)
 
-  let positionData
-  if (bond && Array.isArray(bond.tokenBalances) && bond.tokenBalances.length) {
-    const amount = Number(formatUnits(bond?.tokenBalances[0].amount, bond.decimals)) || 0
-    const fixedAPR = calculateInterestRate({
-      price: bond.clearingPrice,
-      maturityDate: bond.maturityDate,
-      startDate: bond?.auctions?.[0]?.end,
-    })
-    positionData = [
-      {
-        amount: amount.toLocaleString(),
-        cost: (bond?.clearingPrice * amount || '-').toLocaleString(),
-        price: bond?.clearingPrice ? bond?.clearingPrice : '-',
-        fixedAPR,
-        maturityDate: dayjs(bond.maturityDate * 1000)
-          .utc()
-          .tz()
-          .format('ll'),
-        maturityValue: amount ? amount.toLocaleString() : '-',
-      },
-    ]
-  }
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //@ts-ignore idk how to fix this but calculate..() is expecting just auctions[end] not the full Auctions[] thing its complaining about
+  const data = calculatePortfolioRow(bond)
+  const positionData = data && [data]
+
   if (isLoading) {
     return (
       <>

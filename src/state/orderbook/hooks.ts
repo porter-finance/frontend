@@ -11,6 +11,7 @@ import { getLogger } from '../../utils/logger'
 import { AuctionIdentifier } from '../orderPlacement/reducer'
 import {
   appendBid,
+  appendOrderbookData,
   pullOrderbookData,
   removeBid,
   resetOrderbookData,
@@ -18,6 +19,8 @@ import {
   resetUserPrice,
   resetUserVolume,
 } from './actions'
+
+import { useActiveWeb3React } from '@/hooks'
 
 const logger = getLogger('orderbook/hooks')
 
@@ -37,6 +40,13 @@ export function useOrderbookActionHandlers(): {
   onResetUserPrice: (price: number) => void
   onResetUserInterestRate: (interestRate: number) => void
   onResetUserVolume: (volume: number) => void
+  onAppendOrderbookData: (
+    auctionId: number,
+    chainId: number,
+    orderbook: OrderBookData,
+    calculatedAuctionPrice: CalculatedAuctionPrice,
+    error: Maybe<Error>,
+  ) => void
   onResetOrderbookData: (
     auctionId: number,
     chainId: number,
@@ -95,9 +105,25 @@ export function useOrderbookActionHandlers(): {
     [dispatch],
   )
 
+  const onAppendOrderbookData = useCallback(
+    (
+      auctionId: number,
+      chainId: number,
+      orderbook: OrderBookData,
+      calculatedAuctionPrice: CalculatedAuctionPrice,
+      error: Maybe<Error>,
+    ) => {
+      dispatch(
+        appendOrderbookData({ auctionId, chainId, orderbook, calculatedAuctionPrice, error }),
+      )
+    },
+    [dispatch],
+  )
+
   return {
     onPullOrderbookData,
     onResetOrderbookData,
+    onAppendOrderbookData,
     onNewBid,
     onRemoveBid,
     onResetUserPrice,
@@ -106,15 +132,18 @@ export function useOrderbookActionHandlers(): {
   }
 }
 export function useOrderbookDataCallback(auctionIdentifer: AuctionIdentifier) {
-  const { auctionId, chainId } = auctionIdentifer
-  const { onResetOrderbookData } = useOrderbookActionHandlers()
+  const { auctionId } = auctionIdentifer
+  const { chainId } = useActiveWeb3React()
+  const { onAppendOrderbookData, onResetOrderbookData } = useOrderbookActionHandlers()
   const { shouldLoad } = useOrderbookState()
 
   const makeCall = useCallback(async () => {
     try {
       if (!chainId || !auctionId) {
+        console.log('Missing chain / auction id', { chainId, auctionId })
         return
       }
+
       const rawData = await additionalServiceApi.getOrderBookData({
         networkId: chainId,
         auctionId,
@@ -124,6 +153,7 @@ export function useOrderbookDataCallback(auctionIdentifer: AuctionIdentifier) {
         rawData.asks[0],
       )
 
+      onAppendOrderbookData(auctionId, chainId, rawData, calcultatedAuctionPrice, null)
       onResetOrderbookData(auctionId, chainId, rawData, calcultatedAuctionPrice, null)
     } catch (error) {
       logger.error('Error populating orderbook with data', error)
@@ -135,7 +165,7 @@ export function useOrderbookDataCallback(auctionIdentifer: AuctionIdentifier) {
         null,
       )
     }
-  }, [chainId, auctionId, onResetOrderbookData])
+  }, [chainId, auctionId, onResetOrderbookData, onAppendOrderbookData])
 
   useEffect(() => {
     makeCall()
