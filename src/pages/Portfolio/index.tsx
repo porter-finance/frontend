@@ -12,8 +12,10 @@ import { useBondsPortfolio } from '../../hooks/useBondsPortfolio'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import { AllButton, ConvertButtonOutline, SimpleButtonOutline } from '../Auction'
-import { calculatePortfolioRow } from '../BondDetail'
+import { calculatePortfolioRow, getBondStates } from '../BondDetail'
 import { BondIcon } from '../Products'
+
+import { ActiveStatusPill } from '@/components/auction/OrderbookTable'
 
 const columns = [
   {
@@ -100,6 +102,11 @@ const Portfolio = () => {
       type: row.type,
       url: `/products/${row.id}`,
       search: JSON.stringify(row),
+      status: getBondStates(row).isMatured ? (
+        <ActiveStatusPill disabled dot={false} title="Matured" />
+      ) : (
+        <ActiveStatusPill dot={false} title="Active" />
+      ),
     })) || []
   ).filter(({ type }) => (!tableFilter ? true : type === tableFilter))
 
