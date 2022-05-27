@@ -1,5 +1,7 @@
 import React, { ReactElement, useEffect, useState } from 'react'
 
+import { useApolloClient } from '@apollo/client'
+
 import { ReactComponent as GreenCheckIcon } from '../../assets/svg/greencheck.svg'
 import { ReactComponent as PurplePorterIcon } from '../../assets/svg/porter-purple.svg'
 import { ReactComponent as PorterIcon } from '../../assets/svg/porter.svg'
@@ -209,6 +211,7 @@ const ConfirmationDialog = ({
 }) => {
   const { chainId } = useActiveWeb3React()
   const allTransactions = useAllTransactions()
+  const apolloClient = useApolloClient()
 
   const [transactionError, setTransactionError] = useState(false)
   const [transactionPendingWalletConfirm, setTransactionPendingWalletConfirm] = useState(false)
@@ -232,7 +235,7 @@ const ConfirmationDialog = ({
 
         return true
       })
-  }, [showTransactionCreated, onFinished, allTransactions])
+  }, [showTransactionCreated, onFinished, allTransactions, apolloClient])
 
   const waitingTransactionToComplete = showTransactionCreated && !transactionComplete
 
@@ -247,6 +250,9 @@ const ConfirmationDialog = ({
       }
 
       if (transactionComplete) {
+        apolloClient.refetchQueries({
+          include: 'all',
+        })
         setTransactionComplete(false)
         setShowTransactionCreated('')
       }

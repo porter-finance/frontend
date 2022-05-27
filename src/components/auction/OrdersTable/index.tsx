@@ -1,7 +1,5 @@
 import React, { useCallback, useState } from 'react'
 
-import { useApolloClient } from '@apollo/client'
-
 import { BidTransactionLink, TableDesign, calculateRow, useBidStatus } from '../OrderbookTable'
 
 import ConfirmationDialog, { OopsWarning } from '@/components/modals/ConfirmationDialog'
@@ -61,7 +59,6 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
     derivedAuctionInfo: { auctionState },
     loading,
   } = props
-  const apolloClient = useApolloClient()
   const { auctionEndDate, maturityDate } = useBondMaturityForAuction()
   const cancelOrderCallback = useCancelOrderCallback(
     auctionIdentifier,
@@ -125,11 +122,6 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
       data.push(items)
     })
 
-  const refetchBids = () =>
-    apolloClient.refetchQueries({
-      include: 'all',
-    })
-
   return (
     <>
       <TableDesign columns={yourOrdersTableColumns} data={data} loading={loading} showConnect />
@@ -143,7 +135,6 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
         }
         finishedText="Order cancelled"
         loadingText="Cancelling order"
-        onFinished={refetchBids}
         onOpenChange={setShowConfirm}
         open={showConfirm}
         pendingText="Confirm cancellation in wallet"
