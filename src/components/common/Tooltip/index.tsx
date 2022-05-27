@@ -100,4 +100,23 @@ const TooltipElement = ({
   return tipEl
 }
 
+export const TooltipElementFull = ({
+  el,
+  tip,
+}: {
+  tip?: ReactElement | string
+  el?: ReactElement | string
+}) =>
+  tip && (
+    <Provider delayDuration={100} skipDelayDuration={500}>
+      <TooltipRoot>
+        <TooltipTrigger asChild>{el}</TooltipTrigger>
+        <StyledContent className="text-xs" sideOffset={5}>
+          {tip}
+          <StyledArrow />
+        </StyledContent>
+      </TooltipRoot>
+    </Provider>
+  )
+
 export default TooltipElement

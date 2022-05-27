@@ -35,6 +35,7 @@ export function useApproveCallback(
     account ?? undefined,
     addressToApprove,
   )
+
   const pendingApproval = useHasPendingApproval(amountToApprove?.token?.address, addressToApprove)
 
   // check the current approval status
@@ -106,4 +107,91 @@ export function useApproveCallback(
   }, [approval, gasPrice, tokenContract, addressToApprove, amountToApprove, addTransaction])
 
   return [approval, approve]
+}
+
+export function useUnapproveCallback(
+  amountToApprove?: TokenAmount,
+  addressToApprove?: string,
+  chainId?: ChainId,
+): [ApprovalState, () => Promise<void>] {
+  const { account } = useActiveWeb3React()
+  const gasPrice = useGasPrice(chainId)
+
+  const currentAllowance = useTokenAllowance(
+    amountToApprove?.token,
+    account ?? undefined,
+    addressToApprove,
+  )
+
+  const pendingApproval = useHasPendingApproval(amountToApprove?.token?.address, addressToApprove)
+
+  // check the current approval status
+  const approval = useMemo(() => {
+    if (!amountToApprove) return ApprovalState.UNKNOWN
+    // we might not have enough data to know whether or not we need to approve
+    if (!currentAllowance) return ApprovalState.UNKNOWN
+    // amountToApprove will be defined if currentAllowance is
+    if (
+      isTokenXDAI(amountToApprove?.token?.address, chainId) ||
+      isTokenWETH(amountToApprove?.token?.address, chainId) ||
+      isTokenWMATIC(amountToApprove?.token?.address, chainId)
+    ) {
+      return ApprovalState.APPROVED
+    }
+    // amountToApprove will be defined if currentAllowance is
+    return currentAllowance.lessThan(amountToApprove)
+      ? pendingApproval
+        ? ApprovalState.PENDING
+        : ApprovalState.NOT_APPROVED
+      : ApprovalState.APPROVED
+  }, [amountToApprove, currentAllowance, pendingApproval, chainId])
+
+  const tokenContract = useTokenContract(amountToApprove?.token?.address)
+  const addTransaction = useTransactionAdder()
+
+  const unapprove = useCallback(async (): Promise<void> => {
+    if (approval === ApprovalState.NOT_APPROVED) {
+      logger.error('approve was called unnecessarily')
+      return
+    }
+
+    if (!tokenContract) {
+      logger.error('tokenContract is null')
+      return
+    }
+
+    if (!amountToApprove) {
+      logger.error('missing amount to unapprove')
+      return
+    }
+
+    let useExact = false
+    const estimatedGas = await tokenContract.estimateGas
+      .approve(addressToApprove, MaxUint256)
+      .catch(() => {
+        // general fallback for tokens who restrict approval amounts
+        useExact = true
+        return tokenContract.estimateGas.approve(addressToApprove, 0)
+      })
+
+    return tokenContract
+      .approve(addressToApprove, 0, {
+        gasPrice,
+        gasLimit: calculateGasMargin(estimatedGas),
+      })
+      .then((response: TransactionResponse) => {
+        addTransaction(response, {
+          summary: 'unapprove ' + amountToApprove?.token?.symbol,
+          approval: { tokenAddress: amountToApprove.token.address, spender: addressToApprove },
+        })
+
+        return response
+      })
+      .catch((error: Error) => {
+        logger.debug('Failed to unapprove token', error)
+        throw error
+      })
+  }, [approval, gasPrice, tokenContract, addressToApprove, amountToApprove, addTransaction])
+
+  return [approval, unapprove]
 }

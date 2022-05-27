@@ -244,7 +244,11 @@ const Table = ({
                     {...row.getRowProps()}
                   >
                     {row.cells.map((cell, i) => (
-                      <td className="bg-transparent" key={i} {...cell.getCellProps()}>
+                      <td
+                        className="overflow-hidden max-w-xs text-ellipsis bg-transparent"
+                        key={i}
+                        {...cell.getCellProps()}
+                      >
                         {cell.render('Cell')}
                       </td>
                     ))}

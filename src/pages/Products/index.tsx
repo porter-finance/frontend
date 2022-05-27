@@ -4,21 +4,22 @@ import { createGlobalStyle } from 'styled-components'
 import { formatUnits } from '@ethersproject/units'
 import dayjs from 'dayjs'
 
-import { ReactComponent as ConvertIcon } from '../../assets/svg/convert.svg'
-import { ReactComponent as DividerIcon } from '../../assets/svg/divider.svg'
-import { ReactComponent as SimpleIcon } from '../../assets/svg/simple.svg'
-import { ActiveStatusPill } from '../../components/auction/OrderbookTable'
-import Table from '../../components/auctions/Table'
-import { ErrorBoundaryWithFallback } from '../../components/common/ErrorAndReload'
-import { calculateInterestRate } from '../../components/form/InterestRateInputPanel'
-import TokenLogo from '../../components/token/TokenLogo'
-import { useBonds } from '../../hooks/useBond'
-import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import { AllButton, ConvertButtonOutline, SimpleButtonOutline } from '../Auction'
 import { getBondStates } from '../BondDetail'
 import { TABLE_FILTERS } from '../Portfolio'
 
+import { ReactComponent as AuctionsIcon } from '@/assets/svg/auctions.svg'
+import { ReactComponent as ConvertIcon } from '@/assets/svg/convert.svg'
+import { ReactComponent as DividerIcon } from '@/assets/svg/divider.svg'
+import { ReactComponent as SimpleIcon } from '@/assets/svg/simple.svg'
+import { ActiveStatusPill } from '@/components/auction/OrderbookTable'
+import Table from '@/components/auctions/Table'
+import { ErrorBoundaryWithFallback } from '@/components/common/ErrorAndReload'
+import { calculateInterestRate } from '@/components/form/InterestRateInputPanel'
+import TokenLogo from '@/components/token/TokenLogo'
 import { Bond } from '@/generated/graphql'
+import { useBonds } from '@/hooks/useBond'
+import { useSetNoDefaultNetworkId } from '@/state/orderPlacement/hooks'
 
 const GlobalStyle = createGlobalStyle`
   .siteHeader {
@@ -26,7 +27,7 @@ const GlobalStyle = createGlobalStyle`
   }
 `
 
-export const columns = (showAmount = false) => [
+const columns = (showAmount = false) => [
   {
     Header: 'Offering',
     accessor: 'bond',
@@ -58,8 +59,8 @@ export const columns = (showAmount = false) => [
     filter: 'searchInTags',
   },
   {
-    Header: 'Value at maturity',
-    accessor: 'maturityValue',
+    Header: 'Currency',
+    accessor: 'currency',
     align: 'flex-start',
     style: {},
     filter: 'searchInTags',
@@ -73,7 +74,34 @@ export const columns = (showAmount = false) => [
   },
 ]
 
-export const createTable = (data: Bond[]) =>
+export const BondIcon = ({ auctionId = null, icon = null, id, name, symbol, type = null }) => {
+  // used to get currentPrice of auction. might not need this yet
+  // useOrderbookDataCallback({ auctionId }) // TODO this is bad it calls the gnosis api for all these auctions
+  return (
+    <div className="flex flex-row items-center space-x-4">
+      <div className="flex">
+        <TokenLogo
+          size="41px"
+          square
+          token={{
+            address: id,
+            symbol: name,
+          }}
+        />
+      </div>
+      <div className="flex flex-col text-lg text-[#EEEFEB]">
+        <div className="flex items-center space-x-2 capitalize">
+          <span>{name.toLowerCase()} </span>
+          {icon && <AuctionsIcon width={15} />}
+          {type && (type === 'convert' ? <ConvertIcon width={15} /> : <SimpleIcon width={15} />)}
+        </div>
+        <p className="text-sm text-[#9F9F9F] uppercase">{symbol}</p>
+      </div>
+    </div>
+  )
+}
+
+export const createTable = (data?: Bond[]) =>
   data.map((bond: Bond) => {
     const {
       auctions,
@@ -89,7 +117,7 @@ export const createTable = (data: Bond[]) =>
       type,
     } = bond
 
-    const fixedAPR =
+    const fixedAPY =
       calculateInterestRate({
         price: clearingPrice,
         maturityDate,
@@ -109,38 +137,20 @@ export const createTable = (data: Bond[]) =>
         </span>
       ),
       cost: clearingPrice
-        ? `${Number(formatUnits(clearingPrice * maxSupply, decimals)).toLocaleString()} ${
+        ? `${Number(formatUnits(BigInt(clearingPrice * maxSupply), decimals)).toLocaleString()} ${
             paymentToken.symbol
           }`
         : '-',
-      fixedAPR,
-      bond: (
-        <div className="flex flex-row items-center space-x-4">
-          <div className="flex">
-            <TokenLogo
-              size="41px"
-              square
-              token={{
-                address: id,
-                symbol: name,
-              }}
-            />
-          </div>
-          <div className="flex flex-col text-lg text-[#EEEFEB]">
-            <div className="flex items-center space-x-2 capitalize">
-              <span>{name.toLowerCase()} </span>
-              {type === 'convert' ? <ConvertIcon width={15} /> : <SimpleIcon width={15} />}
-            </div>
-            <p className="text-sm text-[#9F9F9F] uppercase">{symbol}</p>
-          </div>
-        </div>
-      ),
+      fixedAPY,
+      bond: <BondIcon id={id} name={name} symbol={symbol} type={type} />,
 
       amountIssued: maxSupply ? Number(formatUnits(maxSupply, decimals)).toLocaleString() : '-',
       amount: maxSupply ? `${Number(formatUnits(maxSupply, decimals)).toLocaleString()}` : '-',
       maturityValue: maxSupply
         ? `${Number(formatUnits(maxSupply, decimals)).toLocaleString()} ${paymentToken.symbol}`
         : `1 ${paymentToken.symbol}`,
+
+      currency: paymentToken.symbol,
 
       status: getBondStates(bond).isMatured ? (
         <ActiveStatusPill disabled dot={false} title="Matured" />

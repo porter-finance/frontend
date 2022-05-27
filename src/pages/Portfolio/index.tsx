@@ -12,7 +12,8 @@ import { useBondsPortfolio } from '../../hooks/useBondsPortfolio'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import { AllButton, ConvertButtonOutline, SimpleButtonOutline } from '../Auction'
-import { createTable } from '../Products'
+import { calculatePortfolioRow } from '../BondDetail'
+import { BondIcon } from '../Products'
 
 const columns = [
   {
@@ -55,8 +56,8 @@ const columns = [
     filter: 'searchInTags',
   },
   {
-    Header: 'Fixed APR',
-    accessor: 'fixedAPR',
+    Header: 'Fixed APY',
+    accessor: 'fixedAPY',
     align: 'flex-start',
     style: {},
     filter: 'searchInTags',
@@ -91,11 +92,16 @@ const Portfolio = () => {
   const [tableFilter, setTableFilter] = useState(TABLE_FILTERS.ALL)
 
   const { data, loading } = useBondsPortfolio()
-  const tableData = !data
-    ? []
-    : !tableFilter
-    ? createTable(data)
-    : createTable(data).filter(({ type }) => type === tableFilter)
+
+  const tableData = (
+    data?.map((row) => ({
+      ...calculatePortfolioRow(row),
+      bond: <BondIcon id={row?.id} name={row?.name} symbol={row?.symbol} type={row?.type} />,
+      type: row.type,
+      url: `/products/${row.id}`,
+      search: JSON.stringify(row),
+    })) || []
+  ).filter(({ type }) => (!tableFilter ? true : type === tableFilter))
 
   const emptyActionText = account ? 'Go to offerings' : 'Connect wallet'
   const emptyActionClick = account ? () => navigate('/offerings') : toggleWalletModal
