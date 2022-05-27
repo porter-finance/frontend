@@ -34,7 +34,7 @@ export interface AuctionProceedings {
 }
 
 export interface ClaimInformation {
-  sellOrdersFormUser: string[]
+  sellOrdersFromUser: string[]
 }
 
 export enum ClaimState {
@@ -71,7 +71,7 @@ export const useGetClaimInfo = () => {
   })
 
   return {
-    claimInfo: { sellOrdersFormUser: data?.bids.map((bid) => bid.bytes) || [] },
+    claimInfo: { sellOrdersFromUser: data?.bids.map((bid) => bid.bytes) || [] },
     loading,
     error,
   }
@@ -208,7 +208,7 @@ export function useGetAuctionProceeds(
           auctionDetails.currentBiddingAmount,
           auctionDetails.minFundingThreshold,
         ),
-        ordersFromUser: claimInfo.sellOrdersFormUser,
+        ordersFromUser: claimInfo.sellOrdersFromUser,
       })
     }
   }, [
@@ -246,7 +246,7 @@ export const useClaimOrderCallback = (
 
     const estimate = easyAuctionContract.estimateGas.claimFromParticipantOrder
     const method: Function = easyAuctionContract.claimFromParticipantOrder
-    const args: Array<string | string[] | number> = [auctionId, claimInfo?.sellOrdersFormUser]
+    const args: Array<string | string[] | number> = [auctionId, claimInfo?.sellOrdersFromUser]
     const value: Maybe<BigNumber> = null
 
     const estimatedGasLimit = await estimate(...args, value ? { value } : {})
@@ -262,7 +262,7 @@ export const useClaimOrderCallback = (
     return response.hash
   }, [account, addTransaction, chainId, error, gasPrice, library, auctionId, claimInfo])
 
-  const claimableOrders = claimInfo?.sellOrdersFormUser
+  const claimableOrders = claimInfo?.sellOrdersFromUser
   const pendingClaim = useHasPendingClaim(auctionIdentifier.auctionId, account)
   const claimStatus = useGetClaimState(auctionIdentifier, claimableOrders, pendingClaim)
 
