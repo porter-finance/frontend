@@ -1,7 +1,7 @@
 import { gql, useQuery } from '@apollo/client'
 import { useWeb3React } from '@web3-react/core'
 
-import { AccountDetailsDocument, Bond } from '@/generated/graphql'
+import { AccountDetailsDocument } from '@/generated/graphql'
 import { getLogger } from '@/utils/logger'
 
 const logger = getLogger('useBondsPortfolio')
@@ -9,10 +9,11 @@ const logger = getLogger('useBondsPortfolio')
 gql`
   query AccountDetails($account: ID!) {
     account(id: $account) {
-      tokenBalances {
+      tokenBalances(where: { amount_gt: 0 }) {
         amount
         bond {
           id
+          amountUnpaid
           state
           name
           symbol
@@ -41,11 +42,6 @@ gql`
   }
 `
 
-export interface TokenBalance {
-  amount: number
-  bond: Bond
-}
-
 export const useBondsPortfolio = () => {
   const { account } = useWeb3React()
   const { data, error, loading } = useQuery(AccountDetailsDocument, {
@@ -55,13 +51,10 @@ export const useBondsPortfolio = () => {
   if (error) {
     logger.error('Error getting useBondsPortfolio info', error)
   }
-  const portfolio = []
-  data?.account?.tokenBalances?.forEach(({ amount, bond }) => {
-    portfolio.push({
-      ...bond,
-      tokenBalances: [{ amount }],
-    })
-  })
+  const portfolio = data?.account?.tokenBalances?.map(({ amount, bond }) => ({
+    ...bond,
+    tokenBalances: [{ amount }],
+  }))
 
   return { data: portfolio, loading }
 }

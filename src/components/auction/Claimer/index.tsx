@@ -148,7 +148,9 @@ const Claimer: React.FC<Props> = (props) => {
                 <TokenItem>
                   <div className="text-base text-white">
                     {claimableBonds
-                      ? `${Number(claimableBonds.toSignificant(6)).toLocaleString()}`
+                      ? `${Number(claimableBonds).toLocaleString(undefined, {
+                          maximumFractionDigits: bondToken.decimals,
+                        })}`
                       : `-`}
                   </div>
                   <TokenPill token={bondToken} />
@@ -165,7 +167,9 @@ const Claimer: React.FC<Props> = (props) => {
             <TokenItem>
               <div className="text-base text-white">
                 {claimableBidFunds
-                  ? `${Number(claimableBidFunds.toSignificant(6)).toLocaleString()}`
+                  ? `${Number(claimableBidFunds).toLocaleString(undefined, {
+                      maximumFractionDigits: biddingToken.decimals,
+                    })}`
                   : `-`}
               </div>
               <TokenPill token={biddingToken} />
@@ -201,7 +205,9 @@ const Claimer: React.FC<Props> = (props) => {
                 <div className="pb-4 space-y-2 text-xs text-[#696969] border-b border-b-[#D5D5D519]">
                   <TokenInfo
                     token={bondToken}
-                    value={Number(claimableBonds.toSignificant(6)).toLocaleString()}
+                    value={Number(claimableBonds).toLocaleString(undefined, {
+                      maximumFractionDigits: bondToken.decimals,
+                    })}
                   />
                   <div className="text-xs text-[#696969]">
                     <Tooltip left="Amount of bonds to claim" />
@@ -210,7 +216,9 @@ const Claimer: React.FC<Props> = (props) => {
                 <div className="pb-4 space-y-2 text-xs text-[#696969] border-b border-b-[#D5D5D519]">
                   <TokenInfo
                     token={biddingToken}
-                    value={Number(claimableBidFunds.toSignificant(6)).toLocaleString()}
+                    value={Number(claimableBidFunds).toLocaleString(undefined, {
+                      maximumFractionDigits: biddingToken.decimals,
+                    })}
                   />
                   <div className="text-xs text-[#696969]">
                     <Tooltip left="Amount of bidding funds to claim" />

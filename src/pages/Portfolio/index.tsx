@@ -97,6 +97,8 @@ const Portfolio = () => {
 
   const tableData = (
     data?.map((row) => ({
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore idk how to fix this but calculate..() is expecting just auctions[end] not the full Auctions[] thing its complaining about
       ...calculatePortfolioRow(row),
       bond: <BondIcon id={row?.id} name={row?.name} symbol={row?.symbol} type={row?.type} />,
       type: row.type,

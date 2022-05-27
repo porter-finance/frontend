@@ -63,7 +63,9 @@ export const calculateRow = (
   if (bidStatus) statusText = bidStatus
   if (row.canceltx) statusText = 'Cancelled'
   const status = statusText
-  const price = `${(row.payable / row.size).toLocaleString()} ${paymentToken}`
+  const price = `${(row.payable / row.size).toLocaleString(undefined, {
+    maximumFractionDigits: derivedAuctionInfo.biddingToken.decimals,
+  })} ${paymentToken}`
   const interestRate = calculateInterestRate({
     price: row.payable / row.size,
     maturityDate,
@@ -73,12 +75,16 @@ export const calculateRow = (
   const amount = `${round(
     Number(formatUnits(row.payable, derivedAuctionInfo.biddingToken.decimals)),
     2,
-  ).toLocaleString()} ${paymentToken}`
+  ).toLocaleString(undefined, {
+    maximumFractionDigits: derivedAuctionInfo.biddingToken.decimals,
+  })} ${paymentToken}`
 
   const bonds = `${round(
     Number(formatUnits(row.size, derivedAuctionInfo.auctioningToken.decimals)),
     3,
-  ).toLocaleString()}+ bonds`
+  ).toLocaleString(undefined, {
+    maximumFractionDigits: derivedAuctionInfo.auctioningToken.decimals,
+  })}+ bonds`
 
   const transaction = <BidTransactionLink bid={row} />
 

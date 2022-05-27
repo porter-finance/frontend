@@ -249,10 +249,12 @@ const BondAction = ({
   if (isActive) {
     const collateralTokensAmount = previewConvertVal
     assetsToReceive.push({
-      extra: `($${(convertibleValue * Number(collateralTokensAmount)).toLocaleString()})`,
+      extra: `($${(convertibleValue * Number(collateralTokensAmount)).toLocaleString(undefined, {
+        maximumFractionDigits: collateralToken?.decimals,
+      })})`,
       token: collateralToken,
       value: Number(collateralTokensAmount).toLocaleString(undefined, {
-        maximumSignificantDigits: collateralToken?.decimals,
+        maximumFractionDigits: collateralToken?.decimals,
       }),
     })
   } else if (isPaid) {
@@ -262,7 +264,7 @@ const BondAction = ({
     assetsToReceive.push({
       token: isConvertComponent ? collateralToken : bond?.paymentToken,
       value: Number(value).toLocaleString(undefined, {
-        maximumSignificantDigits: bond?.paymentToken?.decimals,
+        maximumFractionDigits: bond?.paymentToken?.decimals,
       }),
     })
   } else if (isDefaulted) {
@@ -271,9 +273,11 @@ const BondAction = ({
     assetsToReceive.push({
       token: collateralToken,
       value: Number(collateralTokensAmount).toLocaleString(undefined, {
-        maximumSignificantDigits: 2,
+        maximumFractionDigits: collateralToken.decimals,
       }),
-      extra: `($${(convertibleValue * Number(collateralTokensAmount)).toLocaleString()})`,
+      extra: `($${(convertibleValue * Number(collateralTokensAmount)).toLocaleString(undefined, {
+        maximumFractionDigits: collateralToken.decimals,
+      })})`,
     })
   } else if (isPartiallyPaid) {
     const [paymentTokensAmount, collateralTokensAmount] = previewRedeemVal
@@ -282,18 +286,22 @@ const BondAction = ({
       assetsToReceive.push({
         token: bond?.paymentToken,
         value: Number(paymentTokensAmount).toLocaleString(undefined, {
-          maximumSignificantDigits: 2,
+          maximumFractionDigits: bond?.paymentToken?.decimals,
         }),
-        extra: `($${(convertibleValue * Number(paymentTokensAmount)).toLocaleString()})`,
+        extra: `($${(convertibleValue * Number(paymentTokensAmount)).toLocaleString(undefined, {
+          maximumFractionDigits: bond?.paymentToken?.decimals,
+        })})`,
       })
     }
 
     assetsToReceive.push({
       token: collateralToken,
       value: Number(collateralTokensAmount).toLocaleString(undefined, {
-        maximumSignificantDigits: 2,
+        maximumFractionDigits: collateralToken.decimals,
       }),
-      extra: `($${(convertibleValue * Number(collateralTokensAmount)).toLocaleString()})`,
+      extra: `($${(convertibleValue * Number(collateralTokensAmount)).toLocaleString(undefined, {
+        maximumFractionDigits: collateralToken.decimals,
+      })})`,
     })
   }
 
@@ -392,9 +400,12 @@ const BondAction = ({
                 <div className="flex justify-between">
                   <span>Balance</span>
                   <span>
-                    {`${Number(formatUnits(bondTokenBalance, bond?.decimals)).toLocaleString()} ${
-                      bond?.name
-                    }`}
+                    {`${Number(formatUnits(bondTokenBalance, bond?.decimals)).toLocaleString(
+                      undefined,
+                      {
+                        maximumFractionDigits: bond?.decimals,
+                      },
+                    )} ${bond?.name}`}
                   </span>
                 </div>
               )}
@@ -405,7 +416,9 @@ const BondAction = ({
             actionText={`${getActionText(componentType)} bonds`}
             beforeDisplay={
               <ReviewConvert
-                amount={Number(bondsToRedeem).toLocaleString()}
+                amount={Number(bondsToRedeem).toLocaleString(undefined, {
+                  maximumFractionDigits: bond?.decimals,
+                })}
                 amountToken={tok}
                 assetsToReceive={assetsToReceive}
                 type={getActionText(componentType).toLowerCase()}

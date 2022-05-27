@@ -44,7 +44,9 @@ export const TokenInfoWithLink = ({
     <span>
       {isBigNumberish(value)
         ? abbreviation(formatUnits(value, auction?.bidding?.decimals))
-        : Number(value).toLocaleString()}
+        : Number(value).toLocaleString(undefined, {
+            maximumFractionDigits: auction?.bidding?.decimals,
+          })}
     </span>
     <TokenLink token={auction?.bidding} withLink={withLink} />
   </TokenValue>
@@ -69,13 +71,17 @@ const AuctionDetails = (props: Props) => {
     offeringSize = {
       fullNumberHint: Number(
         formatUnits(auction.offeringSize, auction.bond.decimals),
-      ).toLocaleString(),
+      ).toLocaleString(undefined, {
+        maximumFractionDigits: auction.bond.decimals,
+      }),
       value: `${abbreviation(formatUnits(auction.offeringSize, auction.bond.decimals))} bonds`,
     }
     totalBidVolume = {
       fullNumberHint: Number(
         formatUnits(auction.totalBidVolume, auction.bidding.decimals),
-      ).toLocaleString(),
+      ).toLocaleString(undefined, {
+        maximumFractionDigits: auction.bidding.decimals,
+      }),
       value: (
         <TokenInfoWithLink auction={auction} value={auction.totalBidVolume} withLink={false} />
       ),
@@ -83,7 +89,9 @@ const AuctionDetails = (props: Props) => {
     minimumFundingThreshold = {
       fullNumberHint: Number(
         formatUnits(auction.minimumFundingThreshold, auction.bidding.decimals),
-      ).toLocaleString(),
+      ).toLocaleString(undefined, {
+        maximumFractionDigits: auction.bidding.decimals,
+      }),
       value: (
         <TokenInfoWithLink
           auction={auction}
@@ -93,7 +101,9 @@ const AuctionDetails = (props: Props) => {
       ),
     }
     minimumBondPrice = {
-      fullNumberHint: auction?.minimumBondPrice.toLocaleString(),
+      fullNumberHint: auction?.minimumBondPrice.toLocaleString(undefined, {
+        maximumFractionDigits: auction.bidding.decimals,
+      }),
       value: (
         <TokenInfoWithLink auction={auction} value={auction.minimumBondPrice} withLink={false} />
       ),
@@ -101,7 +111,9 @@ const AuctionDetails = (props: Props) => {
     minimumBidSize = {
       fullNumberHint: Number(
         formatUnits(auction.minimumBidSize, auction.bidding.decimals),
-      ).toLocaleString(),
+      ).toLocaleString(undefined, {
+        maximumFractionDigits: auction.bidding.decimals,
+      }),
       value: (
         <TokenInfoWithLink auction={auction} value={auction.minimumBidSize} withLink={false} />
       ),
@@ -119,10 +131,16 @@ const AuctionDetails = (props: Props) => {
   }
 
   const currentBondPrice = {
-    fullNumberHint: auctionCurrentPrice.toLocaleString(),
+    fullNumberHint: auctionCurrentPrice.toLocaleString(undefined, {
+      maximumFractionDigits: auction?.bond?.decimals,
+    }),
     value: auctionCurrentPrice ? (
       <TokenValue className="space-x-1">
-        <span>{auctionCurrentPrice.toLocaleString()}</span>
+        <span>
+          {auctionCurrentPrice.toLocaleString(undefined, {
+            maximumFractionDigits: auction?.bond?.decimals,
+          })}
+        </span>
         <TokenLink token={auction?.bidding} />
       </TokenValue>
     ) : (

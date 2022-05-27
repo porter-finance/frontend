@@ -23,7 +23,7 @@ import { useBond } from '../../hooks/useBond'
 import { useBondExtraDetails } from '../../hooks/useBondExtraDetails'
 import { ConvertButtonOutline, LoadingTwoGrid, SimpleButtonOutline, TwoGridPage } from '../Auction'
 
-import { Bond } from '@/generated/graphql'
+import { Auction, Bond } from '@/generated/graphql'
 
 export enum BondActions {
   Redeem,
@@ -130,7 +130,9 @@ export const calculatePortfolioRow = (
   bond: Pick<
     Bond,
     'maturityDate' | 'tokenBalances' | 'clearingPrice' | 'decimals' | 'paymentToken' | 'auctions'
-  > & { auctions: Pick<Bond['auctions'][0], 'end'>[] },
+  > & { auctions: Omit<Auction, 'bidding' | 'bond' | 'bondsSold'>[] } & {
+    paymentToken: Pick<Bond['paymentToken'], 'symbol'>
+  },
 ) => {
   if (bond && Array.isArray(bond.tokenBalances) && bond.tokenBalances.length) {
     const amount = Number(formatUnits(bond?.tokenBalances[0].amount, bond.decimals)) || 0
@@ -141,10 +143,14 @@ export const calculatePortfolioRow = (
     })
 
     return {
-      amount: amount.toLocaleString(),
+      amount: amount.toLocaleString(undefined, {
+        maximumFractionDigits: bond?.decimals,
+      }),
       cost:
         bond?.clearingPrice * amount
-          ? `${(bond?.clearingPrice * amount).toLocaleString()} ${bond.paymentToken.symbol}`
+          ? `${(bond?.clearingPrice * amount).toLocaleString(undefined, {
+              maximumFractionDigits: bond?.decimals,
+            })} ${bond.paymentToken.symbol}`
           : '-',
       price: bond?.clearingPrice ? bond?.clearingPrice : '-',
       fixedAPY,
@@ -152,7 +158,11 @@ export const calculatePortfolioRow = (
         .utc()
         .tz()
         .format('ll'),
-      maturityValue: amount ? `${amount.toLocaleString()} ${bond.paymentToken.symbol}` : '-',
+      maturityValue: amount
+        ? `${amount.toLocaleString(undefined, {
+            maximumFractionDigits: bond?.decimals,
+          })} ${bond.paymentToken.symbol}`
+        : '-',
     }
   }
 
@@ -170,7 +180,7 @@ const BondDetail: React.FC = () => {
   const { isConvertBond, isDefaulted, isMatured, isPaid, isPartiallyPaid } = getBondStates(bond)
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //@ts-ignore idk how to fix this but calculate..() is expecting just auctions[end] not the full Auctions[] thing its complaining about
+  // @ts-ignore idk how to fix this but calculate..() is expecting just auctions[end] not the full Auctions[] thing its complaining about
   const data = calculatePortfolioRow(bond)
   const positionData = data && [data]
 
