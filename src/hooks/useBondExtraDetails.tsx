@@ -91,8 +91,8 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
           {bond && <TokenLink token={bond.collateralToken} withLink />}
         </span>
       ),
-      hint: `($${round(collateralValue, 2).toLocaleString(undefined, {
-        maximumFractionDigits: bond?.collateralToken?.decimals,
+      hint: `($${collateralValue.toLocaleString(undefined, {
+        maximumFractionDigits: 2,
       })})`,
       tooltip:
         'Value of collateral securing each bond. If a bond is defaulted on, the bondholder is able to exchange each bond for these collateral tokens.',
@@ -109,8 +109,8 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
           {bond && <TokenLink token={bond.collateralToken} withLink />}
         </span>
       ),
-      hint: `($${round(convertibleValue, 2).toLocaleString(undefined, {
-        maximumFractionDigits: bond?.collateralToken?.decimals,
+      hint: `($${convertibleValue.toLocaleString(undefined, {
+        maximumFractionDigits: 2,
       })})`,
       tooltip: 'Value of tokens each bond is convertible into up until the maturity date.',
       show: isConvertBond,
