@@ -250,7 +250,7 @@ const BondAction = ({
     const collateralTokensAmount = previewConvertVal
     assetsToReceive.push({
       extra: `($${(convertibleValue * Number(collateralTokensAmount)).toLocaleString(undefined, {
-        maximumFractionDigits: 2,
+        maximumFractionDigits: collateralToken?.decimals,
       })})`,
       token: collateralToken,
       value: Number(collateralTokensAmount).toLocaleString(undefined, {
@@ -276,7 +276,7 @@ const BondAction = ({
         maximumFractionDigits: collateralToken.decimals,
       }),
       extra: `($${(convertibleValue * Number(collateralTokensAmount)).toLocaleString(undefined, {
-        maximumFractionDigits: 2,
+        maximumFractionDigits: collateralToken.decimals,
       })})`,
     })
   } else if (isPartiallyPaid) {
@@ -289,7 +289,7 @@ const BondAction = ({
           maximumFractionDigits: bond?.paymentToken?.decimals,
         }),
         extra: `($${(convertibleValue * Number(paymentTokensAmount)).toLocaleString(undefined, {
-          maximumFractionDigits: 2,
+          maximumFractionDigits: bond?.paymentToken?.decimals,
         })})`,
       })
     }
@@ -300,7 +300,7 @@ const BondAction = ({
         maximumFractionDigits: collateralToken.decimals,
       }),
       extra: `($${(convertibleValue * Number(collateralTokensAmount)).toLocaleString(undefined, {
-        maximumFractionDigits: 2,
+        maximumFractionDigits: collateralToken.decimals,
       })})`,
     })
   }
