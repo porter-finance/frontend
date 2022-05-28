@@ -10,7 +10,7 @@ import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
 import Countdown from 'react-countdown'
 
-import { calculateTimeProgress, setLocale } from '../../../utils/tools'
+import { calculateTimeProgress, currentTimeInUTC, setLocale } from '../../../utils/tools'
 import Tooltip from '../../common/Tooltip'
 
 // Used for abbreviated named timezone offset 'z' when formatting.
@@ -60,6 +60,7 @@ const Time = styled.div`
 interface AuctionTimerProps {
   startDate: number
   endDate: number
+  days?: boolean
   startTip?: string
   endTip?: string
   loading?: boolean
@@ -71,6 +72,7 @@ interface AuctionTimerProps {
 
 export const AuctionTimer = ({
   color,
+  days,
   endDate,
   endText,
   endTip,
@@ -85,12 +87,21 @@ export const AuctionTimer = ({
     return progress === 100 ? progress : 100 - progress
   }, [startDate, endDate])
 
+  const daysUntil = progress === 100 ? 0 : dayjs(endDate * 1000).diff(currentTimeInUTC(), 'day')
+
   return (
     <div className="" {...restProps}>
       <div className="flex flex-col place-items-start mb-7 space-y-1">
-        <Time className="flex flex-row items-center space-x-1 text-xs text-white">
-          <Countdown className="text-left" date={endDate * 1000} />
-        </Time>
+        <div className="flex flex-row items-center space-x-1 text-xs text-white">
+          <Time>
+            {!days && <Countdown className="text-left" date={endDate * 1000} />}
+            {days && (
+              <>
+                {daysUntil} {daysUntil === 1 ? 'day' : 'days'}
+              </>
+            )}
+          </Time>
+        </div>
         <DateTitle>{text}</DateTitle>
       </div>
       <div className="flex justify-between mb-3">

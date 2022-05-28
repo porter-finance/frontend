@@ -1,41 +1,24 @@
 import { gql, useQuery } from '@apollo/client'
 import { useWeb3React } from '@web3-react/core'
 
+import {
+  AllBondsDocument,
+  AllBondsQuery,
+  SingleBondDocument,
+  SingleBondQuery,
+} from '../../src/generated/graphql'
 import { getLogger } from '../utils/logger'
 
 const logger = getLogger('useBond')
 
-export interface BondInfo {
-  id: string
-  name: string
-  symbol: string
-  decimals: number
-  owner: string
-  type: string
-  amount?: number
-  state: 'active' | 'paidEarly' | 'defaulted' | 'paid'
-  maturityDate: number
-  createdAt: number
-  paymentToken: Token
-  collateralToken: Token
-  collateralRatio: number
-  convertibleRatio: number
-  maxSupply: number
-  tokenBalances: any
-  clearingPrice?: number
-}
-export interface Token {
-  id: string
-  name: string
-  decimals: number
-  symbol: string
-}
-
 const singleBondQuery = gql`
-  query Bond($bondId: ID!, $accountId: String!) {
+  query SingleBond($bondId: ID!, $accountId: String!) {
     bond(id: $bondId) {
       id
       name
+      maxSupply
+      amountUnpaid
+      state
       symbol
       type
       owner
@@ -58,6 +41,9 @@ const singleBondQuery = gql`
       tokenBalances(where: { account: $accountId }) {
         amount
       }
+      auctions {
+        end
+      }
       collateralRatio
       convertibleRatio
       clearingPrice
@@ -65,9 +51,12 @@ const singleBondQuery = gql`
   }
 `
 const allBondsQuery = gql`
-  query BondList {
+  query AllBonds {
     bonds(first: 100) {
+      state
+      amountUnpaid
       id
+      createdAt
       name
       symbol
       decimals
@@ -93,14 +82,10 @@ const allBondsQuery = gql`
   }
 `
 
-interface SingleBond {
-  data: BondInfo
-  loading: boolean
-}
-export const useBond = (bondId: string): SingleBond => {
+export const useBond = (bondId: string) => {
   const { account } = useWeb3React()
 
-  const { data, error, loading } = useQuery(singleBondQuery, {
+  const { data, error, loading } = useQuery<SingleBondQuery>(SingleBondDocument, {
     variables: { bondId: bondId.toLowerCase(), accountId: account?.toLowerCase() || '0x00' },
   })
 
@@ -112,12 +97,8 @@ export const useBond = (bondId: string): SingleBond => {
   return { data: info, loading }
 }
 
-interface AllBonds {
-  data: BondInfo[]
-  loading: boolean
-}
-export const useBonds = (): AllBonds => {
-  const { data, error, loading } = useQuery(allBondsQuery)
+export const useBonds = () => {
+  const { data, error, loading } = useQuery<AllBondsQuery>(AllBondsDocument)
 
   if (error) {
     logger.error('Error getting useAllBondInfo info', error)

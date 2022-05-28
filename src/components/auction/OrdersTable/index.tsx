@@ -1,26 +1,19 @@
 import React, { useCallback, useState } from 'react'
 
-import { apolloClient } from '../../..'
-import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
-import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
-import { useParticipatingAuctionBids } from '../../../hooks/useParticipatingAuctionBids'
-import {
-  AuctionState,
-  DerivedAuctionInfo,
-  useAllUserOrders,
-} from '../../../state/orderPlacement/hooks'
-import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
-import { OrderStatus } from '../../../state/orders/reducer'
-import { getTokenDisplay } from '../../../utils'
-import ConfirmationDialog from '../../modals/ConfirmationDialog'
-import {
-  BidTransactionLink,
-  TableDesign,
-  calculateRow,
-  ordersTableColumns,
-} from '../OrderbookTable'
+import { BidTransactionLink, TableDesign, calculateRow, useBidStatus } from '../OrderbookTable'
+
+import ConfirmationDialog, { OopsWarning } from '@/components/modals/ConfirmationDialog'
+import { Bid } from '@/generated/graphql'
+import { useBondMaturityForAuction } from '@/hooks/useBondMaturityForAuction'
+import { useCancelOrderCallback } from '@/hooks/useCancelOrderCallback'
+import { AuctionState, DerivedAuctionInfo, useAllUserOrders } from '@/state/orderPlacement/hooks'
+import { AuctionIdentifier } from '@/state/orderPlacement/reducer'
+import { OrderStatus } from '@/state/orders/reducer'
+import { PartiallyOptional, getTokenDisplay } from '@/utils'
 
 interface OrdersTableProps {
+  bids: PartiallyOptional<Bid, 'account'>[]
+  loading: boolean
   auctionIdentifier: AuctionIdentifier
   derivedAuctionInfo: DerivedAuctionInfo
 }
@@ -31,18 +24,47 @@ export const orderStatusText = {
   [OrderStatus.PENDING_CANCELLATION]: 'Cancelling',
 }
 
+const yourOrdersTableColumns = [
+  {
+    Header: 'Status',
+    accessor: 'status',
+  },
+  {
+    Header: 'Price',
+    accessor: 'price',
+  },
+  {
+    Header: 'Interest rate',
+    accessor: 'interest',
+  },
+  {
+    Header: 'Total cost',
+    accessor: 'amount',
+  },
+  {
+    Header: 'Amount',
+    accessor: 'bonds',
+  },
+  {
+    Header: 'Transaction',
+    accessor: 'transaction',
+  },
+]
+
 const OrdersTable: React.FC<OrdersTableProps> = (props) => {
   const {
     auctionIdentifier,
+    bids,
     derivedAuctionInfo,
     derivedAuctionInfo: { auctionState },
+    loading,
   } = props
-  const maturityDate = useBondMaturityForAuction()
-  const { bids, loading } = useParticipatingAuctionBids()
+  const { auctionEndDate, maturityDate } = useBondMaturityForAuction()
   const cancelOrderCallback = useCancelOrderCallback(
     auctionIdentifier,
     derivedAuctionInfo?.biddingToken,
   )
+  const bidStatus = useBidStatus(derivedAuctionInfo)
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [orderId, setOrderId] = useState<string>('')
 
@@ -62,8 +84,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
   const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
   const isOrderCancellationExpired =
     hasLastCancellationDate && now > orderCancellationEndMilliseconds && orderPlacingOnly
-  const orderSubmissionFinished =
-    auctionState === AuctionState.CLAIMING || auctionState === AuctionState.PRICE_SUBMISSION
+  const orderSubmissionFinished = auctionState === AuctionState.CLAIMING
   const hideCancelButton = orderPlacingOnly || orderSubmissionFinished
 
   useAllUserOrders(auctionIdentifier, derivedAuctionInfo)
@@ -73,9 +94,15 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
 
   !ordersEmpty &&
     bids.forEach((row) => {
-      const items = calculateRow(row, paymentToken, maturityDate, derivedAuctionInfo)
+      const items = calculateRow(
+        row,
+        paymentToken,
+        maturityDate,
+        derivedAuctionInfo,
+        auctionEndDate,
+        bidStatus,
+      )
 
-      // TODO: add way to check pending cancellations when they click cancel button
       items.transaction = (
         <div className="flex flex-row items-center space-x-5">
           <BidTransactionLink bid={row} />
@@ -95,29 +122,23 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
       data.push(items)
     })
 
-  const refetchBids = () =>
-    apolloClient.refetchQueries({
-      include: 'active',
-    })
-
   return (
     <>
-      <TableDesign columns={ordersTableColumns} data={data} loading={loading} showConnect />
+      <TableDesign columns={yourOrdersTableColumns} data={data} loading={loading} showConnect />
       <ConfirmationDialog
         actionText="Cancel order"
         beforeDisplay={
-          <span>
-            You will need to place a new order if you still want to participate in this auction.
-          </span>
+          <OopsWarning
+            message="Your order will be cancelled and your funds will be returned."
+            title="Are you sure?"
+          />
         }
         finishedText="Order cancelled"
         loadingText="Cancelling order"
-        onFinished={refetchBids}
         onOpenChange={setShowConfirm}
         open={showConfirm}
         pendingText="Confirm cancellation in wallet"
         placeOrder={onCancelOrder}
-        title="Review cancellation"
       />
     </>
   )

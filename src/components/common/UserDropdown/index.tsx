@@ -2,7 +2,6 @@ import React from 'react'
 import styled from 'styled-components'
 
 import { WalletConnectConnector } from '@anxolin/walletconnect-connector'
-import { useEthers } from '@usedapp/core'
 import { useWeb3React } from '@web3-react/core'
 
 import { useActiveWeb3React } from '../../../hooks'

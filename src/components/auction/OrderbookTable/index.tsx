@@ -1,4 +1,5 @@
 import React from 'react'
+import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { formatUnits } from '@ethersproject/units'
@@ -9,23 +10,23 @@ import { usePagination, useTable } from 'react-table'
 import { useActiveWeb3React } from '../../../hooks'
 import { useAuctionBids } from '../../../hooks/useAuctionBids'
 import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
-import { BidInfo } from '../../../hooks/useParticipatingAuctionBids'
-import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
+import { AuctionState, DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { OrderStatus } from '../../../state/orders/reducer'
 import { getExplorerLink, getTokenDisplay } from '../../../utils'
 import Tooltip from '../../common/Tooltip'
 import { calculateInterestRate } from '../../form/InterestRateInputPanel'
 import { orderStatusText } from '../OrdersTable'
 
+import { Auction } from '@/generated/graphql'
+import { useGetAuctionProceeds } from '@/hooks/useClaimOrderCallback'
+import { getAuctionStates } from '@/pages/Offerings'
+import { RouteAuctionIdentifier, parseURL } from '@/state/orderPlacement/reducer'
+
 export const OverflowWrap = styled.div`
   max-width: 100%;
   flex-grow: 1;
 `
 export const ordersTableColumns = [
-  {
-    Header: 'Status',
-    accessor: 'status',
-  },
   {
     Header: 'Price',
     accessor: 'price',
@@ -39,7 +40,7 @@ export const ordersTableColumns = [
     accessor: 'amount',
   },
   {
-    Header: 'Bonds',
+    Header: 'Amount',
     accessor: 'bonds',
   },
   {
@@ -48,23 +49,36 @@ export const ordersTableColumns = [
   },
 ]
 
-export const calculateRow = (row, paymentToken, maturityDate, derivedAuctionInfo) => {
+export const calculateRow = (
+  row,
+  paymentToken,
+  maturityDate,
+  derivedAuctionInfo,
+  auctionEndDate,
+  bidStatus = '',
+) => {
   let statusText = ''
   if (row.createtx) statusText = orderStatusText[OrderStatus.PLACED]
   if (!row.createtx) statusText = orderStatusText[OrderStatus.PENDING]
+  if (bidStatus) statusText = bidStatus
   if (row.canceltx) statusText = 'Cancelled'
   const status = statusText
   const price = `${(row.payable / row.size).toLocaleString()} ${paymentToken}`
-  const interest = `${calculateInterestRate(row.payable / row.size, maturityDate)} `
+  const interestRate = calculateInterestRate({
+    price: row.payable / row.size,
+    maturityDate,
+    startDate: auctionEndDate,
+  })
+  const interest = interestRate !== '-' ? `${interestRate}+` : interestRate
   const amount = `${round(
     Number(formatUnits(row.payable, derivedAuctionInfo.biddingToken.decimals)),
     2,
-  ).toLocaleString()} ${paymentToken} `
+  ).toLocaleString()} ${paymentToken}`
 
   const bonds = `${round(
     Number(formatUnits(row.size, derivedAuctionInfo.auctioningToken.decimals)),
     3,
-  ).toLocaleString()} ${'bonds'}`
+  ).toLocaleString()}+ bonds`
 
   const transaction = <BidTransactionLink bid={row} />
 
@@ -131,7 +145,7 @@ export const TableDesign = ({
         </thead>
         <tbody {...getTableBodyProps()}>
           {loading &&
-            [...Array(10).keys()].map((z) => (
+            [...Array(4).keys()].map((z) => (
               <tr className="h-[57px] text-sm text-[#D2D2D2] bg-transparent" key={z}>
                 {[...Array(columns.length).keys()].map((i) => (
                   <td className="text-center text-[#696969] bg-transparent" key={i}>
@@ -213,8 +227,8 @@ export const TableDesign = ({
             })}
         </tbody>
       </table>
-      {!hidePagination && (
-        <div className="flex justify-end items-center space-x-2 text-[#696969] !border-none">
+      {!hidePagination && pageOptions.length > 0 && (
+        <div className="flex absolute right-6 bottom-7 justify-end items-center space-x-2 text-[#696969] !border-none">
           <button className="btn btn-xs" disabled={!canPreviousPage} onClick={previousPage}>
             <DoubleArrowLeftIcon />
           </button>
@@ -259,6 +273,15 @@ export const ActiveStatusPill = ({
   )
 }
 
+export const AuctionStatusPill = ({
+  auction,
+}: {
+  auction: Pick<Auction, 'end' | 'orderCancellationEndDate' | 'clearingPrice'>
+}) => {
+  const { atStageEnded, status } = getAuctionStates(auction)
+  return <ActiveStatusPill disabled={atStageEnded} title={atStageEnded ? 'ended' : status} />
+}
+
 export const BidTransactionLink = ({ bid }) => {
   const { chainId } = useActiveWeb3React()
   const hash = bid.canceltx || bid.claimtx || bid.createtx
@@ -283,17 +306,37 @@ export const BidTransactionLink = ({ bid }) => {
   )
 }
 
-export const OrderBookTable: React.FC<OrderBookTableProps> = ({ derivedAuctionInfo }) => {
-  const { bids, loading } = useAuctionBids()
+export const useBidStatus = (derivedAuctionInfo: DerivedAuctionInfo) => {
+  const auctionIdentifier = parseURL(useParams<RouteAuctionIdentifier>())
+  const { claimableBidFunds, claimableBonds } = useGetAuctionProceeds(
+    auctionIdentifier,
+    derivedAuctionInfo,
+  )
 
-  const maturityDate = useBondMaturityForAuction()
+  if (derivedAuctionInfo?.auctionState !== AuctionState.CLAIMING) return ''
+
+  const claimBid = claimableBidFunds && Number(claimableBidFunds.toSignificant(6))
+  const claimBond = claimableBonds && Number(claimableBonds.toSignificant(6))
+
+  let bidStatus = ''
+  if (!claimBid && claimBond) bidStatus = 'Filled'
+  if (claimBid && claimBond) bidStatus = 'Partially filled'
+  if (claimBid && !claimBond) bidStatus = 'Unfilled'
+
+  return bidStatus
+}
+
+export const OrderBookTable: React.FC<OrderBookTableProps> = ({ derivedAuctionInfo }) => {
+  const { data, loading } = useAuctionBids()
+  const bids = data?.bids
+  const { auctionEndDate, maturityDate } = useBondMaturityForAuction()
   const paymentToken = getTokenDisplay(derivedAuctionInfo?.biddingToken)
   const noBids = !Array.isArray(bids) || bids.length === 0
-  const data = []
-  !noBids &&
-    bids.forEach((row) => {
-      data.push(calculateRow(row, paymentToken, maturityDate, derivedAuctionInfo))
-    })
+  const tableData = noBids
+    ? []
+    : bids.map((row) =>
+        calculateRow(row, paymentToken, maturityDate, derivedAuctionInfo, auctionEndDate),
+      )
 
-  return <TableDesign columns={ordersTableColumns} data={data} loading={loading} />
+  return <TableDesign columns={ordersTableColumns} data={tableData} loading={loading} />
 }

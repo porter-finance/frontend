@@ -3,8 +3,9 @@ import * as am4core from '@amcharts/amcharts4/core'
 import am4themesSpiritedaway from '@amcharts/amcharts4/themes/spiritedaway'
 import { round } from 'lodash'
 
-import { Token } from '../../../hooks/useBond'
 import { getDisplay } from '../../../utils'
+
+import { Token } from '@/generated/graphql'
 
 export const createGradient = (color) => {
   const gradient = new am4core.LinearGradient()
@@ -81,6 +82,7 @@ export const XYSimpleBondChart = (props: XYBondChartProps): am4charts.XYChart =>
   priceAxis.extraTooltipPrecision = 3
   priceAxis.adjustLabelPrecision = false
   priceAxis.tooltip.disabled = true
+  tooltipRender(priceAxis)
 
   const dateAxis = chart.xAxes.push(new am4charts.DateAxis())
   dateAxis.renderer.grid.template.strokeOpacity = 0
@@ -104,6 +106,7 @@ export const XYSimpleBondChart = (props: XYBondChartProps): am4charts.XYChart =>
     description:
       'Amount each bond is redeemable for at maturity assuming a default does not occur.',
   }
+  tooltipRender(faceValue)
 
   const collateralValue = chart.series.push(new am4charts.StepLineSeries())
   collateralValue.dataFields.dateX = 'date'
@@ -116,8 +119,9 @@ export const XYSimpleBondChart = (props: XYBondChartProps): am4charts.XYChart =>
   collateralValue.name = 'COLLATERAL VALUE'
   collateralValue.dummyData = {
     description:
-      'Number of collateral tokens securing each bond. If a bond is defaulted on, the bondholder is able to exchange each bond for these collateral tokens.',
+      'Value of collateral securing each bond. If a bond is defaulted on, the bondholder is able to exchange each bond for these collateral tokens.',
   }
+  tooltipRender(collateralValue)
 
   // Add cursor
   chart.cursor = new am4charts.XYCursor()
@@ -157,8 +161,9 @@ export const XYConvertBondChart = (props: XYBondChartProps): am4charts.XYChart =
   convertibleTokenValue.startLocation = 0.5
   convertibleTokenValue.name = 'CONVERTIBLE TOKEN VALUE'
   convertibleTokenValue.dummyData = {
-    description: 'Number of tokens each bond is convertible into up until the maturity date.',
+    description: 'Value of tokens each bond is convertible into up until the maturity date.',
   }
+  tooltipRender(convertibleTokenValue)
 
   return chart
 }
@@ -174,8 +179,6 @@ export const drawInformation = (props: DrawInformation) => {
   const convertibleTokenLabel = getDisplay(convertibleToken)
 
   const collateralValueSeries = chart.series.values[1]
-  collateralValueSeries.dy = -15
-  tooltipRender(collateralValueSeries)
   collateralValueSeries.adapter.add('tooltipText', (text, target) => {
     const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
     const volume = round(valueY, 3)
@@ -183,10 +186,15 @@ export const drawInformation = (props: DrawInformation) => {
     return `Collateral value:  ${volume} ${convertibleTokenLabel}`
   })
 
+  const faceValueSeries = chart.series.values[0]
+  faceValueSeries.adapter.add('tooltipText', (text, target) => {
+    const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
+
+    return `Face value: ${valueY} ${convertibleTokenLabel}`
+  })
+
   if (chart.series.values.length > 2) {
     const convertibleValueSeries = chart.series.values[2]
-    tooltipRender(convertibleValueSeries)
-    convertibleValueSeries.dy = -15
     convertibleValueSeries.adapter.add('tooltipText', (text, target) => {
       const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
       const convertibleValue = round(valueY, 3)

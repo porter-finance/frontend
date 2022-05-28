@@ -32,9 +32,8 @@ notes.txt
 
 package-lock.json
 
-cypress/videos
-cypress/screenshots
-cypress/fixtures/example.json
 .project
 .vercel
 gen
+graphql.schema.json
+src/generated

@@ -3,19 +3,64 @@ import { createGlobalStyle } from 'styled-components'
 
 import dayjs from 'dayjs'
 
-import { ReactComponent as AuctionsIcon } from '../../assets/svg/auctions.svg'
-import { ReactComponent as DividerIcon } from '../../assets/svg/divider.svg'
-import { ReactComponent as OTCIcon } from '../../assets/svg/otc.svg'
-import { ActiveStatusPill } from '../../components/auction/OrderbookTable'
-import Table from '../../components/auctions/Table'
-import { ErrorBoundaryWithFallback } from '../../components/common/ErrorAndReload'
-import { calculateInterestRate } from '../../components/form/InterestRateInputPanel'
-import TokenLogo from '../../components/token/TokenLogo'
-import { useActiveWeb3React } from '../../hooks'
-import { useAuctions } from '../../hooks/useAuction'
-import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import { AllButton, AuctionButtonOutline, OTCButtonOutline } from '../Auction'
 import { TABLE_FILTERS } from '../Portfolio'
+import { BondIcon } from '../Products'
+
+import { ReactComponent as AuctionsIcon } from '@/assets/svg/auctions.svg'
+import { ReactComponent as DividerIcon } from '@/assets/svg/divider.svg'
+import { ReactComponent as OTCIcon } from '@/assets/svg/otc.svg'
+import { TokenInfoWithLink } from '@/components/auction/AuctionDetails'
+import { AuctionStatusPill } from '@/components/auction/OrderbookTable'
+import Table from '@/components/auctions/Table'
+import { ErrorBoundaryWithFallback } from '@/components/common/ErrorAndReload'
+import TooltipElement from '@/components/common/Tooltip'
+import { calculateInterestRate } from '@/components/form/InterestRateInputPanel'
+import { Auction } from '@/generated/graphql'
+import { useAuctions } from '@/hooks/useAuction'
+import { useSetNoDefaultNetworkId } from '@/state/orderPlacement/hooks'
+import { currentTimeInUTC } from '@/utils/tools'
+
+export const getAuctionStates = (
+  auction: Pick<Auction, 'end' | 'orderCancellationEndDate' | 'clearingPrice'>,
+) => {
+  const { clearingPrice, end, orderCancellationEndDate } = auction
+  // open for orders
+  const atStageOrderPlacement = currentTimeInUTC() <= end * 1000
+
+  // cancellable (can be open for orders and cancellable.
+  // This isn't an auction status rather an ability to cancel your bid or not.)
+  const atStageOrderPlacementAndCancelation = currentTimeInUTC() <= orderCancellationEndDate
+
+  // AKA settling (can be settled, but not yet done so)
+  const atStageNeedsSettled = currentTimeInUTC() >= end * 1000
+
+  // claiming (settled)
+  const atStageFinished = !!clearingPrice
+
+  const atStageEnded = currentTimeInUTC() >= end * 1000
+
+  let status = 'Unknown'
+  if (atStageEnded) status = 'ended'
+
+  // Auction can be settled
+  if (atStageNeedsSettled) status = 'settlement'
+
+  // Orders can be claimed
+  if (atStageFinished) status = 'claiming'
+
+  // Orders can be placed
+  if (atStageOrderPlacement) status = 'ongoing'
+
+  return {
+    atStageOrderPlacement,
+    atStageOrderPlacementAndCancelation,
+    atStageNeedsSettled,
+    atStageFinished,
+    atStageEnded,
+    status,
+  }
+}
 
 const GlobalStyle = createGlobalStyle`
   .siteHeader {
@@ -32,32 +77,25 @@ const columns = [
     filter: 'searchInTags',
   },
   {
-    Header: 'Current Price',
-    accessor: 'currentPrice',
+    Header: 'Minimum Price',
+    tooltip: 'Minimum price a bond can be sold for. Bids below this price will not be accepted.',
+    accessor: 'minimumPrice',
     align: 'flex-start',
     style: {},
     filter: 'searchInTags',
   },
   {
-    Header: 'Value at maturity',
-    accessor: 'maturityValue',
+    Header: 'Maximum APY',
     tooltip:
-      'This is the amount your bonds are redeemable for at the maturity date assuming a default does not occur.',
+      'Maximum APY the issuer is willing to pay. This is calculated using the minimum bond price.',
+    accessor: 'maximumAPY',
     align: 'flex-start',
     style: {},
     filter: 'searchInTags',
   },
   {
-    Header: 'Maturity Date',
-    accessor: 'maturityDate',
-    align: 'flex-start',
-    style: {},
-    filter: 'searchInTags',
-  },
-  {
-    Header: 'Fixed APR',
-    tooltip: 'This APR is calculated using the current price of the bond offering.',
-    accessor: 'fixedAPR',
+    Header: 'End Date',
+    accessor: 'endDate',
     align: 'flex-start',
     style: {},
     filter: 'searchInTags',
@@ -72,9 +110,8 @@ const columns = [
 ]
 
 const Offerings = () => {
-  const { chainId } = useActiveWeb3React()
   const { data: allAuctions, loading } = useAuctions()
-  const [tableFilter, setTableFilter] = useState<TABLE_FILTERS>(TABLE_FILTERS.ALL)
+  const [tableFilter, setTableFilter] = useState(TABLE_FILTERS.ALL)
 
   const tableData = []
 
@@ -83,53 +120,46 @@ const Offerings = () => {
   allAuctions?.forEach((auction) => {
     tableData.push({
       id: auction.id,
-      currentPrice: auction.clearingPrice ? auction.clearingPrice : '-',
+      minimumPrice: (
+        <TokenInfoWithLink auction={auction} value={auction.minimumBondPrice} withLink={false} />
+      ),
       search: JSON.stringify(auction),
       auctionId: `#${auction.id}`,
       type: 'auction', // TODO: currently hardcoded since no OTC exists
       price: `1 ${auction?.bidding?.symbol}`,
-      fixedAPR: calculateInterestRate(
-        auction.clearingPrice,
-        auction.bond.maturityDate,
-        true,
-        auction.end,
-      ),
-      status: auction.live ? (
-        <ActiveStatusPill title="Ongoing" />
-      ) : (
-        <ActiveStatusPill disabled dot={false} title="Ended" />
-      ),
+      maximumAPY: calculateInterestRate({
+        price: auction.minimumBondPrice,
+        maturityDate: auction.bond.maturityDate,
+        startDate: auction.end,
+      }),
+      status: <AuctionStatusPill auction={auction} />,
       maturityValue: `1 ${auction?.bond.paymentToken.symbol}`,
-      maturityDate: (
+      endDate: (
         <span className="uppercase">
-          {dayjs(auction?.bond?.maturityDate * 1000)
-            .utc()
-            .tz()
-            .format('ll')}
+          {
+            <TooltipElement
+              left={dayjs(auction?.end * 1000)
+                .utc()
+                .tz()
+                .format('ll')}
+              tip={dayjs(auction?.end * 1000)
+                .utc()
+                .tz()
+                .format('LLLL z ZZ (zzz)')}
+            />
+          }
         </span>
       ),
       offering: (
-        <div className="flex flex-row items-center space-x-4">
-          <div className="flex">
-            <TokenLogo
-              size="41px"
-              square
-              token={{
-                address: auction?.bond?.id,
-                symbol: auction?.bond?.name,
-              }}
-            />
-          </div>
-          <div className="flex flex-col text-lg text-[#EEEFEB]">
-            <div className="flex items-center space-x-2 capitalize">
-              <span>{auction?.bond.name.toLowerCase()}</span>
-              <AuctionsIcon width={15} />
-            </div>
-            <p className="text-sm text-[#9F9F9F] uppercase">{auction?.bond.symbol}</p>
-          </div>
-        </div>
+        <BondIcon
+          auctionId={auction?.id}
+          icon
+          id={auction?.bond?.id}
+          name={auction?.bond?.name}
+          symbol={auction?.bond.symbol}
+        />
       ),
-      url: `/offerings/${auction.id}/${chainId}`,
+      url: `/offerings/${auction.id}`,
     })
   })
 

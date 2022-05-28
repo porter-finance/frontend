@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 
-import { useApolloClient } from '@apollo/client'
 import { formatUnits } from '@ethersproject/units'
 import { Fraction, Token, TokenAmount } from '@josojo/honeyswap-sdk'
 import { useTokenBalance } from '@usedapp/core'
@@ -12,7 +11,11 @@ import kycLinks from '../../../assets/links/kycLinks.json'
 import { ReactComponent as PrivateIcon } from '../../../assets/svg/private.svg'
 import { isDev } from '../../../connectors'
 import { useActiveWeb3React } from '../../../hooks'
-import { ApprovalState, useApproveCallback } from '../../../hooks/useApproveCallback'
+import {
+  ApprovalState,
+  useApproveCallback,
+  useUnapproveCallback,
+} from '../../../hooks/useApproveCallback'
 import { useAuction } from '../../../hooks/useAuction'
 import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
 import { usePlaceOrderCallback } from '../../../hooks/usePlaceOrderCallback'
@@ -34,7 +37,6 @@ import {
   ChainId,
   EASY_AUCTION_NETWORKS,
   getFullTokenDisplay,
-  getTokenDisplay,
   isTokenWETH,
   isTokenWMATIC,
   isTokenXDAI,
@@ -96,7 +98,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     derivedAuctionInfo: { auctionState },
     derivedAuctionInfo,
   } = props
-  const apolloClient = useApolloClient()
   const { data: graphInfo } = useAuction(auctionIdentifier?.auctionId)
   const location = useGeoLocation()
   const disabledCountry = !isDev && location?.country === 'US'
@@ -116,6 +117,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const { auctionDetails, auctionInfoLoading } = useAuctionDetails(auctionIdentifier)
   const { signature } = useSignature(auctionIdentifier, account)
 
+  const [showTokenConfirm, setShowTokenConfirm] = useState<boolean>(false)
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [showWarning, setShowWarning] = useState<boolean>(false)
   const [showWarningWrongChainId, setShowWarningWrongChainId] = useState<boolean>(false)
@@ -134,6 +136,11 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const approvalTokenAmount: TokenAmount | undefined = parsedBiddingAmount
   const [approval, approveCallback] = useApproveCallback(
     approvalTokenAmount,
+    EASY_AUCTION_NETWORKS[chainId as ChainId],
+    chainIdFromWeb3 as ChainId,
+  )
+  const [, unapproveCallback] = useUnapproveCallback(
+    new TokenAmount(biddingToken, '0'),
     EASY_AUCTION_NETWORKS[chainId as ChainId],
     chainIdFromWeb3 as ChainId,
   )
@@ -171,12 +178,17 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     }
 
     const sameOrder = orders.orders.find((order) => order.price === price)
-
-    if (!sameOrder) {
-      setShowConfirm(true)
-    } else {
+    if (sameOrder) {
       setShowWarning(true)
+      return
     }
+
+    if (notApproved) {
+      setShowTokenConfirm(true)
+      return
+    }
+
+    setShowConfirm(true)
   }
 
   const cancelDate = React.useMemo(
@@ -223,6 +235,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
       showWarning ||
       showWarningWrongChainId ||
       showConfirm ||
+      showTokenConfirm ||
       sellAmount === '' ||
       price === '') &&
     true
@@ -280,12 +293,8 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     amount: Number(sellAmount),
     maturityDate: graphInfo?.bond?.maturityDate,
     price,
+    auctionEndDate: graphInfo?.end,
   })
-
-  const refetchOrders = () =>
-    apolloClient.refetchQueries({
-      include: 'active',
-    })
 
   return (
     <div className="card place-order-color">
@@ -364,6 +373,12 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                     Review order
                   </ActionButton>
 
+                  {isDev && !notApproved && (
+                    <a className="mt-2 text-xs text-white" href="#" onClick={unapproveCallback}>
+                      Unapprove token (DEV ONLY)
+                    </a>
+                  )}
+
                   <Modal isOpen={showCountry} onDismiss={setShowCountryDisabledModal}>
                     <div className="mt-10 space-y-6 text-center">
                       <h1 className="text-xl text-[#E0E0E0]">Access restriction warning</h1>
@@ -398,6 +413,32 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                   </Modal>
 
                   <ConfirmationDialog
+                    actionText={`Approve ${biddingTokenDisplay}`}
+                    actionTextDone="Review order"
+                    beforeDisplay={
+                      <ReviewOrder
+                        amountToken={graphInfo?.bond}
+                        cancelCutoff={cancelCutoff}
+                        data={reviewData}
+                        orderPlacingOnly={orderPlacingOnly}
+                        priceToken={graphInfo?.bond?.paymentToken}
+                      />
+                    }
+                    finishedText={`${biddingTokenDisplay} Approved`}
+                    loadingText={`Approving ${biddingTokenDisplay}`}
+                    onOpenChange={(to) => {
+                      setShowTokenConfirm(to)
+
+                      if (!notApproved) {
+                        setShowConfirm(true)
+                      }
+                    }}
+                    open={showTokenConfirm}
+                    pendingText="Confirm approval in wallet"
+                    placeOrder={approveCallback}
+                    title="Review order"
+                  />
+                  <ConfirmationDialog
                     actionText="Place order"
                     beforeDisplay={
                       <ReviewOrder
@@ -410,18 +451,11 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                     }
                     finishedText="Order placed"
                     loadingText="Placing order"
-                    onFinished={refetchOrders}
                     onOpenChange={setShowConfirm}
                     open={showConfirm}
                     pendingText="Confirm order in wallet"
                     placeOrder={placeOrderCallback}
                     title="Review order"
-                    unlock={{
-                      token: biddingTokenDisplay,
-                      isLocked: notApproved,
-                      onUnlock: approveCallback,
-                      unlockState: approval,
-                    }}
                   />
                   <div className="flex flex-row justify-between items-center mt-4 mb-3 text-xs text-[#9F9F9F]">
                     <div>{biddingTokenDisplay} Balance</div>
@@ -437,7 +471,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
           )}
         </Wrapper>
         <WarningModal
-          content={`Pick a different price, you already have an order for ${price} ${biddingTokenDisplay} per ${auctioningTokenDisplay}`}
+          content={`Please pick a different price. You already have an order for ${price} ${biddingTokenDisplay} per ${auctioningTokenDisplay}`}
           isOpen={showWarning}
           onDismiss={() => {
             setShowWarning(false)

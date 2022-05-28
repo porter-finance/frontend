@@ -12,7 +12,10 @@ import { useBondsPortfolio } from '../../hooks/useBondsPortfolio'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import { AllButton, ConvertButtonOutline, SimpleButtonOutline } from '../Auction'
-import { createTable } from '../Products'
+import { calculatePortfolioRow, getBondStates } from '../BondDetail'
+import { BondIcon } from '../Products'
+
+import { ActiveStatusPill } from '@/components/auction/OrderbookTable'
 
 const columns = [
   {
@@ -55,8 +58,8 @@ const columns = [
     filter: 'searchInTags',
   },
   {
-    Header: 'Fixed APR',
-    accessor: 'fixedAPR',
+    Header: 'Fixed APY',
+    accessor: 'fixedAPY',
     align: 'flex-start',
     style: {},
     filter: 'searchInTags',
@@ -76,24 +79,36 @@ const GlobalStyle = createGlobalStyle`
   }
 `
 
-export enum TABLE_FILTERS {
-  ALL = '',
-  CONVERT = 'convert',
-  SIMPLE = 'simple',
-  AUCTION = 'auction',
-  OTC = 'otc',
+export const TABLE_FILTERS = {
+  ALL: '',
+  CONVERT: 'convert',
+  SIMPLE: 'simple',
+  AUCTION: 'auction',
+  OTC: 'otc',
 }
 
 const Portfolio = () => {
   const { account } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
   const navigate = useNavigate()
-  const [tableFilter, setTableFilter] = useState<TABLE_FILTERS>(TABLE_FILTERS.ALL)
+  const [tableFilter, setTableFilter] = useState(TABLE_FILTERS.ALL)
 
   const { data, loading } = useBondsPortfolio()
-  const tableData = data
-    ? createTable(data).filter(({ type }) => (tableFilter ? type === tableFilter : true))
-    : []
+
+  const tableData = (
+    data?.map((row) => ({
+      ...calculatePortfolioRow(row),
+      bond: <BondIcon id={row?.id} name={row?.name} symbol={row?.symbol} type={row?.type} />,
+      type: row.type,
+      url: `/products/${row.id}`,
+      search: JSON.stringify(row),
+      status: getBondStates(row).isMatured ? (
+        <ActiveStatusPill disabled dot={false} title="Matured" />
+      ) : (
+        <ActiveStatusPill dot={false} title="Active" />
+      ),
+    })) || []
+  ).filter(({ type }) => (!tableFilter ? true : type === tableFilter))
 
   const emptyActionText = account ? 'Go to offerings' : 'Connect wallet'
   const emptyActionClick = account ? () => navigate('/offerings') : toggleWalletModal

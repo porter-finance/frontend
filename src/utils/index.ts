@@ -17,8 +17,9 @@ import {
   NETWORK_URL_RINKEBY,
   NETWORK_URL_XDAI,
 } from '../constants/config'
-import { Token as GraphToken } from '../hooks/useBond'
 import { getLogger } from '../utils/logger'
+
+import { Token as GraphToken } from '@/generated/graphql'
 
 const logger = getLogger('utils/index')
 
@@ -275,3 +276,5 @@ export function isTokenWMATIC(tokenAddress?: string, chainId?: ChainId): boolean
 export function isTimeout(timeId: NodeJS.Timeout | undefined): timeId is NodeJS.Timeout {
   return typeof timeId !== 'undefined'
 }
+
+export type PartiallyOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>

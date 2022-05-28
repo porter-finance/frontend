@@ -1,6 +1,9 @@
 import { createReducer } from '@reduxjs/toolkit'
+import { Mainnet, Rinkeby } from '@usedapp/core'
 
+import { isDev } from '../../connectors'
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../constants/config'
+import { useActiveWeb3React } from '../../hooks'
 import { getInverse } from '../../utils/prices'
 import {
   interestRateInput,
@@ -34,7 +37,8 @@ function parseAuctionIdParameter(urlParam: any): number {
 export default createReducer<OrderPlacementState>(initialState, (builder) =>
   builder
     .addCase(setDefaultsFromURLSearch, () => {
-      const { chainId } = useParams()
+      const { chainId } = useActiveWeb3React()
+
       return {
         ...initialState,
         chainId,
@@ -85,11 +89,8 @@ export type AuctionIdentifier = {
 
 export function parseURL(props: RouteAuctionIdentifier): AuctionIdentifier {
   return {
-    chainId: parseAuctionIdParameter(props?.chainId),
+    chainId: isDev ? Rinkeby.chainId : Mainnet.chainId,
     auctionId: parseAuctionIdParameter(props?.auctionId),
     bondId: `${props?.bondId}`,
   }
-}
-function useParams(): { chainId: any } {
-  throw new Error('Function not implemented.')
 }

@@ -1,18 +1,19 @@
 import { gql, useQuery } from '@apollo/client'
 import { useWeb3React } from '@web3-react/core'
 
-import { getLogger } from '../utils/logger'
-import { BondInfo } from './useBond'
+import { AccountDetailsDocument, Bond } from '@/generated/graphql'
+import { getLogger } from '@/utils/logger'
 
 const logger = getLogger('useBondsPortfolio')
 
-const bondsQuery = gql`
-  query BondList($account: ID!) {
+gql`
+  query AccountDetails($account: ID!) {
     account(id: $account) {
       tokenBalances {
         amount
         bond {
           id
+          state
           name
           symbol
           decimals
@@ -31,6 +32,9 @@ const bondsQuery = gql`
           convertibleRatio
           maxSupply
           clearingPrice
+          auctions {
+            end
+          }
         }
       }
     }
@@ -39,26 +43,25 @@ const bondsQuery = gql`
 
 export interface TokenBalance {
   amount: number
-  bond: BondInfo
+  bond: Bond
 }
 
-interface Portfolio {
-  data: BondInfo[]
-  loading: boolean
-}
-export const useBondsPortfolio = (): Portfolio => {
+export const useBondsPortfolio = () => {
   const { account } = useWeb3React()
-  const { data, error, loading } = useQuery(bondsQuery, {
+  const { data, error, loading } = useQuery(AccountDetailsDocument, {
     variables: { account: (account && account?.toLowerCase()) || '0x00' },
   })
 
   if (error) {
     logger.error('Error getting useBondsPortfolio info', error)
   }
-  const bonds = data?.account?.tokenBalances?.map(({ amount, bond }: TokenBalance) => ({
-    ...bond,
-    amount,
-  }))
+  const portfolio = []
+  data?.account?.tokenBalances?.forEach(({ amount, bond }) => {
+    portfolio.push({
+      ...bond,
+      tokenBalances: [{ amount }],
+    })
+  })
 
-  return { data: bonds, loading }
+  return { data: portfolio, loading }
 }

@@ -3,26 +3,27 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { createGlobalStyle } from 'styled-components'
 
 import { formatUnits } from '@ethersproject/units'
-import * as Sentry from '@sentry/react'
 import { useWeb3React } from '@web3-react/core'
 import dayjs from 'dayjs'
 
 import { ReactComponent as ConnectIcon } from '../../assets/svg/connect.svg'
 import { ReactComponent as WalletIcon } from '../../assets/svg/wallet.svg'
 import BondGraphCard from '../../components/BondGraphCard/BondGraphCard'
-import Dev, { forceDevData } from '../../components/Dev'
+import Dev from '../../components/Dev'
 import { AuctionTimer } from '../../components/auction/AuctionTimer'
-import { ActionButton } from '../../components/auction/Claimer'
 import { ExtraDetailsItem } from '../../components/auction/ExtraDetailsItem'
 import { ActiveStatusPill, TableDesign } from '../../components/auction/OrderbookTable'
 import BondAction from '../../components/bond/BondAction'
 import { ErrorBoundaryWithFallback } from '../../components/common/ErrorAndReload'
 import { calculateInterestRate } from '../../components/form/InterestRateInputPanel'
 import WarningModal from '../../components/modals/WarningModal'
+import TokenLink from '../../components/token/TokenLink'
 import TokenLogo from '../../components/token/TokenLogo'
-import { BondInfo, useBond } from '../../hooks/useBond'
+import { useBond } from '../../hooks/useBond'
 import { useBondExtraDetails } from '../../hooks/useBondExtraDetails'
 import { ConvertButtonOutline, LoadingTwoGrid, SimpleButtonOutline, TwoGridPage } from '../Auction'
+
+import { Bond } from '@/generated/graphql'
 
 export enum BondActions {
   Redeem,
@@ -100,26 +101,62 @@ const positionColumns = [
     accessor: 'maturityDate',
   },
   {
-    Header: 'Fixed APR',
-    tooltip: 'This APR is calculated using the closing price of the initial offering.',
-    accessor: 'fixedAPR',
+    Header: 'Fixed APY',
+    tooltip: 'This APY is calculated using the closing price of the initial offering.',
+    accessor: 'fixedAPY',
   },
 ]
 
-export const getBondStates = (bond: BondInfo) => {
-  const isMatured = forceDevData ? true : new Date() > new Date(bond?.maturityDate * 1000)
-  const isConvertBond = forceDevData ? false : bond?.type === 'convert'
-  const isPartiallyPaid = forceDevData ? true : false // TODO ADD THIS TO THE GRAPH
-  const isDefaulted = forceDevData ? false : bond?.state === 'defaulted'
-  const isPaid = forceDevData ? false : bond?.state === 'paidEarly' || bond?.state === 'paid'
-
+export const getBondStates = (
+  bond: Pick<Bond, 'type' | 'state' | 'maturityDate' | 'maxSupply' | 'amountUnpaid'>,
+) => {
+  const isConvertBond = bond?.type === 'convert'
+  const isDefaulted = bond?.state === 'defaulted'
+  const isPartiallyPaid = bond?.maxSupply - bond?.amountUnpaid > 0 && isDefaulted
+  const isPaid = bond?.state === 'paidEarly' || bond?.state === 'paid'
+  const isActive = bond?.state === 'active'
+  const isMatured = isDefaulted || bond?.state === 'paid'
   return {
     isMatured,
     isConvertBond,
     isPartiallyPaid,
     isDefaulted,
     isPaid,
+    isActive,
   }
+}
+
+export const calculatePortfolioRow = (
+  bond: Pick<
+    Bond,
+    'maturityDate' | 'tokenBalances' | 'clearingPrice' | 'decimals' | 'paymentToken' | 'auctions'
+  > & { auctions: Pick<Bond['auctions'][0], 'end'>[] },
+) => {
+  if (bond && Array.isArray(bond.tokenBalances) && bond.tokenBalances.length) {
+    const amount = Number(formatUnits(bond?.tokenBalances[0].amount, bond.decimals)) || 0
+    const fixedAPY = calculateInterestRate({
+      price: bond.clearingPrice,
+      maturityDate: bond.maturityDate,
+      startDate: bond?.auctions?.[0]?.end,
+    })
+
+    return {
+      amount: amount.toLocaleString(),
+      cost:
+        bond?.clearingPrice * amount
+          ? `${(bond?.clearingPrice * amount).toLocaleString()} ${bond.paymentToken.symbol}`
+          : '-',
+      price: bond?.clearingPrice ? bond?.clearingPrice : '-',
+      fixedAPY,
+      maturityDate: dayjs(bond.maturityDate * 1000)
+        .utc()
+        .tz()
+        .format('ll'),
+      maturityValue: amount ? `${amount.toLocaleString()} ${bond.paymentToken.symbol}` : '-',
+    }
+  }
+
+  return null
 }
 
 const BondDetail: React.FC = () => {
@@ -132,24 +169,11 @@ const BondDetail: React.FC = () => {
   const invalidBond = React.useMemo(() => !bondId || !bond, [bondId, bond])
   const { isConvertBond, isDefaulted, isMatured, isPaid, isPartiallyPaid } = getBondStates(bond)
 
-  let positionData
-  if (bond && Array.isArray(bond.tokenBalances) && bond.tokenBalances.length) {
-    const amount = Number(formatUnits(bond?.tokenBalances[0].amount, bond.decimals)) || 0
-    const fixedAPR = calculateInterestRate(bond.clearingPrice, bond.maturityDate)
-    positionData = [
-      {
-        amount: amount.toLocaleString(),
-        cost: (bond?.clearingPrice * amount).toLocaleString() || '-',
-        price: bond?.clearingPrice ? bond?.clearingPrice : '-',
-        fixedAPR,
-        maturityDate: dayjs(bond.maturityDate * 1000)
-          .utc()
-          .tz()
-          .format('ll'),
-        maturityValue: amount ? amount.toLocaleString() : '-',
-      },
-    ]
-  }
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //@ts-ignore idk how to fix this but calculate..() is expecting just auctions[end] not the full Auctions[] thing its complaining about
+  const data = calculatePortfolioRow(bond)
+  const positionData = data && [data]
+
   if (isLoading) {
     return (
       <>
@@ -166,7 +190,7 @@ const BondDetail: React.FC = () => {
         <WarningModal
           content={`This bond doesn't exist or it hasn't been created yet.`}
           isOpen
-          onDismiss={() => navigate('/auctions')}
+          onDismiss={() => navigate('/offerings')}
           title="Warning!"
         />
       </>
@@ -190,7 +214,9 @@ const BondDetail: React.FC = () => {
             </div>
             <div>
               <h1 className="text-3xl text-white capitalize">{bond?.name.toLowerCase()}</h1>
-              <p className="text-sm text-blue-100">{bond?.symbol}</p>
+              <p className="text-sm text-blue-100">
+                <TokenLink token={bond} withLink />
+              </p>
             </div>
           </div>
           <div>{isConvertBond ? <ConvertButtonOutline /> : <SimpleButtonOutline />}</div>
@@ -212,6 +238,7 @@ const BondDetail: React.FC = () => {
 
                   <AuctionTimer
                     color="purple"
+                    days
                     endDate={bond?.maturityDate}
                     endText="Maturity date"
                     endTip="Date each bond can be redeemed for $1 assuming no default. Convertible bonds cannot be converted after this date."
@@ -233,7 +260,7 @@ const BondDetail: React.FC = () => {
                 </div>
               </div>
 
-              <BondGraphCard bond={bond} />
+              <BondGraphCard bond={bond as Bond} />
 
               <div className="card">
                 <div className="card-body">

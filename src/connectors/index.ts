@@ -23,8 +23,7 @@ chainIds.forEach((chainId: ChainId) => {
 })
 
 export const isDev = process.env.REACT_APP_VERCEL_ENV !== 'production'
-// TODO switch to 1 when we have mainnet graph
-const defaultChainId = isDev ? 4 : 4
+const defaultChainId = isDev ? 4 : 1
 
 export const network = new NetworkConnector({ urls, defaultChainId })
 

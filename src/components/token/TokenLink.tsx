@@ -1,8 +1,9 @@
 import React, { ReactElement } from 'react'
 
 import { useActiveWeb3React } from '../../hooks'
-import { Token } from '../../hooks/useBond'
 import { getExplorerLink } from '../../utils'
+
+import { Token } from '@/generated/graphql'
 
 export const AddressLink = ({ children, hash }) => {
   const { chainId } = useActiveWeb3React()
@@ -41,7 +42,7 @@ export default function TokenLink({
   withLink?: boolean
 }): ReactElement {
   if (!token?.symbol) return <span>-</span>
-  const symbol = token.symbol.slice(0, 7)
+  const symbol = token.symbol
 
   if (withLink) {
     return <AddressLink hash={token?.id}>{symbol}</AddressLink>
