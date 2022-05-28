@@ -13,7 +13,7 @@ import { DAppProvider, Mainnet, Rinkeby } from '@usedapp/core'
 import { Web3ReactProvider, createWeb3ReactRoot } from '@web3-react/core'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
-import { WagmiProvider, WagmiProvider, chain, chain, createClient, createClient } from 'wagmi'
+import { WagmiProvider, chain, createClient } from 'wagmi'
 
 import { isDev } from './connectors'
 import { NetworkContextName } from './constants'
