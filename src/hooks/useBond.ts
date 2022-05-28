@@ -16,6 +16,8 @@ const singleBondQuery = gql`
     bond(id: $bondId) {
       id
       name
+      maxSupply
+      amountUnpaid
       state
       symbol
       type
@@ -52,6 +54,7 @@ const allBondsQuery = gql`
   query AllBonds {
     bonds(first: 100) {
       state
+      amountUnpaid
       id
       createdAt
       name

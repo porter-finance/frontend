@@ -5,15 +5,17 @@ import dayjs from 'dayjs'
 
 import { AllButton, AuctionButtonOutline, OTCButtonOutline } from '../Auction'
 import { TABLE_FILTERS } from '../Portfolio'
+import { BondIcon } from '../Products'
 
 import { ReactComponent as AuctionsIcon } from '@/assets/svg/auctions.svg'
 import { ReactComponent as DividerIcon } from '@/assets/svg/divider.svg'
 import { ReactComponent as OTCIcon } from '@/assets/svg/otc.svg'
+import { TokenInfoWithLink } from '@/components/auction/AuctionDetails'
 import { AuctionStatusPill } from '@/components/auction/OrderbookTable'
 import Table from '@/components/auctions/Table'
 import { ErrorBoundaryWithFallback } from '@/components/common/ErrorAndReload'
+import TooltipElement from '@/components/common/Tooltip'
 import { calculateInterestRate } from '@/components/form/InterestRateInputPanel'
-import TokenLogo from '@/components/token/TokenLogo'
 import { Auction } from '@/generated/graphql'
 import { useAuctions } from '@/hooks/useAuction'
 import { useSetNoDefaultNetworkId } from '@/state/orderPlacement/hooks'
@@ -75,17 +77,18 @@ const columns = [
     filter: 'searchInTags',
   },
   {
-    Header: 'Current Price',
-    accessor: 'currentPrice',
+    Header: 'Minimum Price',
+    tooltip: 'Minimum price a bond can be sold for. Bids below this price will not be accepted.',
+    accessor: 'minimumPrice',
     align: 'flex-start',
     style: {},
     filter: 'searchInTags',
   },
   {
-    Header: 'Value at maturity',
-    accessor: 'maturityValue',
+    Header: 'Maximum APY',
     tooltip:
-      'This is the amount your bonds are redeemable for at the maturity date assuming a default does not occur.',
+      'Maximum APY the issuer is willing to pay. This is calculated using the minimum bond price.',
+    accessor: 'maximumAPY',
     align: 'flex-start',
     style: {},
     filter: 'searchInTags',
@@ -93,14 +96,6 @@ const columns = [
   {
     Header: 'End Date',
     accessor: 'endDate',
-    align: 'flex-start',
-    style: {},
-    filter: 'searchInTags',
-  },
-  {
-    Header: 'Fixed APR',
-    tooltip: 'This APR is calculated using the current price of the bond offering.',
-    accessor: 'fixedAPR',
     align: 'flex-start',
     style: {},
     filter: 'searchInTags',
@@ -125,13 +120,15 @@ const Offerings = () => {
   allAuctions?.forEach((auction) => {
     tableData.push({
       id: auction.id,
-      currentPrice: auction.clearingPrice ? auction.clearingPrice : '-',
+      minimumPrice: (
+        <TokenInfoWithLink auction={auction} value={auction.minimumBondPrice} withLink={false} />
+      ),
       search: JSON.stringify(auction),
       auctionId: `#${auction.id}`,
       type: 'auction', // TODO: currently hardcoded since no OTC exists
       price: `1 ${auction?.bidding?.symbol}`,
-      fixedAPR: calculateInterestRate({
-        price: auction.clearingPrice,
+      maximumAPY: calculateInterestRate({
+        price: auction.minimumBondPrice,
         maturityDate: auction.bond.maturityDate,
         startDate: auction.end,
       }),
@@ -139,32 +136,28 @@ const Offerings = () => {
       maturityValue: `1 ${auction?.bond.paymentToken.symbol}`,
       endDate: (
         <span className="uppercase">
-          {dayjs(auction?.end * 1000)
-            .utc()
-            .tz()
-            .format('ll')}
+          {
+            <TooltipElement
+              left={dayjs(auction?.end * 1000)
+                .utc()
+                .tz()
+                .format('ll')}
+              tip={dayjs(auction?.end * 1000)
+                .utc()
+                .tz()
+                .format('LLLL z ZZ (zzz)')}
+            />
+          }
         </span>
       ),
       offering: (
-        <div className="flex flex-row items-center space-x-4">
-          <div className="flex">
-            <TokenLogo
-              size="41px"
-              square
-              token={{
-                address: auction?.bond?.id,
-                symbol: auction?.bond?.name,
-              }}
-            />
-          </div>
-          <div className="flex flex-col text-lg text-[#EEEFEB]">
-            <div className="flex items-center space-x-2 capitalize">
-              <span>{auction?.bond.name.toLowerCase()}</span>
-              <AuctionsIcon width={15} />
-            </div>
-            <p className="text-sm text-[#9F9F9F] uppercase">{auction?.bond.symbol}</p>
-          </div>
-        </div>
+        <BondIcon
+          auctionId={auction?.id}
+          icon
+          id={auction?.bond?.id}
+          name={auction?.bond?.name}
+          symbol={auction?.bond.symbol}
+        />
       ),
       url: `/offerings/${auction.id}`,
     })

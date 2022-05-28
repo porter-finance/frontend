@@ -31,22 +31,34 @@ export const getValuePerBond = (
     : 0
 }
 
+export const useUSDPerBond = (
+  bond?: Pick<Bond, 'collateralToken' | 'collateralRatio' | 'paymentToken' | 'convertibleRatio'>,
+  bondAmount = 1,
+) => {
+  const { data: collateralTokenPrice } = useTokenPrice(bond?.collateralToken.id)
+  const convertiblePerBond = bond ? getValuePerBond(bond, bond?.convertibleRatio) : 0
+  const collateralPerBond = bond ? getValuePerBond(bond, bond?.collateralRatio) : 0
+  const collateralValue = round(collateralPerBond * collateralTokenPrice, 3)
+
+  return {
+    collateralValue: round(collateralValue * bondAmount, 2),
+    convertibleValue: round(convertiblePerBond * collateralTokenPrice * bondAmount, 3),
+    convertiblePerBond,
+  }
+}
+
 export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => {
   const { data: bond } = useBond(bondId)
-  const isConvertBond = bond?.type === 'convert'
-  const { data: collateralTokenPrice } = useTokenPrice(bond?.collateralToken.id)
+  const { collateralValue, convertiblePerBond, convertibleValue } = useUSDPerBond(bond || undefined)
+
   // TODO - use this value, its value should always be close to 1 tho since its a stable
   // const { data: paymentTokenPrice } = useTokenPrice(bond?.paymentToken.id)
-
   const collateralPerBond = bond ? getValuePerBond(bond, bond?.collateralRatio) : 0
-  const convertiblePerBond = bond ? getValuePerBond(bond, bond?.convertibleRatio) : 0
-  const collateralValue = round(collateralPerBond * collateralTokenPrice, 3)
-  const convertibleValue = round(convertiblePerBond * collateralTokenPrice, 3)
-
   const collateralizationRatio = ((collateralValue / paymentTokenPrice) * 100).toLocaleString()
 
   const strikePrice =
     convertiblePerBond > 0 ? (paymentTokenPrice / convertiblePerBond).toLocaleString() : 0
+  const isConvertBond = bond?.type === 'convert'
 
   return [
     {
@@ -78,7 +90,7 @@ export const useBondExtraDetails = (bondId: string): ExtraDetailsItemProps[] => 
           {bond && <TokenLink token={bond.collateralToken} withLink />}
         </span>
       ),
-      hint: `($${convertibleValue})`,
+      hint: `($${round(convertibleValue, 2).toLocaleString()})`,
       tooltip: 'Value of tokens each bond is convertible into up until the maturity date.',
       show: isConvertBond,
     },

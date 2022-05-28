@@ -48,6 +48,7 @@ export const FieldRowLabel = styled.label`
 
 export const FieldRowToken = styled.div`
   .tokenLogo {
+    overflow: visible;
     border-width: 1px;
   }
 `

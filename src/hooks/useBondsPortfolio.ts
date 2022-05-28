@@ -6,7 +6,7 @@ import { getLogger } from '@/utils/logger'
 
 const logger = getLogger('useBondsPortfolio')
 
-const bondsQuery = gql`
+gql`
   query AccountDetails($account: ID!) {
     account(id: $account) {
       tokenBalances {
@@ -55,10 +55,13 @@ export const useBondsPortfolio = () => {
   if (error) {
     logger.error('Error getting useBondsPortfolio info', error)
   }
-  const bonds = data?.account?.tokenBalances?.map(({ amount, bond }: TokenBalance) => ({
-    ...bond,
-    amount,
-  }))
+  const portfolio = []
+  data?.account?.tokenBalances?.forEach(({ amount, bond }) => {
+    portfolio.push({
+      ...bond,
+      tokenBalances: [{ amount }],
+    })
+  })
 
-  return { data: bonds, loading }
+  return { data: portfolio, loading }
 }

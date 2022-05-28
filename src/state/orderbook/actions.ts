@@ -11,6 +11,14 @@ export const removeBid = createAction<{
   order: PricePoint
 }>('removeBid')
 
+export const appendOrderbookData = createAction<{
+  auctionId: number
+  chainId: number
+  orderbook: OrderBookData
+  calculatedAuctionPrice: CalculatedAuctionPrice
+  error: Maybe<Error>
+}>('AppendOrderbookOrders')
+
 export const resetOrderbookData = createAction<{
   auctionId: number
   chainId: number

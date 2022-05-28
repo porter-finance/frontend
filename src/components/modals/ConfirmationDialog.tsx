@@ -1,16 +1,16 @@
 import React, { ReactElement, useEffect, useState } from 'react'
 
+import { useApolloClient } from '@apollo/client'
+
 import { ReactComponent as GreenCheckIcon } from '../../assets/svg/greencheck.svg'
 import { ReactComponent as PurplePorterIcon } from '../../assets/svg/porter-purple.svg'
 import { ReactComponent as PorterIcon } from '../../assets/svg/porter.svg'
 import { useActiveWeb3React } from '../../hooks'
-import { ApprovalState } from '../../hooks/useApproveCallback'
 import { useAllTransactions } from '../../state/transactions/hooks'
 import { getExplorerLink } from '../../utils'
 import { ActionButton, GhostActionLink } from '../auction/Claimer'
 import { TokenInfo } from '../bond/BondAction'
 import Tooltip from '../common/Tooltip'
-import { unlockProps } from '../form/AmountInputPanel'
 import Modal, { DialogTitle } from './common/Modal'
 
 export const OopsWarning = ({
@@ -95,11 +95,11 @@ export const ReviewOrder = ({ amountToken, cancelCutoff, data, orderPlacingOnly,
       </div>
     </div>
     <div className="pb-4 space-y-2 text-xs text-[#696969] border-b border-b-[#D5D5D519]">
-      <TokenInfo extra={`(${data.apr})`} token={priceToken} value={data.earn} />
+      <TokenInfo extra={`(${data.apy})`} token={priceToken} value={data.earn} />
       <div className="text-xs text-[#696969]">
         <Tooltip
           left="Amount of interest you earn"
-          tip="Amount you will earn assuming no default. If the final auction price is lower than your bid price, you will receive more bonds than ordered and, therefore, earn more."
+          tip="Amount you will earn assuming no default. If the final price is lower than your bid price, you will receive more bonds than ordered at a lower price, therefore, earning more."
         />
       </div>
     </div>
@@ -181,89 +181,11 @@ const GhostTransactionLink = ({ chainId, hash }) => (
     </svg>
   </GhostActionLink>
 )
-const TokenApproval = ({
-  actionColor,
-  beforeDisplay,
-  setShowTokenTransactionComplete,
-  showTokenTransactionComplete,
-  unlock,
-}: {
-  actionColor: string
-  beforeDisplay: ReactElement
-  setShowTokenTransactionComplete: (hash: string) => void
-  showTokenTransactionComplete: string
-  unlock: unlockProps
-}) => {
-  const { chainId } = useActiveWeb3React()
-  const [pendingTokenTransaction, setPendingTokenTransaction] = useState(false)
-  const isUnlocking = unlock?.unlockState === ApprovalState.PENDING
-
-  return (
-    <>
-      <div>
-        <BodyPanel
-          after={{
-            show: !isUnlocking && showTokenTransactionComplete,
-            display: <span>{unlock.token} Approved</span>,
-          }}
-          before={{
-            show: !isUnlocking && !showTokenTransactionComplete,
-            display: beforeDisplay,
-          }}
-          color={actionColor}
-          during={{
-            show: isUnlocking,
-            display: <span>Approving {unlock.token}</span>,
-          }}
-        />
-        {!showTokenTransactionComplete && unlock?.isLocked && (
-          <div className="mt-10">
-            <ActionButton
-              aria-label={`Approve ${unlock.token}`}
-              className={pendingTokenTransaction || isUnlocking ? 'loading' : ''}
-              onClick={() => {
-                setPendingTokenTransaction(true)
-                unlock
-                  .onUnlock()
-                  .then((response) => {
-                    setPendingTokenTransaction(false)
-                    setShowTokenTransactionComplete(response?.hash || response)
-                  })
-                  .catch(() => {
-                    setPendingTokenTransaction(false)
-                  })
-              }}
-            >
-              {!isUnlocking && !pendingTokenTransaction && `Approve ${unlock.token}`}
-              {!isUnlocking && pendingTokenTransaction && 'Confirm approval in wallet'}
-              {isUnlocking && !pendingTokenTransaction && `Approving ${unlock.token}`}
-            </ActionButton>
-          </div>
-        )}
-        {showTokenTransactionComplete && (
-          <div className="flex flex-col justify-center items-center mt-20 space-y-4">
-            <GhostTransactionLink chainId={chainId} hash={showTokenTransactionComplete} />
-
-            {!isUnlocking && (
-              <ActionButton
-                aria-label="Review order"
-                onClick={() => {
-                  setShowTokenTransactionComplete('')
-                }}
-              >
-                Review order
-              </ActionButton>
-            )}
-          </div>
-        )}
-      </div>
-    </>
-  )
-}
 
 const ConfirmationDialog = ({
   actionColor = 'blue',
   actionText,
+  actionTextDone = 'Done',
   beforeDisplay,
   finishedText,
   loadingText,
@@ -273,10 +195,10 @@ const ConfirmationDialog = ({
   pendingText,
   placeOrder,
   title,
-  unlock,
 }: {
   placeOrder: () => Promise<any>
   actionColor?: string
+  actionTextDone?: string
   actionText?: string
   onFinished?: () => void
   pendingText: string
@@ -284,40 +206,38 @@ const ConfirmationDialog = ({
   loadingText: string
   finishedText: string
   beforeDisplay: ReactElement
-  unlock?: unlockProps
   onOpenChange: (open: boolean) => void
   open: boolean
 }) => {
   const { chainId } = useActiveWeb3React()
   const allTransactions = useAllTransactions()
+  const apolloClient = useApolloClient()
 
   const [transactionError, setTransactionError] = useState(false)
-  const [showTokenTransactionComplete, setShowTokenTransactionComplete] = useState('')
-
-  const [pendingOrderTransaction, setPendingOrderTransaction] = useState(false)
-  const [orderComplete, setOrderComplete] = useState(false)
-  const [showOrderTransactionComplete, setShowOrderTransactionComplete] = useState('')
+  const [transactionPendingWalletConfirm, setTransactionPendingWalletConfirm] = useState(false)
+  const [transactionComplete, setTransactionComplete] = useState(false)
+  const [showTransactionCreated, setShowTransactionCreated] = useState('')
 
   // get the latest transaction that created the bond
-  // TODO: so bad, should usedapp instead
+  // TODO: so bad, should wagmi/usedapp instead
   useEffect(() => {
     if (!allTransactions) return
     Object.keys(allTransactions)
       .reverse()
       .some((hash) => {
-        if (hash !== showOrderTransactionComplete) return false
+        if (hash !== showTransactionCreated) return false
         const tx = allTransactions[hash]
         // the first one is always the new order
         if (tx.receipt?.logs) {
-          setOrderComplete(true)
+          setTransactionComplete(true)
           if (onFinished) onFinished()
         }
 
         return true
       })
-  }, [showOrderTransactionComplete, onFinished, allTransactions])
+  }, [showTransactionCreated, onFinished, allTransactions, apolloClient])
 
-  const waitingTransactionToComplete = showOrderTransactionComplete && !orderComplete
+  const waitingTransactionToComplete = showTransactionCreated && !transactionComplete
 
   const onDismiss = () => {
     if (waitingTransactionToComplete) return false
@@ -329,92 +249,76 @@ const ConfirmationDialog = ({
         setTransactionError(null)
       }
 
-      if (orderComplete) {
-        setOrderComplete(false)
-        setShowTokenTransactionComplete('')
-        setShowOrderTransactionComplete('')
+      if (transactionComplete) {
+        apolloClient.refetchQueries({
+          include: 'all',
+        })
+        setTransactionComplete(false)
+        setShowTransactionCreated('')
       }
     }, 400)
   }
 
   return (
-    <Modal
-      hideCloseIcon={showOrderTransactionComplete && !orderComplete}
-      isOpen={open}
-      onDismiss={onDismiss}
-    >
+    <Modal hideCloseIcon={waitingTransactionToComplete} isOpen={open} onDismiss={onDismiss}>
       {!transactionError && (
         <>
-          {title &&
-            !showOrderTransactionComplete &&
-            !orderComplete &&
-            !showTokenTransactionComplete && <DialogTitle>{title}</DialogTitle>}
-
-          {unlock && !showOrderTransactionComplete && !orderComplete && (
-            <TokenApproval
-              actionColor={actionColor}
-              beforeDisplay={beforeDisplay}
-              setShowTokenTransactionComplete={setShowTokenTransactionComplete}
-              showTokenTransactionComplete={showTokenTransactionComplete}
-              unlock={unlock}
-            />
+          {title && !showTransactionCreated && !transactionComplete && (
+            <DialogTitle>{title}</DialogTitle>
           )}
 
           <div>
             <BodyPanel
               after={{
-                show: orderComplete && showOrderTransactionComplete,
+                show: transactionComplete && showTransactionCreated,
                 display: <span>{finishedText}</span>,
               }}
               before={{
-                show: !unlock && !showOrderTransactionComplete && !orderComplete,
+                show: !showTransactionCreated && !transactionComplete,
                 display: beforeDisplay,
               }}
               color={actionColor}
               during={{
-                show: showOrderTransactionComplete && !orderComplete,
+                show: showTransactionCreated && !transactionComplete,
                 display: <span>{loadingText}</span>,
               }}
             />
 
-            {!orderComplete &&
-              !showTokenTransactionComplete &&
-              !showOrderTransactionComplete &&
-              !unlock?.isLocked && (
-                <div className="mt-10 mb-0">
-                  <ActionButton
-                    aria-label={actionText}
-                    className={pendingOrderTransaction ? 'loading' : ''}
-                    color={actionColor}
-                    onClick={() => {
-                      setPendingOrderTransaction(true)
-                      placeOrder()
-                        .then((response) => {
-                          setPendingOrderTransaction(false)
-                          setShowOrderTransactionComplete(response?.hash || response)
-                        })
-                        .catch((e) => {
-                          setTransactionError(e?.message || e)
-                          setPendingOrderTransaction(false)
-                        })
-                    }}
-                  >
-                    {pendingOrderTransaction && pendingText}
-                    {!pendingOrderTransaction && actionText}
-                  </ActionButton>
-                </div>
-              )}
+            {!transactionComplete && !showTransactionCreated && (
+              <div className="mt-10 mb-0">
+                <ActionButton
+                  aria-label={actionText}
+                  className={transactionPendingWalletConfirm ? 'loading' : ''}
+                  color={actionColor}
+                  onClick={() => {
+                    setTransactionPendingWalletConfirm(true)
+                    placeOrder()
+                      .then((response) => {
+                        setTransactionPendingWalletConfirm(false)
+                        setShowTransactionCreated(response?.hash || response)
+                      })
+                      .catch((e) => {
+                        setTransactionError(e?.message || e)
+                        setTransactionPendingWalletConfirm(false)
+                      })
+                  }}
+                >
+                  {transactionPendingWalletConfirm && pendingText}
+                  {!transactionPendingWalletConfirm && actionText}
+                </ActionButton>
+              </div>
+            )}
           </div>
 
-          {(showOrderTransactionComplete || orderComplete) && (
+          {(showTransactionCreated || transactionComplete) && (
             <div className="flex flex-col justify-center items-center mt-20 space-y-4">
-              {showOrderTransactionComplete && (
-                <GhostTransactionLink chainId={chainId} hash={showOrderTransactionComplete} />
+              {showTransactionCreated && (
+                <GhostTransactionLink chainId={chainId} hash={showTransactionCreated} />
               )}
 
-              {orderComplete && (
+              {transactionComplete && (
                 <ActionButton aria-label="Done" color={actionColor} onClick={onDismiss}>
-                  Done
+                  {actionTextDone}
                 </ActionButton>
               )}
             </div>

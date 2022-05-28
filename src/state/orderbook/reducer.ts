@@ -3,6 +3,7 @@ import { createReducer } from '@reduxjs/toolkit'
 import { PricePoint } from '../../api/AdditionalServicesApi'
 import {
   appendBid,
+  appendOrderbookData,
   pullOrderbookData,
   removeBid,
   resetOrderbookData,
@@ -88,6 +89,23 @@ export default createReducer<OrderbookState>(initialState, (builder) =>
         userOrderVolume: volume,
       }
     })
+    .addCase(
+      appendOrderbookData,
+      (_, { payload: { auctionId, calculatedAuctionPrice, chainId, error, orderbook } }) => {
+        return {
+          bids: orderbook.bids,
+          asks: orderbook.asks,
+          error,
+          userOrderPrice: 0,
+          userOrderVolume: 0,
+          shouldLoad: false,
+          auctionId,
+          chainId,
+          orderbookPrice: calculatedAuctionPrice.price,
+          orderbookPriceReversed: calculatedAuctionPrice.priceReversed,
+        }
+      },
+    )
     .addCase(
       resetOrderbookData,
       (_, { payload: { auctionId, calculatedAuctionPrice, chainId, error, orderbook } }) => {
