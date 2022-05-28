@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 
+import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useWeb3React } from '@web3-react/core'
 import { HashLink } from 'react-router-hash-link'
 
@@ -172,6 +173,7 @@ export const Component = (props) => {
               <Tooltip tip={`Supported networks are: ${chainNamesFormatted}`} />
             </Error>
           )}
+          <ConnectButton />
           {isConnected && !chainMismatch && <UserDropdownStyled disabled={mobileMenuVisible} />}
         </Inner>
       </Wrapper>

@@ -3,17 +3,14 @@ import { BrowserRouter } from 'react-router-dom'
 
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { Web3Provider } from '@ethersproject/providers'
-import {
-  RainbowKitProvider,
-  apiProvider,
-  configureChains,
-  getDefaultWallets,
-} from '@rainbow-me/rainbowkit'
+import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit'
 import { DAppProvider, Mainnet, Rinkeby } from '@usedapp/core'
 import { Web3ReactProvider, createWeb3ReactRoot } from '@web3-react/core'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
-import { WagmiProvider, chain, createClient } from 'wagmi'
+import { WagmiConfig, chain, configureChains, createClient } from 'wagmi'
+import { alchemyProvider } from 'wagmi/providers/alchemy'
+import { publicProvider } from 'wagmi/providers/public'
 
 import { isDev } from './connectors'
 import { NetworkContextName } from './constants'
@@ -39,8 +36,8 @@ const dappConfig = {
 }
 
 const { chains, provider } = configureChains(
-  [chain.mainnet, chain.rinkeby],
-  [apiProvider.alchemy(process.env.ALCHEMY_ID), apiProvider.fallback()],
+  [chain.mainnet, chain.polygon, chain.optimism, chain.arbitrum],
+  [alchemyProvider({ alchemyId: process.env.ALCHEMY_ID }), publicProvider()],
 )
 
 const { connectors } = getDefaultWallets({
@@ -88,7 +85,7 @@ root.render(
       <Web3ProviderNetwork getLibrary={getLibrary}>
         <Provider store={store}>
           <ApolloProvider client={apolloClient}>
-            <WagmiProvider client={wagmiClient}>
+            <WagmiConfig client={wagmiClient}>
               <RainbowKitProvider chains={chains}>
                 <DAppProvider config={dappConfig}>
                   <Updaters />
@@ -100,7 +97,7 @@ root.render(
                   </ThemeProvider>
                 </DAppProvider>
               </RainbowKitProvider>
-            </WagmiProvider>
+            </WagmiConfig>
           </ApolloProvider>
         </Provider>
       </Web3ProviderNetwork>
