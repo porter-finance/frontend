@@ -13,7 +13,7 @@ const TOKEN_LIST_RESOURCES = [
   'https://tokens.1inch.eth.link',
   'https://bafybeih3zii2hukln4enn2qiacqeb4jgvqescxpbudxhpvtfiex4cjpgce.ipfs.dweb.link/',
   'https://raw.githubusercontent.com/gnosis/ido-contracts/master/assets/tokens/rinkeby-token-list.json',
-  'https://tokens.honeyswap.org',
+  // 'https://tokens.honeyswap.org',
 ]
 
 const ajv = new Ajv({ allErrors: true })
