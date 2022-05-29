@@ -1,27 +1,15 @@
 import React, { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { ConnectButton } from '@rainbow-me/rainbowkit'
-import { HashLink } from 'react-router-hash-link'
 
-import { injected } from '../../../connectors'
-import { chainNames } from '../../../constants'
-import { useWalletModalToggle } from '../../../state/application/hooks'
-import { useOrderPlacementState } from '../../../state/orderPlacement/hooks'
-import { setupNetwork } from '../../../utils/setupNetwork'
-import { getChainName } from '../../../utils/tools'
-import { ButtonConnect } from '../../buttons/ButtonConnect'
 import { ButtonMenu } from '../../buttons/ButtonMenu'
 import { Logo } from '../../common/Logo'
-import { UserDropdown } from '../../common/UserDropdown'
 import WalletModal from '../../modals/WalletModal'
 import { Mainmenu } from '../../navigation/Mainmenu'
 import { Mobilemenu } from '../../navigation/Mobilemenu'
 import { InnerContainer } from '../../pureStyledComponents/InnerContainer'
-import { NetworkError, useNetworkCheck } from '../../web3/Web3Status'
-
-import { useActiveWeb3React } from '@/hooks'
 
 const Wrapper = styled.header`
   width: 100%;
@@ -41,14 +29,6 @@ export const Inner = styled(InnerContainer)`
   padding-right: ${({ theme }) => theme.layout.horizontalPadding};
 `
 
-const LogoLink = styled(HashLink)`
-  display: none;
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    display: block;
-  }
-`
-
 const ButtonMenuStyled = styled(ButtonMenu)`
   display: block;
   position: relative;
@@ -56,26 +36,6 @@ const ButtonMenuStyled = styled(ButtonMenu)`
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     display: none;
-  }
-`
-
-const ButtonConnectStyled = styled(ButtonConnect)`
-  margin-left: auto;
-  position: relative;
-  z-index: 5;
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    margin-left: 0;
-  }
-`
-
-const UserDropdownStyled = styled(UserDropdown)`
-  margin-left: auto;
-  position: relative;
-  z-index: 5;
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    margin-left: 0;
   }
 `
 
@@ -111,50 +71,12 @@ export const Error = styled.span`
   }
 `
 
-const ErrorText = styled.span`
-  margin-right: 8px;
-`
-
 export const Component = (props) => {
-  const location = useLocation()
-  const { account, activate } = useActiveWeb3React()
-  const { chainId } = useOrderPlacementState()
-  const { errorWrongNetwork } = useNetworkCheck()
-  const isConnected = !!account
   const [mobileMenuVisible, setMobileMenuVisible] = useState(false)
-  const toggleWalletModal = useWalletModalToggle()
 
   const mobileMenuToggle = () => {
     setMobileMenuVisible(!mobileMenuVisible)
   }
-
-  const chains = Object.keys(chainNames)
-  let chainNamesFormatted = ''
-
-  for (let count = 0; count < chains.length; count++) {
-    const postPend = count !== chains.length - 1 ? ', ' : '.'
-
-    chainNamesFormatted += getChainName(Number(chains[count])) + postPend
-  }
-
-  const isAuctionPage = React.useMemo(
-    () => location.pathname.includes('/auction'),
-    [location.pathname],
-  )
-  const chainMismatch = React.useMemo(
-    () => errorWrongNetwork === NetworkError.noChainMatch && isAuctionPage,
-    [errorWrongNetwork, isAuctionPage],
-  )
-  React.useEffect(() => {
-    const trySwitchingNetworks = async (): Promise<void> => {
-      const previouslyUsedWalletConnect = localStorage.getItem('walletconnect')
-      if (!previouslyUsedWalletConnect && chainMismatch && chainId == 100) {
-        await setupNetwork(chainId)
-        activate(injected, undefined, true)
-      }
-    }
-    trySwitchingNetworks()
-  }, [chainMismatch, activate, chainId])
 
   return (
     <>
