@@ -8,7 +8,7 @@ import { getLogger } from '@/utils/logger'
 
 const logger = getLogger('useAuctionBids')
 
-const bidsQuery = gql`
+gql`
   query BidsForSingleAuction($auctionId: Int!) {
     bids(
       orderBy: timestamp
