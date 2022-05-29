@@ -3,7 +3,6 @@ import { Link, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { ConnectButton } from '@rainbow-me/rainbowkit'
-import { useWeb3React } from '@web3-react/core'
 import { HashLink } from 'react-router-hash-link'
 
 import { injected } from '../../../connectors'
@@ -15,13 +14,14 @@ import { getChainName } from '../../../utils/tools'
 import { ButtonConnect } from '../../buttons/ButtonConnect'
 import { ButtonMenu } from '../../buttons/ButtonMenu'
 import { Logo } from '../../common/Logo'
-import Tooltip from '../../common/Tooltip'
 import { UserDropdown } from '../../common/UserDropdown'
 import WalletModal from '../../modals/WalletModal'
 import { Mainmenu } from '../../navigation/Mainmenu'
 import { Mobilemenu } from '../../navigation/Mobilemenu'
 import { InnerContainer } from '../../pureStyledComponents/InnerContainer'
 import { NetworkError, useNetworkCheck } from '../../web3/Web3Status'
+
+import { useActiveWeb3React } from '@/hooks'
 
 const Wrapper = styled.header`
   width: 100%;
@@ -117,7 +117,7 @@ const ErrorText = styled.span`
 
 export const Component = (props) => {
   const location = useLocation()
-  const { account, activate } = useWeb3React()
+  const { account, activate } = useActiveWeb3React()
   const { chainId } = useOrderPlacementState()
   const { errorWrongNetwork } = useNetworkCheck()
   const isConnected = !!account
@@ -166,15 +166,7 @@ export const Component = (props) => {
             <Logo />
           </Link>
           <Menu />
-          {!isConnected && <ButtonConnectStyled onClick={toggleWalletModal} />}
-          {isConnected && chainMismatch && (
-            <Error>
-              <ErrorText>Connect to the {getChainName(chainId)} network</ErrorText>
-              <Tooltip tip={`Supported networks are: ${chainNamesFormatted}`} />
-            </Error>
-          )}
           <ConnectButton />
-          {isConnected && !chainMismatch && <UserDropdownStyled disabled={mobileMenuVisible} />}
         </Inner>
       </Wrapper>
       <WalletModal />

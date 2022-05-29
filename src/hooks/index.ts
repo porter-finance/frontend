@@ -4,9 +4,9 @@ import { Web3Provider } from '@ethersproject/providers'
 import { SafeAppConnector, useSafeAppConnection } from '@gnosis.pm/safe-apps-web3-react'
 import { useWeb3React as useWeb3ReactCore } from '@web3-react/core'
 import { isMobile } from 'react-device-detect'
+import { useAccount, useNetwork, useProvider } from 'wagmi'
 
 import { injected, walletconnect } from '../connectors'
-import { NetworkContextName } from '../constants'
 import { useOrderPlacementState } from '../state/orderPlacement/hooks'
 import { useOrderActionHandlers } from '../state/orders/hooks'
 import { getLogger } from '../utils/logger'
@@ -16,10 +16,26 @@ const safeAppConnector = new SafeAppConnector()
 const logger = getLogger('hooks/index')
 
 export function useActiveWeb3React() {
-  const context = useWeb3ReactCore<Web3Provider>()
-  const contextNetwork = useWeb3ReactCore<Web3Provider>(NetworkContextName)
+  const { data } = useAccount()
+  const { activeChain, error, switchNetwork } = useNetwork()
+  const provider = useProvider()
 
-  return context.active ? context : contextNetwork
+  // TODO remove this
+  const context = useWeb3ReactCore<Web3Provider>()
+
+  return {
+    account: data?.address,
+    active: !!activeChain,
+    chainId: activeChain?.id,
+    switchNetwork,
+    provider,
+    error,
+    // TODO: replace these
+    library: context?.library,
+    connector: context?.connector,
+    activate: context?.activate,
+    deactivate: context?.deactivate,
+  }
 }
 
 export function useEagerConnect() {

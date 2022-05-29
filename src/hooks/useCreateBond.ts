@@ -3,8 +3,8 @@ import { useCallback, useEffect, useState } from 'react'
 import { MaxUint256 } from '@ethersproject/constants'
 import { TransactionResponse } from '@ethersproject/providers'
 import { Token } from '@josojo/honeyswap-sdk'
-import { useWeb3React } from '@web3-react/core'
 
+import { useActiveWeb3React } from '.'
 import { useAllTransactions, useTransactionAdder } from '../state/transactions/hooks'
 import { useToken } from './Tokens'
 import { useBondContract, useBondFactoryContract } from './useContract'
@@ -20,7 +20,7 @@ export function useCreateBond(): {
   collateralToken?: Token
 } {
   const allTransactions = useAllTransactions()
-  const { account } = useWeb3React()
+  const { account } = useActiveWeb3React()
   const { hasRole } = useHasRole()
   const [error, setError] = useState('')
   const [newBondAddress, setNewBondAddress] = useState('')

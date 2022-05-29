@@ -2,7 +2,6 @@ import React from 'react'
 import styled from 'styled-components'
 
 import { WalletConnectConnector } from '@anxolin/walletconnect-connector'
-import { useWeb3React } from '@web3-react/core'
 
 import { useActiveWeb3React } from '../../../hooks'
 import { getChainName, truncateStringInTheMiddle } from '../../../utils/tools'
@@ -71,7 +70,7 @@ const Item = styled.li<{ hasOnClick?: boolean; disabled?: boolean; hide?: boolea
 `
 
 const UserDropdownButton = () => {
-  const { account } = useWeb3React()
+  const { account } = useActiveWeb3React()
 
   return (
     <DropdownButton className="btn btn-sm">

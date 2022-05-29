@@ -3,7 +3,7 @@ import styled from 'styled-components'
 
 import { WalletConnectConnector } from '@anxolin/walletconnect-connector'
 import { AbstractConnector } from '@web3-react/abstract-connector'
-import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
+import { UnsupportedChainIdError } from '@web3-react/core'
 import { event } from 'react-ga'
 
 import { ReactComponent as PorterIcon } from '../../../assets/svg/porter.svg'
@@ -24,6 +24,8 @@ import { OopsWarning } from '../ConfirmationDialog'
 import Modal, { DialogTitle } from '../common/Modal'
 import Option from '../common/Option'
 import { Content } from '../common/pureStyledComponents/Content'
+
+import { useActiveWeb3React } from '@/hooks'
 
 const Footer = styled.div`
   color: ${({ theme }) => theme.text1};
@@ -51,7 +53,7 @@ const WALLET_VIEWS = {
 }
 
 const WalletModal: React.FC = () => {
-  const { account, activate, active, connector, deactivate, error } = useWeb3React()
+  const { account, activate, active, connector, deactivate, error } = useActiveWeb3React()
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
   const [pendingWallet, setPendingWallet] = useState<AbstractConnector>()
   const [pendingError, setPendingError] = useState<boolean>()

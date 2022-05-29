@@ -1,6 +1,6 @@
-import { useWeb3React } from '@web3-react/core'
 import useSWR from 'swr'
 
+import { useActiveWeb3React } from '.'
 import { getLogger } from '../utils/logger'
 
 const logger = getLogger('useTokenPrice')
@@ -10,7 +10,7 @@ const coinGekoBaseUrl = 'https://api.coingecko.com/api/v3'
 const ribbonToken = '0x6123b0049f904d730db3c36a31167d9d4121fa6b'
 
 export const useTokenPrice = (tokenContractAddress?: string): { data: any; loading: boolean } => {
-  const { chainId } = useWeb3React()
+  const { chainId } = useActiveWeb3React()
 
   // The tokens used on the testnet will not exist so no price will be returned
   // this uses rocketpool token instead of the real tokens on any network
@@ -39,7 +39,7 @@ export const useHistoricTokenPrice = (
   data: [EpochTimeStamp, number]
   loading: boolean
 } => {
-  const { chainId } = useWeb3React()
+  const { chainId } = useActiveWeb3React()
   // The tokens used on the testnet will not exist so no price will be returned
   // this uses rocketpool token instead of the real tokens on any network
   // other than mainnet so we have pricing data

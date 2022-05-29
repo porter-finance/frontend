@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
 import { Transition } from '@headlessui/react'
-import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
+import { UnsupportedChainIdError } from '@web3-react/core'
 import { Chain, chain } from 'wagmi'
 
 import { isDev } from '../connectors'
@@ -12,8 +12,7 @@ import { useNetworkCheck } from './web3/Web3Status'
 const Warning = ({ chain }: { chain: Chain }) => {
   const toggleWalletModal = useWalletModalToggle()
   const [loading, setLoading] = useState(false)
-  const { library } = useActiveWeb3React()
-  const { provider } = library || {}
+  const { switchNetwork } = useActiveWeb3React()
 
   return (
     <div className="flex justify-center items-center py-6 space-x-4 font-medium text-white bg-[#DB3635]">
@@ -34,30 +33,17 @@ const Warning = ({ chain }: { chain: Chain }) => {
 
       <div>Please switch to Ethereum {chain.name}</div>
 
-      {provider?.request && (
-        <button
-          className={`px-4 !text-2sm font-medium text-white normal-case btn-sm btn ${
-            loading ? 'loading' : ''
-          }`}
-          onClick={() => {
-            setLoading(true)
-            provider
-              .request({
-                method: 'wallet_switchEthereumChain',
-                params: [{ chainId: `0x${chain.id}` }],
-              })
-              .finally(() => setLoading(false))
-              .catch((e) => {
-                setLoading(false)
-
-                if (e?.code === 4001) return
-                toggleWalletModal()
-              })
-          }}
-        >
-          Switch network
-        </button>
-      )}
+      <button
+        className={`px-4 !text-2sm font-medium text-white normal-case btn-sm btn ${
+          loading ? 'loading' : ''
+        }`}
+        onClick={() => {
+          setLoading(true)
+          switchNetwork(chain.id)
+        }}
+      >
+        Switch network
+      </button>
     </div>
   )
 }
@@ -65,7 +51,7 @@ const Warning = ({ chain }: { chain: Chain }) => {
 export const requiredChain = isDev ? chain.rinkeby : chain.mainnet
 
 const ChainWarning = () => {
-  const { account, chainId, error } = useWeb3React()
+  const { account, chainId, error } = useActiveWeb3React()
   const { errorWrongNetwork } = useNetworkCheck(requiredChain.id)
   const networkError = error instanceof UnsupportedChainIdError || errorWrongNetwork
   let showError = false

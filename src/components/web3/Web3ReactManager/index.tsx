@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
-import { useWeb3React } from '@web3-react/core'
 import { useTranslation } from 'react-i18next'
 
 import { tokenLogosServiceApi } from '../../../api'
 import { network } from '../../../connectors'
-import { NetworkContextName } from '../../../constants'
-import { useActiveListener, useEagerConnect, useInactiveListener } from '../../../hooks'
+import {
+  useActiveListener,
+  useActiveWeb3React,
+  useEagerConnect,
+  useInactiveListener,
+} from '../../../hooks'
 import { useTokenListActionHandlers } from '../../../state/tokenList/hooks'
 import { getLogger } from '../../../utils/logger'
 
@@ -30,7 +33,7 @@ export default function Web3ReactManager({ children }) {
     activate: activateNetwork,
     active: networkActive,
     error: networkError,
-  } = useWeb3React(NetworkContextName)
+  } = useActiveWeb3React()
   const { onLoadTokenList } = useTokenListActionHandlers()
 
   // try to eagerly connect to an injected provider, if it exists and has granted access already
