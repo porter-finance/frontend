@@ -14,7 +14,6 @@ import { useRedeemBond } from '../../../hooks/useRedeemBond'
 import { BondActions, getBondStates } from '../../../pages/BondDetail'
 import { useActivePopups, useWalletModalToggle } from '../../../state/application/hooks'
 import { getExplorerLink, getTokenDisplay } from '../../../utils'
-import { ActionButton } from '../../auction/Claimer'
 import { ActiveStatusPill } from '../../auction/OrderbookTable'
 import Tooltip from '../../common/Tooltip'
 import AmountInputPanel from '../../form/AmountInputPanel'
@@ -22,6 +21,7 @@ import ConfirmationDialog, { ReviewConvert } from '../../modals/ConfirmationDial
 import { FieldRowTokenSymbol } from '../../pureStyledComponents/FieldRow'
 import TokenLogo from '../../token/TokenLogo'
 
+import { ActionButton } from '@/components/auction/Claimer'
 import { useUSDPerBond } from '@/hooks/useBondExtraDetails'
 
 export const TokenPill = ({ token }) => {
