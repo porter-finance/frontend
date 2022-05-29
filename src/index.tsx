@@ -76,7 +76,7 @@ root.render(
         <Provider store={store}>
           <ApolloProvider client={apolloClient}>
             <WagmiConfig client={wagmiClient}>
-              <RainbowKitProvider chains={chains}>
+              <RainbowKitProvider chains={chains} showRecentTransactions>
                 <Updaters />
                 <ThemeProvider>
                   <GlobalStyle />
