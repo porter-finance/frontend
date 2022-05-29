@@ -166,7 +166,10 @@ export const Component = (props) => {
             <Logo />
           </Link>
           <Menu />
-          <ConnectButton />
+          <ConnectButton
+            chainStatus={{ smallScreen: 'icon', largeScreen: 'icon' }}
+            showBalance={false}
+          />
         </Inner>
       </Wrapper>
       <WalletModal />
