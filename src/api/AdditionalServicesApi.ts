@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { Mainnet, Rinkeby } from '@usedapp/core'
+import { chain } from 'wagmi'
 
 import { isDev } from '../connectors'
 import { Order, decodeOrder, encodeOrder } from '../hooks/Order'
@@ -105,7 +105,7 @@ function getAdditionalServiceUrl(baseUrl: string): string {
 }
 
 export type AdditionalServicesApiParams = AdditionalServicesEndpoint[]
-const networkId = isDev ? Rinkeby.chainId : Mainnet.chainId
+const networkId = isDev ? chain.rinkeby.id : chain.mainnet.id
 
 export class AdditionalServicesApiImpl implements AdditionalServicesApi {
   private urlsByNetwork: { [networkId: number]: string } = {}

@@ -59,7 +59,7 @@ const WalletModal: React.FC = () => {
   const toggleWalletModal = useWalletModalToggle()
   const closeWalletModal = useWalletModalClose()
   const previousAccount = usePrevious(account)
-  const { errorWrongNetwork } = useNetworkCheck(requiredChain.chainId)
+  const { errorWrongNetwork } = useNetworkCheck(requiredChain.id)
   const { chainId } = useOrderPlacementState()
   const [walletConnectChainError, setWalletConnectChainError] = useState<NetworkError>()
 
@@ -216,7 +216,7 @@ const WalletModal: React.FC = () => {
       : 'Connect a wallet'
   const errorMessage =
     error instanceof UnsupportedChainIdError || walletConnectChainError
-      ? `Please connect to the ${requiredChain.chainName} Ethereum network.`
+      ? `Please connect to the ${requiredChain.name} Ethereum network.`
       : null
 
   const showError = !error && !walletConnectChainError && connectingToWallet && pendingError

@@ -4,7 +4,6 @@ import { BrowserRouter } from 'react-router-dom'
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { Web3Provider } from '@ethersproject/providers'
 import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit'
-import { DAppProvider, Mainnet, Rinkeby } from '@usedapp/core'
 import { Web3ReactProvider, createWeb3ReactRoot } from '@web3-react/core'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
@@ -15,7 +14,6 @@ import { publicProvider } from 'wagmi/providers/public'
 import { isDev } from './connectors'
 import { NetworkContextName } from './constants'
 import './i18n'
-import { NETWORK_URL_MAINNET, NETWORK_URL_RINKEBY } from './constants/config'
 import App from './pages/App'
 import store from './state'
 import ApplicationUpdater from './state/application/updater'
@@ -27,21 +25,13 @@ import { GlobalStyle } from './theme/globalStyle'
 import './index.css'
 import '@rainbow-me/rainbowkit/styles.css'
 
-const dappConfig = {
-  readOnlyChainId: Mainnet.chainId,
-  readOnlyUrls: {
-    [Rinkeby.chainId]: NETWORK_URL_RINKEBY,
-    [Mainnet.chainId]: NETWORK_URL_MAINNET,
-  },
-}
-
 const { chains, provider } = configureChains(
-  [chain.mainnet, chain.polygon, chain.optimism, chain.arbitrum],
-  [alchemyProvider({ alchemyId: process.env.ALCHEMY_ID }), publicProvider()],
+  [chain.mainnet, chain.rinkeby],
+  [alchemyProvider({ alchemyId: 'rD-tnwLLzbfOaFOBAv2ckazyJTmCRLhu' }), publicProvider()],
 )
 
 const { connectors } = getDefaultWallets({
-  appName: 'My RainbowKit App',
+  appName: 'Porter Finance',
   chains,
 })
 
@@ -87,15 +77,13 @@ root.render(
           <ApolloProvider client={apolloClient}>
             <WagmiConfig client={wagmiClient}>
               <RainbowKitProvider chains={chains}>
-                <DAppProvider config={dappConfig}>
-                  <Updaters />
-                  <ThemeProvider>
-                    <GlobalStyle />
-                    <BrowserRouter>
-                      <App />
-                    </BrowserRouter>
-                  </ThemeProvider>
-                </DAppProvider>
+                <Updaters />
+                <ThemeProvider>
+                  <GlobalStyle />
+                  <BrowserRouter>
+                    <App />
+                  </BrowserRouter>
+                </ThemeProvider>
               </RainbowKitProvider>
             </WagmiConfig>
           </ApolloProvider>

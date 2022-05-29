@@ -3,9 +3,9 @@ import styled, { css } from 'styled-components'
 
 import { formatUnits } from '@ethersproject/units'
 import { Fraction, Token, TokenAmount } from '@josojo/honeyswap-sdk'
-import { useTokenBalance } from '@usedapp/core'
 import dayjs from 'dayjs'
 import useGeoLocation from 'react-ipgeolocation'
+import { useBalance } from 'wagmi'
 
 import kycLinks from '../../../assets/links/kycLinks.json'
 import { ReactComponent as PrivateIcon } from '../../../assets/svg/private.svg'
@@ -33,14 +33,7 @@ import {
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderState } from '../../../state/orders/hooks'
 import { OrderState } from '../../../state/orders/reducer'
-import {
-  ChainId,
-  EASY_AUCTION_NETWORKS,
-  getFullTokenDisplay,
-  isTokenWETH,
-  isTokenWMATIC,
-  isTokenXDAI,
-} from '../../../utils'
+import { ChainId, EASY_AUCTION_NETWORKS, getFullTokenDisplay } from '../../../utils'
 import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
 import Tooltip from '../../common/Tooltip'
@@ -145,9 +138,13 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     chainIdFromWeb3 as ChainId,
   )
 
-  const biddingTokenBalance = useTokenBalance(biddingToken.address, account, { chainId })
+  const { data: biddingTokenBalance } = useBalance({
+    token: biddingToken.address,
+    addressOrName: account,
+    chainId,
+  })
   const balanceString = biddingTokenBalance
-    ? Number(formatUnits(biddingTokenBalance, biddingToken.decimals)).toLocaleString()
+    ? Number(formatUnits(biddingTokenBalance?.value, biddingToken.decimals)).toLocaleString()
     : '0.00'
 
   useEffect(() => {
@@ -240,15 +237,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
       price === '') &&
     true
 
-  const isWrappable =
-    biddingTokenBalance &&
-    biddingTokenBalance.gt('0') &&
-    (isTokenXDAI(biddingToken.address, chainId) ||
-      isTokenWETH(biddingToken.address, chainId) ||
-      isTokenWMATIC(biddingToken.address, chainId)) &&
-    !!account &&
-    !!biddingToken.address
-
   const auctioningTokenAddress = auctioningToken && auctioningToken?.address
   const linkForKYC = auctioningTokenAddress ? kycLinks[auctioningTokenAddress] : null
 
@@ -317,31 +305,14 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
           {(!isPrivate || signatureAvailable) && (
             <>
               <AmountInputPanel
-                chainId={chainId}
                 info={amountInfo}
                 onUserSellAmountInput={onUserSellAmountInput}
                 token={graphInfo?.bond}
                 value={sellAmount}
-                wrap={{
-                  isWrappable,
-                  onClick: () =>
-                    chainId == 100
-                      ? window.open(
-                          `https://app.honeyswap.org/#/swap?inputCurrency=${biddingToken.address}`,
-                        )
-                      : chainId == 137
-                      ? window.open(
-                          `https://quickswap.exchange/#/swap?inputCurrency=${biddingToken.address}`,
-                        )
-                      : window.open(
-                          `https://app.uniswap.org/#/swap?inputCurrency=${biddingToken.address}`,
-                        ),
-                }}
               />
               <PriceInputPanel
                 account={account}
                 auctionId={auctionIdentifier?.auctionId}
-                chainId={chainId}
                 disabled={!account}
                 info={priceInfo}
                 onUserPriceInput={onUserPriceInput}

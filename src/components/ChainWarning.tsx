@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 
 import { Transition } from '@headlessui/react'
-import { Chain, Mainnet, Rinkeby } from '@usedapp/core'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
+import { Chain, chain } from 'wagmi'
 
 import { isDev } from '../connectors'
 import { useActiveWeb3React } from '../hooks'
@@ -32,7 +32,7 @@ const Warning = ({ chain }: { chain: Chain }) => {
         <path d="M12.252 8H10.252V13H12.252V8Z" fill="#e0e0e0" />
       </svg>
 
-      <div>Please switch to Ethereum {chain.chainName}</div>
+      <div>Please switch to Ethereum {chain.name}</div>
 
       {provider?.request && (
         <button
@@ -44,7 +44,7 @@ const Warning = ({ chain }: { chain: Chain }) => {
             provider
               .request({
                 method: 'wallet_switchEthereumChain',
-                params: [{ chainId: `0x${chain.chainId}` }],
+                params: [{ chainId: `0x${chain.id}` }],
               })
               .finally(() => setLoading(false))
               .catch((e) => {
@@ -62,11 +62,11 @@ const Warning = ({ chain }: { chain: Chain }) => {
   )
 }
 
-export const requiredChain = isDev ? Rinkeby : Mainnet
+export const requiredChain = isDev ? chain.rinkeby : chain.mainnet
 
 const ChainWarning = () => {
   const { account, chainId, error } = useWeb3React()
-  const { errorWrongNetwork } = useNetworkCheck(requiredChain.chainId)
+  const { errorWrongNetwork } = useNetworkCheck(requiredChain.id)
   const networkError = error instanceof UnsupportedChainIdError || errorWrongNetwork
   let showError = false
   if (account) {
@@ -74,7 +74,7 @@ const ChainWarning = () => {
     if (
       !!networkError || // There was a problem with the network
       !chainId || // There is not a recognized chain connected
-      chainId !== requiredChain.chainId // An unsupported chain is connected
+      chainId !== requiredChain.id // An unsupported chain is connected
     ) {
       showError = true
     }

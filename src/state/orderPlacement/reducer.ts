@@ -1,5 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { Mainnet, Rinkeby } from '@usedapp/core'
+import { chain } from 'wagmi'
 
 import { isDev } from '../../connectors'
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../constants/config'
@@ -89,7 +89,7 @@ export type AuctionIdentifier = {
 
 export function parseURL(props: RouteAuctionIdentifier): AuctionIdentifier {
   return {
-    chainId: isDev ? Rinkeby.chainId : Mainnet.chainId,
+    chainId: isDev ? chain.rinkeby.id : chain.mainnet.id,
     auctionId: parseAuctionIdParameter(props?.auctionId),
     bondId: `${props?.bondId}`,
   }

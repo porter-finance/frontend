@@ -334,7 +334,6 @@ const BondAction = ({
                     ? 'Amount of bonds you are exchanging for convertible tokens.'
                     : 'Amount of bonds you are redeeming.'
                 }
-                chainId={chainId}
                 disabled={!account}
                 maxTitle={`${getActionText(componentType)} all`}
                 onMax={() => {
@@ -343,7 +342,6 @@ const BondAction = ({
                 onUserSellAmountInput={setBondsToRedeem}
                 token={tok}
                 value={bondsToRedeem}
-                wrap={{ isWrappable: false, onClick: null }}
               />
             )}
             <div className="space-y-6 text-xs text-[#696969]">
