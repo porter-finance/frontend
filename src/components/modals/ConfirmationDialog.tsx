@@ -2,16 +2,17 @@ import React, { ReactElement, useEffect, useState } from 'react'
 
 import { useApolloClient } from '@apollo/client'
 
-import { ReactComponent as GreenCheckIcon } from '../../assets/svg/greencheck.svg'
-import { ReactComponent as PurplePorterIcon } from '../../assets/svg/porter-purple.svg'
-import { ReactComponent as PorterIcon } from '../../assets/svg/porter.svg'
-import { useActiveWeb3React } from '../../hooks'
-import { useAllTransactions } from '../../state/transactions/hooks'
-import { getExplorerLink } from '../../utils'
 import { ActionButton, GhostActionLink } from '../auction/Claimer'
 import { TokenInfo } from '../bond/BondAction'
 import Tooltip from '../common/Tooltip'
 import Modal, { DialogTitle } from './common/Modal'
+
+import { ReactComponent as GreenCheckIcon } from '@/assets/svg/greencheck.svg'
+import { ReactComponent as PurplePorterIcon } from '@/assets/svg/porter-purple.svg'
+import { ReactComponent as PorterIcon } from '@/assets/svg/porter.svg'
+import { useActiveWeb3React } from '@/hooks'
+import { useAllTransactions } from '@/state/transactions/hooks'
+import { getExplorerLink } from '@/utils'
 
 export const OopsWarning = ({
   actionClick = null,

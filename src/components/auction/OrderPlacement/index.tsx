@@ -476,7 +476,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
           onDismiss={() => {
             setShowWarning(false)
           }}
-          title="Warning!"
         />
         <WarningModal
           content={`In order to place this order, please connect to the ${getChainName(
@@ -486,7 +485,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
           onDismiss={() => {
             setShowWarningWrongChainId(false)
           }}
-          title="Warning!"
         />
       </div>
     </div>
