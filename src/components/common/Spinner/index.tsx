@@ -1,7 +1,7 @@
 import React, { HTMLAttributes } from 'react'
 import styled from 'styled-components'
 
-import { ReactComponent as PorterIcon } from '../../../assets/svg/porter.svg'
+import { ReactComponent as PorterIcon } from '@/assets/svg/porter.svg'
 
 const Wrapper = styled.div<{ size?: SpinnerSize | string | undefined }>`
   flex-grow: 0;
