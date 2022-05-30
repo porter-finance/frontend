@@ -15,7 +15,7 @@ const WarningModal: React.FC<Props> = (props) => {
 
   return (
     <Modal isOpen={isOpen} onDismiss={onDismiss}>
-      <OopsWarning actionClick={onDismiss} message={content} />
+      <OopsWarning actionClick={onDismiss} message={content} title={title} />
     </Modal>
   )
 }
