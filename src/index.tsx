@@ -3,7 +3,7 @@ import { BrowserRouter } from 'react-router-dom'
 
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { Web3Provider } from '@ethersproject/providers'
-import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit'
+import { RainbowKitProvider, darkTheme, getDefaultWallets } from '@rainbow-me/rainbowkit'
 import { Web3ReactProvider, createWeb3ReactRoot } from '@web3-react/core'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
@@ -71,12 +71,20 @@ const apolloClient = new ApolloClient({
 
 root.render(
   <>
-    <Web3ReactProvider getLibrary={getLibrary}>
-      <Web3ProviderNetwork getLibrary={getLibrary}>
-        <Provider store={store}>
-          <ApolloProvider client={apolloClient}>
-            <WagmiConfig client={wagmiClient}>
-              <RainbowKitProvider chains={chains} showRecentTransactions>
+    <WagmiConfig client={wagmiClient}>
+      <RainbowKitProvider
+        chains={chains}
+        showRecentTransactions
+        theme={darkTheme({
+          accentColor: '#404eed',
+          accentColorForeground: '#e0e0e0',
+          fontStack: 'system',
+        })}
+      >
+        <Web3ReactProvider getLibrary={getLibrary}>
+          <Web3ProviderNetwork getLibrary={getLibrary}>
+            <Provider store={store}>
+              <ApolloProvider client={apolloClient}>
                 <Updaters />
                 <ThemeProvider>
                   <GlobalStyle />
@@ -84,11 +92,11 @@ root.render(
                     <App />
                   </BrowserRouter>
                 </ThemeProvider>
-              </RainbowKitProvider>
-            </WagmiConfig>
-          </ApolloProvider>
-        </Provider>
-      </Web3ProviderNetwork>
-    </Web3ReactProvider>
+              </ApolloProvider>
+            </Provider>
+          </Web3ProviderNetwork>
+        </Web3ReactProvider>
+      </RainbowKitProvider>
+    </WagmiConfig>
   </>,
 )
