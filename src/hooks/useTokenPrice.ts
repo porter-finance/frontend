@@ -1,6 +1,6 @@
 import useSWR from 'swr'
 
-import { useActiveWeb3React } from '.'
+import { isDev } from '../connectors'
 import { getLogger } from '../utils/logger'
 
 const logger = getLogger('useTokenPrice')
@@ -10,12 +10,10 @@ const coinGekoBaseUrl = 'https://api.coingecko.com/api/v3'
 const ribbonToken = '0x6123b0049f904d730db3c36a31167d9d4121fa6b'
 
 export const useTokenPrice = (tokenContractAddress?: string): { data: any; loading: boolean } => {
-  const { chainId } = useActiveWeb3React()
-
   // The tokens used on the testnet will not exist so no price will be returned
-  // this uses rocketpool token instead of the real tokens on any network
-  // other than mainnet so we have pricing data
-  const realOrTestToken = chainId === 1 ? tokenContractAddress || '' : ribbonToken
+  // this uses ribbon token instead of the real tokens on dev
+  // so we have pricing data
+  const realOrTestToken = isDev ? ribbonToken : tokenContractAddress || ''
   const { data, error } = useSWR(
     `${coinGekoBaseUrl}/simple/token_price/ethereum?vs_currencies=usd&contract_addresses=${realOrTestToken}`,
     fetcher,
@@ -39,11 +37,10 @@ export const useHistoricTokenPrice = (
   data: [EpochTimeStamp, number]
   loading: boolean
 } => {
-  const { chainId } = useActiveWeb3React()
   // The tokens used on the testnet will not exist so no price will be returned
-  // this uses rocketpool token instead of the real tokens on any network
-  // other than mainnet so we have pricing data
-  const realOrTestToken = chainId === 1 ? tokenContractAddress : ribbonToken
+  // this uses ribbon token instead of the real tokens on dev
+  // so we have pricing data
+  const realOrTestToken = isDev ? ribbonToken : tokenContractAddress
   const url = `${coinGekoBaseUrl}/coins/ethereum/contract/${realOrTestToken}/market_chart/?vs_currency=usd&days=${days}&interval=daily`
   const { data, error } = useSWR(url, fetcher, { refreshInterval: 600 * 1000 })
 
