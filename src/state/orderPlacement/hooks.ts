@@ -670,10 +670,10 @@ export function useAllUserOrders(
         return
       }
 
-      let sellOrdersFormUser: string[] = []
+      let sellOrdersFromUser: string[] = []
 
       try {
-        sellOrdersFormUser = await additionalServiceApi.getAllUserOrders({
+        sellOrdersFromUser = await additionalServiceApi.getAllUserOrders({
           networkId: chainId,
           auctionId,
           user: account,
@@ -683,7 +683,7 @@ export function useAllUserOrders(
       }
 
       const sellOrderDisplays: OrderDisplay[] = []
-      for (const orderString of sellOrdersFormUser) {
+      for (const orderString of sellOrdersFromUser) {
         const order = decodeOrder(orderString)
 
         // in some of the orders the buyAmount field is zero

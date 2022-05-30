@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react'
 
-import { BidTransactionLink, TableDesign, calculateRow, useBidStatus } from '../OrderbookTable'
+import { BidTransactionLink, TableDesign, calculateRow } from '../OrderbookTable'
 
 import ConfirmationDialog, { OopsWarning } from '@/components/modals/ConfirmationDialog'
 import { Bid } from '@/generated/graphql'
@@ -64,7 +64,6 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
     auctionIdentifier,
     derivedAuctionInfo?.biddingToken,
   )
-  const bidStatus = useBidStatus(derivedAuctionInfo)
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [orderId, setOrderId] = useState<string>('')
 
@@ -100,7 +99,6 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
         maturityDate,
         derivedAuctionInfo,
         auctionEndDate,
-        bidStatus,
       )
 
       items.transaction = (
