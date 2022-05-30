@@ -4,8 +4,8 @@ import { createGlobalStyle } from 'styled-components'
 import dayjs from 'dayjs'
 
 import { AllButton, AuctionButtonOutline, OTCButtonOutline } from '../Auction'
+import { BondIcon } from '../Bonds'
 import { TABLE_FILTERS } from '../Portfolio'
-import { BondIcon } from '../Products'
 
 import { ReactComponent as AuctionsIcon } from '@/assets/svg/auctions.svg'
 import { ReactComponent as DividerIcon } from '@/assets/svg/divider.svg'

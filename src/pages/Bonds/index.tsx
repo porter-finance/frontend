@@ -166,11 +166,11 @@ export const createTable = (data?: Bond[]) =>
         </span>
       ),
 
-      url: `/products/${id}`,
+      url: `/bonds/${id}`,
     }
   })
 
-const Products = () => {
+const Bonds = () => {
   const { data, loading } = useBonds()
   const [tableFilter, setTableFilter] = useState(TABLE_FILTERS.ALL)
 
@@ -189,7 +189,7 @@ const Products = () => {
           columns={columns()}
           data={tableData}
           emptyActionClass="!bg-[#532DBE]"
-          emptyDescription="There are no products at the moment"
+          emptyDescription="There are no bonds at the moment"
           emptyLogo={
             <>
               <ConvertIcon height={36} width={36} /> <SimpleIcon height={36} width={36} />
@@ -213,12 +213,12 @@ const Products = () => {
             </>
           }
           loading={loading}
-          name="products"
-          title="Products"
+          name="bonds"
+          title="Bonds"
         />
       </ErrorBoundaryWithFallback>
     </>
   )
 }
 
-export default Products
+export default Bonds
