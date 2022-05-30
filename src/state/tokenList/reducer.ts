@@ -14,10 +14,20 @@ export const DEV_tokens = [
   // Ribbon Token
   ['0xac554b8fb63ac7a46819701953a7413290c81448', 'https://etherscan.io/token/images/ribbon_32.png'],
 
-  // Ribbon Bond
+  // Ribbon Bond Development Test
   [
     '0x3c585f028e0f8d8fa18d2c7dbe6fd40fcd6ea2a5',
-    'https://img.freepik.com/free-vector/elegant-red-ribbon-bow-isolated-white_1284-46797.jpg?w=200',
+    'https://user-images.githubusercontent.com/44010262/170816957-67584771-3ba9-48be-8ddd-eaef9efe9e04.png',
+  ],
+  // Ribbon Bond Rinkeby
+  [
+    '0xfbdeec30e1c93463f6c4dcbda175613aee122016',
+    'https://user-images.githubusercontent.com/44010262/170816957-67584771-3ba9-48be-8ddd-eaef9efe9e04.png',
+  ],
+  // Ribbon Bond Mainnet
+  [
+    '0xe34c023c0ea9899a8f8e9381437a604908e8b719',
+    'https://user-images.githubusercontent.com/44010262/170816957-67584771-3ba9-48be-8ddd-eaef9efe9e04.png',
   ],
 
   // Porter Bond Rinkeby
