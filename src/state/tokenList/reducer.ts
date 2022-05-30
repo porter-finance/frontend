@@ -20,6 +20,11 @@ export const DEV_tokens = [
     'https://img.freepik.com/free-vector/elegant-red-ribbon-bow-isolated-white_1284-46797.jpg?w=200',
   ],
 
+  // Porter Bond
+  [
+    '0x708ef78a8aab8df64b80c5759a193a120027e2f0',
+    'https://raw.githubusercontent.com/porter-finance/docs/main/.gitbook/assets/porter_bond_60x60.png',
+  ],
   // USDC
   [
     '0x3384bfbfaebb59e281493edf8d6325a4bc1e6ba9',
