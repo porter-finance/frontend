@@ -344,7 +344,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                     Review order
                   </ActionButton>
 
-                  {isDev && !notApproved && (
+                  {process.env.REACT_APP_VERCEL_ENV === 'development' && !notApproved && (
                     <a className="mt-2 text-xs text-white" href="#" onClick={unapproveCallback}>
                       Unapprove token (DEV ONLY)
                     </a>
