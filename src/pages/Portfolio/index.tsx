@@ -13,7 +13,7 @@ import { useWalletModalToggle } from '../../state/application/hooks'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import { AllButton, ConvertButtonOutline, SimpleButtonOutline } from '../Auction'
 import { calculatePortfolioRow, getBondStates } from '../BondDetail'
-import { BondIcon } from '../Products'
+import { BondIcon } from '../Bonds'
 
 import { ActiveStatusPill } from '@/components/auction/OrderbookTable'
 
@@ -100,7 +100,7 @@ const Portfolio = () => {
       ...calculatePortfolioRow(row),
       bond: <BondIcon id={row?.id} name={row?.name} symbol={row?.symbol} type={row?.type} />,
       type: row.type,
-      url: `/products/${row.id}`,
+      url: `/bonds/${row.id}`,
       search: JSON.stringify(row),
       status: getBondStates(row).isMatured ? (
         <ActiveStatusPill disabled dot={false} title="Matured" />
@@ -152,7 +152,7 @@ const Portfolio = () => {
             </>
           }
           loading={loading}
-          name="products"
+          name="bonds"
           title="Portfolio"
         />
       </ErrorBoundaryWithFallback>

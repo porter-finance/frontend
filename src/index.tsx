@@ -11,6 +11,7 @@ import { WagmiConfig, chain, configureChains, createClient } from 'wagmi'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
 
+import { MobileBlocker } from './components/MobileBlocker'
 import { isDev } from './connectors'
 import { NetworkContextName } from './constants'
 import './i18n'
@@ -89,7 +90,10 @@ root.render(
                 <ThemeProvider>
                   <GlobalStyle />
                   <BrowserRouter>
-                    <App />
+                    <div className="hidden sm:block">
+                      <App />
+                    </div>
+                    <MobileBlocker />
                   </BrowserRouter>
                 </ThemeProvider>
               </ApolloProvider>

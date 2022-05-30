@@ -89,7 +89,7 @@ const BondCard = ({ graphInfo }: { graphInfo: Auction }) => {
           <h2 className="card-title">Bond information</h2>
           <button
             className="space-x-2 !text-xxs font-normal bg-[#532DBE] rounded-md btn btn-sm btn-primary"
-            onClick={() => navigate(`/products/${graphInfo?.bond.id || ''}`)}
+            onClick={() => navigate(`/bonds/${graphInfo?.bond.id || ''}`)}
           >
             <span>Learn more</span>
             <span>
