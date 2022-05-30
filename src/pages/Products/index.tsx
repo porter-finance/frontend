@@ -29,7 +29,7 @@ const GlobalStyle = createGlobalStyle`
 
 const columns = (showAmount = false) => [
   {
-    Header: 'Offering',
+    Header: 'Bond',
     accessor: 'bond',
     align: 'flex-start',
     style: { height: '100%', justifyContent: 'center' },
