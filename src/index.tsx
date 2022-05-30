@@ -3,8 +3,9 @@ import { BrowserRouter } from 'react-router-dom'
 
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { Web3Provider } from '@ethersproject/providers'
-import { RainbowKitProvider, darkTheme, getDefaultWallets } from '@rainbow-me/rainbowkit'
+import { RainbowKitProvider, Theme, darkTheme, getDefaultWallets } from '@rainbow-me/rainbowkit'
 import { Web3ReactProvider, createWeb3ReactRoot } from '@web3-react/core'
+import { merge } from 'lodash'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 import { WagmiConfig, chain, configureChains, createClient } from 'wagmi'
@@ -70,18 +71,19 @@ const apolloClient = new ApolloClient({
   cache: new InMemoryCache(),
 })
 
+const myTheme = merge(darkTheme(), {
+  colors: {
+    accentColor: '#e0e0e0',
+    accentColorForeground: '#1e1e1e',
+    connectButtonBackground: '#e0e0e0',
+    connectButtonText: '#1e1e1e',
+  },
+} as Theme)
+
 root.render(
   <>
     <WagmiConfig client={wagmiClient}>
-      <RainbowKitProvider
-        chains={chains}
-        showRecentTransactions
-        theme={darkTheme({
-          accentColor: '#404eed',
-          accentColorForeground: '#e0e0e0',
-          fontStack: 'system',
-        })}
-      >
+      <RainbowKitProvider chains={chains} showRecentTransactions theme={myTheme}>
         <Web3ReactProvider getLibrary={getLibrary}>
           <Web3ProviderNetwork getLibrary={getLibrary}>
             <Provider store={store}>

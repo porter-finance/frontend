@@ -88,10 +88,7 @@ export const Component = (props) => {
             <Logo />
           </Link>
           <Menu />
-          <ConnectButton
-            chainStatus={{ smallScreen: 'icon', largeScreen: 'icon' }}
-            showBalance={false}
-          />
+          <ConnectButton accountStatus="address" chainStatus="none" showBalance={false} />
         </Inner>
       </Wrapper>
       <WalletModal />
