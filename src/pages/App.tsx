@@ -3,7 +3,6 @@ import styled from 'styled-components'
 
 import * as Sentry from '@sentry/react'
 import { BrowserTracing } from '@sentry/tracing'
-import ReactTooltip from 'react-tooltip'
 
 import ChainWarning from '../components/ChainWarning'
 import ScrollToTop from '../components/ScrollToTop'
@@ -37,14 +36,6 @@ const App: React.FC = () => (
       <ChainWarning />
       <TermsModal />
       <Header />
-      <ReactTooltip
-        className="customTooltip"
-        delayHide={500}
-        delayShow={50}
-        delayUpdate={500}
-        effect="solid"
-        textColor="#fff"
-      />
       <ErrorBoundaryWithFallback>
         <InnerApp className="fullPage">
           <Web3ReactManager>
