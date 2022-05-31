@@ -4,7 +4,6 @@ import styled from 'styled-components'
 import * as Sentry from '@sentry/react'
 import { BrowserTracing } from '@sentry/tracing'
 
-import ChainWarning from '../components/ChainWarning'
 import ScrollToTop from '../components/ScrollToTop'
 import TermsModal from '../components/TermsModal'
 import { ErrorBoundaryWithFallback } from '../components/common/ErrorAndReload'
@@ -33,7 +32,6 @@ const App: React.FC = () => (
   <Suspense fallback={null}>
     <MainWrapper>
       <ScrollToTop />
-      <ChainWarning />
       <TermsModal />
       <Header />
       <ErrorBoundaryWithFallback>

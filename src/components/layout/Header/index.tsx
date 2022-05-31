@@ -86,7 +86,7 @@ export const Component = (props) => {
             <Logo />
           </Link>
           <Menu />
-          <ConnectButton accountStatus="address" chainStatus="none" showBalance={false} />
+          <ConnectButton accountStatus="address" showBalance={false} />
         </Inner>
       </Wrapper>
       <WalletModal />
