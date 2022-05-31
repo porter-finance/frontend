@@ -1,6 +1,7 @@
 import React, { ReactElement, useEffect, useState } from 'react'
 
 import { useApolloClient } from '@apollo/client'
+import { useWaitForTransaction } from 'wagmi'
 
 import { ActionButton, GhostActionLink } from '../auction/Claimer'
 import { TokenInfo } from '../bond/BondAction'
@@ -11,7 +12,6 @@ import { ReactComponent as GreenCheckIcon } from '@/assets/svg/greencheck.svg'
 import { ReactComponent as PurplePorterIcon } from '@/assets/svg/porter-purple.svg'
 import { ReactComponent as PorterIcon } from '@/assets/svg/porter.svg'
 import { useActiveWeb3React } from '@/hooks'
-import { useAllTransactions } from '@/state/transactions/hooks'
 import { getExplorerLink } from '@/utils'
 
 export const OopsWarning = ({
@@ -211,32 +211,22 @@ const ConfirmationDialog = ({
   open: boolean
 }) => {
   const { chainId } = useActiveWeb3React()
-  const allTransactions = useAllTransactions()
   const apolloClient = useApolloClient()
 
   const [transactionError, setTransactionError] = useState(false)
   const [transactionPendingWalletConfirm, setTransactionPendingWalletConfirm] = useState(false)
   const [transactionComplete, setTransactionComplete] = useState(false)
   const [showTransactionCreated, setShowTransactionCreated] = useState('')
+  const { isSuccess } = useWaitForTransaction({
+    hash: showTransactionCreated,
+  })
 
-  // get the latest transaction that created the bond
-  // TODO: so bad, should wagmi/usedapp instead
   useEffect(() => {
-    if (!allTransactions) return
-    Object.keys(allTransactions)
-      .reverse()
-      .some((hash) => {
-        if (hash !== showTransactionCreated) return false
-        const tx = allTransactions[hash]
-        // the first one is always the new order
-        if (tx.receipt?.logs) {
-          setTransactionComplete(true)
-          if (onFinished) onFinished()
-        }
-
-        return true
-      })
-  }, [showTransactionCreated, onFinished, allTransactions, apolloClient])
+    if (isSuccess) {
+      setTransactionComplete(true)
+      if (onFinished) onFinished()
+    }
+  }, [isSuccess, onFinished])
 
   const waitingTransactionToComplete = showTransactionCreated && !transactionComplete
 
