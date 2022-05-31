@@ -19,7 +19,7 @@ export const InnerApp = styled(InnerContainer)`
   margin-top: -100px;
 
   @media (max-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    margin-top: -130px;
+    margin-top: -110px;
   }
 `
 Sentry.init({

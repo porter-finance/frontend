@@ -25,8 +25,6 @@ export const Inner = styled(InnerContainer)`
   flex-shrink: 0;
   height: ${({ theme }) => theme.header.height};
   justify-content: space-between;
-  padding-left: ${({ theme }) => theme.layout.horizontalPadding};
-  padding-right: ${({ theme }) => theme.layout.horizontalPadding};
 `
 
 const ButtonMenuStyled = styled(ButtonMenu)`
