@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 
 import { Transition } from '@headlessui/react'
-import { Chain, Mainnet, Rinkeby } from '@usedapp/core'
+import { Chain } from '@usedapp/core'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 
-import { isDev } from '../connectors'
+import { requiredChain } from '../connectors'
 import { useActiveWeb3React } from '../hooks'
 import { useWalletModalToggle } from '../state/application/hooks'
 import { useNetworkCheck } from './web3/Web3Status'
@@ -61,8 +61,6 @@ const Warning = ({ chain }: { chain: Chain }) => {
     </div>
   )
 }
-
-export const requiredChain = isDev ? Rinkeby : Mainnet
 
 const ChainWarning = () => {
   const { account, chainId, error } = useWeb3React()

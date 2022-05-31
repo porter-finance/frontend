@@ -32,7 +32,7 @@ const doProcess = (bond: Bond, prices) => {
 }
 
 const BondGraphCard = ({ bond }: { bond: Bond }) => {
-  const [daysToShow, setDaysToShow] = useState(durations[2][0])
+  const [daysToShow, setDaysToShow] = useState(durations[0][0])
   const { data, loading } = useHistoricTokenPrice(bond?.collateralToken?.id, daysToShow)
   const processedData = doProcess(bond, data)
 
