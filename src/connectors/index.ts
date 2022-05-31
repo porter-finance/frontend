@@ -22,7 +22,7 @@ chainIds.forEach((chainId: ChainId) => {
   }
 })
 
-export const isDev = process.env.REACT_APP_VERCEL_ENV !== 'production'
+export const isDev = !window.location.href.includes('app.porter')
 const defaultChainId = isDev ? 4 : 1
 
 export const network = new NetworkConnector({ urls, defaultChainId })
