@@ -213,20 +213,25 @@ const ConfirmationDialog = ({
   const { chainId } = useActiveWeb3React()
   const apolloClient = useApolloClient()
 
-  const [transactionError, setTransactionError] = useState(false)
+  const [transactionError, setTransactionError] = useState('')
   const [transactionPendingWalletConfirm, setTransactionPendingWalletConfirm] = useState(false)
   const [transactionComplete, setTransactionComplete] = useState(false)
   const [showTransactionCreated, setShowTransactionCreated] = useState('')
-  const { isSuccess } = useWaitForTransaction({
+  const { error, isError, isSuccess } = useWaitForTransaction({
     hash: showTransactionCreated,
   })
 
   useEffect(() => {
     if (isSuccess) {
+      apolloClient.refetchQueries({
+        include: 'all',
+      })
       setTransactionComplete(true)
       if (onFinished) onFinished()
+    } else if (isError) {
+      setTransactionError(error.message)
     }
-  }, [isSuccess, onFinished])
+  }, [isSuccess, onFinished, apolloClient, isError, error])
 
   const waitingTransactionToComplete = showTransactionCreated && !transactionComplete
 
@@ -237,7 +242,7 @@ const ConfirmationDialog = ({
     // Prevent changing state during transition
     setTimeout(() => {
       if (transactionError) {
-        setTransactionError(null)
+        setTransactionError('')
       }
 
       if (transactionComplete) {
@@ -320,7 +325,7 @@ const ConfirmationDialog = ({
       {transactionError && (
         <OopsWarning
           actionClick={() => {
-            setTransactionError(null)
+            setTransactionError('')
           }}
           actionColor={actionColor}
           message={transactionError}
