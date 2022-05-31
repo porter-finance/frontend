@@ -9,7 +9,7 @@ import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 
 import { MobileBlocker } from './components/MobileBlocker'
-import { isDev } from './connectors'
+import { isRinkeby } from './connectors'
 import { NetworkContextName } from './constants'
 import './i18n'
 import { NETWORK_URL_MAINNET, NETWORK_URL_RINKEBY } from './constants/config'
@@ -52,7 +52,7 @@ const container = document.getElementById('root')
 const root = createRoot(container)
 
 const apolloClient = new ApolloClient({
-  uri: isDev
+  uri: isRinkeby
     ? process.env.REACT_APP_SUBGRAPH_URL_RINKEBY
     : process.env.REACT_APP_SUBGRAPH_URL_MAINNET,
   connectToDevTools: true,

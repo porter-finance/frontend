@@ -7,7 +7,7 @@ import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { event } from 'react-ga'
 
 import { ReactComponent as PorterIcon } from '../../../assets/svg/porter.svg'
-import { injected } from '../../../connectors'
+import { injected, requiredChain } from '../../../connectors'
 import { SUPPORTED_WALLETS } from '../../../constants'
 import usePrevious from '../../../hooks/usePrevious'
 import {
@@ -18,7 +18,6 @@ import {
 import { useOrderPlacementState } from '../../../state/orderPlacement/hooks'
 import { ExternalLink } from '../../../theme'
 import { setupNetwork } from '../../../utils/setupNetwork'
-import { requiredChain } from '../../ChainWarning'
 import { NetworkError, useNetworkCheck } from '../../web3/Web3Status'
 import { OopsWarning } from '../ConfirmationDialog'
 import Modal, { DialogTitle } from '../common/Modal'

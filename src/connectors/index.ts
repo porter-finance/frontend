@@ -1,4 +1,5 @@
 import { WalletConnectConnector } from '@anxolin/walletconnect-connector'
+import { Mainnet, Rinkeby } from '@usedapp/core'
 import { InjectedConnector } from '@web3-react/injected-connector'
 import { NetworkConnector } from '@web3-react/network-connector'
 import { PortisConnector } from '@web3-react/portis-connector'
@@ -22,10 +23,10 @@ chainIds.forEach((chainId: ChainId) => {
   }
 })
 
-export const isDev = process.env.REACT_APP_VERCEL_ENV !== 'production'
-const defaultChainId = isDev ? 4 : 1
+export const isRinkeby = !window.location.href.includes('app.porter')
+export const requiredChain = isRinkeby ? Rinkeby : Mainnet
 
-export const network = new NetworkConnector({ urls, defaultChainId })
+export const network = new NetworkConnector({ urls, defaultChainId: requiredChain.chainId })
 
 export const injected = new InjectedConnector({
   supportedChainIds: chainIds,
