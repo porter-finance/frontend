@@ -66,7 +66,7 @@ export function useCancelOrderCallback(
                 decodedOrder.sellAmount.toString(),
                 BigNumber.from(10).pow(biddingToken.decimals).toString(),
               ).toSignificant(2),
-            )} ${biddingToken.symbol} Order`,
+            )} ${biddingToken.symbol} order from auction ${auctionId}`,
           })
           actionCancelOrder(orderId)
           return response.hash

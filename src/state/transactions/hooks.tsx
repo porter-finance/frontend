@@ -151,7 +151,7 @@ export function useHasPendingClaim(auctionId?: number, from?: string | null): bo
         } else {
           return (
             tx.from === from &&
-            `Claiming tokens auction-${auctionId}` === tx.summary &&
+            `Claim tokens from auction ${auctionId}` === tx.summary &&
             isTransactionRecent(tx)
           )
         }

@@ -253,7 +253,7 @@ export const useClaimOrderCallback = (
     })
 
     addTransaction(response, {
-      summary: `Claiming tokens auction-${auctionId}`,
+      summary: `Claim tokens from auction ${auctionId}`,
     })
     return response.hash
   }, [account, addTransaction, chainId, error, gasPrice, signer, auctionId, claimInfo])

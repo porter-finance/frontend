@@ -136,7 +136,7 @@ export function usePlaceOrderCallback(
             addTransaction(response, {
               summary: `Place ${abbreviation(
                 sellAmount,
-              )} ${biddingTokenDisplay} order for ${auctioningTokenDisplay}`,
+              )} ${biddingTokenDisplay} order for ${auctioningTokenDisplay} on auction ${auctionId}`,
             })
 
             const order = {

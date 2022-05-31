@@ -181,7 +181,7 @@ export function useUnapproveCallback(
       })
       .then((response: TransactionResponse) => {
         addTransaction(response, {
-          summary: 'unapprove ' + amountToApprove?.token?.symbol,
+          summary: 'Unapprove ' + amountToApprove?.token?.symbol,
           approval: { tokenAddress: amountToApprove.token.address, spender: addressToApprove },
         })
 
