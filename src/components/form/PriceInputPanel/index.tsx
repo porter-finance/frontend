@@ -59,7 +59,7 @@ const PriceInputPanel = (props: Props) => {
             onUserSellAmountInput={onUserPriceInput}
             placeholder="-"
             readOnly={!account}
-            value={value}
+            value={value || ''}
           />
           {graphInfo && <TokenPill token={graphInfo.bidding} />}
         </FieldRowTop>

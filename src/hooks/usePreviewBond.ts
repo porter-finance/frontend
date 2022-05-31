@@ -27,7 +27,6 @@ export function usePreviewBond(bondAddress?: string) {
         .previewRedeemAtMaturity(amountToPreview.raw.toString())
         .catch((error: Error) => {
           logger.debug('Failed to preview token', error)
-          throw error
         })
 
       return response
@@ -50,7 +49,6 @@ export function usePreviewBond(bondAddress?: string) {
         .previewConvertBeforeMaturity(amountToPreview.raw.toString())
         .catch((error: Error) => {
           logger.debug('Failed to preview token', error)
-          throw error
         })
 
       return response
@@ -74,7 +72,6 @@ export function usePreviewBond(bondAddress?: string) {
         .previewMintBeforeMaturity(amountToPreview.raw.toString())
         .catch((error: Error) => {
           logger.debug('Failed to preview token', error)
-          throw error
         })
 
       return response

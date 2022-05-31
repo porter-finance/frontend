@@ -189,7 +189,6 @@ export function useUnapproveCallback(
       })
       .catch((error: Error) => {
         logger.debug('Failed to unapprove token', error)
-        throw error
       })
   }, [approval, gasPrice, tokenContract, addressToApprove, amountToApprove, addTransaction])
 
