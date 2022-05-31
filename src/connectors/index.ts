@@ -1,9 +1,9 @@
 import { WalletConnectConnector } from '@anxolin/walletconnect-connector'
-import { Mainnet, Rinkeby } from '@usedapp/core'
 import { InjectedConnector } from '@web3-react/injected-connector'
 import { NetworkConnector } from '@web3-react/network-connector'
 import { PortisConnector } from '@web3-react/portis-connector'
 import { WalletLinkConnector } from '@web3-react/walletlink-connector'
+import { chain } from 'wagmi'
 
 import { NETWORK_URL_MAINNET, PORTIS_ID } from '../constants/config'
 import { ChainId, NETWORK_CONFIGS } from './../utils/index'
@@ -24,9 +24,9 @@ chainIds.forEach((chainId: ChainId) => {
 })
 
 export const isRinkeby = !window.location.href.includes('app.porter')
-export const requiredChain = isRinkeby ? Rinkeby : Mainnet
+export const requiredChain = isRinkeby ? chain.rinkeby : chain.mainnet
 
-export const network = new NetworkConnector({ urls, defaultChainId: requiredChain.chainId })
+export const network = new NetworkConnector({ urls, defaultChainId: requiredChain.id })
 
 export const injected = new InjectedConnector({
   supportedChainIds: chainIds,

@@ -104,7 +104,7 @@ function getAdditionalServiceUrl(baseUrl: string): string {
 }
 
 export type AdditionalServicesApiParams = AdditionalServicesEndpoint[]
-const networkId = requiredChain.chainId
+const networkId = requiredChain.id
 
 export class AdditionalServicesApiImpl implements AdditionalServicesApi {
   private urlsByNetwork: { [networkId: number]: string } = {}

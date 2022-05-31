@@ -89,7 +89,7 @@ export type AuctionIdentifier = {
 
 export function parseURL(props: RouteAuctionIdentifier): AuctionIdentifier {
   return {
-    chainId: requiredChain.chainId,
+    chainId: requiredChain.id,
     auctionId: parseAuctionIdParameter(props?.auctionId),
     bondId: `${props?.bondId}`,
   }
