@@ -141,3 +141,9 @@ svg text tspan {
 g[role='tooltip'] {
   @apply ease-in-out duration-150;
 }
+
+/* rainbowkit */
+
+[data-rk] * {
+  font-weight: 400 !important;
+}
