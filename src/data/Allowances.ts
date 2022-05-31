@@ -10,7 +10,7 @@ export function useTokenAllowance(
   owner?: string,
   spender?: string,
 ): TokenAmount | undefined {
-  const contract = useTokenContract(token?.address, false)
+  const contract = useTokenContract(token?.address)
 
   const inputs = useMemo(() => [owner, spender], [owner, spender])
   // eslint-disable-next-line no-warning-comments

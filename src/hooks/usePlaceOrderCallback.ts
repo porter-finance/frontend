@@ -1,8 +1,8 @@
+import { Signer } from 'ethers'
 import { useMemo } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract, ContractFunction } from '@ethersproject/contracts'
-import { Web3Provider } from '@ethersproject/providers'
 import { Token } from '@josojo/honeyswap-sdk'
 
 import { additionalServiceApi } from '../api'
@@ -55,7 +55,7 @@ export function usePlaceOrderCallback(
   auctioningToken: Token,
   biddingToken: Token,
 ): null | (() => Promise<string>) {
-  const { account, chainId, library } = useActiveWeb3React()
+  const { account, chainId, signer } = useActiveWeb3React()
   const { auctionId } = auctionIdentifer
 
   const addTransaction = useTransactionAdder()
@@ -79,7 +79,7 @@ export function usePlaceOrderCallback(
     let previousOrder: string
 
     return async function onPlaceOrder() {
-      if (!chainId || !library || !account || !userId || !signature) {
+      if (!chainId || !signer || !account || !userId || !signature) {
         throw new Error('missing dependencies in onPlaceOrder callback')
       }
 
@@ -114,7 +114,7 @@ export function usePlaceOrderCallback(
       const { args, estimate, method, value } = getEstimateParams(
         biddingToken,
         chainId,
-        library,
+        signer,
         account,
         buyAmountScaled,
         sellAmountScaled,
@@ -177,7 +177,7 @@ export function usePlaceOrderCallback(
     biddingToken,
     chainId,
     gasPrice,
-    library,
+    signer,
     price,
     sellAmount,
     signature,
@@ -188,7 +188,7 @@ export function usePlaceOrderCallback(
 const getEstimateParams = (
   biddingToken: Token,
   chainId: ChainId,
-  library: Web3Provider,
+  signer: Signer,
   account: string,
   buyAmountScaled: BigNumber,
   sellAmountScaled: BigNumber,
@@ -196,7 +196,7 @@ const getEstimateParams = (
   auctionId: number,
   signature: string,
 ): EstimateAndParams => {
-  const easyAuctionContract: Contract = getEasyAuctionContract(chainId, library, account)
+  const easyAuctionContract: Contract = getEasyAuctionContract(chainId, signer)
   if (
     isTokenXDAI(biddingToken.address, chainId) ||
     isTokenWETH(biddingToken.address, chainId) ||
@@ -205,8 +205,7 @@ const getEstimateParams = (
     const depositAndPlaceOrderContract = getContract(
       DEPOSIT_AND_PLACE_ORDER[chainId],
       depositAndPlaceOrderABI,
-      library,
-      account,
+      signer,
     )
 
     return {

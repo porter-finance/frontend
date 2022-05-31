@@ -4,7 +4,7 @@ import { Web3Provider } from '@ethersproject/providers'
 import { SafeAppConnector, useSafeAppConnection } from '@gnosis.pm/safe-apps-web3-react'
 import { useWeb3React as useWeb3ReactCore } from '@web3-react/core'
 import { isMobile } from 'react-device-detect'
-import { useAccount, useBlockNumber, useNetwork, useProvider } from 'wagmi'
+import { useAccount, useBlockNumber, useNetwork, useProvider, useSigner } from 'wagmi'
 
 import { injected, walletconnect } from '../connectors'
 import { useOrderPlacementState } from '../state/orderPlacement/hooks'
@@ -20,6 +20,7 @@ export function useActiveWeb3React() {
   const { activeChain, error, switchNetwork } = useNetwork()
   const provider = useProvider()
   const { data: blockNumber } = useBlockNumber()
+  const { data: signer } = useSigner()
 
   // TODO remove this
   const context = useWeb3ReactCore<Web3Provider>()
@@ -32,8 +33,9 @@ export function useActiveWeb3React() {
     provider,
     error,
     blockNumber,
+    library: provider,
+    signer,
     // TODO: replace these
-    library: context?.library,
     connector: context?.connector,
     activate: context?.activate,
     deactivate: context?.deactivate,
