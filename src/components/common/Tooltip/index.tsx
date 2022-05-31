@@ -68,9 +68,11 @@ export const TooltipContent = StyledContent
 const TooltipElement = ({
   left,
   tip,
+  ...props
 }: {
   tip?: ReactElement | string
   left?: ReactElement | string
+  className?: string
 }) => {
   const tipEl = tip && (
     <Provider delayDuration={100} skipDelayDuration={500}>
@@ -90,7 +92,7 @@ const TooltipElement = ({
 
   if (left) {
     return (
-      <div className="flex flex-row items-center space-x-2">
+      <div className="flex flex-row items-center space-x-2" {...props}>
         <div className="flex">{left}</div>
         {tipEl && <div className="flex">{tipEl}</div>}
       </div>
