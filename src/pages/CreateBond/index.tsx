@@ -4,7 +4,7 @@ import { parseUnits } from '@ethersproject/units'
 import { round } from 'lodash'
 
 import BondAction from '../../components/bond/BondAction'
-import { isDev } from '../../connectors'
+import { isRinkeby } from '../../connectors'
 import { useCreateBond } from '../../hooks/useCreateBond'
 import { BondActions } from '../BondDetail'
 
@@ -33,7 +33,7 @@ const getFakeData = (account: string): Array<string | number> => {
   const collateralTokenAddress = '0xf4e2543879d3a7ca73f8c98ebc5206d77240043f'
   const maxSupply = parseUnits('50000000', 18).toString()
 
-  const fakeData = isDev
+  const fakeData = isRinkeby
     ? [
         bondName,
         bondSymbol,

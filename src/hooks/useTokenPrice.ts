@@ -1,6 +1,6 @@
 import useSWR from 'swr'
 
-import { isDev } from '../connectors'
+import { isRinkeby } from '../connectors'
 import { getLogger } from '../utils/logger'
 
 const logger = getLogger('useTokenPrice')
@@ -13,7 +13,7 @@ export const useTokenPrice = (tokenContractAddress?: string): { data: any; loadi
   // The tokens used on the testnet will not exist so no price will be returned
   // this uses ribbon token instead of the real tokens on dev
   // so we have pricing data
-  const realOrTestToken = isDev ? ribbonToken : tokenContractAddress || ''
+  const realOrTestToken = isRinkeby ? ribbonToken : tokenContractAddress || ''
   const { data, error } = useSWR(
     `${coinGekoBaseUrl}/simple/token_price/ethereum?vs_currencies=usd&contract_addresses=${realOrTestToken}`,
     fetcher,
@@ -40,7 +40,7 @@ export const useHistoricTokenPrice = (
   // The tokens used on the testnet will not exist so no price will be returned
   // this uses ribbon token instead of the real tokens on dev
   // so we have pricing data
-  const realOrTestToken = isDev ? ribbonToken : tokenContractAddress
+  const realOrTestToken = isRinkeby ? ribbonToken : tokenContractAddress
   const url = `${coinGekoBaseUrl}/coins/ethereum/contract/${realOrTestToken}/market_chart/?vs_currency=usd&days=${days}&interval=daily`
   const { data, error } = useSWR(url, fetcher, { refreshInterval: 600 * 1000 })
 

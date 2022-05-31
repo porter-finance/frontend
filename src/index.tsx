@@ -13,7 +13,7 @@ import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
 
 import { MobileBlocker } from './components/MobileBlocker'
-import { isDev } from './connectors'
+import { isRinkeby } from './connectors'
 import { NetworkContextName } from './constants'
 import './i18n'
 import App from './pages/App'
@@ -64,7 +64,7 @@ const container = document.getElementById('root')
 const root = createRoot(container)
 
 const apolloClient = new ApolloClient({
-  uri: isDev
+  uri: isRinkeby
     ? process.env.REACT_APP_SUBGRAPH_URL_RINKEBY
     : process.env.REACT_APP_SUBGRAPH_URL_MAINNET,
   connectToDevTools: true,

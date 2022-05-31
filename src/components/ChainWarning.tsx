@@ -2,15 +2,14 @@ import React, { useState } from 'react'
 
 import { Transition } from '@headlessui/react'
 import { UnsupportedChainIdError } from '@web3-react/core'
-import { Chain, chain } from 'wagmi'
+import { Chain } from 'wagmi'
 
-import { isDev } from '../connectors'
 import { useActiveWeb3React } from '../hooks'
-import { useWalletModalToggle } from '../state/application/hooks'
 import { useNetworkCheck } from './web3/Web3Status'
 
+import { requiredChain } from '@/connectors'
+
 const Warning = ({ chain }: { chain: Chain }) => {
-  const toggleWalletModal = useWalletModalToggle()
   const [loading, setLoading] = useState(false)
   const { switchNetwork } = useActiveWeb3React()
 
@@ -47,8 +46,6 @@ const Warning = ({ chain }: { chain: Chain }) => {
     </div>
   )
 }
-
-export const requiredChain = isDev ? chain.rinkeby : chain.mainnet
 
 const ChainWarning = () => {
   const { account, chainId, error } = useActiveWeb3React()

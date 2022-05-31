@@ -1,7 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { chain } from 'wagmi'
 
-import { isDev } from '../../connectors'
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../constants/config'
 import { useActiveWeb3React } from '../../hooks'
 import { getInverse } from '../../utils/prices'
@@ -13,6 +11,8 @@ import {
   setDefaultsFromURLSearch,
   setNoDefaultNetworkId,
 } from './actions'
+
+import { requiredChain } from '@/connectors'
 
 export interface OrderPlacementState {
   readonly chainId: number | undefined
@@ -89,7 +89,7 @@ export type AuctionIdentifier = {
 
 export function parseURL(props: RouteAuctionIdentifier): AuctionIdentifier {
   return {
-    chainId: isDev ? chain.rinkeby.id : chain.mainnet.id,
+    chainId: requiredChain.chainId,
     auctionId: parseAuctionIdParameter(props?.auctionId),
     bondId: `${props?.bondId}`,
   }
