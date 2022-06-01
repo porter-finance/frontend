@@ -314,7 +314,7 @@ export const useGetOrderPlacementError = (
     undefined
 
   const errorBidSize =
-    sellAmount && price && Number(sellAmount) * Number(price) < minBidSize
+    sellAmount && price && total <= minBidSize
       ? `Bid size must be higher than ${minBidSize}`
       : undefined
 
