@@ -223,6 +223,8 @@ export const useGetOrderPlacementError = (
   const relevantTokenBalances = useTokenBalancesTreatWETHAsETH(account ?? undefined, [
     derivedAuctionInfo?.biddingToken,
   ])
+  console.log(price, sellAmount)
+
   const biddingTokenBalance =
     relevantTokenBalances?.[derivedAuctionInfo?.biddingToken?.address ?? '']
   const parsedBiddingAmount = tryParseAmount(sellAmount, derivedAuctionInfo?.biddingToken)
@@ -239,10 +241,18 @@ export const useGetOrderPlacementError = (
     Number(formatUnits(minimumBidSize, derivedAuctionInfo?.biddingToken?.decimals))
 
   const invalidAmount = sellAmount && !amountIn && `Invalid Amount`
+  console.log({
+    sellAmount,
+    amountIn: amountIn?.toSignificant(5),
+    balanceIn: balanceIn?.toSignificant(5),
+  })
+
+  const total = Number(sellAmount) * Number(price)
+
   const insufficientBalance =
     balanceIn &&
     amountIn &&
-    balanceIn.lessThan(amountIn) &&
+    total > Number(formatUnits(balanceIn.raw.toString(), balanceIn.token.decimals)) &&
     `You do not have enough ${getFullTokenDisplay(
       amountIn.token,
       chainId as ChainId,

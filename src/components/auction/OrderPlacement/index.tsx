@@ -107,12 +107,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const orders: OrderState | undefined = useOrderState()
   const toggleWalletModal = useWalletModalToggle()
   const { price, sellAmount } = useOrderPlacementState()
-  const { errorAmount, errorBidSize, errorPrice } = useGetOrderPlacementError(
-    derivedAuctionInfo,
-    auctionState,
-    auctionIdentifier,
-    graphInfo?.minimumBidSize,
-  )
+
   const { onUserPriceInput, onUserSellAmountInput } = useSwapActionHandlers()
   const { auctionDetails, auctionInfoLoading } = useAuctionDetails(auctionIdentifier)
   const { signature } = useSignature(auctionIdentifier, account)
@@ -121,7 +116,12 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [showWarning, setShowWarning] = useState<boolean>(false)
   const [showWarningWrongChainId, setShowWarningWrongChainId] = useState<boolean>(false)
-
+  const { errorAmount, errorBidSize, errorPrice } = useGetOrderPlacementError(
+    derivedAuctionInfo,
+    auctionState,
+    auctionIdentifier,
+    graphInfo?.minimumBidSize,
+  )
   // Setting the name from graphql to the token from gnosis
   const auctioningToken = new Token(
     derivedAuctionInfo?.auctioningToken.chainId,
