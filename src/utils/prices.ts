@@ -48,8 +48,8 @@ export function convertPriceIntoBuyAndSellAmount(
     .mul(BigNumber.from(10).pow(auctioningToken.decimals))
     .div(inversePriceAdjustedBybiddingToken.raw.toString())
   return {
-    sellAmountScaled: BigNumber.from(sellAmountScaled.raw.toString()),
-    buyAmountScaled,
+    buyAmountScaled: BigNumber.from(sellAmountScaled.raw.toString()),
+    sellAmountScaled: buyAmountScaled,
   }
 }
 
