@@ -64,8 +64,8 @@ export const getReviewData = ({
   auctionEndDate,
   maturityDate,
   price,
-}): { apy: string | number; earn: string; receive: string; pay: string } => ({
-  apy: `${calculateInterestRate({ price, maturityDate, startDate: auctionEndDate })}+`,
+}): { ytm: string | number; earn: string; receive: string; pay: string } => ({
+  ytm: `${calculateInterestRate({ price, maturityDate, startDate: auctionEndDate })}+`,
   earn: `${round(amount - price * amount, 2).toLocaleString()}+`,
   receive: `${amount.toLocaleString()}+`,
   pay: `${round(price * amount, 2).toLocaleString()}`,
@@ -125,7 +125,7 @@ const InterestRateInputPanel = ({
       </div>
       <div className="flex flex-row justify-between">
         <div className="overflow-hidden w-full max-w-[194px] text-sm text-[#E0E0E0] text-ellipsis">
-          {!account ? '-' : data.apy}
+          {!account ? '-' : data.ytm}
         </div>
         <Tooltip
           className="flex flex-row justify-end items-center space-x-2 w-full max-w-[95px]"
