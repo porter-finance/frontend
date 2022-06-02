@@ -66,9 +66,9 @@ export const getReviewData = ({
   price,
 }): { ytm: string | number; earn: string; receive: string; pay: string } => ({
   ytm: `${calculateInterestRate({ price, maturityDate, startDate: auctionEndDate })}+`,
-  earn: `${round(amount - price * amount, 2).toLocaleString()}+`,
-  receive: `${amount.toLocaleString()}+`,
-  pay: `${round(price * amount, 2).toLocaleString()}`,
+  earn: `${round(amount / price - amount, 2).toLocaleString()}+`,
+  receive: `${round(amount / price, 2).toLocaleString()}+`,
+  pay: `${round(amount, 2).toLocaleString()}`,
 })
 
 const InterestRateInputPanel = ({

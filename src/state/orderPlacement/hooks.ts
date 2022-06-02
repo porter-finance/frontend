@@ -241,7 +241,7 @@ export const useGetOrderPlacementError = (
 
   const invalidAmount = sellAmount && !amountIn && `Invalid Amount`
 
-  const total = Number(sellAmount) * Number(price)
+  const total = Number(sellAmount)
 
   const insufficientBalance =
     balanceIn &&
