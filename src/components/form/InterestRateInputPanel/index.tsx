@@ -129,8 +129,8 @@ const InterestRateInputPanel = ({
         </div>
         <Tooltip
           className="flex flex-row justify-end items-center space-x-2 w-full max-w-[95px]"
-          left={<FieldRowLabelStyledText>Your APY</FieldRowLabelStyledText>}
-          tip="APY you will earn assuming no default. If the final price is lower than your bid price, you will receive more bonds than ordered at a lower price, therefore, earning a higher APY."
+          left={<FieldRowLabelStyledText>Your YTM</FieldRowLabelStyledText>}
+          tip="YTM you will earn assuming no default. If the final price is lower than your bid price, you will receive more bonds than ordered at a lower price, therefore, earning a higher YTM."
         />
       </div>
     </FieldRowWrapper>

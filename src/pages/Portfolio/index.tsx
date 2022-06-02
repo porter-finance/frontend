@@ -58,8 +58,8 @@ const columns = [
     filter: 'searchInTags',
   },
   {
-    Header: 'Fixed APY',
-    accessor: 'fixedAPY',
+    Header: 'Fixed YTM',
+    accessor: 'fixedYTM',
     align: 'flex-start',
     style: {},
     filter: 'searchInTags',

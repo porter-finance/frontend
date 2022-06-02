@@ -62,8 +62,8 @@ const AuctionDetails = (props: Props) => {
     minimumFundingThreshold,
     minimumBidSize = {}
 
-  let currentBondAPY,
-    maxBondAPY = '-'
+  let currentBondYTM,
+    maxBondYTM = '-'
 
   if (auction) {
     offeringSize = {
@@ -106,12 +106,12 @@ const AuctionDetails = (props: Props) => {
         <TokenInfoWithLink auction={auction} value={auction.minimumBidSize} withLink={false} />
       ),
     }
-    currentBondAPY = calculateInterestRate({
+    currentBondYTM = calculateInterestRate({
       price: auctionCurrentPrice,
       maturityDate: auction.bond.maturityDate,
       startDate: auction.end,
     }) as string
-    maxBondAPY = calculateInterestRate({
+    maxBondYTM = calculateInterestRate({
       price: auction.minimumBondPrice,
       maturityDate: auction.bond.maturityDate,
       startDate: auction.end,
@@ -164,10 +164,10 @@ const AuctionDetails = (props: Props) => {
       bordered: 'blue',
     },
     {
-      title: 'Current bond APY',
-      value: currentBondAPY,
+      title: 'Current bond YTM',
+      value: currentBondYTM,
       tooltip:
-        'Current bond APY calculated from the current bond price. If the auction ended now, this is the return bond purchasers would receive assuming no default.',
+        'Current bond YTM calculated from the current bond price. If the auction ended now, this is the return bond purchasers would receive assuming no default.',
       bordered: 'blue',
     },
     {
@@ -177,10 +177,10 @@ const AuctionDetails = (props: Props) => {
       ...minimumBondPrice,
     },
     {
-      title: 'Maximum bond APY',
-      value: maxBondAPY,
+      title: 'Maximum bond YTM',
+      value: maxBondYTM,
       tooltip:
-        'Maximum APY the issuer is willing to pay. This is calculated using the minimum bond price.',
+        'Maximum YTM the issuer is willing to pay. This is calculated using the minimum bond price.',
     },
   ]
 
