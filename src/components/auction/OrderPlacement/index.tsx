@@ -458,7 +458,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                     title="Review order"
                   />
                   <div className="flex flex-row justify-between items-center mt-4 mb-3 text-xs text-[#9F9F9F]">
-                    <div>{biddingTokenDisplay} Balance</div>
+                    <div>Balance</div>
                     <div>
                       <span className="text-xs font-normal text-[#9F9F9F]">
                         {balanceString} {biddingTokenDisplay}
