@@ -98,7 +98,7 @@ const InterestRateInputPanel = ({
               You pay
             </FieldRowLabelStyledText>
           }
-          tip="This is your bid size. You will pay this much."
+          tip="This is your order size. You will pay this much."
         />
       </div>
       <div className="flex flex-row justify-between">
@@ -109,7 +109,7 @@ const InterestRateInputPanel = ({
         <Tooltip
           className="flex flex-row justify-end items-center space-x-2 w-full max-w-[95px]"
           left={<FieldRowLabelStyledText>You receive</FieldRowLabelStyledText>}
-          tip="Amount of bonds you will receive. If the final auction price is lower than your bid price, you will receive more bonds than were ordered at that lower price."
+          tip="Amount of bonds you will receive. If the final auction price is lower than your order price, you will receive more bonds than were ordered at that lower price."
         />
       </div>
       <div className="flex flex-row justify-between">
@@ -120,7 +120,7 @@ const InterestRateInputPanel = ({
         <Tooltip
           className="flex flex-row justify-end items-center space-x-2 w-full max-w-[95px]"
           left={<FieldRowLabelStyledText>You earn</FieldRowLabelStyledText>}
-          tip="Amount you will earn assuming no default. If the final price is lower than your bid price, you will receive more bonds than ordered and, therefore, earn more."
+          tip="Amount you will earn assuming no default. If the final price is lower than your order price, you will receive more bonds than ordered and, therefore, earn more."
         />
       </div>
       <div className="flex flex-row justify-between">
@@ -130,7 +130,7 @@ const InterestRateInputPanel = ({
         <Tooltip
           className="flex flex-row justify-end items-center space-x-2 w-full max-w-[95px]"
           left={<FieldRowLabelStyledText>Your YTM</FieldRowLabelStyledText>}
-          tip="YTM you will earn assuming no default. If the final price is lower than your bid price, you will receive more bonds than ordered at a lower price, therefore, earning a higher YTM."
+          tip="YTM you will earn assuming no default. If the final price is lower than your order price, you will receive more bonds than ordered at a lower price, therefore, earning a higher YTM."
         />
       </div>
     </FieldRowWrapper>

@@ -141,12 +141,12 @@ const AuctionDetails = (props: Props) => {
       title: 'Total order volume',
       value: '-',
       ...totalBidVolume,
-      tooltip: 'Sum of all bid volume.',
+      tooltip: 'Sum of all order volume.',
     },
     {
       title: 'Min funding threshold',
       tooltip:
-        'Minimum bid volume required for auction to close. If this value is not reached, all funds will be returned and no bonds will be sold.',
+        'Minimum order volume required for auction to close. If this value is not reached, all funds will be returned and no bonds will be sold.',
       value: '-',
       ...minimumFundingThreshold,
     },
@@ -154,7 +154,7 @@ const AuctionDetails = (props: Props) => {
       title: 'Minimum order amount',
       value: '-',
       ...minimumBidSize,
-      tooltip: 'Minimum size for a single bid. Bids below this size cannot be placed.',
+      tooltip: 'Minimum size for a single order. Orders below this size cannot be placed.',
     },
     {
       title: 'Current bond price',
@@ -172,7 +172,8 @@ const AuctionDetails = (props: Props) => {
     },
     {
       title: 'Minimum bond price',
-      tooltip: 'Minimum price a bond can be sold for. Bids below this price will not be accepted.',
+      tooltip:
+        'Minimum price a bond can be sold for. Orders below this price will not be accepted.',
       value: '-',
       ...minimumBondPrice,
     },

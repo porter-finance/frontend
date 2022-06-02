@@ -29,7 +29,7 @@ export const getAuctionStates = (
   const atStageOrderPlacement = currentTimeInUTC() <= end * 1000
 
   // cancellable (can be open for orders and cancellable.
-  // This isn't an auction status rather an ability to cancel your bid or not.)
+  // This isn't an auction status rather an ability to cancel your order or not.)
   const atStageOrderPlacementAndCancelation = currentTimeInUTC() <= orderCancellationEndDate
 
   // AKA settling (can be settled, but not yet done so)

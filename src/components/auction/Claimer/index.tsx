@@ -182,7 +182,7 @@ const Claimer: React.FC<Props> = (props) => {
 
             <FieldRowLabelStyled>
               <Tooltip
-                left="Amount of bidding funds to claim"
+                left="Amount of order funds to claim"
                 tip="Amount of assets you can claim. If there are no bonds claimable, your order price was not competitive."
               />
             </FieldRowLabelStyled>
@@ -233,7 +233,7 @@ const Claimer: React.FC<Props> = (props) => {
                   />
                   <div className="text-xs text-[#696969]">
                     <Tooltip
-                      left="Amount of bidding funds to claim"
+                      left="Amount of order funds to claim"
                       tip="If there are order funds to claim, some or all of your orders were not competitive and did not get filled."
                     />
                   </div>
