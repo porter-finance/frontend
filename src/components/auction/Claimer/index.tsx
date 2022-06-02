@@ -232,7 +232,10 @@ const Claimer: React.FC<Props> = (props) => {
                     ).toLocaleString()}
                   />
                   <div className="text-xs text-[#696969]">
-                    <Tooltip left="Amount of bidding funds to claim" />
+                    <Tooltip
+                      left="Amount of bidding funds to claim"
+                      tip="If there are order funds to claim, some or all of your orders were not competitive and did not get filled."
+                    />
                   </div>
                 </div>
               </div>
