@@ -76,7 +76,7 @@ export const ReviewOrder = ({ amountToken, cancelCutoff, data, orderPlacingOnly,
     <div className="pb-4 space-y-2 text-xs text-[#696969] border-b border-b-[#D5D5D519]">
       <TokenInfo token={priceToken} value={data.pay} />
       <div className="text-xs text-[#696969]">
-        <Tooltip left="Amount you pay" tip="This is your order size. You will pay this much." />
+        <Tooltip left="Amount you pay" tip="This is your order amount. You will pay this much." />
       </div>
     </div>
     <div className="pb-4 space-y-2 text-xs text-[#696969] border-b border-b-[#D5D5D519]">

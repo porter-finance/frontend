@@ -98,7 +98,7 @@ const InterestRateInputPanel = ({
               You pay
             </FieldRowLabelStyledText>
           }
-          tip="This is your order size. You will pay this much."
+          tip="This is your order amount. You will pay this much."
         />
       </div>
       <div className="flex flex-row justify-between">

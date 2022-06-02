@@ -90,7 +90,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
 
   // background: linear-gradient(180deg, rgba(64, 78, 237, 0.24) 0%, rgba(64, 78, 237, 0) 100%);
 
-  // Create series, shows the price (x axis) and size (y axis) of the orders that have been placed, both expressed in the order token
+  // Create series, shows the price (x axis) and amount (y axis) of the orders that have been placed, both expressed in the order token
   const bidSeries = chart.series.push(new am4charts.StepLineSeries())
   bidSeries.dataFields.valueX = 'priceNumber'
   bidSeries.dataFields.valueY = 'bidValueY'
@@ -102,7 +102,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   bidSeries.name = 'ORDERS'
   bidSeries.dummyData = {
     description:
-      'Shows the price (x axis) and size (y axis) of the orders that have been placed, both expressed in the order token',
+      'Shows the price (x axis) and amount (y axis) of the orders that have been placed, both expressed in the order token',
   }
 
   // Create series, shows the minimum sell price (x axis) the auctioneer is willing to accept

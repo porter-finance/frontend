@@ -140,7 +140,7 @@ const OrderBookChart: React.FC<Props> = (props) => {
                   <span>Orders</span>
                 </div>
               }
-              tip="Shows the price (x axis) and size (y axis) of the orders that have been placed, both expressed in the order token"
+              tip="Shows the price (x axis) and amount (y axis) of the orders that have been placed, both expressed in the order token"
             />
             <Tooltip
               left={

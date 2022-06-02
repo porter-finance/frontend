@@ -132,7 +132,7 @@ const AuctionDetails = (props: Props) => {
 
   const extraDetails: Array<ExtraDetailsItemProps> = [
     {
-      title: 'Offering size',
+      title: 'Offering amount',
       value: '-',
       ...offeringSize,
       tooltip: 'Number of bonds being sold.',
@@ -154,7 +154,7 @@ const AuctionDetails = (props: Props) => {
       title: 'Minimum order amount',
       value: '-',
       ...minimumBidSize,
-      tooltip: 'Minimum size for a single order. Orders below this size cannot be placed.',
+      tooltip: 'Minimum amount for a single order. Orders below this amount cannot be placed.',
     },
     {
       title: 'Current bond price',
