@@ -226,8 +226,8 @@ const getEstimateParams = (
     method: easyAuctionContract.placeSellOrders,
     args: [
       auctionId,
-      [buyAmountScaled.toString()],
       [sellAmountScaled.toString()],
+      [buyAmountScaled.toString()],
       [previousOrder],
       signature ? signature : '0x',
     ],
