@@ -59,6 +59,7 @@ const columns = [
   },
   {
     Header: 'Fixed YTM',
+    tooltip: 'Yield to maturity',
     accessor: 'fixedYTM',
     align: 'flex-start',
     style: {},

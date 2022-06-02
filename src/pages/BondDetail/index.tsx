@@ -102,7 +102,8 @@ const positionColumns = [
   },
   {
     Header: 'Fixed YTM',
-    tooltip: 'This YTM is calculated using the closing price of the initial offering.',
+    tooltip:
+      'This yield to maturity is calculated using the closing price of the initial offering.',
     accessor: 'fixedYTM',
   },
 ]

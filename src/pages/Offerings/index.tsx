@@ -87,7 +87,7 @@ const columns = [
   {
     Header: 'Maximum YTM',
     tooltip:
-      'Maximum YTM the issuer is willing to pay. This is calculated using the minimum bond price.',
+      'Maximum yield to maturity the issuer is willing to pay. This is calculated using the minimum bond price.',
     accessor: 'maximumYTM',
     align: 'flex-start',
     style: {},

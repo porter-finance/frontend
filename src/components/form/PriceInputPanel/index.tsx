@@ -73,7 +73,7 @@ const PriceInputPanel = (props: Props) => {
             <FieldRowLabelStyled>
               <Tooltip
                 left="Price"
-                tip="Maximum price per bond you are willing to pay. The actual settlement price may be lower which will result in you getting a higher YTM."
+                tip="Maximum price per bond you are willing to pay. The actual settlement price may be lower which will result in you getting a higher yield to maturity."
               />
             </FieldRowLabelStyled>
           )}

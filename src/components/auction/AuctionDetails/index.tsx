@@ -167,7 +167,7 @@ const AuctionDetails = (props: Props) => {
       title: 'Current bond YTM',
       value: currentBondYTM,
       tooltip:
-        'Current bond YTM calculated from the current bond price. If the auction ended now, this is the return bond purchasers would receive assuming no default.',
+        'Current bond yield to maturity calculated from the current bond price. If the auction ended now, this is the return bond purchasers would receive assuming no default.',
       bordered: 'blue',
     },
     {
@@ -181,7 +181,7 @@ const AuctionDetails = (props: Props) => {
       title: 'Maximum bond YTM',
       value: maxBondYTM,
       tooltip:
-        'Maximum YTM the issuer is willing to pay. This is calculated using the minimum bond price.',
+        'Maximum yield to maturity the issuer is willing to pay. This is calculated using the minimum bond price.',
     },
   ]
 

@@ -130,7 +130,7 @@ const InterestRateInputPanel = ({
         <Tooltip
           className="flex flex-row justify-end items-center space-x-2 w-full max-w-[95px]"
           left={<FieldRowLabelStyledText>Your YTM</FieldRowLabelStyledText>}
-          tip="YTM you will earn assuming no default. If the final price is lower than your order price, you will receive more bonds than ordered at a lower price, therefore, earning a higher YTM."
+          tip="Yield to maturity you will earn assuming no default. If the final price is lower than your order price, you will receive more bonds than ordered at a lower price, therefore, earning a higher YTM."
         />
       </div>
     </FieldRowWrapper>
