@@ -138,7 +138,7 @@ const AuctionDetails = (props: Props) => {
       tooltip: 'Number of bonds being sold.',
     },
     {
-      title: 'Total bid volume',
+      title: 'Total order volume',
       value: '-',
       ...totalBidVolume,
       tooltip: 'Sum of all bid volume.',
@@ -151,7 +151,7 @@ const AuctionDetails = (props: Props) => {
       ...minimumFundingThreshold,
     },
     {
-      title: 'Minimum bid size',
+      title: 'Minimum order amount',
       value: '-',
       ...minimumBidSize,
       tooltip: 'Minimum size for a single bid. Bids below this size cannot be placed.',
