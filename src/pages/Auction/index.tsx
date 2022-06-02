@@ -96,7 +96,7 @@ export const TwoGridPage = ({ leftChildren, rightChildren }) => (
       </div>
 
       {/* Right column */}
-      <div className="grid grid-cols-1 gap-4">
+      <div className="grid order-first grid-cols-1 gap-4 lg:order-last">
         <section aria-labelledby="section-2-title">{rightChildren}</section>
       </div>
     </div>
