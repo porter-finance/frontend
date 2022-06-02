@@ -321,7 +321,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                 chainId={chainId}
                 info={amountInfo}
                 onUserSellAmountInput={onUserSellAmountInput}
-                token={graphInfo?.bond}
+                token={graphInfo?.bidding}
                 value={sellAmount}
                 wrap={{
                   isWrappable,
