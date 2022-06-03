@@ -10,7 +10,7 @@ import Bonds from '@/pages/Bonds'
 import CreateBond from '@/pages/CreateBond'
 import Offerings from '@/pages/Offerings'
 import Portfolio from '@/pages/Portfolio'
-  
+
 const AppRoutes: React.FC = () => {
   return (
     <Routes>
