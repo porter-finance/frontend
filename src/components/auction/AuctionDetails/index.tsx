@@ -11,7 +11,7 @@ import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderbookState } from '../../../state/orderbook/hooks'
 import { abbreviation } from '../../../utils/numeral'
 import { calculateInterestRate } from '../../form/InterestRateInputPanel'
-import TokenLink from '../../token/TokenLink'
+import TokenLink, { LinkIcon } from '../../token/TokenLink'
 import { AuctionTimer } from '../AuctionTimer'
 import { ExtraDetailsItem, Props as ExtraDetailsItemProps } from '../ExtraDetailsItem'
 import { AuctionStatusPill } from '../OrderbookTable'
@@ -203,6 +203,20 @@ const AuctionDetails = (props: Props) => {
           color="blue"
           endDate={auction?.end}
           endText="End date"
+          rightOfCountdown={
+            <div className="flex flex-col justify-end">
+              <ExtraDetailsItem
+                bordered={false}
+                title="Documents"
+                titleClass="justify-end"
+                value={
+                  <LinkIcon href="/pdf/Ribbon DAO Collateral & Credit Analysis.pdf">
+                    Prospectus
+                  </LinkIcon>
+                }
+              />
+            </div>
+          }
           startDate={auction?.start}
           startText="Start date"
           text="Ends in"

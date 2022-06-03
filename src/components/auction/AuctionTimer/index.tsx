@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ReactElement } from 'react'
 import styled from 'styled-components'
 
 import dayjs from 'dayjs'
@@ -66,6 +66,7 @@ interface AuctionTimerProps {
   loading?: boolean
   text: string
   startText: string
+  rightOfCountdown?: ReactElement
   color: string
   endText: string
 }
@@ -76,6 +77,7 @@ export const AuctionTimer = ({
   endDate,
   endText,
   endTip,
+  rightOfCountdown,
   startDate,
   startText,
   startTip,
@@ -91,18 +93,22 @@ export const AuctionTimer = ({
 
   return (
     <div className="" {...restProps}>
-      <div className="flex flex-col place-items-start mb-7 space-y-1">
-        <div className="flex flex-row items-center space-x-1 text-xs text-white">
-          <Time>
-            {!days && <Countdown className="text-left" date={endDate * 1000} />}
-            {days && (
-              <>
-                {daysUntil} {daysUntil === 1 ? 'day' : 'days'}
-              </>
-            )}
-          </Time>
+      <div className="flex justify-between mb-7 space-y-1">
+        <div>
+          <div className="flex flex-row items-center space-x-1 text-xs text-white">
+            <Time>
+              {!days && <Countdown className="text-left" date={endDate * 1000} />}
+              {days && (
+                <>
+                  {daysUntil} {daysUntil === 1 ? 'day' : 'days'}
+                </>
+              )}
+            </Time>
+          </div>
+          <DateTitle>{text}</DateTitle>
         </div>
-        <DateTitle>{text}</DateTitle>
+
+        {rightOfCountdown}
       </div>
       <div className="flex justify-between mb-3">
         <DateValue>
