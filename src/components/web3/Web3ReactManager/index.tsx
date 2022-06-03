@@ -90,7 +90,7 @@ export default function Web3ReactManager({ children }) {
     return (
       <MessageWrapper>
         <Message>
-          Oops! An unknown error occurred. Please refresh the page, or visit from another browser or
+          Oops! An unknown error occurred. Please refresh the page or visit from another browser or
           device.
         </Message>
       </MessageWrapper>
