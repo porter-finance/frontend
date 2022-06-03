@@ -3,6 +3,7 @@ import styled from 'styled-components'
 
 import { isBigNumberish } from '@ethersproject/bignumber/lib/bignumber'
 import { formatUnits } from '@ethersproject/units'
+import { ceil } from 'lodash'
 
 import { useAuction } from '../../../hooks/useAuction'
 import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
@@ -97,7 +98,11 @@ const AuctionDetails = (props: Props) => {
     minimumBondPrice = {
       fullNumberHint: auction?.minimumBondPrice.toLocaleString(),
       value: (
-        <TokenInfoWithLink auction={auction} value={auction.minimumBondPrice} withLink={false} />
+        <TokenInfoWithLink
+          auction={auction}
+          value={ceil(auction.minimumBondPrice, auction?.bidding?.decimals)}
+          withLink={false}
+        />
       ),
     }
     minimumBidSize = {
