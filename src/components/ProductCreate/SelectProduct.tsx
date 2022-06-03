@@ -18,7 +18,7 @@ const SelectProduct = () => {
             <p className="text-[#696969]">A convertible bond built for DeFi.</p>
             <button
               className="flex self-start mt-4 !text-2sm font-normal text-white normal-case bg-[#181A1C] !border-[#2A2B2C] btn btn-sm"
-              onClick={() => navigate('/products/create/convertible')}
+              onClick={() => navigate('/bonds/create/convertible')}
             >
               Learn more
             </button>
@@ -33,7 +33,7 @@ const SelectProduct = () => {
 
             <button
               className="flex self-start mt-4 !text-2sm font-normal text-white normal-case bg-[#181A1C] !border-[#2A2B2C] btn btn-sm"
-              onClick={() => navigate('/products/create/simple')}
+              onClick={() => navigate('/bonds/create/simple')}
             >
               Learn more
             </button>
