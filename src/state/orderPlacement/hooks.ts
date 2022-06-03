@@ -241,7 +241,7 @@ export const useGetOrderPlacementError = (
 
   const invalidAmount = sellAmount && !amountIn && `Invalid Amount`
 
-  const total = Number(sellAmount) * Number(price)
+  const total = Number(sellAmount)
 
   const insufficientBalance =
     balanceIn &&
@@ -268,7 +268,7 @@ export const useGetOrderPlacementError = (
       ? messageMinimunPrice()
       : undefined
   const invalidSellAmount =
-    sellAmount && amountIn && price && !sellAmountScaled && `Invalid bidding price`
+    sellAmount && amountIn && price && !sellAmountScaled && `Invalid order price`
   const outOfBoundsPricePlacingOrder =
     amountIn &&
     price &&
@@ -309,7 +309,7 @@ export const useGetOrderPlacementError = (
 
   const errorBidSize =
     sellAmount && price && total <= minBidSize
-      ? `Bid size must be higher than ${minBidSize}`
+      ? `Order amount must be higher than ${minBidSize}`
       : undefined
 
   return {

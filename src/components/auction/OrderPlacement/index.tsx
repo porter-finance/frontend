@@ -313,10 +313,11 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
           {(!isPrivate || signatureAvailable) && (
             <>
               <AmountInputPanel
+                amountTooltip="This is your order amount. You will pay this much."
                 chainId={chainId}
                 info={amountInfo}
                 onUserSellAmountInput={onUserSellAmountInput}
-                token={graphInfo?.bond}
+                token={graphInfo?.bidding}
                 value={sellAmount}
                 wrap={{
                   isWrappable,
@@ -454,7 +455,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                     title="Review order"
                   />
                   <div className="flex flex-row justify-between items-center mt-4 mb-3 text-xs text-[#9F9F9F]">
-                    <div>{biddingTokenDisplay} Balance</div>
+                    <div>Balance</div>
                     <div>
                       <span className="text-xs font-normal text-[#9F9F9F]">
                         {balanceString} {biddingTokenDisplay}

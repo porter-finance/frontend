@@ -101,9 +101,10 @@ const positionColumns = [
     accessor: 'maturityDate',
   },
   {
-    Header: 'Fixed APY',
-    tooltip: 'This APY is calculated using the closing price of the initial offering.',
-    accessor: 'fixedAPY',
+    Header: 'Fixed YTM',
+    tooltip:
+      'This yield to maturity is calculated using the closing price of the initial offering.',
+    accessor: 'fixedYTM',
   },
 ]
 
@@ -134,7 +135,7 @@ export const calculatePortfolioRow = (
 ) => {
   if (bond && Array.isArray(bond.tokenBalances) && bond.tokenBalances.length) {
     const amount = Number(formatUnits(bond?.tokenBalances[0].amount, bond.decimals)) || 0
-    const fixedAPY = calculateInterestRate({
+    const fixedYTM = calculateInterestRate({
       price: bond.clearingPrice,
       maturityDate: bond.maturityDate,
       startDate: bond?.auctions?.[0]?.end,
@@ -147,7 +148,7 @@ export const calculatePortfolioRow = (
           ? `${(bond?.clearingPrice * amount).toLocaleString()} ${bond.paymentToken.symbol}`
           : '-',
       price: bond?.clearingPrice ? bond?.clearingPrice : '-',
-      fixedAPY,
+      fixedYTM,
       maturityDate: dayjs(bond.maturityDate * 1000)
         .utc()
         .tz()
