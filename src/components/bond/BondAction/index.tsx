@@ -340,7 +340,10 @@ const BondAction = ({
                   setBondsToRedeem(formatUnits(bondTokenBalance, bond?.decimals))
                 }}
                 onUserSellAmountInput={setBondsToRedeem}
-                token={tok}
+                token={{
+                  ...tok,
+                  symbol: tok?.name || tok?.symbol,
+                }}
                 value={bondsToRedeem}
                 wrap={{ isWrappable: false, onClick: null }}
               />

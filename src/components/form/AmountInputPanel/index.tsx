@@ -152,6 +152,7 @@ const AmountInputPanel: React.FC<Props> = (props) => {
       >
         <FieldRowTop>
           <FieldRowInput
+            className="overflow-hidden text-ellipsis"
             disabled={!account || isDisabled}
             hasError={error}
             onUserSellAmountInput={onUserSellAmountInput}
