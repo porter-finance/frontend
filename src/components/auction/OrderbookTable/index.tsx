@@ -80,7 +80,7 @@ export const calculateRow = (
     3,
   ).toLocaleString()}+ bonds`
 
-  const transaction = <BidTransactionLink bid={row} />
+  const transaction = <BidTransactionLink order={row} />
 
   return { status, price, interest, amount, bonds, transaction }
 }
@@ -282,9 +282,9 @@ export const AuctionStatusPill = ({
   return <ActiveStatusPill disabled={atStageEnded} title={atStageEnded ? 'ended' : status} />
 }
 
-export const BidTransactionLink = ({ bid }) => {
+export const BidTransactionLink = ({ order }) => {
   const { chainId } = useActiveWeb3React()
-  const hash = bid.canceltx || bid.claimtx || bid.createtx
+  const hash = order.canceltx || order.claimtx || order.createtx
 
   if (!hash) return <span>N/A</span>
 

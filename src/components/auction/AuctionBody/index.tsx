@@ -135,17 +135,14 @@ const BondCard = ({ graphInfo }: { graphInfo: Auction }) => {
 }
 
 const AuctionBody = (props: AuctionBodyProps) => {
-  const {
-    auctionIdentifier,
-    derivedAuctionInfo: { auctionState },
-    derivedAuctionInfo,
-    graphInfo,
-  } = props
+  const { auctionIdentifier, derivedAuctionInfo, graphInfo } = props
   const settling = derivedAuctionInfo?.auctionState === AuctionState.NEEDS_SETTLED
 
   const placeAndCancel =
     forceDevData ||
-    [AuctionState.ORDER_PLACING, AuctionState.ORDER_PLACING_AND_CANCELING].includes(auctionState)
+    [AuctionState.ORDER_PLACING, AuctionState.ORDER_PLACING_AND_CANCELING].includes(
+      derivedAuctionInfo?.auctionState,
+    )
 
   return (
     <>
@@ -161,7 +158,7 @@ const AuctionBody = (props: AuctionBodyProps) => {
 
             <OrderBookContainer
               auctionIdentifier={auctionIdentifier}
-              auctionState={auctionState}
+              auctionState={derivedAuctionInfo?.auctionState}
               derivedAuctionInfo={derivedAuctionInfo}
             />
           </>
@@ -178,7 +175,7 @@ const AuctionBody = (props: AuctionBodyProps) => {
                 <WarningCard />
               </>
             )}
-            {auctionState === AuctionState.CLAIMING && (
+            {derivedAuctionInfo?.auctionState === AuctionState.CLAIMING && (
               <Claimer
                 auctionIdentifier={auctionIdentifier}
                 derivedAuctionInfo={derivedAuctionInfo}

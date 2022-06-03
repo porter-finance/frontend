@@ -3,7 +3,6 @@ import { Link, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { useWeb3React } from '@web3-react/core'
-import { HashLink } from 'react-router-hash-link'
 
 import { injected } from '../../../connectors'
 import { chainNames } from '../../../constants'
@@ -36,16 +35,6 @@ export const Inner = styled(InnerContainer)`
   flex-shrink: 0;
   height: ${({ theme }) => theme.header.height};
   justify-content: space-between;
-  padding-left: ${({ theme }) => theme.layout.horizontalPadding};
-  padding-right: ${({ theme }) => theme.layout.horizontalPadding};
-`
-
-const LogoLink = styled(HashLink)`
-  display: none;
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    display: block;
-  }
 `
 
 const ButtonMenuStyled = styled(ButtonMenu)`

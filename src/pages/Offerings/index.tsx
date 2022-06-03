@@ -29,7 +29,7 @@ export const getAuctionStates = (
   const atStageOrderPlacement = currentTimeInUTC() <= end * 1000
 
   // cancellable (can be open for orders and cancellable.
-  // This isn't an auction status rather an ability to cancel your bid or not.)
+  // This isn't an auction status rather an ability to cancel your order or not.)
   const atStageOrderPlacementAndCancelation = currentTimeInUTC() <= orderCancellationEndDate
 
   // AKA settling (can be settled, but not yet done so)
@@ -85,10 +85,10 @@ const columns = [
     filter: 'searchInTags',
   },
   {
-    Header: 'Maximum APY',
+    Header: 'Maximum YTM',
     tooltip:
-      'Maximum APY the issuer is willing to pay. This is calculated using the minimum bond price.',
-    accessor: 'maximumAPY',
+      'Maximum yield to maturity the issuer is willing to pay. This is calculated using the minimum bond price.',
+    accessor: 'maximumYTM',
     align: 'flex-start',
     style: {},
     filter: 'searchInTags',
@@ -127,7 +127,7 @@ const Offerings = () => {
       auctionId: `#${auction.id}`,
       type: 'auction', // TODO: currently hardcoded since no OTC exists
       price: `1 ${auction?.bidding?.symbol}`,
-      maximumAPY: calculateInterestRate({
+      maximumYTM: calculateInterestRate({
         price: auction.minimumBondPrice,
         maturityDate: auction.bond.maturityDate,
         startDate: auction.end,

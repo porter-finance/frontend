@@ -19,9 +19,15 @@ export const DEV_tokens = [
     '0x3c585f028e0f8d8fa18d2c7dbe6fd40fcd6ea2a5',
     'https://user-images.githubusercontent.com/44010262/170816957-67584771-3ba9-48be-8ddd-eaef9efe9e04.png',
   ],
-  // Ribbon Bond Rinkeby
+  // Ribbon Bond Rinkeby 1
   [
     '0xfbdeec30e1c93463f6c4dcbda175613aee122016',
+    'https://user-images.githubusercontent.com/44010262/170816957-67584771-3ba9-48be-8ddd-eaef9efe9e04.png',
+  ],
+
+  // Ribbon Bond Rinkeby 2
+  [
+    '0xdd14fba06df518451b1defb0527e8f9b1174b639',
     'https://user-images.githubusercontent.com/44010262/170816957-67584771-3ba9-48be-8ddd-eaef9efe9e04.png',
   ],
   // Ribbon Bond Mainnet

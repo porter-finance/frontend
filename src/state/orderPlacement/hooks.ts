@@ -223,6 +223,7 @@ export const useGetOrderPlacementError = (
   const relevantTokenBalances = useTokenBalancesTreatWETHAsETH(account ?? undefined, [
     derivedAuctionInfo?.biddingToken,
   ])
+
   const biddingTokenBalance =
     relevantTokenBalances?.[derivedAuctionInfo?.biddingToken?.address ?? '']
   const parsedBiddingAmount = tryParseAmount(sellAmount, derivedAuctionInfo?.biddingToken)
@@ -239,10 +240,13 @@ export const useGetOrderPlacementError = (
     Number(formatUnits(minimumBidSize, derivedAuctionInfo?.biddingToken?.decimals))
 
   const invalidAmount = sellAmount && !amountIn && `Invalid Amount`
+
+  const total = Number(sellAmount)
+
   const insufficientBalance =
     balanceIn &&
     amountIn &&
-    balanceIn.lessThan(amountIn) &&
+    total > Number(formatUnits(balanceIn.raw.toString(), balanceIn.token.decimals)) &&
     `You do not have enough ${getFullTokenDisplay(
       amountIn.token,
       chainId as ChainId,
@@ -264,7 +268,7 @@ export const useGetOrderPlacementError = (
       ? messageMinimunPrice()
       : undefined
   const invalidSellAmount =
-    sellAmount && amountIn && price && !sellAmountScaled && `Invalid bidding price`
+    sellAmount && amountIn && price && !sellAmountScaled && `Invalid order price`
   const outOfBoundsPricePlacingOrder =
     amountIn &&
     price &&
@@ -304,8 +308,8 @@ export const useGetOrderPlacementError = (
     undefined
 
   const errorBidSize =
-    sellAmount && price && Number(sellAmount) * Number(price) < minBidSize
-      ? `Bid size must be higher than ${minBidSize}`
+    sellAmount && price && total <= minBidSize
+      ? `Order amount must be higher than ${minBidSize}`
       : undefined
 
   return {

@@ -58,8 +58,9 @@ const columns = [
     filter: 'searchInTags',
   },
   {
-    Header: 'Fixed APY',
-    accessor: 'fixedAPY',
+    Header: 'Fixed YTM',
+    tooltip: 'Yield to maturity',
+    accessor: 'fixedYTM',
     align: 'flex-start',
     style: {},
     filter: 'searchInTags',

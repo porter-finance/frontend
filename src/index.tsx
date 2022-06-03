@@ -8,9 +8,9 @@ import { Web3ReactProvider, createWeb3ReactRoot } from '@web3-react/core'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 
-import { isDev } from './connectors'
+import { MobileBlocker } from './components/MobileBlocker'
+import { isRinkeby } from './connectors'
 import { NetworkContextName } from './constants'
-import './i18n'
 import { NETWORK_URL_MAINNET, NETWORK_URL_RINKEBY } from './constants/config'
 import App from './pages/App'
 import store from './state'
@@ -24,10 +24,9 @@ import './index.css'
 
 const dappConfig = {
   readOnlyChainId: Mainnet.chainId,
-  readOnlyUrls: {
-    [Rinkeby.chainId]: NETWORK_URL_RINKEBY,
-    [Mainnet.chainId]: NETWORK_URL_MAINNET,
-  },
+  readOnlyUrls: isRinkeby
+    ? { [Rinkeby.chainId]: NETWORK_URL_RINKEBY }
+    : { [Mainnet.chainId]: NETWORK_URL_MAINNET },
 }
 
 const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
@@ -51,7 +50,7 @@ const container = document.getElementById('root')
 const root = createRoot(container)
 
 const apolloClient = new ApolloClient({
-  uri: isDev
+  uri: isRinkeby
     ? process.env.REACT_APP_SUBGRAPH_URL_RINKEBY
     : process.env.REACT_APP_SUBGRAPH_URL_MAINNET,
   connectToDevTools: true,
@@ -69,7 +68,10 @@ root.render(
               <ThemeProvider>
                 <GlobalStyle />
                 <BrowserRouter>
-                  <App />
+                  <div className="hidden sm:block">
+                    <App />
+                  </div>
+                  <MobileBlocker />
                 </BrowserRouter>
               </ThemeProvider>
             </DAppProvider>

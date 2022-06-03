@@ -6,7 +6,7 @@ const Wrapper = styled.span`
   display: flex;
 `
 
-export const Logo: React.FC = (props) => {
+export const Logo = (props) => {
   return (
     <Wrapper {...props}>
       <svg
