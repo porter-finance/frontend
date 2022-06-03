@@ -44,7 +44,9 @@ export const TokenInfoWithLink = ({
     <span>
       {isBigNumberish(value)
         ? abbreviation(formatUnits(value, auction?.bidding?.decimals))
-        : Number(value).toLocaleString()}
+        : Number(value).toLocaleString(undefined, {
+            maximumFractionDigits: auction?.bidding?.decimals,
+          })}
     </span>
     <TokenLink token={auction?.bidding} withLink={withLink} />
   </TokenValue>
