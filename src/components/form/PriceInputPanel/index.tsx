@@ -67,6 +67,7 @@ const PriceInputPanel = (props: Props) => {
       >
         <FieldRowTop>
           <FieldRowInput
+            className="overflow-hidden text-ellipsis"
             disabled={!account || disabled === true}
             hasError={error}
             onUserSellAmountInput={onUserPriceInput}
