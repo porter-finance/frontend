@@ -47,6 +47,7 @@ export function convertPriceIntoBuyAndSellAmount(
   const buyAmountScaled = BigNumber.from(sellAmountScaled.raw.toString())
     .mul(BigNumber.from(10).pow(auctioningToken.decimals))
     .div(inversePriceAdjustedBybiddingToken.raw.toString())
+
   return {
     sellAmountScaled: BigNumber.from(sellAmountScaled.raw.toString()),
     buyAmountScaled,
