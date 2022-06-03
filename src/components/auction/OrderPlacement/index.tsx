@@ -93,11 +93,7 @@ interface OrderPlacementProps {
 }
 
 const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
-  const {
-    auctionIdentifier,
-    derivedAuctionInfo: { auctionState },
-    derivedAuctionInfo,
-  } = props
+  const { auctionIdentifier, derivedAuctionInfo } = props
   const { data: graphInfo } = useAuction(auctionIdentifier?.auctionId)
   const location = useGeoLocation()
   const disabledCountry = !isRinkeby && location?.country === 'US'
@@ -118,7 +114,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const [showWarningWrongChainId, setShowWarningWrongChainId] = useState<boolean>(false)
   const { errorAmount, errorBidSize, errorPrice } = useGetOrderPlacementError(
     derivedAuctionInfo,
-    auctionState,
+    derivedAuctionInfo?.auctionState,
     auctionIdentifier,
     graphInfo?.minimumBidSize,
   )
@@ -199,7 +195,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
         : undefined,
     [derivedAuctionInfo?.auctionEndDate, derivedAuctionInfo?.orderCancellationEndDate],
   )
-  const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
+  const orderPlacingOnly = derivedAuctionInfo?.auctionState === AuctionState.ORDER_PLACING
   const isPrivate = React.useMemo(
     () => auctionDetails && auctionDetails.isPrivateAuction,
     [auctionDetails],
