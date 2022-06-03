@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 import { Transition } from '@headlessui/react'
 import { Chain } from '@usedapp/core'
-import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
+import { UnsupportedChainIdError } from '@web3-react/core'
 
 import { requiredChain } from '../connectors'
 import { useActiveWeb3React } from '../hooks'
@@ -63,7 +63,7 @@ const Warning = ({ chain }: { chain: Chain }) => {
 }
 
 const ChainWarning = () => {
-  const { account, chainId, error } = useWeb3React()
+  const { account, chainId, error } = useActiveWeb3React()
   const { errorWrongNetwork } = useNetworkCheck(requiredChain.chainId)
   const networkError = error instanceof UnsupportedChainIdError || errorWrongNetwork
   let showError = false

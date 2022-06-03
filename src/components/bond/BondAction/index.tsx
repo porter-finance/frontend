@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom'
 
 import { formatUnits, parseUnits } from '@ethersproject/units'
 import { Token, TokenAmount } from '@josojo/honeyswap-sdk'
-import { useWeb3React } from '@web3-react/core'
 import dayjs from 'dayjs'
 
 import { useActiveWeb3React } from '../../../hooks'
@@ -84,7 +83,7 @@ const BondAction = ({
   componentType: BondActions
   overwriteBondId?: string
 }) => {
-  const { account, chainId } = useWeb3React()
+  const { account, chainId } = useActiveWeb3React()
   const activePopups = useActivePopups()
   const params = useParams()
 

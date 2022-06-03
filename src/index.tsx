@@ -25,10 +25,9 @@ import './index.css'
 
 const dappConfig = {
   readOnlyChainId: Mainnet.chainId,
-  readOnlyUrls: {
-    [Rinkeby.chainId]: NETWORK_URL_RINKEBY,
-    [Mainnet.chainId]: NETWORK_URL_MAINNET,
-  },
+  readOnlyUrls: isRinkeby
+    ? { [Rinkeby.chainId]: NETWORK_URL_RINKEBY }
+    : { [Mainnet.chainId]: NETWORK_URL_MAINNET },
 }
 
 const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
