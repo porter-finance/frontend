@@ -52,13 +52,7 @@ const yourOrdersTableColumns = [
 ]
 
 const OrdersTable: React.FC<OrdersTableProps> = (props) => {
-  const {
-    auctionIdentifier,
-    bids,
-    derivedAuctionInfo,
-    derivedAuctionInfo: { auctionState },
-    loading,
-  } = props
+  const { auctionIdentifier, bids, derivedAuctionInfo, loading } = props
   const { auctionEndDate, maturityDate } = useBondMaturityForAuction()
   const cancelOrderCallback = useCancelOrderCallback(
     auctionIdentifier,
@@ -80,10 +74,10 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
   const ordersEmpty = !bids || bids.length == 0
 
   // the array is frozen in strict mode, we will need to copy the array before sorting it
-  const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
+  const orderPlacingOnly = derivedAuctionInfo?.auctionState === AuctionState.ORDER_PLACING
   const isOrderCancellationExpired =
     hasLastCancellationDate && now > orderCancellationEndMilliseconds && orderPlacingOnly
-  const orderSubmissionFinished = auctionState === AuctionState.CLAIMING
+  const orderSubmissionFinished = derivedAuctionInfo?.auctionState === AuctionState.CLAIMING
   const hideCancelButton = orderPlacingOnly || orderSubmissionFinished
 
   useAllUserOrders(auctionIdentifier, derivedAuctionInfo)

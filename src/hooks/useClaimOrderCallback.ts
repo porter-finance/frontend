@@ -20,6 +20,7 @@ import { useActiveWeb3React } from './index'
 import { useAuctionDetails } from './useAuctionDetails'
 import { useGasPrice } from './useGasPrice'
 
+import { requiredChain } from '@/connectors'
 import { BidsForAccountNoCancelledDocument } from '@/generated/graphql'
 
 const logger = getLogger('useClaimOrderCallback')
@@ -275,8 +276,8 @@ export function useGetClaimState(
   pendingClaim?: Boolean,
 ): ClaimState {
   const [claimStatus, setClaimStatus] = useState<ClaimState>(ClaimState.UNKNOWN)
-  const { account, library } = useActiveWeb3React()
-  const { auctionId, chainId } = auctionIdentifier
+  const { account, chainId, library } = useActiveWeb3React()
+  const { auctionId } = auctionIdentifier
 
   useEffect(() => {
     setClaimStatus(ClaimState.UNKNOWN)
@@ -295,7 +296,7 @@ export function useGetClaimState(
 
     async function userHasAvailableClaim() {
       try {
-        if (!library || !account || !claimableOrders) return
+        if (!library || !account || !claimableOrders || chainId !== requiredChain.chainId) return
 
         const easyAuctionContract: Contract = getEasyAuctionContract(
           chainId as ChainId,

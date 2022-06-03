@@ -11,7 +11,6 @@ import { Provider } from 'react-redux'
 import { MobileBlocker } from './components/MobileBlocker'
 import { isRinkeby } from './connectors'
 import { NetworkContextName } from './constants'
-import './i18n'
 import { NETWORK_URL_MAINNET, NETWORK_URL_RINKEBY } from './constants/config'
 import App from './pages/App'
 import store from './state'
@@ -25,10 +24,9 @@ import './index.css'
 
 const dappConfig = {
   readOnlyChainId: Mainnet.chainId,
-  readOnlyUrls: {
-    [Rinkeby.chainId]: NETWORK_URL_RINKEBY,
-    [Mainnet.chainId]: NETWORK_URL_MAINNET,
-  },
+  readOnlyUrls: isRinkeby
+    ? { [Rinkeby.chainId]: NETWORK_URL_RINKEBY }
+    : { [Mainnet.chainId]: NETWORK_URL_MAINNET },
 }
 
 const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
