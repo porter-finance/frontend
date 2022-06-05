@@ -339,6 +339,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                 account={account}
                 auctionId={auctionIdentifier?.auctionId}
                 chainId={chainId}
+                derivedAuctionInfo={derivedAuctionInfo}
                 disabled={!account}
                 info={priceInfo}
                 onUserPriceInput={onUserPriceInput}

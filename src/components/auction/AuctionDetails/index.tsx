@@ -3,6 +3,7 @@ import styled from 'styled-components'
 
 import { isBigNumberish } from '@ethersproject/bignumber/lib/bignumber'
 import { formatUnits } from '@ethersproject/units'
+import { ceil } from 'lodash'
 
 import { useAuction } from '../../../hooks/useAuction'
 import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
@@ -10,7 +11,7 @@ import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderbookState } from '../../../state/orderbook/hooks'
 import { abbreviation } from '../../../utils/numeral'
 import { calculateInterestRate } from '../../form/InterestRateInputPanel'
-import TokenLink from '../../token/TokenLink'
+import TokenLink, { LinkIcon } from '../../token/TokenLink'
 import { AuctionTimer } from '../AuctionTimer'
 import { ExtraDetailsItem, Props as ExtraDetailsItemProps } from '../ExtraDetailsItem'
 import { AuctionStatusPill } from '../OrderbookTable'
@@ -44,7 +45,9 @@ export const TokenInfoWithLink = ({
     <span>
       {isBigNumberish(value)
         ? abbreviation(formatUnits(value, auction?.bidding?.decimals))
-        : Number(value).toLocaleString()}
+        : Number(value).toLocaleString(undefined, {
+            maximumFractionDigits: auction?.bidding?.decimals,
+          })}
     </span>
     <TokenLink token={auction?.bidding} withLink={withLink} />
   </TokenValue>
@@ -95,7 +98,11 @@ const AuctionDetails = (props: Props) => {
     minimumBondPrice = {
       fullNumberHint: auction?.minimumBondPrice.toLocaleString(),
       value: (
-        <TokenInfoWithLink auction={auction} value={auction.minimumBondPrice} withLink={false} />
+        <TokenInfoWithLink
+          auction={auction}
+          value={ceil(auction.minimumBondPrice, auction?.bidding?.decimals)}
+          withLink={false}
+        />
       ),
     }
     minimumBidSize = {
@@ -196,6 +203,20 @@ const AuctionDetails = (props: Props) => {
           color="blue"
           endDate={auction?.end}
           endText="End date"
+          rightOfCountdown={
+            <div className="flex flex-col justify-end">
+              <ExtraDetailsItem
+                bordered={false}
+                title="Documents"
+                titleClass="justify-end"
+                value={
+                  <LinkIcon href="/pdf/Ribbon DAO Collateral & Credit Analysis.pdf">
+                    Prospectus
+                  </LinkIcon>
+                }
+              />
+            </div>
+          }
           startDate={auction?.start}
           startText="Start date"
           text="Ends in"
