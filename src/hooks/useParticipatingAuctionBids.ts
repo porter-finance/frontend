@@ -31,14 +31,14 @@ const bidsQuery = gql`
   }
 `
 
-export const useParticipatingAuctionBids = (auctionId?: number) => {
+export const useParticipatingAuctionBids = (auctionId?: number, accountOverride?: string) => {
   const { auctionId: urlAuctionId } = parseURL(useParams<RouteAuctionIdentifier>())
   const { account } = useActiveWeb3React()
 
   const { data, error, loading } = useQuery(BidsForAccountDocument, {
     variables: {
       auctionId: Number(auctionId || urlAuctionId),
-      account: (account && account?.toLowerCase()) || '0x00',
+      account: accountOverride || (account && account?.toLowerCase()) || '0x00',
     },
   })
 

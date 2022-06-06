@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
+import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
 import * as CSS from 'csstype'
 
 import { useParticipatingAuctionBids } from '../../../hooks/useParticipatingAuctionBids'
@@ -62,6 +63,8 @@ export const OrderBookContainer = (props) => {
 
   // Always call this when they first load the page to see past prices when placing a new order
   // Can't allow them to place an order at a past price
+  const { safe } = useSafeAppsSDK()
+  console.log(safe.safeAddress)
   const { bids, loading } = useParticipatingAuctionBids()
 
   useOrderbookDataCallback(auctionIdentifier)
