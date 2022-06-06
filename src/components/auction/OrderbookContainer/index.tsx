@@ -8,8 +8,6 @@ import { useOrderbookDataCallback } from '../../../state/orderbook/hooks'
 import { OrderBook } from '../Orderbook'
 import OrdersTable from '../OrdersTable'
 
-import useSafe from '@/hooks/useSafe'
-
 interface WrapProps {
   margin?: any
   flexDir?: any
@@ -64,8 +62,7 @@ export const OrderBookContainer = (props) => {
 
   // Always call this when they first load the page to see past prices when placing a new order
   // Can't allow them to place an order at a past price
-  const { safeAddress } = useSafe()
-  const { bids, loading } = useParticipatingAuctionBids(auctionIdentifier?.auctionId, safeAddress)
+  const { bids, loading } = useParticipatingAuctionBids(auctionIdentifier?.auctionId)
 
   useOrderbookDataCallback(auctionIdentifier)
 
