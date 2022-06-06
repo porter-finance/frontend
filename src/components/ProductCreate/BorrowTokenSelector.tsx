@@ -2,6 +2,7 @@ import React, { Fragment, useState } from 'react'
 
 import { Listbox, Transition } from '@headlessui/react'
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
+import { useFormContext } from 'react-hook-form'
 
 import { ReactComponent as UnicornSvg } from '@/assets/svg/simple-bond.svg'
 
@@ -89,55 +90,69 @@ const tokens = [
   },
 ]
 
-export default function BorrowTokenSelector() {
-  const [selected, setSelected] = useState(tokens[0])
+const BorrowToken = ({ option }) => (
+  <span className="flex items-center py-3 px-4 space-x-4 text-xs">
+    {option?.icon || <UnicornSvg height={20} width={20} />}
+    <span>{option.name}</span>
+  </span>
+)
+
+export const Selector = ({ OptionEl, onChange, options, selected }) => {
+  const { register } = useFormContext()
 
   return (
-    <div className="">
-      <Listbox onChange={setSelected} value={selected}>
-        <div className="relative mt-1">
-          <Listbox.Button className="relative py-2 pr-10 pl-3 w-full text-sm text-left text-white bg-transparent rounded-lg border border-[#2A2B2C] shadow-md cursor-default">
-            <span className="block truncate">{selected.name}</span>
-            <span className="flex absolute inset-y-0 right-0 items-center pr-2 pointer-events-none">
-              <CaretSortIcon aria-hidden="true" className="w-5 h-5 text-gray-400" />
-            </span>
-          </Listbox.Button>
-          <Transition
-            as={Fragment}
-            leave="transition ease-in duration-100"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <Listbox.Options className="overflow-auto absolute z-10 w-full max-h-64 bg-[#1F2123] rounded-lg border border-[#2A2B2C] focus:outline-none ring-1 ring-black ring-opacity-5 shadow scrollbar-thin scrollbar-track-zinc-800 scrollbar-thumb-zinc-700">
-              {tokens.map((token, tokenIdx) => (
-                <Listbox.Option
-                  className={({ active }) =>
-                    `cursor-pointer relative px-4 py-3 select-none text-white hover:bg-zinc-800 ${
-                      active ? 'bg-zinc-800' : ''
-                    }`
-                  }
-                  key={tokenIdx}
-                  value={token}
-                >
-                  {({ selected }) => (
-                    <>
-                      <span className="flex items-center space-x-4 text-xs">
-                        {token?.icon || <UnicornSvg height={20} width={20} />}
-                        <span>{token.name}</span>
+    <Listbox onChange={onChange} value={selected}>
+      <div className="relative mt-1">
+        <Listbox.Button className="relative pr-4 w-full text-sm text-left text-white bg-transparent rounded-lg border border-[#2A2B2C] shadow-md cursor-pointer">
+          <OptionEl option={selected} />
+          <span className="flex absolute inset-y-0 right-0 items-center pr-2 pointer-events-none">
+            <CaretSortIcon aria-hidden="true" className="w-5 h-5 text-gray-400" />
+          </span>
+        </Listbox.Button>
+        <Transition
+          as={Fragment}
+          leave="transition ease-in duration-100"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <Listbox.Options className="overflow-auto absolute z-10 w-full max-h-64 bg-[#1F2123] rounded-lg border border-[#2A2B2C] focus:outline-none ring-1 ring-black ring-opacity-5 shadow scrollbar-thin scrollbar-track-zinc-800 scrollbar-thumb-zinc-700">
+            {options.map((option, optionIdx) => (
+              <Listbox.Option
+                className={({ active }) =>
+                  `cursor-pointer relative select-none text-white hover:bg-zinc-800 ${
+                    active ? 'bg-zinc-800' : ''
+                  }`
+                }
+                key={optionIdx}
+                value={option}
+              >
+                {({ selected }) => (
+                  <>
+                    <OptionEl option={option} />
+                    {selected ? (
+                      <span className="flex absolute inset-y-0 right-2 items-center pl-3 text-[#532DBE]">
+                        <CheckIcon aria-hidden="true" className="w-5 h-5" />
                       </span>
-                      {selected ? (
-                        <span className="flex absolute inset-y-0 right-2 items-center pl-3 text-[#532DBE]">
-                          <CheckIcon aria-hidden="true" className="w-5 h-5" />
-                        </span>
-                      ) : null}
-                    </>
-                  )}
-                </Listbox.Option>
-              ))}
-            </Listbox.Options>
-          </Transition>
-        </div>
-      </Listbox>
-    </div>
+                    ) : null}
+                  </>
+                )}
+              </Listbox.Option>
+            ))}
+          </Listbox.Options>
+        </Transition>
+      </div>
+    </Listbox>
   )
 }
+
+const BorrowTokenSelector = () => {
+  const [selected, setSelected] = useState(tokens[0])
+  const setList = (e) => {
+    // Can't just use form onchange handler, even with a hidden input field that changes
+    setSelected(e)
+  }
+
+  return <Selector OptionEl={BorrowToken} onChange={setList} options={tokens} selected={selected} />
+}
+
+export default BorrowTokenSelector
