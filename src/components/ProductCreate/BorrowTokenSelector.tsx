@@ -97,11 +97,13 @@ const BorrowToken = ({ option }) => (
   </span>
 )
 
-export const Selector = ({ OptionEl, onChange, options, selected }) => {
+export const Selector = ({ OptionEl, name, onChange, options, selected }) => {
+  // We assume options will have "name" key
   const { register } = useFormContext()
 
   return (
     <Listbox onChange={onChange} value={selected}>
+      <input className="hidden" readOnly value={selected?.name} {...register(name)} />
       <div className="relative mt-1">
         <Listbox.Button className="relative pr-4 w-full text-sm text-left text-white bg-transparent rounded-lg border border-[#2A2B2C] shadow-md cursor-pointer">
           <OptionEl option={selected} />
@@ -152,7 +154,15 @@ const BorrowTokenSelector = () => {
     setSelected(e)
   }
 
-  return <Selector OptionEl={BorrowToken} onChange={setList} options={tokens} selected={selected} />
+  return (
+    <Selector
+      OptionEl={BorrowToken}
+      name="borrowToken"
+      onChange={setList}
+      options={tokens}
+      selected={selected}
+    />
+  )
 }
 
 export default BorrowTokenSelector

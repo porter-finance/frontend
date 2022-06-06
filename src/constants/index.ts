@@ -1,12 +1,12 @@
 import { JSBI, Percent } from '@josojo/honeyswap-sdk'
 
-import ArrowRightIcon from '../assets/images/arrow-right.svg'
-import CoinbaseWalletIcon from '../assets/images/coinbaseWalletIcon.svg'
-import MetamaskIcon from '../assets/images/metamask.svg'
-import PortisIcon from '../assets/images/portisIcon.png'
-import TrustWalletIcon from '../assets/images/trustWallet.png'
-import WalletConnectIcon from '../assets/images/wallet-connect.svg'
-import { injected, portis, walletconnect, walletlink } from '../connectors'
+import ArrowRightIcon from '@/assets/images/arrow-right.svg'
+import CoinbaseWalletIcon from '@/assets/images/coinbaseWalletIcon.svg'
+import MetamaskIcon from '@/assets/images/metamask.svg'
+import PortisIcon from '@/assets/images/portisIcon.png'
+import TrustWalletIcon from '@/assets/images/trustWallet.png'
+import WalletConnectIcon from '@/assets/images/wallet-connect.svg'
+import { injected, portis, walletconnect, walletlink } from '@/connectors'
 
 export const chainNames = {
   1: 'Mainnet',
