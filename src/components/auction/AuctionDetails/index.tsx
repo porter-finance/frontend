@@ -210,7 +210,7 @@ const AuctionDetails = (props: Props) => {
                 title="Documents"
                 titleClass="justify-end"
                 value={
-                  <LinkIcon href="/pdf/Ribbon DAO Collateral & Credit Analysis.pdf">
+                  <LinkIcon href="/pdf/Ribbon DAO Prospectus.pdf">
                     Prospectus
                   </LinkIcon>
                 }
