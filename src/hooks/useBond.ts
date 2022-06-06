@@ -8,6 +8,7 @@ import {
   SingleBondQuery,
 } from '../../src/generated/graphql'
 import { getLogger } from '../utils/logger'
+import useSafe from './useSafe'
 
 const logger = getLogger('useBond')
 
@@ -82,11 +83,20 @@ const allBondsQuery = gql`
   }
 `
 
-export const useBond = (bondId: string) => {
+export const useAccountForSubgraph = () => {
   const { account } = useWeb3React()
+  const { safeAddress } = useSafe()
+
+  return (
+    (safeAddress && safeAddress?.toLowerCase()) || (account && account?.toLowerCase()) || '0x00'
+  )
+}
+
+export const useBond = (bondId: string) => {
+  const accountId = useAccountForSubgraph()
 
   const { data, error, loading } = useQuery<SingleBondQuery>(SingleBondDocument, {
-    variables: { bondId: bondId.toLowerCase(), accountId: account?.toLowerCase() || '0x00' },
+    variables: { bondId: bondId.toLowerCase(), accountId },
   })
 
   if (error) {

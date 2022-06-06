@@ -2,8 +2,7 @@ import { useParams } from 'react-router-dom'
 
 import { gql, useQuery } from '@apollo/client'
 
-import { useActiveWeb3React } from './index'
-import useSafe from './useSafe'
+import { useAccountForSubgraph } from './useBond'
 
 import { BidsForAccountDocument } from '@/generated/graphql'
 import { RouteAuctionIdentifier, parseURL } from '@/state/orderPlacement/reducer'
@@ -34,13 +33,12 @@ const bidsQuery = gql`
 
 export const useParticipatingAuctionBids = (auctionId?: number) => {
   const { auctionId: urlAuctionId } = parseURL(useParams<RouteAuctionIdentifier>())
-  const { account } = useActiveWeb3React()
-  const { safeAddress } = useSafe()
+  const account = useAccountForSubgraph()
 
   const { data, error, loading } = useQuery(BidsForAccountDocument, {
     variables: {
       auctionId: Number(auctionId || urlAuctionId),
-      account: safeAddress || (account && account?.toLowerCase()) || '0x00',
+      account,
     },
   })
 

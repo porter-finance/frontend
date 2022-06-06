@@ -18,6 +18,7 @@ import { getLogger } from '../utils/logger'
 import { Order, decodeOrder } from './Order'
 import { useActiveWeb3React } from './index'
 import { useAuctionDetails } from './useAuctionDetails'
+import { useAccountForSubgraph } from './useBond'
 import { useGasPrice } from './useGasPrice'
 
 import { requiredChain } from '@/connectors'
@@ -63,11 +64,12 @@ gql`
 // returns the coded orders that participated in the auction for the current account
 export const useGetClaimInfo = () => {
   const { auctionId: urlAuctionId } = parseURL(useParams<RouteAuctionIdentifier>())
-  const { account } = useActiveWeb3React()
+  const account = useAccountForSubgraph()
+
   const { data, error, loading } = useQuery(BidsForAccountNoCancelledDocument, {
     variables: {
       auctionId: Number(urlAuctionId),
-      account: (account && account?.toLowerCase()) || '0x00',
+      account,
     },
   })
 
