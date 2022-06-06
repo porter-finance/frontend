@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { createGlobalStyle } from 'styled-components'
 
 import dayjs from 'dayjs'
+import { ceil } from 'lodash'
 
 import { AllButton, AuctionButtonOutline, OTCButtonOutline } from '../Auction'
 import { BondIcon } from '../Bonds'
@@ -121,7 +122,11 @@ const Offerings = () => {
     tableData.push({
       id: auction.id,
       minimumPrice: (
-        <TokenInfoWithLink auction={auction} value={auction.minimumBondPrice} withLink={false} />
+        <TokenInfoWithLink
+          auction={auction}
+          value={ceil(auction.minimumBondPrice, auction?.bidding?.decimals)}
+          withLink={false}
+        />
       ),
       search: JSON.stringify(auction),
       auctionId: `#${auction.id}`,

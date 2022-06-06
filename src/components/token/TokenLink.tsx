@@ -5,14 +5,13 @@ import { getExplorerLink } from '../../utils'
 
 import { Token } from '@/generated/graphql'
 
-export const AddressLink = ({ children, hash }) => {
-  const { chainId } = useActiveWeb3React()
+export const LinkIcon = ({ children, href }) => {
   const noPropagation = (e) => e.stopPropagation()
 
   return (
     <a
       className="group flex items-center space-x-2"
-      href={getExplorerLink(chainId, hash, 'address')}
+      href={href}
       onClick={noPropagation}
       rel="noreferrer"
       target="_blank"
@@ -32,6 +31,11 @@ export const AddressLink = ({ children, hash }) => {
       </svg>
     </a>
   )
+}
+
+export const AddressLink = ({ children, hash }) => {
+  const { chainId } = useActiveWeb3React()
+  return <LinkIcon href={getExplorerLink(chainId, hash, 'address')}>{children}</LinkIcon>
 }
 
 export default function TokenLink({
