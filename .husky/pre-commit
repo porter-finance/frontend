@@ -1,4 +1,6 @@
 #!/bin/sh
+git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
 . "$(dirname "$0")/_/husky.sh"
 
 npx lint-staged

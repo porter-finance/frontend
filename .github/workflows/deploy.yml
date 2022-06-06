@@ -1,0 +1,62 @@
+name: Deploy & Format CI
+
+env:
+  REACT_APP_SUBGRAPH_URL_RINKEBY: ${{ secrets.REACT_APP_SUBGRAPH_URL_RINKEBY }}
+
+on:
+  - push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: borales/actions-yarn@v2.3.0
+        with:
+          cmd: install # will run `yarn install` command
+      - uses: borales/actions-yarn@v2.3.0
+        with:
+          cmd: build # will run `yarn install` command
+  format:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: borales/actions-yarn@v2.3.0
+        with:
+          cmd: install # will run `yarn install` command
+      - uses: borales/actions-yarn@v2.3.0
+        with:
+          cmd: format # will run `yarn format` command
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Apply formatting changes
+          branch: ${{ github.head_ref }}
+
+  deploy:
+    needs: [format, build] # wait for other jobs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Deploy to Vercel Action
+      - uses: amondnet/vercel-action@v20 #deploy
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
+          github-comment: false
+          vercel-args: '--prod' #Optional
+          vercel-org-id: ${{ secrets.ORG_ID}}  #Required
+          vercel-project-id: ${{ secrets.PROJECT_ID}} #Required
+          working-directory: ./

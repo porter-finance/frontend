@@ -1,5 +1,9 @@
 {
+  "builds": [
+    { "src": "{{Source for distribution}}", "use": "@vercel/static" }
+  ],
   "github": {
+    "enabled": false,
     "silent": true
   }
 }
