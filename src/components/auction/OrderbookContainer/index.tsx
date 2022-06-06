@@ -62,7 +62,7 @@ export const OrderBookContainer = (props) => {
 
   // Always call this when they first load the page to see past prices when placing a new order
   // Can't allow them to place an order at a past price
-  const { bids, loading } = useParticipatingAuctionBids(auctionIdentifier?.auctionId)
+  const { bids, loading } = useParticipatingAuctionBids()
 
   useOrderbookDataCallback(auctionIdentifier)
 
