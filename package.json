@@ -9,9 +9,12 @@
   },
   "scripts": {
     "start": "react-app-rewired start",
+    "prebuild": "yarn format",
     "build": "cross-env REACT_APP_GIT_COMMIT_HASH=$(git show -s --format=%H) yarn typechain:all && react-app-rewired build",
     "test": "react-app-rewired test --env=jsdom",
-    "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --fix",
+    "format": "yarn format:eslint && yarn format:prettier",
+    "format:eslint": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --fix",
+    "format:prettier": "prettier \"**/*\" --write",
     "eject": "react-app-rewired eject",
     "prepare": "husky install",
     "postinstall": "yarn typechain:all",
@@ -158,11 +161,10 @@
     "util": "^0.12.4"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
+    "*.{ts,tsx,js,jsx,json,md,css}": [
       "eslint --fix",
       "prettier --write"
-    ],
-    "*": "prettier --ignore-unknown --write"
+    ]
   },
   "jest": {
     "transformIgnorePatterns": [
