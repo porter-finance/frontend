@@ -16,7 +16,9 @@ jobs:
     - uses: borales/actions-yarn@v2.3.0
       with:
           cmd: install # will run `yarn install` command
-    - run: yarn format
+    - uses: borales/actions-yarn@v2.3.0
+      with:
+        cmd: format # will run `yarn format` command
     - name: Commit changes
       uses: stefanzweifel/git-auto-commit-action@v4
       with:
