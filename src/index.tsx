@@ -3,7 +3,6 @@ import { BrowserRouter } from 'react-router-dom'
 
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { Web3Provider } from '@ethersproject/providers'
-import { SafeProvider } from '@gnosis.pm/safe-apps-react-sdk'
 import { DAppProvider, Mainnet, Rinkeby } from '@usedapp/core'
 import { Web3ReactProvider, createWeb3ReactRoot } from '@web3-react/core'
 import { createRoot } from 'react-dom/client'
@@ -69,11 +68,9 @@ root.render(
               <ThemeProvider>
                 <GlobalStyle />
                 <BrowserRouter>
-                  <SafeProvider>
-                    <div className="hidden sm:block">
-                      <App />
-                    </div>
-                  </SafeProvider>
+                  <div className="hidden sm:block">
+                    <App />
+                  </div>
                   <MobileBlocker />
                 </BrowserRouter>
               </ThemeProvider>
