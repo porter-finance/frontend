@@ -167,10 +167,10 @@ const BodyPanel = ({ after, before, color = 'blue', during }) => (
   </>
 )
 
-const GhostTransactionLink = ({ chainId, hash }) => (
+const GhostTransactionLink = ({ hash }) => (
   <GhostActionLink
     className="group space-x-3"
-    href={getExplorerLink(chainId, hash, 'transaction')}
+    href={getExplorerLink(hash, 'transaction')}
     target="_blank"
   >
     <span>View eth transaction</span>
@@ -313,9 +313,7 @@ const ConfirmationDialog = ({
 
           {(showTransactionCreated || transactionComplete) && (
             <div className="flex flex-col justify-center items-center mt-20 space-y-4">
-              {showTransactionCreated && (
-                <GhostTransactionLink chainId={chainId} hash={showTransactionCreated} />
-              )}
+              {showTransactionCreated && <GhostTransactionLink hash={showTransactionCreated} />}
 
               {transactionComplete && (
                 <ActionButton aria-label="Done" color={actionColor} onClick={onDismiss}>

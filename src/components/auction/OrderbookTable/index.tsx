@@ -283,13 +283,12 @@ export const AuctionStatusPill = ({
 }
 
 export const BidTransactionLink = ({ order }) => {
-  const { chainId } = useActiveWeb3React()
   const hash = order.canceltx || order.claimtx || order.createtx
 
   if (!hash) return <span>N/A</span>
 
   return (
-    <a href={getExplorerLink(chainId, hash, 'transaction')} rel="noreferrer" target="_blank">
+    <a href={getExplorerLink(hash, 'transaction')} rel="noreferrer" target="_blank">
       <svg
         fill="none"
         height="16"

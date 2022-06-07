@@ -19,6 +19,7 @@ import {
 } from '../constants/config'
 import { getLogger } from '../utils/logger'
 
+import { requiredChain } from '@/connectors'
 import { Token as GraphToken } from '@/generated/graphql'
 
 const logger = getLogger('utils/index')
@@ -95,12 +96,8 @@ const getExplorerPrefix = (chainId: ChainId) => {
   )
 }
 
-export function getExplorerLink(
-  chainId: ChainId,
-  data: string,
-  type: 'transaction' | 'address',
-): string {
-  const prefix = getExplorerPrefix(chainId)
+export function getExplorerLink(data: string, type: 'transaction' | 'address'): string {
+  const prefix = getExplorerPrefix(requiredChain.chainId)
 
   switch (type) {
     case 'transaction': {

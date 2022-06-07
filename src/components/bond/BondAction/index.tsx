@@ -24,7 +24,6 @@ import { ActionButton } from '@/components/auction/Claimer'
 import { useUSDPerBond } from '@/hooks/useBondExtraDetails'
 
 export const TokenPill = ({ token }) => {
-  const { chainId } = useActiveWeb3React()
   const noPropagation = (e) => e.stopPropagation()
 
   let displayName = ''
@@ -35,7 +34,7 @@ export const TokenPill = ({ token }) => {
   return token ? (
     <a
       className="flex flex-row items-center p-1 px-2 pl-1 space-x-2 bg-[#2C2C2C] rounded-full cursor-pointer"
-      href={getExplorerLink(chainId, token.address || token.id, 'address')}
+      href={getExplorerLink(token.address || token.id, 'address')}
       onClick={noPropagation}
       rel="noreferrer"
       target="_blank"
