@@ -9,7 +9,7 @@ const TooltipElement = ({
   tip,
   ...props
 }: {
-  tip?: ReactElement | string
+  tip?: string
   left?: ReactElement | string
   className?: string
 }) => {
@@ -34,13 +34,7 @@ const TooltipElement = ({
   return tipEl
 }
 
-export const TooltipElementFull = ({
-  el,
-  tip,
-}: {
-  tip?: ReactElement | string
-  el?: ReactElement | string
-}) => {
+export const TooltipElementFull = ({ el, tip }: { tip?: string; el?: ReactElement | string }) => {
   useEffect(() => {
     ReactTooltip.rebuild()
   })
