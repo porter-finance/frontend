@@ -26,16 +26,15 @@ export const UnregisteredToken: React.FC<Props> = (props) => {
           <QuestionMarkIcon color="#404eed" height={size} width={size} />
         </Wrapper>
       }
-      tip={
-        <div className="space-y-1">
-          <p className="font-medium">Unregistered token</p>
+      tip={`
+        <div class="space-y-1">
+          <p class="font-medium">Unregistered token</p>
           <p>
             This token is unrecognized, and it could even be a fake version of an existing token.
             Use it at your own risk. Caution is advised.
           </p>
-          <p>{token.address}</p>
-        </div>
-      }
+          <p>${token.address}</p>
+        </div>`}
     />
   )
 }
