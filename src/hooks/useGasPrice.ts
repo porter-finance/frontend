@@ -19,15 +19,11 @@ export const useGasPrice = (chainId?: ChainId): BigNumber => {
 
     const getGasPrice = async (): Promise<void> => {
       try {
-        if (ChainId.XDAI === chainId) {
-          setGasPrice(BigNumber.from(1000000000)) // 1 gwei
-        } else {
-          // get gas price from web3 provider.
-          const providerGasPrice: BigNumber = await library?.getGasPrice()
+        // get gas price from web3 provider.
+        const providerGasPrice: BigNumber = await library?.getGasPrice()
 
-          if (cancelled) return
-          setGasPrice(providerGasPrice)
-        }
+        if (cancelled) return
+        setGasPrice(providerGasPrice)
       } catch (error) {
         logger.error('Error trying to get gas price: ', error)
 

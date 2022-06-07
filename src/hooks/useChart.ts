@@ -5,7 +5,6 @@ import { Token } from '@josojo/honeyswap-sdk'
 
 import { XYChartProps, drawInformation } from '../components/auction/Charts/XYChart'
 import { PricePointDetails } from '../components/auction/OrderbookChart'
-import { ChainId } from '../utils'
 import { useBondMaturityForAuction } from './useBondMaturityForAuction'
 
 interface Props {
@@ -13,11 +12,10 @@ interface Props {
   data: Maybe<PricePointDetails[]>
   baseToken: Token
   quoteToken: Token
-  chainId: ChainId
 }
 
 const useChart = (props: Props) => {
-  const { baseToken, chainId, createChart, data, quoteToken } = props
+  const { baseToken, createChart, data, quoteToken } = props
   const { auctionEndDate, maturityDate } = useBondMaturityForAuction()
 
   const [loading, setLoading] = useState(false)
@@ -55,13 +53,12 @@ const useChart = (props: Props) => {
       chart: chartRef.current,
       baseToken,
       quoteToken,
-      chainId,
       maturityDate,
       auctionEndDate,
     })
 
     chartRef.current.data = data
-  }, [baseToken, quoteToken, data, chainId, maturityDate, auctionEndDate])
+  }, [baseToken, quoteToken, data, maturityDate, auctionEndDate])
 
   return { chartRef, mountPoint, loading }
 }

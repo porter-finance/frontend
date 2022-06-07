@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom'
 
 import { TokenAmount } from '@josojo/honeyswap-sdk'
 
-import { useActiveWeb3React } from '../../../hooks'
 import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
 import { LoadingBox } from '../../../pages/Auction'
 import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
@@ -23,14 +22,12 @@ export const OrderBook: React.FC<OrderbookGraphProps> = (props) => {
     asks,
     auctionId: orderbookAuctionId,
     bids,
-    chainId: orderbookChainId,
     error,
     userOrderPrice,
     userOrderVolume,
   } = useOrderbookState()
 
   const [showOrderList, setShowOrderList] = useState(false)
-  const { chainId } = useActiveWeb3React()
   const auctionIdentifier = parseURL(useParams())
   const { auctionDetails } = useAuctionDetails(auctionIdentifier)
   const { auctionId } = auctionIdentifier
@@ -54,7 +51,7 @@ export const OrderBook: React.FC<OrderbookGraphProps> = (props) => {
     })
   }, [asks, baseToken, bids, quoteToken, userOrderPrice, userOrderVolume, auctionDetails])
 
-  const isLoading = orderbookAuctionId != auctionId || chainId != orderbookChainId
+  const isLoading = orderbookAuctionId != auctionId
   const hasError = error || !asks || asks.length === 0
 
   if (isLoading) {
@@ -86,12 +83,7 @@ export const OrderBook: React.FC<OrderbookGraphProps> = (props) => {
 
         {hasError && <OrderBookError error={error} />}
         {!hasError && !showOrderList && (
-          <OrderBookChart
-            baseToken={baseToken}
-            chainId={chainId}
-            data={processedOrderbook}
-            quoteToken={quoteToken}
-          />
+          <OrderBookChart baseToken={baseToken} data={processedOrderbook} quoteToken={quoteToken} />
         )}
 
         {showOrderList && <OrderBookTable derivedAuctionInfo={derivedAuctionInfo} />}

@@ -24,8 +24,6 @@ import {
   getEasyAuctionContract,
   getTokenDisplay,
   isTokenWETH,
-  isTokenWMATIC,
-  isTokenXDAI,
 } from '../utils'
 import { getLogger } from '../utils/logger'
 import { abbreviation } from '../utils/numeral'
@@ -196,12 +194,8 @@ const getEstimateParams = (
   auctionId: number,
   signature: string,
 ): EstimateAndParams => {
-  const easyAuctionContract: Contract = getEasyAuctionContract(chainId, library, account)
-  if (
-    isTokenXDAI(biddingToken.address, chainId) ||
-    isTokenWETH(biddingToken.address, chainId) ||
-    isTokenWMATIC(biddingToken.address, chainId)
-  ) {
+  const easyAuctionContract: Contract = getEasyAuctionContract(library, account)
+  if (isTokenWETH(biddingToken.address, chainId)) {
     const depositAndPlaceOrderContract = getContract(
       DEPOSIT_AND_PLACE_ORDER[chainId],
       depositAndPlaceOrderABI,

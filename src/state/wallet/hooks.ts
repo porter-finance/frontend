@@ -4,7 +4,6 @@ import { JSBI, Token, TokenAmount, WETH } from '@josojo/honeyswap-sdk'
 
 import ERC20_INTERFACE from '../../constants/abis/erc20'
 import { useActiveWeb3React } from '../../hooks'
-import { useAllTokens } from '../../hooks/Tokens'
 import { useMulticallContract } from '../../hooks/useContract'
 import { ChainId, isAddress } from '../../utils'
 import { useMultipleContractSingleData, useSingleContractMultipleData } from '../multicall/hooks'
@@ -124,25 +123,4 @@ export function useTokenBalancesTreatWETHAsETH(
       return balancesWithoutWETH
     }
   }, [balancesWithoutWETH, ETHBalance, includesWETH, address, chainId])
-}
-
-// mimics the behavior of useAddressBalance
-export function useTokenBalanceTreatingWETHasETHonXDAI(
-  account?: string,
-  token?: Token,
-): TokenAmount | undefined {
-  const balances = useTokenBalancesTreatWETHAsETH(account, [token])
-  if (!token) return
-  return balances?.[token.address]
-}
-
-// mimics useAllBalances
-export function useAllTokenBalancesTreatingWETHasETH(): {
-  [tokenAddress: string]: TokenAmount | undefined
-} {
-  const { account } = useActiveWeb3React()
-  const allTokens = useAllTokens()
-  const allTokensArray = useMemo(() => Object.values(allTokens ?? {}), [allTokens])
-  const balances = useTokenBalancesTreatWETHAsETH(account ?? undefined, allTokensArray)
-  return balances ?? {}
 }

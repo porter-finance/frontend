@@ -21,6 +21,7 @@ import { FieldRowTokenSymbol } from '../../pureStyledComponents/FieldRow'
 import TokenLogo from '../../token/TokenLogo'
 
 import { ActionButton } from '@/components/auction/Claimer'
+import { requiredChain } from '@/connectors'
 import { useUSDPerBond } from '@/hooks/useBondExtraDetails'
 
 export const TokenPill = ({ token }) => {
@@ -82,7 +83,7 @@ const BondAction = ({
   componentType: BondActions
   overwriteBondId?: string
 }) => {
-  const { account, chainId } = useActiveWeb3React()
+  const { account } = useActiveWeb3React()
   const activePopups = useActivePopups()
   const params = useParams()
 
@@ -109,9 +110,9 @@ const BondAction = ({
     if (bond) {
       const bondsToRedeemBigNumber =
         (Number(bondsToRedeem) && parseUnits(bondsToRedeem, bond.decimals)) || 0
-      tok = new Token(chainId, bond.id, bond.decimals, bond.symbol, bond.name)
+      tok = new Token(requiredChain.chainId, bond.id, bond.decimals, bond.symbol, bond.name)
       payTok = new Token(
-        chainId,
+        requiredChain.chainId,
         bond?.paymentToken?.id,
         bond?.paymentToken?.decimals,
         bond?.paymentToken?.symbol,
@@ -120,7 +121,7 @@ const BondAction = ({
       BondAmount = new TokenAmount(tok, bondsToRedeemBigNumber.toString())
       setTokenDetails({ BondAmount, tok, payTok })
     }
-  }, [chainId, bondsToRedeem, bond])
+  }, [bondsToRedeem, bond])
 
   // these names r so bad
   const { BondAmount, tok } = tokenDetails
@@ -332,7 +333,6 @@ const BondAction = ({
                     ? 'Amount of bonds you are exchanging for convertible tokens.'
                     : 'Amount of bonds you are redeeming.'
                 }
-                chainId={chainId}
                 disabled={!account}
                 maxTitle={`${getActionText(componentType)} all`}
                 onMax={() => {
@@ -344,7 +344,6 @@ const BondAction = ({
                   symbol: tok?.name || tok?.symbol,
                 }}
                 value={bondsToRedeem}
-                wrap={{ isWrappable: false, onClick: null }}
               />
             )}
             <div className="space-y-6 text-xs text-[#696969]">

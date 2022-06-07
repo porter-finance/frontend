@@ -9,7 +9,7 @@ import useGeoLocation from 'react-ipgeolocation'
 
 import kycLinks from '../../../assets/links/kycLinks.json'
 import { ReactComponent as PrivateIcon } from '../../../assets/svg/private.svg'
-import { isRinkeby } from '../../../connectors'
+import { isRinkeby, requiredChain } from '../../../connectors'
 import { useActiveWeb3React } from '../../../hooks'
 import {
   ApprovalState,
@@ -33,14 +33,7 @@ import {
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderState } from '../../../state/orders/hooks'
 import { OrderState } from '../../../state/orders/reducer'
-import {
-  ChainId,
-  EASY_AUCTION_NETWORKS,
-  getFullTokenDisplay,
-  isTokenWETH,
-  isTokenWMATIC,
-  isTokenXDAI,
-} from '../../../utils'
+import { ChainId, EASY_AUCTION_NETWORKS, getFullTokenDisplay } from '../../../utils'
 import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
 import Tooltip from '../../common/Tooltip'
@@ -132,16 +125,18 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const approvalTokenAmount: TokenAmount | undefined = parsedBiddingAmount
   const [approval, approveCallback] = useApproveCallback(
     approvalTokenAmount,
-    EASY_AUCTION_NETWORKS[chainId as ChainId],
+    EASY_AUCTION_NETWORKS[requiredChain.chainId],
     chainIdFromWeb3 as ChainId,
   )
   const [, unapproveCallback] = useUnapproveCallback(
     new TokenAmount(biddingToken, '0'),
-    EASY_AUCTION_NETWORKS[chainId as ChainId],
+    EASY_AUCTION_NETWORKS[requiredChain.chainId],
     chainIdFromWeb3 as ChainId,
   )
 
-  const biddingTokenBalance = useTokenBalance(biddingToken.address, account, { chainId })
+  const biddingTokenBalance = useTokenBalance(biddingToken.address, account, {
+    chainId: requiredChain.chainId,
+  })
   const balanceString = biddingTokenBalance
     ? Number(formatUnits(biddingTokenBalance, biddingToken.decimals)).toLocaleString()
     : '0.00'
@@ -168,7 +163,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
 
   const handleShowConfirm = () => {
     setShowCountryDisabledModal(false)
-    if (chainId !== chainIdFromWeb3) {
+    if (chainIdFromWeb3 !== requiredChain.chainId) {
       setShowWarningWrongChainId(true)
       return
     }
@@ -235,15 +230,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
       sellAmount === '' ||
       price === '') &&
     true
-
-  const isWrappable =
-    biddingTokenBalance &&
-    biddingTokenBalance.gt('0') &&
-    (isTokenXDAI(biddingToken.address, chainId) ||
-      isTokenWETH(biddingToken.address, chainId) ||
-      isTokenWMATIC(biddingToken.address, chainId)) &&
-    !!account &&
-    !!biddingToken.address
 
   const auctioningTokenAddress = auctioningToken && auctioningToken?.address
   const linkForKYC = auctioningTokenAddress ? kycLinks[auctioningTokenAddress] : null
@@ -314,31 +300,14 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
             <>
               <AmountInputPanel
                 amountTooltip="This is your order amount. You will pay this much."
-                chainId={chainId}
                 info={amountInfo}
                 onUserSellAmountInput={onUserSellAmountInput}
                 token={graphInfo?.bidding}
                 value={sellAmount}
-                wrap={{
-                  isWrappable,
-                  onClick: () =>
-                    chainId == 100
-                      ? window.open(
-                          `https://app.honeyswap.org/#/swap?inputCurrency=${biddingToken.address}`,
-                        )
-                      : chainId == 137
-                      ? window.open(
-                          `https://quickswap.exchange/#/swap?inputCurrency=${biddingToken.address}`,
-                        )
-                      : window.open(
-                          `https://app.uniswap.org/#/swap?inputCurrency=${biddingToken.address}`,
-                        ),
-                }}
               />
               <PriceInputPanel
                 account={account}
                 auctionId={auctionIdentifier?.auctionId}
-                chainId={chainId}
                 derivedAuctionInfo={derivedAuctionInfo}
                 disabled={!account}
                 info={priceInfo}
