@@ -146,7 +146,7 @@ export function getContract(
 // account is optional
 export function getEasyAuctionContract(library: Web3Provider, account?: string): EasyAuction {
   return getContract(
-    EASY_AUCTION_NETWORKS[requiredChain.chainId],
+    EASY_AUCTION_NETWORKS[requiredChain.chainId as ChainId],
     easyAuctionABI,
     library,
     account,

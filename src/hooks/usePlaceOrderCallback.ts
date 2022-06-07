@@ -33,6 +33,8 @@ import { useActiveWeb3React } from './index'
 import { useContract } from './useContract'
 import { useGasPrice } from './useGasPrice'
 
+import { requiredChain } from '@/connectors'
+
 const logger = getLogger('usePlaceOrderCallback')
 
 export const queueStartElement =
@@ -66,7 +68,7 @@ export function usePlaceOrderCallback(
   const price = priceFromSwapState.toString()
 
   const easyAuctionInstance: Maybe<Contract> = useContract(
-    EASY_AUCTION_NETWORKS[chainId as ChainId],
+    EASY_AUCTION_NETWORKS[requiredChain.chainId as ChainId],
     easyAuctionABI,
   )
   const userId: Result | undefined = useSingleCallResult(easyAuctionInstance, 'getUserId', [
