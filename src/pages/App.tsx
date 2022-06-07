@@ -33,18 +33,20 @@ Sentry.init({
 const App: React.FC = () => (
   <Suspense fallback={null}>
     <MainWrapper>
+      <ReactTooltip
+        arrowColor={'#2a2b2c'}
+        backgroundColor={'#181a1c'}
+        border
+        borderColor={'#2a2b2c'}
+        delayShow={50}
+        effect="solid"
+        id={'wrap_button'}
+        textColor="#d6d6d6"
+      />
       <ScrollToTop />
       <ChainWarning />
       <TermsModal />
       <Header />
-      <ReactTooltip
-        className="customTooltip"
-        delayHide={500}
-        delayShow={50}
-        delayUpdate={500}
-        effect="solid"
-        textColor="#fff"
-      />
       <ErrorBoundaryWithFallback>
         <InnerApp className="fullPage">
           <Web3ReactManager>

@@ -106,7 +106,7 @@
     "@headlessui/react": "^1.6.4",
     "@josojo/honeyswap-sdk": "^1.0.0",
     "@radix-ui/react-icons": "^1.1.0",
-    "@radix-ui/react-tooltip": "^0.1.7",
+    "@radix-ui/react-tooltip": "0.1.8-rc.37",
     "@reduxjs/toolkit": "^1.8.0",
     "@sentry/react": "^7.0.0",
     "@sentry/tracing": "^7.0.0",
