@@ -39,14 +39,14 @@ export default function MyModal({
 
   return (
     <Modal
-      className="relative z-10"
+      className="w-full max-w-md"
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       onClickBackdrop={!blockBackdropDismiss ? closeModal : () => {}}
       open={isOpen}
     >
       <div className="overflow-y-auto">
         <div className="flex justify-center items-center p-4 min-h-full text-center">
-          <Modal.Body className="overflow-hidden p-6 w-full max-w-md text-left align-middle bg-[#181A1C] rounded-lg border border-[#2c2c2c] shadow-xl transition-all">
+          <Modal.Body className="overflow-hidden p-6 w-full text-left align-middle bg-[#181A1C] rounded-lg border border-[#2c2c2c] shadow-xl transition-all">
             <div className="mt-2">{children}</div>
 
             {!hideCloseIcon && (
