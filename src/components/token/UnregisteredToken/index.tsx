@@ -3,7 +3,7 @@ import styled from 'styled-components'
 
 import { QuestionMarkIcon } from '@radix-ui/react-icons'
 
-import { TooltipElementFull } from '@/components/common/Tooltip'
+import { TooltipFull } from '@/components/common/Tooltip'
 
 const Wrapper = styled.div<{ size: string }>`
   height: ${(props) => props.size};
@@ -20,7 +20,7 @@ export const UnregisteredToken: React.FC<Props> = (props) => {
   const { size, token, ...restProps } = props
 
   return (
-    <TooltipElementFull
+    <TooltipFull
       el={
         <Wrapper className="cursor-pointer" size={size} {...restProps}>
           <QuestionMarkIcon color="#404eed" height={size} width={size} />

@@ -4,7 +4,7 @@ import ReactTooltip from 'react-tooltip'
 
 import { TooltipIcon } from '../../icons/TooltipIcon'
 
-const TooltipElement = ({
+const Tooltip = ({
   left,
   tip,
   ...props
@@ -34,17 +34,16 @@ const TooltipElement = ({
   return tipEl
 }
 
-export const TooltipElementFull = ({ el, tip }: { tip?: string; el?: ReactElement | string }) => {
+export const TooltipFull = ({ el, tip }: { tip?: string; el?: ReactElement | string }) => {
   useEffect(() => {
     ReactTooltip.rebuild()
   })
+  if (!tip) return null
   return (
-    tip && (
-      <span data-for="wrap_button" data-html={true} data-multiline={true} data-tip={tip}>
-        {el}
-      </span>
-    )
+    <span data-for="wrap_button" data-html={true} data-multiline={true} data-tip={tip}>
+      {el}
+    </span>
   )
 }
 
-export default TooltipElement
+export default Tooltip
