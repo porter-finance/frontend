@@ -21,8 +21,10 @@ import { FieldRowTokenSymbol } from '../../pureStyledComponents/FieldRow'
 import TokenLogo from '../../token/TokenLogo'
 
 import { ActionButton } from '@/components/auction/Claimer'
+import WarningModal from '@/components/modals/WarningModal'
 import { requiredChain } from '@/connectors'
 import { useUSDPerBond } from '@/hooks/useBondExtraDetails'
+import { getChainName } from '@/utils/tools'
 
 export const TokenPill = ({ token }) => {
   const noPropagation = (e) => e.stopPropagation()
@@ -83,9 +85,10 @@ const BondAction = ({
   componentType: BondActions
   overwriteBondId?: string
 }) => {
-  const { account } = useActiveWeb3React()
+  const { account, chainId: Web3ChainId } = useActiveWeb3React()
   const activePopups = useActivePopups()
   const params = useParams()
+  const [showWarningWrongChainId, setShowWarningWrongChainId] = useState<boolean>(false)
 
   const bondId = overwriteBondId || params?.bondId
   const { data: bond } = useBond(bondId)
@@ -382,7 +385,11 @@ const BondAction = ({
                   color="purple"
                   disabled={isActionDisabled}
                   onClick={() => {
-                    setOpenReviewModal(true)
+                    if (Web3ChainId !== requiredChain.chainId) {
+                      setShowWarningWrongChainId(true)
+                    } else {
+                      setOpenReviewModal(true)
+                    }
                   }}
                 >
                   Review {isConvertComponent ? 'conversion' : 'redemption'}
@@ -400,6 +407,15 @@ const BondAction = ({
               )}
             </div>
           </div>
+          <WarningModal
+            content={`In order to place this ${
+              isConvertComponent ? 'conversion' : 'redemption'
+            }, please connect to the ${getChainName(requiredChain.chainId)} network`}
+            isOpen={showWarningWrongChainId}
+            onDismiss={() => {
+              setShowWarningWrongChainId(false)
+            }}
+          />
           <ConfirmationDialog
             actionColor="purple"
             actionText={`${getActionText(componentType)} bonds`}
