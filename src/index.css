@@ -141,8 +141,13 @@ svg text tspan {
 g[role='tooltip'] {
   @apply ease-in-out duration-150;
 }
+
 .__react_component_tooltip.show {
   opacity: 1 !important;
   overflow: hidden;
   @apply max-w-sm;
+
+/* daisy modal backdrop */
+.modal {
+  @apply bg-[#131415AC];
 }
