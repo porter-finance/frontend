@@ -141,3 +141,8 @@ svg text tspan {
 g[role='tooltip'] {
   @apply ease-in-out duration-150;
 }
+
+/* daisy modal backdrop */
+.modal {
+  @apply bg-[#131415AC];
+}
