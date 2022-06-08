@@ -146,6 +146,7 @@ g[role='tooltip'] {
   opacity: 1 !important;
   overflow: hidden;
   @apply max-w-sm;
+}
 
 /* daisy modal backdrop */
 .modal {
