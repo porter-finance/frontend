@@ -14658,6 +14658,11 @@ react-countdown@^2.3.2:
   dependencies:
     prop-types "^15.7.2"
 
+react-daisyui@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/react-daisyui/-/react-daisyui-2.0.2.tgz#bbb1c3a7c7ec966722a68568fa3db9c85f06310d"
+  integrity sha512-zpBPUAh5511d142zLAiM6KQRYcHDuKAIXKGdtYb0i6HBpSsHw1Wl68HwvR4/S58g6jpAvFvQn+IcCNrk3irSlg==
+
 react-dev-utils@^12.0.1:
   version "12.0.1"
   resolved "https://registry.npmjs.org/react-dev-utils/-/react-dev-utils-12.0.1.tgz"
