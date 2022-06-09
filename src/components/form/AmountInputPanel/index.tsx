@@ -2,8 +2,6 @@ import { rgba } from 'polished'
 import React from 'react'
 import styled, { keyframes } from 'styled-components'
 
-import ReactTooltip from 'react-tooltip'
-
 import { unwrapMessage } from '../../../constants'
 import { useActiveWeb3React } from '../../../hooks'
 import { ApprovalState } from '../../../hooks/useApproveCallback'
@@ -192,19 +190,6 @@ const AmountInputPanel: React.FC<Props> = (props) => {
                 data-tip={dataTip}
                 onClick={wrap.onClick}
               >
-                <ReactTooltip
-                  arrowColor={'#001429'}
-                  backgroundColor={'#001429'}
-                  border
-                  borderColor={'#174172'}
-                  className="customTooltip"
-                  delayHide={500}
-                  delayShow={50}
-                  delayUpdate={500}
-                  effect="solid"
-                  id={'wrap_button'}
-                  textColor="#fff"
-                />
                 <FieldRowPrimaryButtonText>Unwrap</FieldRowPrimaryButtonText>
               </FieldRowPrimaryButton>
             )}
