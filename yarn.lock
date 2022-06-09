@@ -1120,10 +1120,30 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@coinbase/wallet-sdk@^3.0.4", "@coinbase/wallet-sdk@^3.1.0":
+"@coinbase/wallet-sdk@^3.0.4":
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/@coinbase/wallet-sdk/-/wallet-sdk-3.1.0.tgz#294fbd52cf7262b68137731ac414f0cf5a0580a3"
   integrity sha512-8IGfVklv/CMfCT4qd9KfL0IwlINsIgSlW1oQB/or8uSY9wAqoY8lIoQVpOyFx7YDK094Xfd9alhulZtRZNJBjw==
+  dependencies:
+    "@metamask/safe-event-emitter" "2.0.0"
+    bind-decorator "^1.0.11"
+    bn.js "^5.1.1"
+    clsx "^1.1.0"
+    eth-block-tracker "4.4.3"
+    eth-json-rpc-filters "4.2.2"
+    eth-rpc-errors "4.0.2"
+    js-sha256 "0.9.0"
+    json-rpc-engine "6.1.0"
+    keccak "^3.0.1"
+    preact "^10.5.9"
+    qs "^6.10.3"
+    rxjs "^6.6.3"
+    stream-browserify "^3.0.0"
+
+"@coinbase/wallet-sdk@^3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@coinbase/wallet-sdk/-/wallet-sdk-3.2.0.tgz#cceda6c2ed213b663c5cbb35fcf65a57c24323f0"
+  integrity sha512-uw9rdsfzXsdmC9FblMt2UH4094vLl9h3i1za5A2MaC8Ak1X/E1QbGr1oi64QAx9HD+M75zmy506F+zT0/s5dpQ==
   dependencies:
     "@metamask/safe-event-emitter" "2.0.0"
     bind-decorator "^1.0.11"
@@ -2761,10 +2781,10 @@
   dependencies:
     "@babel/runtime" "^7.13.10"
 
-"@rainbow-me/rainbowkit@^0.2.0":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@rainbow-me/rainbowkit/-/rainbowkit-0.2.1.tgz#5b55e42c6904d1ef35a16acdb34f3df3fa94f3e7"
-  integrity sha512-l6KVP/jexVrncjp0OYu/9MReI+VvZhFfpyL3YHvsStPEX4AIhHt2sfnU60iqigRWfh/lxmGmsqGLa7RflQSXUA==
+"@rainbow-me/rainbowkit@^0.2.3":
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/@rainbow-me/rainbowkit/-/rainbowkit-0.2.3.tgz#e164239769cb0d8159c0ae8ce907f36f94fed73e"
+  integrity sha512-w4sVLssuXOcd7j5AuSsFvRr2+DRMCE+WjrzBNWcnKP5tFfQsAY0A6PjHbCp4bq9rsxgpsdxqeQZGacHVexEvlQ==
   dependencies:
     "@vanilla-extract/css" "1.7.0"
     "@vanilla-extract/dynamic" "2.0.2"
@@ -3747,10 +3767,10 @@
   resolved "https://registry.yarnpkg.com/@vanilla-extract/sprinkles/-/sprinkles-1.4.1.tgz#8c8703ddedaac355c1187db909119816c0fc771c"
   integrity sha512-aW6CfMMToX4a+baLuVxwcT0FSACjX3xrNt8wdi/3LLRlLAfhyue8OK7kJxhcYNZfydBeWTP59aRy8p5FUTIeew==
 
-"@wagmi/core@^0.3.3":
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-0.3.3.tgz#79197593f16e9132760e0c1b417f959adcd011f5"
-  integrity sha512-Xs3OwbnKuFwGH8HtpswwEL9YmoQIj9TFJUh678LSqBlUM/9XIxUpXZmUMhPxw6amOJzMCdh+Di9/gT7LZ6TBcA==
+"@wagmi/core@^0.3.7":
+  version "0.3.7"
+  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-0.3.7.tgz#68cda69426f9a35c77a5afc39daeb561e3096014"
+  integrity sha512-RJAaypcQK0OA/ezpgNz4Smk4rUUMf9IXapLR2PtDLUWjJxI2Xw5l+Pq4t6xOvJt6fNO1GKM0iRjUaUN37py0+w==
   dependencies:
     eventemitter3 "^4.0.7"
     zustand "^4.0.0-rc.1"
@@ -14777,10 +14797,10 @@ react-is@^18.0.0, react-is@^18.1.0:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-18.1.0.tgz#61aaed3096d30eacf2a2127118b5b41387d32a67"
   integrity sha512-Fl7FuabXsJnV5Q1qIOQwx/sagGF18kogb4gpfcG4gjLBWO0WDiiz1ko/ExayuxE7InyQkBLkxRFG5oxY6Uu3Kg==
 
-react-query@4.0.0-beta.12:
-  version "4.0.0-beta.12"
-  resolved "https://registry.yarnpkg.com/react-query/-/react-query-4.0.0-beta.12.tgz#479299c6691e55294e6481ee49131ac6aadf0a0e"
-  integrity sha512-PAeGKj/SlIvxShJVBbyKojUYUK78yK/W9nS9Uw78e40wjhuHiFMqbQWjtAQTBCbliZ5p1VkSHCAtpEVrr5GOvQ==
+react-query@^4.0.0-beta.23:
+  version "4.0.0-beta.23"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-4.0.0-beta.23.tgz#76713547670ef1f991ae828b3d51df63ec6e035c"
+  integrity sha512-e6mNBVAYGy0M1OwX0mhRB/lCkOedKeqTUrbPjNCqvm8hQGUsJJobqfHVvTv8o6JJaOO2MFcxKF4vZM+PEKbHZA==
   dependencies:
     "@babel/runtime" "^7.17.9"
     "@types/use-sync-external-store" "^0.0.3"
@@ -17583,15 +17603,15 @@ w3c-xmlserializer@^2.0.0:
   dependencies:
     xml-name-validator "^3.0.0"
 
-wagmi@^0.4.2:
-  version "0.4.3"
-  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-0.4.3.tgz#1071f3e61b9e2b46cfd58c229ee6bd2dc8d19514"
-  integrity sha512-xxb7q9huQnvW0W+5rPPAo+rSHu2gvp1wklAmSLNbczJNILkafBeVbR5v6+C4KL6IeFebRSL6msmaTaTH37k+Pg==
+wagmi@^0.4.10:
+  version "0.4.10"
+  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-0.4.10.tgz#ef815ccdfbaf0e786cee499796a601666b244662"
+  integrity sha512-/RyAYvOdKc+AXni2VNwLqz83N4tw2hNU0pSY9TOgXmrr5uRtzdy2MSqCMGrmyoIjMPx4ilop1X7WJ4JdPu2jbw==
   dependencies:
-    "@coinbase/wallet-sdk" "^3.1.0"
-    "@wagmi/core" "^0.3.3"
+    "@coinbase/wallet-sdk" "^3.2.0"
+    "@wagmi/core" "^0.3.7"
     "@walletconnect/ethereum-provider" "^1.7.8"
-    react-query "4.0.0-beta.12"
+    react-query "^4.0.0-beta.23"
     use-sync-external-store "^1.1.0"
 
 walker@^1.0.7:
