@@ -196,7 +196,7 @@ const getEstimateParams = (
   auctionId: number,
   signature: string,
 ): EstimateAndParams => {
-  const easyAuctionContract: Contract = getEasyAuctionContract(chainId, signer)
+  const easyAuctionContract: Contract = getEasyAuctionContract(signer)
   if (isTokenWETH(biddingToken.address, chainId)) {
     const depositAndPlaceOrderContract = getContract(
       DEPOSIT_AND_PLACE_ORDER[chainId],

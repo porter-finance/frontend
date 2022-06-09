@@ -239,7 +239,7 @@ export const useClaimOrderCallback = (
       throw new Error('missing dependencies in onPlaceOrder callback')
     }
 
-    const easyAuctionContract: Contract = getEasyAuctionContract(library, signer)
+    const easyAuctionContract: Contract = getEasyAuctionContract(signer)
 
     const estimate = easyAuctionContract.estimateGas.claimFromParticipantOrder
     const method: Function = easyAuctionContract.claimFromParticipantOrder
@@ -294,7 +294,7 @@ export function useGetClaimState(
       try {
         if (!signer || !claimableOrders || chainId !== requiredChain.chainId) return
 
-        const easyAuctionContract: Contract = getEasyAuctionContract(library, signer)
+        const easyAuctionContract: Contract = getEasyAuctionContract(signer)
 
         const method: Function = easyAuctionContract.containsOrder
         const args: Array<number | string> = [auctionId, claimableOrders[0]]

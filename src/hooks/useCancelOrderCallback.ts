@@ -42,7 +42,7 @@ export function useCancelOrderCallback(
       }
 
       const decodedOrder = decodeOrder(orderId)
-      const easyAuctionContract: Contract = getEasyAuctionContract(account)
+      const easyAuctionContract: Contract = getEasyAuctionContract(signer)
       let estimate, method: Function, args: Array<number | string[]>, value: Maybe<BigNumber>
       {
         estimate = easyAuctionContract.estimateGas.cancelSellOrders
