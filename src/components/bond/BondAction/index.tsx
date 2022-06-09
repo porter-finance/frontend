@@ -113,9 +113,9 @@ const BondAction = ({
     if (bond) {
       const bondsToRedeemBigNumber =
         (Number(bondsToRedeem) && parseUnits(bondsToRedeem, bond.decimals)) || 0
-      tok = new Token(requiredChain.chainId, bond.id, bond.decimals, bond.symbol, bond.name)
+      tok = new Token(requiredChain.id, bond.id, bond.decimals, bond.symbol, bond.name)
       payTok = new Token(
-        requiredChain.chainId,
+        requiredChain.id,
         bond?.paymentToken?.id,
         bond?.paymentToken?.decimals,
         bond?.paymentToken?.symbol,
@@ -385,7 +385,7 @@ const BondAction = ({
                   color="purple"
                   disabled={isActionDisabled}
                   onClick={() => {
-                    if (Web3ChainId !== requiredChain.chainId) {
+                    if (Web3ChainId !== requiredChain.id) {
                       setShowWarningWrongChainId(true)
                     } else {
                       setOpenReviewModal(true)
@@ -410,7 +410,7 @@ const BondAction = ({
           <WarningModal
             content={`In order to place this ${
               isConvertComponent ? 'conversion' : 'redemption'
-            }, please connect to the ${getChainName(requiredChain.chainId)} network`}
+            }, please connect to the ${getChainName(requiredChain.id)} network`}
             isOpen={showWarningWrongChainId}
             onDismiss={() => {
               setShowWarningWrongChainId(false)

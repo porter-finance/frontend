@@ -292,7 +292,7 @@ export function useGetClaimState(
 
     async function userHasAvailableClaim() {
       try {
-        if (!signer || !claimableOrders || chainId !== requiredChain.chainId) return
+        if (!signer || !claimableOrders || chainId !== requiredChain.id) return
 
         const easyAuctionContract: Contract = getEasyAuctionContract(signer)
 

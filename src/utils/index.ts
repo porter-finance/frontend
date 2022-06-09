@@ -75,7 +75,7 @@ const getExplorerPrefix = (chainId: ChainId) => {
 }
 
 export function getExplorerLink(data: string, type: 'transaction' | 'address'): string {
-  const prefix = getExplorerPrefix(requiredChain.chainId)
+  const prefix = getExplorerPrefix(requiredChain.id)
 
   switch (type) {
     case 'transaction': {
@@ -129,7 +129,7 @@ export function getContract(address: string, ABI: any, signer: Signer): Contract
 // account is optional
 export function getEasyAuctionContract(signer: Signer): EasyAuction {
   return getContract(
-    EASY_AUCTION_NETWORKS[requiredChain.chainId as ChainId],
+    EASY_AUCTION_NETWORKS[requiredChain.id as ChainId],
     easyAuctionABI,
     signer,
   ) as EasyAuction

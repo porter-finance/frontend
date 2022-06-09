@@ -125,19 +125,19 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const approvalTokenAmount: TokenAmount | undefined = parsedBiddingAmount
   const [approval, approveCallback] = useApproveCallback(
     approvalTokenAmount,
-    EASY_AUCTION_NETWORKS[requiredChain.chainId],
+    EASY_AUCTION_NETWORKS[requiredChain.id],
     chainIdFromWeb3 as ChainId,
   )
   const [, unapproveCallback] = useUnapproveCallback(
     new TokenAmount(biddingToken, '0'),
-    EASY_AUCTION_NETWORKS[requiredChain.chainId],
+    EASY_AUCTION_NETWORKS[requiredChain.id],
     chainIdFromWeb3 as ChainId,
   )
 
   const { data: biddingTokenBalance } = useBalance({
     token: biddingToken.address,
     addressOrName: account,
-    chainId: requiredChain.chainId,
+    chainId: requiredChain.id,
   })
   const balanceString = biddingTokenBalance
     ? Number(formatUnits(biddingTokenBalance?.value, biddingToken.decimals)).toLocaleString()
@@ -165,7 +165,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
 
   const handleShowConfirm = () => {
     setShowCountryDisabledModal(false)
-    if (chainIdFromWeb3 !== requiredChain.chainId) {
+    if (chainIdFromWeb3 !== requiredChain.id) {
       setShowWarningWrongChainId(true)
       return
     }
