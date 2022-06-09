@@ -15,7 +15,7 @@ import { TokenInfoWithLink } from '@/components/auction/AuctionDetails'
 import { AuctionStatusPill } from '@/components/auction/OrderbookTable'
 import Table from '@/components/auctions/Table'
 import { ErrorBoundaryWithFallback } from '@/components/common/ErrorAndReload'
-import TooltipElement from '@/components/common/Tooltip'
+import Tooltip from '@/components/common/Tooltip'
 import { calculateInterestRate } from '@/components/form/InterestRateInputPanel'
 import { Auction } from '@/generated/graphql'
 import { useAuctions } from '@/hooks/useAuction'
@@ -142,7 +142,7 @@ const Offerings = () => {
       endDate: (
         <span className="uppercase">
           {
-            <TooltipElement
+            <Tooltip
               left={dayjs(auction?.end * 1000)
                 .utc()
                 .tz()
