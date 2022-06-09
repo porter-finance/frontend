@@ -1,13 +1,14 @@
 import React from 'react'
 
 import { parseUnits } from '@ethersproject/units'
-import { useWeb3React } from '@web3-react/core'
 import { round } from 'lodash'
 
 import BondAction from '../../components/bond/BondAction'
 import { isRinkeby } from '../../connectors'
 import { useCreateBond } from '../../hooks/useCreateBond'
 import { BondActions } from '../BondDetail'
+
+import { useActiveWeb3React } from '@/hooks'
 
 const getFormValues = (form) => {
   const controls = form.children
@@ -50,7 +51,7 @@ const getFakeData = (account: string): Array<string | number> => {
 }
 
 const CreateBond: React.FC = () => {
-  const { account } = useWeb3React()
+  const { account } = useActiveWeb3React()
 
   const { createBond, error, newBondAddress } = useCreateBond()
 

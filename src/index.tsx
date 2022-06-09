@@ -2,16 +2,16 @@ import React from 'react'
 import { BrowserRouter } from 'react-router-dom'
 
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
-import { Web3Provider } from '@ethersproject/providers'
-import { DAppProvider, Mainnet, Rinkeby } from '@usedapp/core'
-import { Web3ReactProvider, createWeb3ReactRoot } from '@web3-react/core'
+import { RainbowKitProvider, Theme, darkTheme, getDefaultWallets } from '@rainbow-me/rainbowkit'
+import { merge } from 'lodash'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
+import { WagmiConfig, chain, configureChains, createClient } from 'wagmi'
+import { alchemyProvider } from 'wagmi/providers/alchemy'
+import { publicProvider } from 'wagmi/providers/public'
 
 import { MobileBlocker } from './components/MobileBlocker'
 import { isRinkeby } from './connectors'
-import { NetworkContextName } from './constants'
-import { NETWORK_URL_MAINNET, NETWORK_URL_RINKEBY } from './constants/config'
 import App from './pages/App'
 import store from './state'
 import ApplicationUpdater from './state/application/updater'
@@ -21,19 +21,23 @@ import UserUpdater from './state/user/updater'
 import ThemeProvider from './theme'
 import { GlobalStyle } from './theme/globalStyle'
 import './index.css'
+import '@rainbow-me/rainbowkit/styles.css'
 
-const dappConfig = {
-  readOnlyChainId: Mainnet.chainId,
-  readOnlyUrls: isRinkeby
-    ? { [Rinkeby.chainId]: NETWORK_URL_RINKEBY }
-    : { [Mainnet.chainId]: NETWORK_URL_MAINNET },
-}
+const { chains, provider } = configureChains(
+  [!isRinkeby ? chain.mainnet : chain.rinkeby],
+  [alchemyProvider({ alchemyId: 'rD-tnwLLzbfOaFOBAv2ckazyJTmCRLhu' }), publicProvider()],
+)
 
-const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
+const { connectors } = getDefaultWallets({
+  appName: 'Porter Finance',
+  chains,
+})
 
-const getLibrary = (provider: any): Web3Provider => {
-  return new Web3Provider(provider)
-}
+const wagmiClient = createClient({
+  autoConnect: true,
+  connectors,
+  provider,
+})
 
 const Updaters = () => {
   return (
@@ -57,27 +61,37 @@ const apolloClient = new ApolloClient({
   cache: new InMemoryCache(),
 })
 
+const myTheme = merge(darkTheme(), {
+  fonts: {
+    body: 'Neue Haas Grotesk Display',
+  },
+  colors: {
+    accentColor: '#e0e0e0',
+    accentColorForeground: '#1e1e1e',
+    connectButtonBackground: '#e0e0e0',
+    connectButtonText: '#1e1e1e',
+  },
+} as Theme)
+
 root.render(
   <>
-    <Web3ReactProvider getLibrary={getLibrary}>
-      <Web3ProviderNetwork getLibrary={getLibrary}>
+    <WagmiConfig client={wagmiClient}>
+      <RainbowKitProvider chains={chains} showRecentTransactions theme={myTheme}>
         <Provider store={store}>
           <ApolloProvider client={apolloClient}>
-            <DAppProvider config={dappConfig}>
-              <Updaters />
-              <ThemeProvider>
-                <GlobalStyle />
-                <BrowserRouter>
-                  <div className="hidden sm:block">
-                    <App />
-                  </div>
-                  <MobileBlocker />
-                </BrowserRouter>
-              </ThemeProvider>
-            </DAppProvider>
+            <Updaters />
+            <ThemeProvider>
+              <GlobalStyle />
+              <BrowserRouter>
+                <div className="hidden sm:block">
+                  <App />
+                </div>
+                <MobileBlocker />
+              </BrowserRouter>
+            </ThemeProvider>
           </ApolloProvider>
         </Provider>
-      </Web3ProviderNetwork>
-    </Web3ReactProvider>
+      </RainbowKitProvider>
+    </WagmiConfig>
   </>,
 )

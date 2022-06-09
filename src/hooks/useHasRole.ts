@@ -1,7 +1,6 @@
 import { useState } from 'react'
 
-import { useWeb3React } from '@web3-react/core'
-
+import { useActiveWeb3React } from '.'
 import { getLogger } from '../utils/logger'
 import { useBondFactoryContract } from './useContract'
 
@@ -9,7 +8,7 @@ const logger = getLogger('useHasRole')
 
 export function useHasRole(): { hasRole: boolean | null } {
   const contract = useBondFactoryContract()
-  const { account } = useWeb3React()
+  const { account } = useActiveWeb3React()
   const [role, setRole] = useState()
   const [hasRole, setHasRole] = useState<boolean | null>(null)
   contract?.ISSUER_ROLE().then((r) => setRole(r))

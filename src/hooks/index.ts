@@ -1,140 +1,25 @@
-import { useEffect, useState } from 'react'
+import { useAccount, useBlockNumber, useNetwork, useProvider, useSigner } from 'wagmi'
 
-import { Web3Provider } from '@ethersproject/providers'
-import { SafeAppConnector, useSafeAppConnection } from '@gnosis.pm/safe-apps-web3-react'
-import { useWeb3React as useWeb3ReactCore } from '@web3-react/core'
-import { isMobile } from 'react-device-detect'
-
-import { injected, walletconnect } from '../connectors'
-import { NetworkContextName } from '../constants'
-import { useOrderPlacementState } from '../state/orderPlacement/hooks'
-import { useOrderActionHandlers } from '../state/orders/hooks'
 import { getLogger } from '../utils/logger'
-
-const safeAppConnector = new SafeAppConnector()
 
 const logger = getLogger('hooks/index')
 
 export function useActiveWeb3React() {
-  const context = useWeb3ReactCore<Web3Provider>()
-  const contextNetwork = useWeb3ReactCore<Web3Provider>(NetworkContextName)
+  const { data } = useAccount()
+  const { activeChain, error, switchNetwork } = useNetwork()
+  const provider = useProvider()
+  const { data: blockNumber } = useBlockNumber()
+  const { data: signer } = useSigner()
 
-  return context.active ? context : contextNetwork
-}
-
-export function useEagerConnect() {
-  const { activate, active } = useWeb3ReactCore() // specifically using useWeb3ReactCore because of what this hook does
-  const [tried, setTried] = useState(false)
-  const { chainId } = useOrderPlacementState()
-  const triedToConnectToSafeApp = useSafeAppConnection(safeAppConnector)
-
-  useEffect(() => {
-    // Safe app gets first dibs. If it's not connected, try to connect to injected.
-    if (!triedToConnectToSafeApp) {
-      return
-    }
-    if (tried) {
-      return
-    }
-    const previouslyUsedWalletConnect = localStorage.getItem('walletconnect')
-
-    if (previouslyUsedWalletConnect && chainId) {
-      activate(walletconnect[chainId], undefined, true).catch(() => {
-        setTried(true)
-      })
-    } else {
-      injected.isAuthorized().then((isAuthorized) => {
-        if (isAuthorized) {
-          activate(injected, undefined, true).catch(() => {
-            setTried(true)
-          })
-        } else {
-          if (isMobile && window.ethereum) {
-            activate(injected, undefined, true).catch(() => {
-              setTried(true)
-            })
-          } else {
-            setTried(true)
-          }
-        }
-      })
-    }
-  }, [tried, activate, chainId, triedToConnectToSafeApp]) // intentionally only running on mount (make sure it's only mounted once :))
-
-  // if the connection worked, wait until we get confirmation of that to flip the flag
-  useEffect(() => {
-    if (!tried && active) {
-      setTried(true)
-    }
-  }, [active, tried])
-
-  return tried
-}
-
-/**
- * Use for network and injected - logs user in
- * and out after checking what network theyre on
- */
-export const useInactiveListener = (suppress = false) => {
-  const { activate, active, error } = useWeb3ReactCore() // specifically using useWeb3React because of what this hook does
-
-  useEffect(() => {
-    const { ethereum } = window
-
-    if (ethereum && ethereum.on && !active && !error && !suppress) {
-      const handleChainChanged = () => {
-        // eat errors
-        activate(injected, undefined, true).catch((error) => {
-          logger.error('Failed to activate after chain changed', error)
-        })
-      }
-
-      const handleAccountsChanged = (accounts: string[]) => {
-        if (accounts.length > 0) {
-          // eat errors
-          activate(injected, undefined, true).catch((error) => {
-            logger.error('Failed to activate after accounts changed', error)
-          })
-        }
-      }
-
-      const handleNetworkChanged = () => {
-        // eat errors
-        activate(injected, undefined, true).catch((error) => {
-          logger.error('Failed to activate after networks changed', error)
-        })
-      }
-
-      ethereum.on('chainChanged', handleChainChanged)
-      ethereum.on('networkChanged', handleNetworkChanged)
-      ethereum.on('accountsChanged', handleAccountsChanged)
-
-      if (ethereum.removeListener) {
-        ethereum.removeListener('chainChanged', handleChainChanged)
-        ethereum.removeListener('networkChanged', handleNetworkChanged)
-        ethereum.removeListener('accountsChanged', handleAccountsChanged)
-      }
-    }
-  }, [active, error, suppress, activate])
-}
-
-/**
- * Hook that subscribes to some events
- */
-export const useActiveListener = () => {
-  const { active, error } = useWeb3ReactCore()
-  const { onReloadFromAPI } = useOrderActionHandlers()
-
-  useEffect(() => {
-    const { ethereum } = window
-
-    if (ethereum && ethereum.on && active && !error) {
-      const handleAccountsChanged = () => {
-        // Reload orders on accounts changed
-        onReloadFromAPI()
-      }
-
-      ethereum.on('accountsChanged', handleAccountsChanged)
-    }
-  }, [active, error, onReloadFromAPI])
+  return {
+    account: data?.address,
+    active: !!activeChain,
+    chainId: activeChain?.id,
+    switchNetwork,
+    provider,
+    error,
+    blockNumber,
+    library: provider,
+    signer,
+  }
 }

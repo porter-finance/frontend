@@ -65,14 +65,14 @@ export function useDarkModeManager(): [boolean, () => void] {
 }
 
 export function useFetchTokenByAddress(): (address: string) => Promise<Maybe<Token>> {
-  const { chainId, library } = useActiveWeb3React()
+  const { chainId, signer } = useActiveWeb3React()
 
   return useCallback(
     async (address: string): Promise<Maybe<Token>> => {
-      if (!library || !chainId) return null
+      if (!signer || !chainId) return null
       const validatedAddress = isAddress(address)
       if (!validatedAddress) return null
-      const { decimals, name, symbol } = await getTokenInfoWithFallback(validatedAddress, library)
+      const { decimals, name, symbol } = await getTokenInfoWithFallback(validatedAddress, signer)
 
       if (decimals === null) {
         return null
@@ -80,7 +80,7 @@ export function useFetchTokenByAddress(): (address: string) => Promise<Maybe<Tok
         return new Token(chainId, validatedAddress, decimals, symbol, name)
       }
     },
-    [library, chainId],
+    [signer, chainId],
   )
 }
 

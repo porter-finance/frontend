@@ -5,7 +5,6 @@ import * as Sentry from '@sentry/react'
 import { BrowserTracing } from '@sentry/tracing'
 import ReactTooltip from 'react-tooltip'
 
-import ChainWarning from '../components/ChainWarning'
 import ScrollToTop from '../components/ScrollToTop'
 import TermsModal from '../components/TermsModal'
 import { ErrorBoundaryWithFallback } from '../components/common/ErrorAndReload'
@@ -14,7 +13,6 @@ import { Header } from '../components/layout/Header'
 import Routes from '../components/navigation/Routes/Routes'
 import { InnerContainer } from '../components/pureStyledComponents/InnerContainer'
 import { MainWrapper } from '../components/pureStyledComponents/MainWrapper'
-import Web3ReactManager from '../components/web3/Web3ReactManager'
 
 export const InnerApp = styled(InnerContainer)`
   margin-top: -100px;
@@ -33,23 +31,24 @@ Sentry.init({
 const App: React.FC = () => (
   <Suspense fallback={null}>
     <MainWrapper>
-      <ScrollToTop />
-      <ChainWarning />
-      <TermsModal />
-      <Header />
       <ReactTooltip
-        className="customTooltip"
+        arrowColor={'#2a2b2c'}
+        backgroundColor={'#181a1c'}
+        border
+        borderColor={'#2a2b2c'}
+        clickable
         delayHide={500}
         delayShow={50}
-        delayUpdate={500}
         effect="solid"
-        textColor="#fff"
+        id={'wrap_button'}
+        textColor="#d6d6d6"
       />
+      <ScrollToTop />
+      <TermsModal />
+      <Header />
       <ErrorBoundaryWithFallback>
         <InnerApp className="fullPage">
-          <Web3ReactManager>
-            <Routes />
-          </Web3ReactManager>
+          <Routes />
         </InnerApp>
       </ErrorBoundaryWithFallback>
       <Footer />

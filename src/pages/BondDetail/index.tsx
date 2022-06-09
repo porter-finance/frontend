@@ -3,7 +3,6 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { createGlobalStyle } from 'styled-components'
 
 import { formatUnits } from '@ethersproject/units'
-import { useWeb3React } from '@web3-react/core'
 import dayjs from 'dayjs'
 
 import { ReactComponent as ConnectIcon } from '../../assets/svg/connect.svg'
@@ -24,6 +23,7 @@ import { useBondExtraDetails } from '../../hooks/useBondExtraDetails'
 import { ConvertButtonOutline, LoadingTwoGrid, SimpleButtonOutline, TwoGridPage } from '../Auction'
 
 import { Bond } from '@/generated/graphql'
+import { useActiveWeb3React } from '@/hooks'
 
 export enum BondActions {
   Redeem,
@@ -161,7 +161,7 @@ export const calculatePortfolioRow = (
 }
 
 const BondDetail: React.FC = () => {
-  const { account } = useWeb3React()
+  const { account } = useActiveWeb3React()
   const navigate = useNavigate()
   const { bondId } = useParams()
 

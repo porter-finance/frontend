@@ -6,7 +6,7 @@ import { TokenAmount } from '@josojo/honeyswap-sdk'
 
 import { useTokenAllowance } from '../data/Allowances'
 import { useHasPendingApproval, useTransactionAdder } from '../state/transactions/hooks'
-import { ChainId, calculateGasMargin, isTokenWETH, isTokenWMATIC, isTokenXDAI } from '../utils'
+import { ChainId, calculateGasMargin, isTokenWETH } from '../utils'
 import { getLogger } from '../utils/logger'
 import { useActiveWeb3React } from './index'
 import { useTokenContract } from './useContract'
@@ -44,11 +44,7 @@ export function useApproveCallback(
     // we might not have enough data to know whether or not we need to approve
     if (!currentAllowance) return ApprovalState.UNKNOWN
     // amountToApprove will be defined if currentAllowance is
-    if (
-      isTokenXDAI(amountToApprove?.token?.address, chainId) ||
-      isTokenWETH(amountToApprove?.token?.address, chainId) ||
-      isTokenWMATIC(amountToApprove?.token?.address, chainId)
-    ) {
+    if (isTokenWETH(amountToApprove?.token?.address, chainId)) {
       return ApprovalState.APPROVED
     }
     // amountToApprove will be defined if currentAllowance is
@@ -131,11 +127,7 @@ export function useUnapproveCallback(
     // we might not have enough data to know whether or not we need to approve
     if (!currentAllowance) return ApprovalState.UNKNOWN
     // amountToApprove will be defined if currentAllowance is
-    if (
-      isTokenXDAI(amountToApprove?.token?.address, chainId) ||
-      isTokenWETH(amountToApprove?.token?.address, chainId) ||
-      isTokenWMATIC(amountToApprove?.token?.address, chainId)
-    ) {
+    if (isTokenWETH(amountToApprove?.token?.address, chainId)) {
       return ApprovalState.APPROVED
     }
     // amountToApprove will be defined if currentAllowance is
@@ -181,7 +173,7 @@ export function useUnapproveCallback(
       })
       .then((response: TransactionResponse) => {
         addTransaction(response, {
-          summary: 'unapprove ' + amountToApprove?.token?.symbol,
+          summary: 'Unapprove ' + amountToApprove?.token?.symbol,
           approval: { tokenAddress: amountToApprove.token.address, spender: addressToApprove },
         })
 

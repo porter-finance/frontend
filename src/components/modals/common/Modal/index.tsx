@@ -1,13 +1,11 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 
-import { Dialog, Transition } from '@headlessui/react'
 import { Cross2Icon } from '@radix-ui/react-icons'
 import { styled } from '@stitches/react'
+import { Modal } from 'react-daisyui'
 
 export const DialogTitle = ({ children }) => (
-  <Dialog.Title as="h3" className="mb-5 text-2xl text-[#E0E0E0]">
-    {children}
-  </Dialog.Title>
+  <Modal.Header className="mb-5 text-2xl text-[#E0E0E0]">{children}</Modal.Header>
 )
 
 export const IconButton = styled('button', {
@@ -15,14 +13,15 @@ export const IconButton = styled('button', {
   fontFamily: 'inherit',
   borderRadius: '100%',
   height: 25,
+  cursor: 'pointer',
   width: 25,
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
   color: '#696969',
   position: 'absolute',
-  top: 10,
-  right: 10,
+  top: 30,
+  right: 30,
 
   '&:hover': { backgroundColor: '#ececec' },
 })
@@ -39,49 +38,25 @@ export default function MyModal({
   }
 
   return (
-    <Transition appear as={Fragment} show={isOpen}>
-      <Dialog
-        as="div"
-        className="relative z-10"
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        onClose={!blockBackdropDismiss ? closeModal : () => {}}
-      >
-        <Transition.Child
-          as={Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-[#131415AC]" />
-        </Transition.Child>
+    <Modal
+      className="w-full max-w-md"
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      onClickBackdrop={!blockBackdropDismiss ? closeModal : () => {}}
+      open={isOpen}
+    >
+      <div className="overflow-y-auto">
+        <div className="flex justify-center items-center p-4 min-h-full text-center">
+          <Modal.Body className="overflow-hidden p-6 w-full text-left align-middle bg-[#181A1C] rounded-lg border border-[#2c2c2c] shadow-xl transition-all">
+            <div className="mt-2">{children}</div>
 
-        <div className="overflow-y-auto fixed inset-0">
-          <div className="flex justify-center items-center p-4 min-h-full text-center">
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 scale-95"
-              enterTo="opacity-100 scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 scale-100"
-              leaveTo="opacity-0 scale-95"
-            >
-              <Dialog.Panel className="overflow-hidden p-6 w-full max-w-md text-left align-middle bg-[#181A1C] rounded-lg border border-[#2c2c2c] shadow-xl transition-all">
-                <div className="mt-2">{children}</div>
-
-                {!hideCloseIcon && (
-                  <IconButton onClick={closeModal}>
-                    <Cross2Icon />
-                  </IconButton>
-                )}
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
+            {!hideCloseIcon && (
+              <IconButton onClick={closeModal}>
+                <Cross2Icon />
+              </IconButton>
+            )}
+          </Modal.Body>
         </div>
-      </Dialog>
-    </Transition>
+      </div>
+    </Modal>
   )
 }

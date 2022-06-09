@@ -1,6 +1,6 @@
 import { gql, useQuery } from '@apollo/client'
-import { useWeb3React } from '@web3-react/core'
 
+import { useActiveWeb3React } from '.'
 import {
   AllBondsDocument,
   AllBondsQuery,
@@ -83,7 +83,7 @@ const allBondsQuery = gql`
 `
 
 export const useBond = (bondId: string) => {
-  const { account } = useWeb3React()
+  const { account } = useActiveWeb3React()
 
   const { data, error, loading } = useQuery<SingleBondQuery>(SingleBondDocument, {
     variables: { bondId: bondId.toLowerCase(), accountId: account?.toLowerCase() || '0x00' },

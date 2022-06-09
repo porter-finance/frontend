@@ -36,6 +36,8 @@ import {
 } from './actions'
 import { AuctionIdentifier } from './reducer'
 
+import { requiredChain } from '@/connectors'
+
 const logger = getLogger('orderPlacement/hooks')
 
 export interface SellOrder {
@@ -599,10 +601,10 @@ export function useOnChainAuctionData(auctionIdentifier: AuctionIdentifier): {
   clearingPriceSellOrder: Maybe<SellOrder>
   isLoading: boolean
 } {
-  const { auctionId, chainId } = auctionIdentifier
+  const { auctionId } = auctionIdentifier
 
   const easyAuctionInstance: Maybe<Contract> = useContract(
-    EASY_AUCTION_NETWORKS[chainId as ChainId],
+    EASY_AUCTION_NETWORKS[requiredChain.id as ChainId],
     easyAuctionABI,
   )
 
