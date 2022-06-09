@@ -9,7 +9,7 @@ import { useBalance } from 'wagmi'
 
 import kycLinks from '../../../assets/links/kycLinks.json'
 import { ReactComponent as PrivateIcon } from '../../../assets/svg/private.svg'
-import { isRinkeby } from '../../../connectors'
+import { isRinkeby, requiredChain } from '../../../connectors'
 import { useActiveWeb3React } from '../../../hooks'
 import {
   ApprovalState,
@@ -125,19 +125,19 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const approvalTokenAmount: TokenAmount | undefined = parsedBiddingAmount
   const [approval, approveCallback] = useApproveCallback(
     approvalTokenAmount,
-    EASY_AUCTION_NETWORKS[chainId as ChainId],
+    EASY_AUCTION_NETWORKS[requiredChain.chainId],
     chainIdFromWeb3 as ChainId,
   )
   const [, unapproveCallback] = useUnapproveCallback(
     new TokenAmount(biddingToken, '0'),
-    EASY_AUCTION_NETWORKS[chainId as ChainId],
+    EASY_AUCTION_NETWORKS[requiredChain.chainId],
     chainIdFromWeb3 as ChainId,
   )
 
   const { data: biddingTokenBalance } = useBalance({
     token: biddingToken.address,
     addressOrName: account,
-    chainId,
+    chainId: requiredChain.chainId,
   })
   const balanceString = biddingTokenBalance
     ? Number(formatUnits(biddingTokenBalance?.value, biddingToken.decimals)).toLocaleString()
@@ -165,7 +165,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
 
   const handleShowConfirm = () => {
     setShowCountryDisabledModal(false)
-    if (chainId !== chainIdFromWeb3) {
+    if (chainIdFromWeb3 !== requiredChain.chainId) {
       setShowWarningWrongChainId(true)
       return
     }

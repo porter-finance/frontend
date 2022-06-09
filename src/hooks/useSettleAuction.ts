@@ -3,7 +3,7 @@ import { useCallback } from 'react'
 import { ContractTransaction } from '@ethersproject/contracts'
 
 import { useTransactionAdder } from '../state/transactions/hooks'
-import { ChainId, getEasyAuctionContract } from '../utils'
+import { getEasyAuctionContract } from '../utils'
 import { getLogger } from '../utils/logger'
 import { useActiveWeb3React } from './index'
 
@@ -19,7 +19,7 @@ export function useSettleAuction(address: string) {
       return
     }
 
-    const easyAuctionContract = getEasyAuctionContract(chainId as ChainId, signer)
+    const easyAuctionContract = getEasyAuctionContract(signer)
 
     if (!easyAuctionContract) {
       logger.error('missing contract')

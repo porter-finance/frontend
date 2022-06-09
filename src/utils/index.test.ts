@@ -2,7 +2,6 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { JSBI, Percent } from '@josojo/honeyswap-sdk'
 
 import {
-  ChainId,
   basisPointsToPercent,
   calculateGasMargin,
   getExplorerLink,
@@ -13,15 +12,13 @@ import {
 describe('utils', () => {
   describe('#getExplorerLink', () => {
     it('correct for tx', () => {
-      expect(getExplorerLink(1, 'abc', 'transaction')).toEqual('https://etherscan.io/tx/abc')
+      expect(getExplorerLink('abc', 'transaction')).toEqual('https://etherscan.io/tx/abc')
     })
     it('correct for address', () => {
-      expect(getExplorerLink(1, 'abc', 'address')).toEqual('https://etherscan.io/address/abc')
+      expect(getExplorerLink('abc', 'address')).toEqual('https://etherscan.io/address/abc')
     })
     it('enum', () => {
-      expect(getExplorerLink(ChainId.RINKEBY, 'abc', 'address')).toEqual(
-        'https://rinkeby.etherscan.io/address/abc',
-      )
+      expect(getExplorerLink('abc', 'address')).toEqual('https://rinkeby.etherscan.io/address/abc')
     })
   })
 
