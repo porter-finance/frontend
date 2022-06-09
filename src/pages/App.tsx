@@ -13,7 +13,6 @@ import { Header } from '../components/layout/Header'
 import Routes from '../components/navigation/Routes/Routes'
 import { InnerContainer } from '../components/pureStyledComponents/InnerContainer'
 import { MainWrapper } from '../components/pureStyledComponents/MainWrapper'
-import Web3ReactManager from '../components/web3/Web3ReactManager'
 
 export const InnerApp = styled(InnerContainer)`
   margin-top: -100px;
@@ -49,9 +48,7 @@ const App: React.FC = () => (
       <Header />
       <ErrorBoundaryWithFallback>
         <InnerApp className="fullPage">
-          <Web3ReactManager>
-            <Routes />
-          </Web3ReactManager>
+          <Routes />
         </InnerApp>
       </ErrorBoundaryWithFallback>
       <Footer />
