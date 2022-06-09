@@ -38,6 +38,8 @@ const App: React.FC = () => (
         backgroundColor={'#181a1c'}
         border
         borderColor={'#2a2b2c'}
+        clickable
+        delayHide={500}
         delayShow={50}
         effect="solid"
         id={'wrap_button'}

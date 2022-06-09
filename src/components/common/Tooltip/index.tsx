@@ -39,6 +39,7 @@ export const TooltipFull = ({ el, tip }: { tip?: string; el?: ReactElement | str
     ReactTooltip.rebuild()
   })
   if (!tip) return null
+
   return (
     <span data-for="wrap_button" data-html={true} data-multiline={true} data-tip={tip}>
       {el}
