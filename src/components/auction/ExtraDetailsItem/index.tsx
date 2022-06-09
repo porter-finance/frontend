@@ -83,11 +83,12 @@ const BlueLinearBorder = () => (
 
 export interface Props {
   show?: boolean
-  title: string
+  title: string | ReactElement
   tooltip?: string
   disabled?: boolean
-  bordered?: string
+  bordered?: string | boolean
   url?: string
+  titleClass?: string
   hint?: string | number | ReactElement
   fullNumberHint?: string
   value: string | number | ReactElement
@@ -100,6 +101,7 @@ export const ExtraDetailsItem: React.FC<Props> = ({
   hint,
   show = true,
   title,
+  titleClass,
   tooltip,
   url,
   value,
@@ -113,15 +115,17 @@ export const ExtraDetailsItem: React.FC<Props> = ({
           {url && <Link href={url} />}
           {hint && <span className="text-[#979797]">{hint}</span>}
         </Value>
-        <Title>
+        <Title className={titleClass ?? ''}>
           <TitleText className="text">{title}</TitleText>
           {tooltip && <Tooltip tip={tooltip} />}
         </Title>
       </div>
 
-      <div className={`mt-5 ${!bordered && 'border border-[#222222]'}`}>
-        {bordered === 'blue' && <BlueLinearBorder />}
-        {bordered === 'purple' && <PurpleLinearBorder />}
-      </div>
+      {bordered !== false && (
+        <div className={`mt-5 ${!bordered && 'border border-[#222222]'}`}>
+          {bordered === 'blue' && <BlueLinearBorder />}
+          {bordered === 'purple' && <PurpleLinearBorder />}
+        </div>
+      )}
     </div>
   )

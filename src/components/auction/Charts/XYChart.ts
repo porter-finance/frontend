@@ -90,7 +90,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
 
   // background: linear-gradient(180deg, rgba(64, 78, 237, 0.24) 0%, rgba(64, 78, 237, 0) 100%);
 
-  // Create series, shows the price (x axis) and size (y axis) of the bids that have been placed, both expressed in the bid token
+  // Create series, shows the price (x axis) and amount (y axis) of the orders that have been placed, both expressed in the order token
   const bidSeries = chart.series.push(new am4charts.StepLineSeries())
   bidSeries.dataFields.valueX = 'priceNumber'
   bidSeries.dataFields.valueY = 'bidValueY'
@@ -99,10 +99,10 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   bidSeries.fill = createGradient(colors.blue)
   bidSeries.fillOpacity = 0.25
   bidSeries.startLocation = 0.5
-  bidSeries.name = 'BIDS'
+  bidSeries.name = 'ORDERS'
   bidSeries.dummyData = {
     description:
-      'Shows the price (x axis) and size (y axis) of the bids that have been placed, both expressed in the bid token',
+      'Shows the price (x axis) and amount (y axis) of the orders that have been placed, both expressed in the order token',
   }
 
   // Create series, shows the minimum sell price (x axis) the auctioneer is willing to accept
@@ -116,7 +116,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   askSeries.name = 'SELL SUPPLY'
   askSeries.dummyData = {
     description:
-      'Shows sell supply of the auction based on the price and nominated in the bidding token',
+      'Shows sell supply of the auction based on the price and nominated in the ordering token',
   }
 
   // Create series, shows the minimum sell price (x axis) the auctioneer is willing to accept
@@ -133,7 +133,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   }
 
   // Dotted white line -> shows the Current price, which is the closing price of the auction if
-  // no more bids are submitted or cancelled and the auction ends
+  // no more orders are submitted or cancelled and the auction ends
   const priceSeries = chart.series.push(new am4charts.LineSeries())
   priceSeries.dataFields.valueX = 'priceNumber'
   priceSeries.dataFields.valueY = 'clearingPriceValueY'
@@ -143,7 +143,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   priceSeries.name = 'CURRENT PRICE'
   priceSeries.dummyData = {
     description:
-      'Shows the current price. This price would be the closing price of the auction if no more bids are submitted or cancelled',
+      'Shows the current price. This price would be the closing price of the auction if no more orders are submitted or cancelled',
   }
 
   // New order to be placed
@@ -244,7 +244,7 @@ Interest:  ${interest}
       calculateInterestRate({ price: valueX, maturityDate, startDate: auctionEndDate })
 
     return `${market}<br/>
-Bid Price:  ${bidPrice} ${quoteTokenLabel}<br/>
+Order Price:  ${bidPrice} ${quoteTokenLabel}<br/>
 Volume:  ${volume} ${quoteTokenLabel}<br/>
 Interest:  ${interest}
 `

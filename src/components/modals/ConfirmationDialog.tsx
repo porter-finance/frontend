@@ -76,7 +76,7 @@ export const ReviewOrder = ({ amountToken, cancelCutoff, data, orderPlacingOnly,
     <div className="pb-4 space-y-2 text-xs text-[#696969] border-b border-b-[#D5D5D519]">
       <TokenInfo token={priceToken} value={data.pay} />
       <div className="text-xs text-[#696969]">
-        <Tooltip left="Amount you pay" tip="This is your bid size. You will pay this much." />
+        <Tooltip left="Amount you pay" tip="This is your order amount. You will pay this much." />
       </div>
     </div>
     <div className="pb-4 space-y-2 text-xs text-[#696969] border-b border-b-[#D5D5D519]">
@@ -91,16 +91,16 @@ export const ReviewOrder = ({ amountToken, cancelCutoff, data, orderPlacingOnly,
       <div className="text-xs text-[#696969]">
         <Tooltip
           left="Amount of bonds you receive"
-          tip="Amount of bonds you will receive. If the final auction price is lower than your bid price, you will receive more bonds than were ordered at that lower price."
+          tip="Amount of bonds you will receive. If the final auction price is lower than your order price, you will receive more bonds than were ordered at that lower price."
         />
       </div>
     </div>
     <div className="pb-4 space-y-2 text-xs text-[#696969] border-b border-b-[#D5D5D519]">
-      <TokenInfo extra={`(${data.apy})`} token={priceToken} value={data.earn} />
+      <TokenInfo extra={`(${data.ytm})`} token={priceToken} value={data.earn} />
       <div className="text-xs text-[#696969]">
         <Tooltip
           left="Amount of interest you earn"
-          tip="Amount you will earn assuming no default. If the final price is lower than your bid price, you will receive more bonds than ordered at a lower price, therefore, earning more."
+          tip="Amount you will earn assuming no default. If the final price is lower than your order price, you will receive more bonds than ordered at a lower price, therefore, earning more."
         />
       </div>
     </div>

@@ -61,7 +61,7 @@ export function usePlaceOrderCallback(
   const addTransaction = useTransactionAdder()
   const { onNewOrder } = useOrderActionHandlers()
   const { price: priceFromSwapState, sellAmount: bondsToPurchase } = useOrderPlacementState()
-  const sellAmount = (Number(bondsToPurchase) * Number(priceFromSwapState)).toString()
+  const sellAmount = Number(bondsToPurchase).toString()
   const { onNewBid } = useOrderbookActionHandlers()
   const gasPrice = useGasPrice(chainId)
 

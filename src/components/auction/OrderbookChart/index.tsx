@@ -137,10 +137,10 @@ const OrderBookChart: React.FC<Props> = (props) => {
               left={
                 <div className="flex items-center space-x-3">
                   <span className="w-[14px] h-[5px] bg-[#404EED] rounded-sm" />
-                  <span>Bids</span>
+                  <span>Orders</span>
                 </div>
               }
-              tip="Shows the price (x axis) and size (y axis) of the bids that have been placed, both expressed in the bid token"
+              tip="Shows the price (x axis) and amount (y axis) of the orders that have been placed, both expressed in the order token"
             />
             <Tooltip
               left={
@@ -149,7 +149,7 @@ const OrderBookChart: React.FC<Props> = (props) => {
                   <span>Sell supply</span>
                 </div>
               }
-              tip="Shows sell supply of the auction based on the price and nominated in the bidding token"
+              tip="Shows sell supply of the auction based on the price and nominated in the ordering token"
             />
             <Tooltip
               left={
@@ -171,7 +171,7 @@ const OrderBookChart: React.FC<Props> = (props) => {
                   <span>Current price</span>
                 </div>
               }
-              tip="Shows the current price. This price would be the closing price of the auction if no more bids are submitted or cancelled"
+              tip="Shows the current price. This price would be the closing price of the auction if no more orders are submitted or cancelled"
             />
           </div>
         </>

@@ -117,7 +117,7 @@ export const createTable = (data?: Bond[]) =>
       type,
     } = bond
 
-    const fixedAPY =
+    const fixedYTM =
       calculateInterestRate({
         price: clearingPrice,
         maturityDate,
@@ -141,7 +141,7 @@ export const createTable = (data?: Bond[]) =>
             paymentToken.symbol
           }`
         : '-',
-      fixedAPY,
+      fixedYTM,
       bond: <BondIcon id={id} name={name} symbol={symbol} type={type} />,
 
       amountIssued: maxSupply ? Number(formatUnits(maxSupply, decimals)).toLocaleString() : '-',

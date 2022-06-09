@@ -138,6 +138,7 @@ const AmountInputPanel: React.FC<Props> = (props) => {
       >
         <FieldRowTop>
           <FieldRowInput
+            className="overflow-hidden text-ellipsis"
             disabled={!account || isDisabled}
             hasError={error}
             onUserSellAmountInput={onUserSellAmountInput}
@@ -146,7 +147,7 @@ const AmountInputPanel: React.FC<Props> = (props) => {
             value={!account ? '-' : value}
           />
           <Wrap>
-            {token && <TokenPill token={{ ...token, symbol: token?.name || token?.symbol }} />}
+            {token && <TokenPill token={token} />}
             {unlock?.isLocked && (
               <UnlockButton
                 disabled={isUnlocking}

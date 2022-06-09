@@ -3,6 +3,7 @@ import styled from 'styled-components'
 
 import { isBigNumberish } from '@ethersproject/bignumber/lib/bignumber'
 import { formatUnits } from '@ethersproject/units'
+import { ceil } from 'lodash'
 
 import { useAuction } from '../../../hooks/useAuction'
 import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
@@ -10,7 +11,7 @@ import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderbookState } from '../../../state/orderbook/hooks'
 import { abbreviation } from '../../../utils/numeral'
 import { calculateInterestRate } from '../../form/InterestRateInputPanel'
-import TokenLink from '../../token/TokenLink'
+import TokenLink, { LinkIcon } from '../../token/TokenLink'
 import { AuctionTimer } from '../AuctionTimer'
 import { ExtraDetailsItem, Props as ExtraDetailsItemProps } from '../ExtraDetailsItem'
 import { AuctionStatusPill } from '../OrderbookTable'
@@ -44,7 +45,9 @@ export const TokenInfoWithLink = ({
     <span>
       {isBigNumberish(value)
         ? abbreviation(formatUnits(value, auction?.bidding?.decimals))
-        : Number(value).toLocaleString()}
+        : Number(value).toLocaleString(undefined, {
+            maximumFractionDigits: auction?.bidding?.decimals,
+          })}
     </span>
     <TokenLink token={auction?.bidding} withLink={withLink} />
   </TokenValue>
@@ -62,8 +65,8 @@ const AuctionDetails = (props: Props) => {
     minimumFundingThreshold,
     minimumBidSize = {}
 
-  let currentBondAPY,
-    maxBondAPY = '-'
+  let currentBondYTM,
+    maxBondYTM = '-'
 
   if (auction) {
     offeringSize = {
@@ -95,7 +98,11 @@ const AuctionDetails = (props: Props) => {
     minimumBondPrice = {
       fullNumberHint: auction?.minimumBondPrice.toLocaleString(),
       value: (
-        <TokenInfoWithLink auction={auction} value={auction.minimumBondPrice} withLink={false} />
+        <TokenInfoWithLink
+          auction={auction}
+          value={ceil(auction.minimumBondPrice, auction?.bidding?.decimals)}
+          withLink={false}
+        />
       ),
     }
     minimumBidSize = {
@@ -106,12 +113,12 @@ const AuctionDetails = (props: Props) => {
         <TokenInfoWithLink auction={auction} value={auction.minimumBidSize} withLink={false} />
       ),
     }
-    currentBondAPY = calculateInterestRate({
+    currentBondYTM = calculateInterestRate({
       price: auctionCurrentPrice,
       maturityDate: auction.bond.maturityDate,
       startDate: auction.end,
     }) as string
-    maxBondAPY = calculateInterestRate({
+    maxBondYTM = calculateInterestRate({
       price: auction.minimumBondPrice,
       maturityDate: auction.bond.maturityDate,
       startDate: auction.end,
@@ -132,29 +139,29 @@ const AuctionDetails = (props: Props) => {
 
   const extraDetails: Array<ExtraDetailsItemProps> = [
     {
-      title: 'Offering size',
+      title: 'Offering amount',
       value: '-',
       ...offeringSize,
       tooltip: 'Number of bonds being sold.',
     },
     {
-      title: 'Total bid volume',
+      title: 'Total order volume',
       value: '-',
       ...totalBidVolume,
-      tooltip: 'Sum of all bid volume.',
+      tooltip: 'Sum of all order volume.',
     },
     {
       title: 'Min funding threshold',
       tooltip:
-        'Minimum bid volume required for auction to close. If this value is not reached, all funds will be returned and no bonds will be sold.',
+        'Minimum order volume required for auction to close. If this value is not reached, all funds will be returned and no bonds will be sold.',
       value: '-',
       ...minimumFundingThreshold,
     },
     {
-      title: 'Minimum bid size',
+      title: 'Minimum order amount',
       value: '-',
       ...minimumBidSize,
-      tooltip: 'Minimum size for a single bid. Bids below this size cannot be placed.',
+      tooltip: 'Minimum amount for a single order. Orders below this amount cannot be placed.',
     },
     {
       title: 'Current bond price',
@@ -164,23 +171,24 @@ const AuctionDetails = (props: Props) => {
       bordered: 'blue',
     },
     {
-      title: 'Current bond APY',
-      value: currentBondAPY,
+      title: 'Current bond YTM',
+      value: currentBondYTM,
       tooltip:
-        'Current bond APY calculated from the current bond price. If the auction ended now, this is the return bond purchasers would receive assuming no default.',
+        'Current bond yield to maturity calculated from the current bond price. If the auction ended now, this is the return bond purchasers would receive assuming no default.',
       bordered: 'blue',
     },
     {
       title: 'Minimum bond price',
-      tooltip: 'Minimum price a bond can be sold for. Bids below this price will not be accepted.',
+      tooltip:
+        'Minimum price a bond can be sold for. Orders below this price will not be accepted.',
       value: '-',
       ...minimumBondPrice,
     },
     {
-      title: 'Maximum bond APY',
-      value: maxBondAPY,
+      title: 'Maximum bond YTM',
+      value: maxBondYTM,
       tooltip:
-        'Maximum APY the issuer is willing to pay. This is calculated using the minimum bond price.',
+        'Maximum yield to maturity the issuer is willing to pay. This is calculated using the minimum bond price.',
     },
   ]
 
@@ -195,6 +203,16 @@ const AuctionDetails = (props: Props) => {
           color="blue"
           endDate={auction?.end}
           endText="End date"
+          rightOfCountdown={
+            <div className="flex flex-col justify-end">
+              <ExtraDetailsItem
+                bordered={false}
+                title="Documents"
+                titleClass="justify-end"
+                value={<LinkIcon href="/pdf/Ribbon DAO Prospectus.pdf">Prospectus</LinkIcon>}
+              />
+            </div>
+          }
           startDate={auction?.start}
           startText="Start date"
           text="Ends in"

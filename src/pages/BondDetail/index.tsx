@@ -16,7 +16,7 @@ import BondAction from '../../components/bond/BondAction'
 import { ErrorBoundaryWithFallback } from '../../components/common/ErrorAndReload'
 import { calculateInterestRate } from '../../components/form/InterestRateInputPanel'
 import WarningModal from '../../components/modals/WarningModal'
-import TokenLink from '../../components/token/TokenLink'
+import TokenLink, { LinkIcon } from '../../components/token/TokenLink'
 import TokenLogo from '../../components/token/TokenLogo'
 import { useBond } from '../../hooks/useBond'
 import { useBondExtraDetails } from '../../hooks/useBondExtraDetails'
@@ -101,9 +101,10 @@ const positionColumns = [
     accessor: 'maturityDate',
   },
   {
-    Header: 'Fixed APY',
-    tooltip: 'This APY is calculated using the closing price of the initial offering.',
-    accessor: 'fixedAPY',
+    Header: 'Fixed YTM',
+    tooltip:
+      'This yield to maturity is calculated using the closing price of the initial offering.',
+    accessor: 'fixedYTM',
   },
 ]
 
@@ -134,7 +135,7 @@ export const calculatePortfolioRow = (
 ) => {
   if (bond && Array.isArray(bond.tokenBalances) && bond.tokenBalances.length) {
     const amount = Number(formatUnits(bond?.tokenBalances[0].amount, bond.decimals)) || 0
-    const fixedAPY = calculateInterestRate({
+    const fixedYTM = calculateInterestRate({
       price: bond.clearingPrice,
       maturityDate: bond.maturityDate,
       startDate: bond?.auctions?.[0]?.end,
@@ -147,7 +148,7 @@ export const calculatePortfolioRow = (
           ? `${(bond?.clearingPrice * amount).toLocaleString()} ${bond.paymentToken.symbol}`
           : '-',
       price: bond?.clearingPrice ? bond?.clearingPrice : '-',
-      fixedAPY,
+      fixedYTM,
       maturityDate: dayjs(bond.maturityDate * 1000)
         .utc()
         .tz()
@@ -241,6 +242,20 @@ const BondDetail: React.FC = () => {
                     endDate={bond?.maturityDate}
                     endText="Maturity date"
                     endTip="Date each bond can be redeemed for $1 assuming no default. Convertible bonds cannot be converted after this date."
+                    rightOfCountdown={
+                      <div className="flex flex-col justify-end">
+                        <ExtraDetailsItem
+                          bordered={false}
+                          title="Documents"
+                          titleClass="justify-end"
+                          value={
+                            <LinkIcon href="/pdf/Ribbon DAO Collateral & Credit Analysis.pdf">
+                              Credit analysis
+                            </LinkIcon>
+                          }
+                        />
+                      </div>
+                    }
                     startDate={bond?.createdAt}
                     startText="Issuance date"
                     startTip="Time the bonds were minted."

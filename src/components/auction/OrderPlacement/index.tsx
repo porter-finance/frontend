@@ -86,11 +86,7 @@ interface OrderPlacementProps {
 }
 
 const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
-  const {
-    auctionIdentifier,
-    derivedAuctionInfo: { auctionState },
-    derivedAuctionInfo,
-  } = props
+  const { auctionIdentifier, derivedAuctionInfo } = props
   const { data: graphInfo } = useAuction(auctionIdentifier?.auctionId)
   const location = useGeoLocation()
   const disabledCountry = !isRinkeby && location?.country === 'US'
@@ -100,12 +96,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const orders: OrderState | undefined = useOrderState()
   const toggleWalletModal = useWalletModalToggle()
   const { price, sellAmount } = useOrderPlacementState()
-  const { errorAmount, errorBidSize, errorPrice } = useGetOrderPlacementError(
-    derivedAuctionInfo,
-    auctionState,
-    auctionIdentifier,
-    graphInfo?.minimumBidSize,
-  )
+
   const { onUserPriceInput, onUserSellAmountInput } = useSwapActionHandlers()
   const { auctionDetails, auctionInfoLoading } = useAuctionDetails(auctionIdentifier)
   const { signature } = useSignature(auctionIdentifier, account)
@@ -114,7 +105,12 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [showWarning, setShowWarning] = useState<boolean>(false)
   const [showWarningWrongChainId, setShowWarningWrongChainId] = useState<boolean>(false)
-
+  const { errorAmount, errorBidSize, errorPrice } = useGetOrderPlacementError(
+    derivedAuctionInfo,
+    derivedAuctionInfo?.auctionState,
+    auctionIdentifier,
+    graphInfo?.minimumBidSize,
+  )
   // Setting the name from graphql to the token from gnosis
   const auctioningToken = new Token(
     derivedAuctionInfo?.auctioningToken.chainId,
@@ -196,7 +192,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
         : undefined,
     [derivedAuctionInfo?.auctionEndDate, derivedAuctionInfo?.orderCancellationEndDate],
   )
-  const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
+  const orderPlacingOnly = derivedAuctionInfo?.auctionState === AuctionState.ORDER_PLACING
   const isPrivate = React.useMemo(
     () => auctionDetails && auctionDetails.isPrivateAuction,
     [auctionDetails],
@@ -305,14 +301,16 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
           {(!isPrivate || signatureAvailable) && (
             <>
               <AmountInputPanel
+                amountTooltip="This is your order amount. You will pay this much."
                 info={amountInfo}
                 onUserSellAmountInput={onUserSellAmountInput}
-                token={graphInfo?.bond}
+                token={graphInfo?.bidding}
                 value={sellAmount}
               />
               <PriceInputPanel
                 account={account}
                 auctionId={auctionIdentifier?.auctionId}
+                derivedAuctionInfo={derivedAuctionInfo}
                 disabled={!account}
                 info={priceInfo}
                 onUserPriceInput={onUserPriceInput}
@@ -429,7 +427,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                     title="Review order"
                   />
                   <div className="flex flex-row justify-between items-center mt-4 mb-3 text-xs text-[#9F9F9F]">
-                    <div>{biddingTokenDisplay} Balance</div>
+                    <div>Balance</div>
                     <div>
                       <span className="text-xs font-normal text-[#9F9F9F]">
                         {balanceString} {biddingTokenDisplay}

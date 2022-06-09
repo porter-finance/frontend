@@ -251,7 +251,7 @@ const BondAction = ({
       extra: `($${(convertibleValue * Number(collateralTokensAmount)).toLocaleString()})`,
       token: collateralToken,
       value: Number(collateralTokensAmount).toLocaleString(undefined, {
-        maximumSignificantDigits: collateralToken?.decimals,
+        maximumFractionDigits: 5,
       }),
     })
   } else if (isPaid) {
@@ -261,7 +261,7 @@ const BondAction = ({
     assetsToReceive.push({
       token: isConvertComponent ? collateralToken : bond?.paymentToken,
       value: Number(value).toLocaleString(undefined, {
-        maximumSignificantDigits: bond?.paymentToken?.decimals,
+        maximumFractionDigits: 5,
       }),
     })
   } else if (isDefaulted) {
@@ -270,7 +270,7 @@ const BondAction = ({
     assetsToReceive.push({
       token: collateralToken,
       value: Number(collateralTokensAmount).toLocaleString(undefined, {
-        maximumSignificantDigits: 2,
+        maximumFractionDigits: 5,
       }),
       extra: `($${(convertibleValue * Number(collateralTokensAmount)).toLocaleString()})`,
     })
@@ -281,7 +281,7 @@ const BondAction = ({
       assetsToReceive.push({
         token: bond?.paymentToken,
         value: Number(paymentTokensAmount).toLocaleString(undefined, {
-          maximumSignificantDigits: 2,
+          maximumFractionDigits: 5,
         }),
         extra: `($${(convertibleValue * Number(paymentTokensAmount)).toLocaleString()})`,
       })
@@ -290,7 +290,7 @@ const BondAction = ({
     assetsToReceive.push({
       token: collateralToken,
       value: Number(collateralTokensAmount).toLocaleString(undefined, {
-        maximumSignificantDigits: 2,
+        maximumFractionDigits: 5,
       }),
       extra: `($${(convertibleValue * Number(collateralTokensAmount)).toLocaleString()})`,
     })
@@ -339,7 +339,10 @@ const BondAction = ({
                   setBondsToRedeem(formatUnits(bondTokenBalance, bond?.decimals))
                 }}
                 onUserSellAmountInput={setBondsToRedeem}
-                token={tok}
+                token={{
+                  ...tok,
+                  symbol: tok?.name || tok?.symbol,
+                }}
                 value={bondsToRedeem}
               />
             )}

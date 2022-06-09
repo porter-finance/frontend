@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 
 import { Web3Provider } from '@ethersproject/providers'
-import { SafeAppConnector, useSafeAppConnection } from '@gnosis.pm/safe-apps-web3-react'
 import { useWeb3React as useWeb3ReactCore } from '@web3-react/core'
 import { isMobile } from 'react-device-detect'
 import { useAccount, useBlockNumber, useNetwork, useProvider, useSigner } from 'wagmi'
@@ -10,8 +9,6 @@ import { injected, walletconnect } from '../connectors'
 import { useOrderPlacementState } from '../state/orderPlacement/hooks'
 import { useOrderActionHandlers } from '../state/orders/hooks'
 import { getLogger } from '../utils/logger'
-
-const safeAppConnector = new SafeAppConnector()
 
 const logger = getLogger('hooks/index')
 
@@ -46,13 +43,8 @@ export function useEagerConnect() {
   const { activate, active } = useWeb3ReactCore() // specifically using useWeb3ReactCore because of what this hook does
   const [tried, setTried] = useState(false)
   const { chainId } = useOrderPlacementState()
-  const triedToConnectToSafeApp = useSafeAppConnection(safeAppConnector)
 
   useEffect(() => {
-    // Safe app gets first dibs. If it's not connected, try to connect to injected.
-    if (!triedToConnectToSafeApp) {
-      return
-    }
     if (tried) {
       return
     }
@@ -79,7 +71,7 @@ export function useEagerConnect() {
         }
       })
     }
-  }, [tried, activate, chainId, triedToConnectToSafeApp]) // intentionally only running on mount (make sure it's only mounted once :))
+  }, [tried, activate, chainId]) // intentionally only running on mount (make sure it's only mounted once :))
 
   // if the connection worked, wait until we get confirmation of that to flip the flag
   useEffect(() => {

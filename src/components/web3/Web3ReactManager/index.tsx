@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
-import { useTranslation } from 'react-i18next'
-
 import { tokenLogosServiceApi } from '../../../api'
 import { network } from '../../../connectors'
 import {
@@ -28,7 +26,6 @@ const Message = styled.h2`
 `
 
 export default function Web3ReactManager({ children }) {
-  const { t } = useTranslation()
   const {
     activate: activateNetwork,
     active: networkActive,
@@ -94,7 +91,10 @@ export default function Web3ReactManager({ children }) {
   if (!networkActive && networkError) {
     return (
       <MessageWrapper>
-        <Message>{t('unknownError')}</Message>
+        <Message>
+          Oops! An unknown error occurred. Please refresh the page or visit from another browser or
+          device.
+        </Message>
       </MessageWrapper>
     )
   }

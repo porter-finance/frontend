@@ -3,6 +3,7 @@ import styled from 'styled-components'
 
 import * as Sentry from '@sentry/react'
 import { BrowserTracing } from '@sentry/tracing'
+import ReactTooltip from 'react-tooltip'
 
 import ScrollToTop from '../components/ScrollToTop'
 import TermsModal from '../components/TermsModal'
@@ -31,6 +32,18 @@ Sentry.init({
 const App: React.FC = () => (
   <Suspense fallback={null}>
     <MainWrapper>
+      <ReactTooltip
+        arrowColor={'#2a2b2c'}
+        backgroundColor={'#181a1c'}
+        border
+        borderColor={'#2a2b2c'}
+        clickable
+        delayHide={500}
+        delayShow={50}
+        effect="solid"
+        id={'wrap_button'}
+        textColor="#d6d6d6"
+      />
       <ScrollToTop />
       <TermsModal />
       <Header />
