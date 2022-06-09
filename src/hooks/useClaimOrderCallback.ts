@@ -13,7 +13,7 @@ import {
   parseURL,
 } from '../state/orderPlacement/reducer'
 import { useHasPendingClaim, useTransactionAdder } from '../state/transactions/hooks'
-import { ChainId, calculateGasMargin, getEasyAuctionContract } from '../utils'
+import { calculateGasMargin, getEasyAuctionContract } from '../utils'
 import { getLogger } from '../utils/logger'
 import { Order, decodeOrder } from './Order'
 import { useActiveWeb3React } from './index'
@@ -239,11 +239,7 @@ export const useClaimOrderCallback = (
       throw new Error('missing dependencies in onPlaceOrder callback')
     }
 
-    const easyAuctionContract: Contract = getEasyAuctionContract(
-      chainId as ChainId,
-      library,
-      account,
-    )
+    const easyAuctionContract: Contract = getEasyAuctionContract(library, account)
 
     const estimate = easyAuctionContract.estimateGas.claimFromParticipantOrder
     const method: Function = easyAuctionContract.claimFromParticipantOrder
@@ -298,11 +294,7 @@ export function useGetClaimState(
       try {
         if (!library || !account || !claimableOrders || chainId !== requiredChain.chainId) return
 
-        const easyAuctionContract: Contract = getEasyAuctionContract(
-          chainId as ChainId,
-          library,
-          account,
-        )
+        const easyAuctionContract: Contract = getEasyAuctionContract(library, account)
 
         const method: Function = easyAuctionContract.containsOrder
         const args: Array<number | string> = [auctionId, claimableOrders[0]]

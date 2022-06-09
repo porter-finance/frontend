@@ -24,8 +24,6 @@ import {
   getEasyAuctionContract,
   getTokenDisplay,
   isTokenWETH,
-  isTokenWMATIC,
-  isTokenXDAI,
 } from '../utils'
 import { getLogger } from '../utils/logger'
 import { abbreviation } from '../utils/numeral'
@@ -34,6 +32,8 @@ import { encodeOrder } from './Order'
 import { useActiveWeb3React } from './index'
 import { useContract } from './useContract'
 import { useGasPrice } from './useGasPrice'
+
+import { requiredChain } from '@/connectors'
 
 const logger = getLogger('usePlaceOrderCallback')
 
@@ -68,7 +68,7 @@ export function usePlaceOrderCallback(
   const price = priceFromSwapState.toString()
 
   const easyAuctionInstance: Maybe<Contract> = useContract(
-    EASY_AUCTION_NETWORKS[chainId as ChainId],
+    EASY_AUCTION_NETWORKS[requiredChain.chainId as ChainId],
     easyAuctionABI,
   )
   const userId: Result | undefined = useSingleCallResult(easyAuctionInstance, 'getUserId', [
@@ -196,12 +196,8 @@ const getEstimateParams = (
   auctionId: number,
   signature: string,
 ): EstimateAndParams => {
-  const easyAuctionContract: Contract = getEasyAuctionContract(chainId, library, account)
-  if (
-    isTokenXDAI(biddingToken.address, chainId) ||
-    isTokenWETH(biddingToken.address, chainId) ||
-    isTokenWMATIC(biddingToken.address, chainId)
-  ) {
+  const easyAuctionContract: Contract = getEasyAuctionContract(library, account)
+  if (isTokenWETH(biddingToken.address, chainId)) {
     const depositAndPlaceOrderContract = getContract(
       DEPOSIT_AND_PLACE_ORDER[chainId],
       depositAndPlaceOrderABI,

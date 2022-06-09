@@ -1,6 +1,5 @@
 import React, { ReactElement } from 'react'
 
-import { useActiveWeb3React } from '../../hooks'
 import { getExplorerLink } from '../../utils'
 
 import { Token } from '@/generated/graphql'
@@ -34,8 +33,7 @@ export const LinkIcon = ({ children, href }) => {
 }
 
 export const AddressLink = ({ children, hash }) => {
-  const { chainId } = useActiveWeb3React()
-  return <LinkIcon href={getExplorerLink(chainId, hash, 'address')}>{children}</LinkIcon>
+  return <LinkIcon href={getExplorerLink(hash, 'address')}>{children}</LinkIcon>
 }
 
 export default function TokenLink({

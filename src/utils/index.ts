@@ -11,14 +11,10 @@ import { EasyAuction } from '../../gen/types'
 import easyAuctionABI from '../constants/abis/easyAuction/easyAuction.json'
 import ERC20_ABI from '../constants/abis/erc20.json'
 import ERC20_BYTES32_ABI from '../constants/abis/erc20_bytes32.json'
-import {
-  NETWORK_URL_MAINNET,
-  NETWORK_URL_POLYGON,
-  NETWORK_URL_RINKEBY,
-  NETWORK_URL_XDAI,
-} from '../constants/config'
+import { NETWORK_URL_MAINNET, NETWORK_URL_RINKEBY } from '../constants/config'
 import { getLogger } from '../utils/logger'
 
+import { requiredChain } from '@/connectors'
 import { Token as GraphToken } from '@/generated/graphql'
 
 const logger = getLogger('utils/index')
@@ -35,22 +31,16 @@ export function isAddress(value: any): string | false {
 export enum ChainId {
   MAINNET = 1,
   RINKEBY = 4,
-  XDAI = 100,
-  MATIC = 137,
 }
 
 export const EASY_AUCTION_NETWORKS: { [chainId in ChainId]: string } = {
   [ChainId.MAINNET]: '0x0b7fFc1f4AD541A4Ed16b40D8c37f0929158D101',
   [ChainId.RINKEBY]: '0xC5992c0e0A3267C7F75493D0F717201E26BE35f7',
-  [ChainId.XDAI]: '0x0b7fFc1f4AD541A4Ed16b40D8c37f0929158D101',
-  [ChainId.MATIC]: '0x0b7fFc1f4AD541A4Ed16b40D8c37f0929158D101',
 }
 
 export const DEPOSIT_AND_PLACE_ORDER: { [chainId in ChainId]: string } = {
   [ChainId.MAINNET]: '0x10D15DEA67f7C95e2F9Fe4eCC245a8862b9B5B96',
   [ChainId.RINKEBY]: '0x8624fbDf455D51B967ff40aaB4019281A855f008',
-  [ChainId.XDAI]: '0x845AbED0734e39614FEC4245F3F3C88E2da98157',
-  [ChainId.MATIC]: '0x93D2BbA07b44e8F2b02F7DA164eE4f7442a3B618',
 }
 
 type NetworkConfig = {
@@ -74,18 +64,6 @@ export const NETWORK_CONFIGS: { [chainId in ChainId]: NetworkConfig } = {
     rpc: NETWORK_URL_RINKEBY,
     etherscan_prefix: 'rinkeby.',
   },
-  100: {
-    name: 'XDAI',
-    symbol: 'xDai',
-    rpc: NETWORK_URL_XDAI,
-    explorer: 'https://blockscout.com/xdai/mainnet',
-  },
-  137: {
-    name: 'Matic Mainnet',
-    symbol: 'MATIC',
-    rpc: NETWORK_URL_POLYGON,
-    explorer: 'https://polygonscan.com',
-  },
 }
 
 const getExplorerPrefix = (chainId: ChainId) => {
@@ -95,12 +73,8 @@ const getExplorerPrefix = (chainId: ChainId) => {
   )
 }
 
-export function getExplorerLink(
-  chainId: ChainId,
-  data: string,
-  type: 'transaction' | 'address',
-): string {
-  const prefix = getExplorerPrefix(chainId)
+export function getExplorerLink(data: string, type: 'transaction' | 'address'): string {
+  const prefix = getExplorerPrefix(requiredChain.chainId)
 
   switch (type) {
     case 'transaction': {
@@ -170,13 +144,9 @@ export function getContract(
 }
 
 // account is optional
-export function getEasyAuctionContract(
-  chainId: ChainId,
-  library: Web3Provider,
-  account?: string,
-): EasyAuction {
+export function getEasyAuctionContract(library: Web3Provider, account?: string): EasyAuction {
   return getContract(
-    EASY_AUCTION_NETWORKS[chainId],
+    EASY_AUCTION_NETWORKS[requiredChain.chainId as ChainId],
     easyAuctionABI,
     library,
     account,
@@ -250,14 +220,8 @@ export function getDisplay(token: GraphToken): string {
 
 // Always return a non-undefined token display
 export function getFullTokenDisplay(token: Token, chainId: ChainId): string {
-  if (isTokenXDAI(token.address, chainId)) return `XDAI`
   if (isTokenWETH(token.address, chainId)) return `ETH`
-  if (isTokenWMATIC(token.address, chainId)) return `MATIC`
   return token?.name || token?.symbol || token?.address || '🤔'
-}
-
-export function isTokenXDAI(tokenAddress?: string, chainId?: ChainId): boolean {
-  return !!tokenAddress && !!chainId && tokenAddress == WETH[chainId].address && chainId === 100
 }
 
 export function isTokenWETH(tokenAddress?: string, chainId?: ChainId): boolean {
@@ -267,10 +231,6 @@ export function isTokenWETH(tokenAddress?: string, chainId?: ChainId): boolean {
     tokenAddress == WETH[chainId].address &&
     (chainId === 1 || chainId === 4)
   )
-}
-
-export function isTokenWMATIC(tokenAddress?: string, chainId?: ChainId): boolean {
-  return !!tokenAddress && !!chainId && tokenAddress == WETH[chainId].address && chainId === 137
 }
 
 export function isTimeout(timeId: NodeJS.Timeout | undefined): timeId is NodeJS.Timeout {

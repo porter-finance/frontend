@@ -8,7 +8,7 @@ import { chainNames } from '../constants'
 import { AuctionIdentifier } from '../state/orderPlacement/reducer'
 import { useOrderActionHandlers } from '../state/orders/hooks'
 import { useTransactionAdder } from '../state/transactions/hooks'
-import { ChainId, calculateGasMargin, getEasyAuctionContract } from '../utils'
+import { calculateGasMargin, getEasyAuctionContract } from '../utils'
 import { getLogger } from '../utils/logger'
 import { abbreviation } from '../utils/numeral'
 import { decodeOrder } from './Order'
@@ -42,11 +42,7 @@ export function useCancelOrderCallback(
       }
 
       const decodedOrder = decodeOrder(orderId)
-      const easyAuctionContract: Contract = getEasyAuctionContract(
-        chainId as ChainId,
-        library,
-        account,
-      )
+      const easyAuctionContract: Contract = getEasyAuctionContract(library, account)
       let estimate, method: Function, args: Array<number | string[]>, value: Maybe<BigNumber>
       {
         estimate = easyAuctionContract.estimateGas.cancelSellOrders

@@ -10,7 +10,6 @@ import Modal, { DialogTitle } from './common/Modal'
 import { ReactComponent as GreenCheckIcon } from '@/assets/svg/greencheck.svg'
 import { ReactComponent as PurplePorterIcon } from '@/assets/svg/porter-purple.svg'
 import { ReactComponent as PorterIcon } from '@/assets/svg/porter.svg'
-import { useActiveWeb3React } from '@/hooks'
 import { useAllTransactions } from '@/state/transactions/hooks'
 import { getExplorerLink } from '@/utils'
 
@@ -167,10 +166,10 @@ const BodyPanel = ({ after, before, color = 'blue', during }) => (
   </>
 )
 
-const GhostTransactionLink = ({ chainId, hash }) => (
+const GhostTransactionLink = ({ hash }) => (
   <GhostActionLink
     className="group space-x-3"
-    href={getExplorerLink(chainId, hash, 'transaction')}
+    href={getExplorerLink(hash, 'transaction')}
     target="_blank"
   >
     <span>View eth transaction</span>
@@ -210,7 +209,6 @@ const ConfirmationDialog = ({
   onOpenChange: (open: boolean) => void
   open: boolean
 }) => {
-  const { chainId } = useActiveWeb3React()
   const allTransactions = useAllTransactions()
   const apolloClient = useApolloClient()
 
@@ -313,9 +311,7 @@ const ConfirmationDialog = ({
 
           {(showTransactionCreated || transactionComplete) && (
             <div className="flex flex-col justify-center items-center mt-20 space-y-4">
-              {showTransactionCreated && (
-                <GhostTransactionLink chainId={chainId} hash={showTransactionCreated} />
-              )}
+              {showTransactionCreated && <GhostTransactionLink hash={showTransactionCreated} />}
 
               {transactionComplete && (
                 <ActionButton aria-label="Done" color={actionColor} onClick={onDismiss}>

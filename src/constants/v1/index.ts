@@ -13,8 +13,6 @@ const testbondfactory = '0xa148c9A96AE2c987AF86eC170e75719cf4CEa937'
 const V1_BOND_FACTORY_ADDRESS: { [chainId in ChainId]: string } = {
   [ChainId.MAINNET]: testbondfactory,
   [ChainId.RINKEBY]: testbondfactory,
-  [ChainId.XDAI]: testbondfactory,
-  [ChainId.MATIC]: testbondfactory,
 }
 
 export {

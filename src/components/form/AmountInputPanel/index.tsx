@@ -2,10 +2,8 @@ import { rgba } from 'polished'
 import React from 'react'
 import styled, { keyframes } from 'styled-components'
 
-import { unwrapMessage } from '../../../constants'
 import { useActiveWeb3React } from '../../../hooks'
 import { ApprovalState } from '../../../hooks/useApproveCallback'
-import { ChainId } from '../../../utils'
 import { TokenPill } from '../../bond/BondAction'
 import Tooltip from '../../common/Tooltip'
 import { MiniLock } from '../../icons/MiniLock'
@@ -93,13 +91,7 @@ export interface unlockProps {
   token?: string
 }
 
-interface wrapProps {
-  isWrappable: boolean
-  onClick: () => void
-}
-
 interface Props {
-  chainId: ChainId
   info?: FieldRowInfoProps
   onMax?: () => void
   onUserSellAmountInput: (val: string) => void
@@ -107,7 +99,6 @@ interface Props {
   unlock?: unlockProps
   amountText?: string
   amountTooltip?: string
-  wrap: wrapProps
   maxTitle?: string
   amountDescription?: string
   value: string
@@ -119,7 +110,6 @@ const AmountInputPanel: React.FC<Props> = (props) => {
     amountDescription,
     amountText = 'Amount',
     amountTooltip = 'Number of bonds you would like to purchase.',
-    chainId,
     disabled,
     info,
     maxTitle = 'Max',
@@ -128,13 +118,11 @@ const AmountInputPanel: React.FC<Props> = (props) => {
     token = null,
     unlock,
     value,
-    wrap,
     ...restProps
   } = props
   const { account } = useActiveWeb3React()
   const isUnlocking = unlock?.unlockState === ApprovalState.PENDING
   const error = info?.type === InfoType.error
-  const dataTip = unwrapMessage[chainId]
   const isDisabled = disabled === true
 
   return (
@@ -180,18 +168,6 @@ const AmountInputPanel: React.FC<Props> = (props) => {
                   </>
                 )}
               </UnlockButton>
-            )}
-            {wrap.isWrappable && (
-              <FieldRowPrimaryButton
-                className={`tooltipComponent`}
-                data-for={'wrap_button'}
-                data-html={true}
-                data-multiline={true}
-                data-tip={dataTip}
-                onClick={wrap.onClick}
-              >
-                <FieldRowPrimaryButtonText>Unwrap</FieldRowPrimaryButtonText>
-              </FieldRowPrimaryButton>
             )}
           </Wrap>
         </FieldRowTop>

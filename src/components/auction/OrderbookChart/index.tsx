@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { Token } from '@josojo/honeyswap-sdk'
 
 import useChart from '../../../hooks/useChart'
-import { ChainId, getTokenDisplay } from '../../../utils'
+import { getTokenDisplay } from '../../../utils'
 import { InlineLoading } from '../../common/InlineLoading'
 import { SpinnerSize } from '../../common/Spinner'
 import Tooltip from '../../common/Tooltip'
@@ -42,7 +42,6 @@ export interface Props {
   baseToken: Token
   data: Maybe<PricePointDetails[]>
   quoteToken: Token
-  chainId: ChainId
 }
 
 export const ChartWrapper = styled.div`
@@ -111,7 +110,7 @@ export const VolumeLabel = styled.div`
 `
 
 const OrderBookChart: React.FC<Props> = (props) => {
-  const { baseToken, chainId, data, quoteToken } = props
+  const { baseToken, data, quoteToken } = props
   const quoteTokenLabel = getTokenDisplay(quoteToken)
   const volumeTitle = `Volume (${quoteTokenLabel})`
   const { loading, mountPoint } = useChart({
@@ -119,7 +118,6 @@ const OrderBookChart: React.FC<Props> = (props) => {
     data,
     baseToken,
     quoteToken,
-    chainId,
   })
 
   return (
