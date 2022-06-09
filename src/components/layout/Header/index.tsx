@@ -6,7 +6,6 @@ import { ConnectButton } from '@rainbow-me/rainbowkit'
 
 import { ButtonMenu } from '../../buttons/ButtonMenu'
 import { Logo } from '../../common/Logo'
-import WalletModal from '../../modals/WalletModal'
 import { Mainmenu } from '../../navigation/Mainmenu'
 import { Mobilemenu } from '../../navigation/Mobilemenu'
 import { InnerContainer } from '../../pureStyledComponents/InnerContainer'
@@ -89,7 +88,6 @@ export const Component = (props) => {
           <ConnectButton accountStatus="address" showBalance={false} />
         </Inner>
       </Wrapper>
-      <WalletModal />
     </>
   )
 }

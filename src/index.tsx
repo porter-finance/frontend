@@ -2,9 +2,7 @@ import React from 'react'
 import { BrowserRouter } from 'react-router-dom'
 
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
-import { Web3Provider } from '@ethersproject/providers'
 import { RainbowKitProvider, Theme, darkTheme, getDefaultWallets } from '@rainbow-me/rainbowkit'
-import { Web3ReactProvider, createWeb3ReactRoot } from '@web3-react/core'
 import { merge } from 'lodash'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
@@ -14,7 +12,6 @@ import { publicProvider } from 'wagmi/providers/public'
 
 import { MobileBlocker } from './components/MobileBlocker'
 import { isRinkeby } from './connectors'
-import { NetworkContextName } from './constants'
 import App from './pages/App'
 import store from './state'
 import ApplicationUpdater from './state/application/updater'
@@ -41,12 +38,6 @@ const wagmiClient = createClient({
   connectors,
   provider,
 })
-
-const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
-
-const getLibrary = (provider: any): Web3Provider => {
-  return new Web3Provider(provider)
-}
 
 const Updaters = () => {
   return (
@@ -86,24 +77,20 @@ root.render(
   <>
     <WagmiConfig client={wagmiClient}>
       <RainbowKitProvider chains={chains} showRecentTransactions theme={myTheme}>
-        <Web3ReactProvider getLibrary={getLibrary}>
-          <Web3ProviderNetwork getLibrary={getLibrary}>
-            <Provider store={store}>
-              <ApolloProvider client={apolloClient}>
-                <Updaters />
-                <ThemeProvider>
-                  <GlobalStyle />
-                  <BrowserRouter>
-                    <div className="hidden sm:block">
-                      <App />
-                    </div>
-                    <MobileBlocker />
-                  </BrowserRouter>
-                </ThemeProvider>
-              </ApolloProvider>
-            </Provider>
-          </Web3ProviderNetwork>
-        </Web3ReactProvider>
+        <Provider store={store}>
+          <ApolloProvider client={apolloClient}>
+            <Updaters />
+            <ThemeProvider>
+              <GlobalStyle />
+              <BrowserRouter>
+                <div className="hidden sm:block">
+                  <App />
+                </div>
+                <MobileBlocker />
+              </BrowserRouter>
+            </ThemeProvider>
+          </ApolloProvider>
+        </Provider>
       </RainbowKitProvider>
     </WagmiConfig>
   </>,
