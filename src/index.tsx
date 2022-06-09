@@ -24,7 +24,7 @@ import './index.css'
 import '@rainbow-me/rainbowkit/styles.css'
 
 const { chains, provider } = configureChains(
-  [!isRinkeby ? chain.mainnet : chain.rinkeby],
+  [!isRinkeby ? chain.mainnet : chain.hardhat],
   [alchemyProvider({ alchemyId: 'rD-tnwLLzbfOaFOBAv2ckazyJTmCRLhu' }), publicProvider()],
 )
 

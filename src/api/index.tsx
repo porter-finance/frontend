@@ -25,6 +25,11 @@ function createAdditionalServiceApi(): AdditionalServicesApi {
       url_production: API_URL_PRODUCTION_RINKEBY,
       url_develop: API_URL_DEVELOP_RINKEBY,
     })
+  config.push({
+    networkId: 31337,
+    url_production: API_URL_PRODUCTION_RINKEBY,
+    url_develop: API_URL_DEVELOP_RINKEBY,
+  })
   const dexPriceEstimatorApi = new AdditionalServicesApiImpl(config)
 
   window['dexPriceEstimatorApi'] = dexPriceEstimatorApi

@@ -34,14 +34,16 @@ export enum ChainId {
   RINKEBY = 4,
 }
 
-export const EASY_AUCTION_NETWORKS: { [chainId in ChainId]: string } = {
+export const EASY_AUCTION_NETWORKS: { [key: number]: string } = {
   [ChainId.MAINNET]: '0x0b7fFc1f4AD541A4Ed16b40D8c37f0929158D101',
   [ChainId.RINKEBY]: '0xC5992c0e0A3267C7F75493D0F717201E26BE35f7',
+  [31337]: '0xC5992c0e0A3267C7F75493D0F717201E26BE35f7',
 }
 
-export const DEPOSIT_AND_PLACE_ORDER: { [chainId in ChainId]: string } = {
+export const DEPOSIT_AND_PLACE_ORDER: { [key: number]: string } = {
   [ChainId.MAINNET]: '0x10D15DEA67f7C95e2F9Fe4eCC245a8862b9B5B96',
   [ChainId.RINKEBY]: '0x8624fbDf455D51B967ff40aaB4019281A855f008',
+  [31337]: '0x8624fbDf455D51B967ff40aaB4019281A855f008',
 }
 
 type NetworkConfig = {
@@ -52,7 +54,7 @@ type NetworkConfig = {
   etherscan_prefix?: string
 }
 
-export const NETWORK_CONFIGS: { [chainId in ChainId]: NetworkConfig } = {
+export const NETWORK_CONFIGS: { [key: number]: NetworkConfig } = {
   1: {
     name: 'Mainnet',
     symbol: 'ETH',
@@ -63,6 +65,12 @@ export const NETWORK_CONFIGS: { [chainId in ChainId]: NetworkConfig } = {
     name: 'Rinkeby',
     symbol: 'ETH',
     rpc: NETWORK_URL_RINKEBY,
+    etherscan_prefix: 'rinkeby.',
+  },
+  31337: {
+    name: 'Hardhat',
+    symbol: 'ETH',
+    rpc: 'http://localhost:8545',
     etherscan_prefix: 'rinkeby.',
   },
 }
@@ -210,6 +218,7 @@ export function isTokenWETH(tokenAddress?: string, chainId?: ChainId): boolean {
   return (
     !!tokenAddress &&
     !!chainId &&
+    !!WETH[chainId] &&
     tokenAddress == WETH[chainId].address &&
     (chainId === 1 || chainId === 4)
   )
