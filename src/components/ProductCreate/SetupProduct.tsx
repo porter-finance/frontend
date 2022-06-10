@@ -48,7 +48,7 @@ export const StepOne = () => {
         <input
           className="w-full input input-bordered"
           defaultValue=""
-          {...register('issuerName')}
+          {...register('issuerName', { required: true })}
           placeholder="Insert issuer name"
           type="text"
         />
@@ -180,6 +180,7 @@ export const StepThree = () => {
           className="w-full input input-bordered"
           name="amountOfConvertible"
           placeholder="0"
+          {...register('amountOfConvertible', { required: true })}
           type="number"
         />
       </div>
@@ -266,7 +267,7 @@ const SetupProduct = () => {
 
   const methods = useForm<Inputs>()
   const {
-    formState: { errors },
+    formState: { isValid },
     handleSubmit,
   } = methods
   const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data)
@@ -310,6 +311,7 @@ const SetupProduct = () => {
                 {currentStep < 3 && (
                   <ActionButton
                     color="purple"
+                    disabled={!isValid}
                     onClick={() => setCurrentStep(currentStep + 1)}
                     type="submit"
                   >
@@ -331,6 +333,7 @@ const SetupProduct = () => {
 
                     <ActionButton
                       color="purple"
+                      disabled={false}
                       onClick={() => {
                         console.log('click')
                       }}
