@@ -5,7 +5,6 @@ import * as Sentry from '@sentry/react'
 import { BrowserTracing } from '@sentry/tracing'
 import ReactTooltip from 'react-tooltip'
 
-import ChainWarning from '../components/ChainWarning'
 import ScrollToTop from '../components/ScrollToTop'
 import TermsModal from '../components/TermsModal'
 import { ErrorBoundaryWithFallback } from '../components/common/ErrorAndReload'
@@ -14,7 +13,6 @@ import { Header } from '../components/layout/Header'
 import Routes from '../components/navigation/Routes/Routes'
 import { InnerContainer } from '../components/pureStyledComponents/InnerContainer'
 import { MainWrapper } from '../components/pureStyledComponents/MainWrapper'
-import Web3ReactManager from '../components/web3/Web3ReactManager'
 
 export const InnerApp = styled(InnerContainer)`
   margin-top: -100px;
@@ -46,14 +44,11 @@ const App: React.FC = () => (
         textColor="#d6d6d6"
       />
       <ScrollToTop />
-      <ChainWarning />
       <TermsModal />
       <Header />
       <ErrorBoundaryWithFallback>
         <InnerApp className="fullPage">
-          <Web3ReactManager>
-            <Routes />
-          </Web3ReactManager>
+          <Routes />
         </InnerApp>
       </ErrorBoundaryWithFallback>
       <Footer />

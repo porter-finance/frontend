@@ -21,7 +21,7 @@ export function useCancelOrderCallback(
   auctionIdentifier: AuctionIdentifier,
   biddingToken: Token,
 ): null | ((orderId: string) => Promise<string>) {
-  const { account, chainId, library } = useActiveWeb3React()
+  const { account, chainId, signer } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
   const { onCancelOrder: actionCancelOrder } = useOrderActionHandlers()
   const { auctionId, chainId: orderChainId } = auctionIdentifier
@@ -29,7 +29,7 @@ export function useCancelOrderCallback(
 
   return useMemo(() => {
     return async function onCancelOrder(orderId: string) {
-      if (!chainId || !library || !account) {
+      if (!chainId || !signer || !account) {
         throw new Error('missing dependencies in onCancelOrder callback')
       }
 
@@ -42,7 +42,7 @@ export function useCancelOrderCallback(
       }
 
       const decodedOrder = decodeOrder(orderId)
-      const easyAuctionContract: Contract = getEasyAuctionContract(library, account)
+      const easyAuctionContract: Contract = getEasyAuctionContract(signer)
       let estimate, method: Function, args: Array<number | string[]>, value: Maybe<BigNumber>
       {
         estimate = easyAuctionContract.estimateGas.cancelSellOrders
@@ -66,7 +66,7 @@ export function useCancelOrderCallback(
                 decodedOrder.sellAmount.toString(),
                 BigNumber.from(10).pow(biddingToken.decimals).toString(),
               ).toSignificant(2),
-            )} ${biddingToken.symbol} Order`,
+            )} ${biddingToken.symbol} order from auction ${auctionId}`,
           })
           actionCancelOrder(orderId)
           return response.hash
@@ -78,7 +78,7 @@ export function useCancelOrderCallback(
     }
   }, [
     chainId,
-    library,
+    signer,
     account,
     orderChainId,
     auctionId,

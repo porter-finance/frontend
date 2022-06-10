@@ -227,7 +227,7 @@ export function useGetAuctionProceeds(
 export const useClaimOrderCallback = (
   auctionIdentifier: AuctionIdentifier,
 ): [ClaimState, () => Promise<Maybe<string>>] => {
-  const { account, library } = useActiveWeb3React()
+  const { account, signer } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
 
   const { auctionId, chainId } = auctionIdentifier
@@ -235,11 +235,11 @@ export const useClaimOrderCallback = (
   const gasPrice = useGasPrice(chainId)
 
   const claimCallback = useCallback(async (): Promise<Maybe<string>> => {
-    if (!chainId || !library || !account || error || !claimInfo) {
+    if (!chainId || !signer || !account || error || !claimInfo) {
       throw new Error('missing dependencies in onPlaceOrder callback')
     }
 
-    const easyAuctionContract: Contract = getEasyAuctionContract(library, account)
+    const easyAuctionContract: Contract = getEasyAuctionContract(signer)
 
     const estimate = easyAuctionContract.estimateGas.claimFromParticipantOrder
     const method: Function = easyAuctionContract.claimFromParticipantOrder
@@ -254,10 +254,10 @@ export const useClaimOrderCallback = (
     })
 
     addTransaction(response, {
-      summary: `Claiming tokens auction-${auctionId}`,
+      summary: `Claim tokens from auction ${auctionId}`,
     })
     return response.hash
-  }, [account, addTransaction, chainId, error, gasPrice, library, auctionId, claimInfo])
+  }, [account, addTransaction, chainId, error, gasPrice, signer, auctionId, claimInfo])
 
   const claimableOrders = claimInfo?.sellOrdersFromUser
   const pendingClaim = useHasPendingClaim(auctionIdentifier.auctionId, account)
@@ -272,13 +272,13 @@ export function useGetClaimState(
   pendingClaim?: Boolean,
 ): ClaimState {
   const [claimStatus, setClaimStatus] = useState<ClaimState>(ClaimState.UNKNOWN)
-  const { account, chainId, library } = useActiveWeb3React()
+  const { chainId, signer } = useActiveWeb3React()
   const { auctionId } = auctionIdentifier
 
   useEffect(() => {
     setClaimStatus(ClaimState.UNKNOWN)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auctionId, chainId, account])
+  }, [auctionId, chainId])
 
   useEffect(() => {
     let cancelled = false
@@ -292,9 +292,9 @@ export function useGetClaimState(
 
     async function userHasAvailableClaim() {
       try {
-        if (!library || !account || !claimableOrders || chainId !== requiredChain.chainId) return
+        if (!signer || !claimableOrders || chainId !== requiredChain.id) return
 
-        const easyAuctionContract: Contract = getEasyAuctionContract(library, account)
+        const easyAuctionContract: Contract = getEasyAuctionContract(signer)
 
         const method: Function = easyAuctionContract.containsOrder
         const args: Array<number | string> = [auctionId, claimableOrders[0]]
@@ -321,7 +321,7 @@ export function useGetClaimState(
     return (): void => {
       cancelled = true
     }
-  }, [account, auctionId, chainId, claimableOrders, library, pendingClaim])
+  }, [auctionId, chainId, claimableOrders, signer, pendingClaim])
 
   return claimStatus
 }

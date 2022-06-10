@@ -10,16 +10,16 @@ import { useActiveWeb3React } from './index'
 const logger = getLogger('useSettleAuction')
 
 export function useSettleAuction(address: string) {
-  const { account, chainId, library } = useActiveWeb3React()
+  const { chainId, signer } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
 
   const settleAuctionCallback = useCallback(async (): Promise<ContractTransaction | undefined> => {
-    if (!account || !chainId || !library) {
+    if (!signer || !chainId) {
       logger.error('missing deps')
       return
     }
 
-    const easyAuctionContract = getEasyAuctionContract(library, account)
+    const easyAuctionContract = getEasyAuctionContract(signer)
 
     if (!easyAuctionContract) {
       logger.error('missing contract')
@@ -38,7 +38,7 @@ export function useSettleAuction(address: string) {
 
     addTransaction(response)
     return response
-  }, [addTransaction, address, chainId, account, library])
+  }, [addTransaction, address, chainId, signer])
 
   return { settleAuctionCallback }
 }

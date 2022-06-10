@@ -3,9 +3,9 @@ import styled, { css } from 'styled-components'
 
 import { formatUnits } from '@ethersproject/units'
 import { Fraction, Token, TokenAmount } from '@josojo/honeyswap-sdk'
-import { useTokenBalance } from '@usedapp/core'
 import dayjs from 'dayjs'
 import useGeoLocation from 'react-ipgeolocation'
+import { useBalance } from 'wagmi'
 
 import kycLinks from '../../../assets/links/kycLinks.json'
 import { ReactComponent as PrivateIcon } from '../../../assets/svg/private.svg'
@@ -125,20 +125,22 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const approvalTokenAmount: TokenAmount | undefined = parsedBiddingAmount
   const [approval, approveCallback] = useApproveCallback(
     approvalTokenAmount,
-    EASY_AUCTION_NETWORKS[requiredChain.chainId],
+    EASY_AUCTION_NETWORKS[requiredChain.id],
     chainIdFromWeb3 as ChainId,
   )
   const [, unapproveCallback] = useUnapproveCallback(
     new TokenAmount(biddingToken, '0'),
-    EASY_AUCTION_NETWORKS[requiredChain.chainId],
+    EASY_AUCTION_NETWORKS[requiredChain.id],
     chainIdFromWeb3 as ChainId,
   )
 
-  const biddingTokenBalance = useTokenBalance(biddingToken.address, account, {
-    chainId: requiredChain.chainId,
+  const { data: biddingTokenBalance } = useBalance({
+    token: biddingToken.address,
+    addressOrName: account,
+    chainId: requiredChain.id,
   })
   const balanceString = biddingTokenBalance
-    ? Number(formatUnits(biddingTokenBalance, biddingToken.decimals)).toLocaleString()
+    ? Number(formatUnits(biddingTokenBalance?.value, biddingToken.decimals)).toLocaleString()
     : '0.00'
 
   useEffect(() => {
@@ -163,7 +165,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
 
   const handleShowConfirm = () => {
     setShowCountryDisabledModal(false)
-    if (chainIdFromWeb3 !== requiredChain.chainId) {
+    if (chainIdFromWeb3 !== requiredChain.id) {
       setShowWarningWrongChainId(true)
       return
     }

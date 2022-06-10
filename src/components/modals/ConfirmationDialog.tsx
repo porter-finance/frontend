@@ -1,6 +1,7 @@
 import React, { ReactElement, useEffect, useState } from 'react'
 
 import { useApolloClient } from '@apollo/client'
+import { useWaitForTransaction } from 'wagmi'
 
 import { ActionButton, GhostActionLink } from '../auction/Claimer'
 import { TokenInfo } from '../bond/BondAction'
@@ -212,29 +213,25 @@ const ConfirmationDialog = ({
   const allTransactions = useAllTransactions()
   const apolloClient = useApolloClient()
 
-  const [transactionError, setTransactionError] = useState(false)
+  const [transactionError, setTransactionError] = useState('')
   const [transactionPendingWalletConfirm, setTransactionPendingWalletConfirm] = useState(false)
   const [transactionComplete, setTransactionComplete] = useState(false)
   const [showTransactionCreated, setShowTransactionCreated] = useState('')
+  const { error, isError, isSuccess } = useWaitForTransaction({
+    hash: showTransactionCreated,
+  })
 
-  // get the latest transaction that created the bond
-  // TODO: so bad, should wagmi/usedapp instead
   useEffect(() => {
-    if (!allTransactions) return
-    Object.keys(allTransactions)
-      .reverse()
-      .some((hash) => {
-        if (hash !== showTransactionCreated) return false
-        const tx = allTransactions[hash]
-        // the first one is always the new order
-        if (tx.receipt?.logs) {
-          setTransactionComplete(true)
-          if (onFinished) onFinished()
-        }
-
-        return true
+    if (isSuccess) {
+      apolloClient.refetchQueries({
+        include: 'all',
       })
-  }, [showTransactionCreated, onFinished, allTransactions, apolloClient])
+      setTransactionComplete(true)
+      if (onFinished) onFinished()
+    } else if (isError) {
+      setTransactionError(error.message)
+    }
+  }, [isSuccess, onFinished, apolloClient, isError, error])
 
   const waitingTransactionToComplete = showTransactionCreated && !transactionComplete
 
@@ -245,7 +242,7 @@ const ConfirmationDialog = ({
     // Prevent changing state during transition
     setTimeout(() => {
       if (transactionError) {
-        setTransactionError(null)
+        setTransactionError('')
       }
 
       if (transactionComplete) {
@@ -326,7 +323,7 @@ const ConfirmationDialog = ({
       {transactionError && (
         <OopsWarning
           actionClick={() => {
-            setTransactionError(null)
+            setTransactionError('')
           }}
           actionColor={actionColor}
           message={transactionError}

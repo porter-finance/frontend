@@ -193,7 +193,7 @@ const Claimer: React.FC<Props> = (props) => {
             <ActionButton
               disabled={isClaimButtonDisabled}
               onClick={() => {
-                if (Web3ChainId !== requiredChain.chainId) {
+                if (Web3ChainId !== requiredChain.id) {
                   setShowWarningWrongChainId(true)
                 } else {
                   setShowConfirm(true)
@@ -254,7 +254,7 @@ const Claimer: React.FC<Props> = (props) => {
           />
           <WarningModal
             content={`In order to place this claim, please connect to the ${getChainName(
-              requiredChain.chainId,
+              requiredChain.id,
             )} network`}
             isOpen={showWarningWrongChainId}
             onDismiss={() => {

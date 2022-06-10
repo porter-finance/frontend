@@ -1,8 +1,9 @@
+import { Signer } from 'ethers'
+
 import { getAddress } from '@ethersproject/address'
 import { BigNumber } from '@ethersproject/bignumber'
 import { AddressZero } from '@ethersproject/constants'
 import { Contract } from '@ethersproject/contracts'
-import { JsonRpcSigner, Provider, Web3Provider } from '@ethersproject/providers'
 import { parseBytes32String } from '@ethersproject/strings'
 import { JSBI, Percent, Token, TokenAmount, WETH } from '@josojo/honeyswap-sdk'
 import IUniswapV2PairABI from '@uniswap/v2-core/build/IUniswapV2Pair.json'
@@ -74,7 +75,7 @@ const getExplorerPrefix = (chainId: ChainId) => {
 }
 
 export function getExplorerLink(data: string, type: 'transaction' | 'address'): string {
-  const prefix = getExplorerPrefix(requiredChain.chainId)
+  const prefix = getExplorerPrefix(requiredChain.id)
 
   switch (type) {
     case 'transaction': {
@@ -116,62 +117,43 @@ export function calculateSlippageAmount(value: TokenAmount, slippage: number): [
   ]
 }
 
-// account is not optional
-export function getSigner(library: Web3Provider, account: string): JsonRpcSigner {
-  return library.getSigner(account).connectUnchecked()
-}
-
 // account is optional
-export function getProviderOrSigner(
-  library: Web3Provider,
-  account?: string,
-): Web3Provider | JsonRpcSigner {
-  return account ? getSigner(library, account) : library
-}
-
-// account is optional
-export function getContract(
-  address: string,
-  ABI: any,
-  library: Web3Provider,
-  account?: string,
-): Contract {
+export function getContract(address: string, ABI: any, signer: Signer): Contract {
   if (!isAddress(address) || address === AddressZero) {
     throw Error(`Invalid 'address' parameter '${address}'.`)
   }
 
-  return new Contract(address, ABI, getProviderOrSigner(library, account) as Provider)
+  return new Contract(address, ABI, signer)
 }
 
 // account is optional
-export function getEasyAuctionContract(library: Web3Provider, account?: string): EasyAuction {
+export function getEasyAuctionContract(signer: Signer): EasyAuction {
   return getContract(
-    EASY_AUCTION_NETWORKS[requiredChain.chainId as ChainId],
+    EASY_AUCTION_NETWORKS[requiredChain.id as ChainId],
     easyAuctionABI,
-    library,
-    account,
+    signer,
   ) as EasyAuction
 }
 
 // account is optional
-export function getExchangeContract(pairAddress: string, library: Web3Provider, account?: string) {
-  return getContract(pairAddress, IUniswapV2PairABI.abi, library, account)
+export function getExchangeContract(pairAddress: string, signer: Signer) {
+  return getContract(pairAddress, IUniswapV2PairABI.abi, signer)
 }
 
 // get token info and fall back to unknown if not available, except for the
 // decimals which falls back to null
 export async function getTokenInfoWithFallback(
   tokenAddress: string,
-  library: Web3Provider,
+  signer: Signer,
 ): Promise<{ name: string; symbol: string; decimals: null | number }> {
   if (!isAddress(tokenAddress)) {
     throw Error(`Invalid 'tokenAddress' parameter '${tokenAddress}'.`)
   }
 
-  const token = getContract(tokenAddress, ERC20_ABI, library)
+  const token = getContract(tokenAddress, ERC20_ABI, signer)
 
   const namePromise: Promise<string> = token.name().catch(() =>
-    getContract(tokenAddress, ERC20_BYTES32_ABI, library)
+    getContract(tokenAddress, ERC20_BYTES32_ABI, signer)
       .name()
       .then(parseBytes32String)
       .catch((e: Error) => {
@@ -181,7 +163,7 @@ export async function getTokenInfoWithFallback(
   )
 
   const symbolPromise: Promise<string> = token.symbol().catch(() => {
-    const contractBytes32 = getContract(tokenAddress, ERC20_BYTES32_ABI, library)
+    const contractBytes32 = getContract(tokenAddress, ERC20_BYTES32_ABI, signer)
     return contractBytes32
       .symbol()
       .then(parseBytes32String)

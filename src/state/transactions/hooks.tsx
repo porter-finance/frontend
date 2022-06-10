@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react'
 
 import { TransactionResponse } from '@ethersproject/providers'
+import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { useActiveWeb3React } from '../../hooks'
@@ -16,6 +17,7 @@ export function useTransactionAdder(): (
   response: TransactionResponse,
   customData?: { summary?: string; approval?: { tokenAddress: string; spender: string } },
 ) => void {
+  const addRecentTransaction = useAddRecentTransaction()
   const { account, chainId } = useActiveWeb3React()
   const dispatch = useDispatch<AppDispatch>()
 
@@ -34,6 +36,9 @@ export function useTransactionAdder(): (
       if (!hash) {
         throw Error('No transaction hash found.')
       }
+
+      addRecentTransaction({ hash, description: summary || '' })
+
       dispatch(
         addTransaction({
           hash,
@@ -44,7 +49,7 @@ export function useTransactionAdder(): (
         }),
       )
     },
-    [dispatch, chainId, account],
+    [dispatch, chainId, account, addRecentTransaction],
   )
 }
 
@@ -146,7 +151,7 @@ export function useHasPendingClaim(auctionId?: number, from?: string | null): bo
         } else {
           return (
             tx.from === from &&
-            `Claiming tokens auction-${auctionId}` === tx.summary &&
+            `Claim tokens from auction ${auctionId}` === tx.summary &&
             isTransactionRecent(tx)
           )
         }

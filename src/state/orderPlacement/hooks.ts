@@ -604,7 +604,7 @@ export function useOnChainAuctionData(auctionIdentifier: AuctionIdentifier): {
   const { auctionId } = auctionIdentifier
 
   const easyAuctionInstance: Maybe<Contract> = useContract(
-    EASY_AUCTION_NETWORKS[requiredChain.chainId as ChainId],
+    EASY_AUCTION_NETWORKS[requiredChain.id as ChainId],
     easyAuctionABI,
   )
 
