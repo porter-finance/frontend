@@ -3,7 +3,6 @@ import React, { useState } from 'react'
 import { DoubleArrowRightIcon } from '@radix-ui/react-icons'
 import { FormProvider, SubmitHandler, useForm, useFormContext } from 'react-hook-form'
 
-import BorrowTokenSelector from '../ProductCreate/BorrowTokenSelector'
 import CollateralTokenSelector from '../ProductCreate/CollateralTokenSelector'
 import { ActionButton } from '../auction/Claimer'
 import TooltipElement from '../common/Tooltip'
@@ -41,23 +40,19 @@ const StepOne = () => {
       <div className="w-full form-control">
         <label className="label">
           <TooltipElement
-            left={<span className="label-text">Issuer name</span>}
-            tip="Name of the issuing organization"
+            left={<span className="label-text">Bond to auction</span>}
+            tip="Bond you will be selling"
           />
         </label>
-        <input
-          className="w-full input input-bordered"
-          defaultValue=""
-          {...register('issuerName')}
-          placeholder="Insert issuer name"
-          type="text"
-        />
+
+        <CollateralTokenSelector />
       </div>
+
       <div className="w-full form-control">
         <label className="label">
           <TooltipElement
-            left={<span className="label-text">Amount of bonds to mint</span>}
-            tip="Number of bonds you will issue"
+            left={<span className="label-text">Number of bonds to auction</span>}
+            tip="Number of bonds you will be selling"
           />
         </label>
         <input
@@ -68,30 +63,65 @@ const StepOne = () => {
           {...register('amountOfBonds', { required: true })}
         />
       </div>
+
       <div className="w-full form-control">
         <label className="label">
           <TooltipElement
-            left={<span className="label-text">Borrow token</span>}
-            tip="Token that will be borrowed and used for repayment"
-          />
-        </label>
-        <BorrowTokenSelector />
-      </div>
-      <div className="w-full form-control">
-        <label className="label">
-          <TooltipElement
-            left={<span className="label-text">Bond maturity date</span>}
-            tip="Date the bond will need to be paid by"
+            left={<span className="label-text">Minimum sale price</span>}
+            tip="Minimum price you are willing to accept per bond"
           />
         </label>
         <input
           className="w-full input input-bordered"
-          name="maturityDate"
-          placeholder="DD/MM/YYYY"
-          type="date"
-          {...register('maturityDate', { required: true })}
+          name="minSalePrice"
+          placeholder="0"
+          type="number"
+          {...register('amountOfBonds', { required: true })}
         />
       </div>
+
+      <FieldRowWrapper className="py-1 my-4 space-y-3">
+        <div className="flex flex-row justify-between">
+          <div className="text-sm text-[#E0E0E0]">
+            <p>-</p>
+          </div>
+
+          <TooltipElement
+            left={<FieldRowLabelStyledText>Minimum funds raised</FieldRowLabelStyledText>}
+            tip="Minimum amount of funds you will raise assuming all bonds are sold. The funds raised will be higher if the final sale price is higher than the minimum price set"
+          />
+        </div>
+        <div className="flex flex-row justify-between">
+          <div className="text-sm text-[#E0E0E0]">
+            <p>-</p>
+          </div>
+
+          <TooltipElement
+            left={<FieldRowLabelStyledText>Amounted owed at maturity</FieldRowLabelStyledText>}
+            tip="Amount you will owe at maturity assuming all bonds are sold."
+          />
+        </div>
+        <div className="flex flex-row justify-between">
+          <div className="text-sm text-[#E0E0E0]">
+            <p>-</p>
+          </div>
+
+          <TooltipElement
+            left={<FieldRowLabelStyledText>Maximum interest owed</FieldRowLabelStyledText>}
+            tip="Maximum interest owed assuming all bonds are sold. The interest owed will be lower if the final sale price is higher than the minimum price set."
+          />
+        </div>
+        <div className="flex flex-row justify-between">
+          <div className="text-sm text-[#E0E0E0]">
+            <p>-</p>
+          </div>
+
+          <TooltipElement
+            left={<FieldRowLabelStyledText>Maximum APR</FieldRowLabelStyledText>}
+            tip="Maximum APR you will be required to pay. The settlement APR might be lower than your maximum set."
+          />
+        </div>
+      </FieldRowWrapper>
     </>
   )
 }
