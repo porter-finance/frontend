@@ -33,7 +33,7 @@ export const TokenDetails = ({ option }) => (
   </div>
 )
 
-const StepOne = () => {
+export const StepOne = () => {
   const { register } = useFormContext()
 
   return (
@@ -96,7 +96,7 @@ const StepOne = () => {
   )
 }
 
-const StepTwo = () => {
+export const StepTwo = () => {
   const { register } = useFormContext()
 
   return (
@@ -153,7 +153,7 @@ const StepTwo = () => {
   )
 }
 
-const StepThree = () => {
+export const StepThree = () => {
   const { register } = useFormContext()
 
   return (
@@ -210,7 +210,7 @@ const StepThree = () => {
   )
 }
 
-const confirmSteps = [
+export const confirmSteps = [
   {
     text: 'Approve UNI as collateral',
     tip: 'The collateral token needs to be approved so it can be transferred into the bond contract and used as collateral.',
@@ -219,7 +219,7 @@ const confirmSteps = [
 ]
 const steps = ['Setup product', 'Choose collateral', 'Set convertibility', 'Confirm creation']
 
-const SummaryItem = ({ text, tip, title }) => (
+export const SummaryItem = ({ text, tip, title }) => (
   <div className="pb-4 space-y-2 border-b border-[#2C2C2C]">
     <div className="text-base text-white">{text}</div>
     <div className="text-xs text-[#696969]">
