@@ -2,6 +2,7 @@ import React from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 
 import SelectOffering from '@/components/OfferingCreate/SelectOffering'
+import SetupOffering from '@/components/OfferingCreate/SetupOffering'
 import SelectProduct from '@/components/ProductCreate/SelectProduct'
 import SetupProduct from '@/components/ProductCreate/SetupProduct'
 import { BaseCard } from '@/components/pureStyledComponents/BaseCard'
@@ -23,8 +24,8 @@ const AppRoutes: React.FC = () => {
       <Route element={<SetupProduct />} path="/bonds/create/simple" />
 
       <Route element={<SelectOffering />} path="/offerings/create" />
-      <Route element={<SetupProduct />} path="/offerings/create/convertible" />
-      <Route element={<SetupProduct />} path="/offerings/create/simple" />
+      <Route element={<SetupOffering />} path="/offerings/create/auction" />
+      <Route element={<SetupOffering />} path="/offerings/create/otc" />
 
       <Route element={<BondDetail />} path="/bonds/:bondId" />
       <Route element={<Portfolio />} path="/portfolio" />
