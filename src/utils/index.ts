@@ -7,7 +7,7 @@ import { Contract } from '@ethersproject/contracts'
 import { parseBytes32String } from '@ethersproject/strings'
 import { JSBI, Percent, Token, TokenAmount, WETH } from '@josojo/honeyswap-sdk'
 import IUniswapV2PairABI from '@uniswap/v2-core/build/IUniswapV2Pair.json'
-import { chain } from 'wagmi'
+import { chain, etherscanBlockExplorers } from 'wagmi'
 
 import { EasyAuction } from '../../gen/types'
 import easyAuctionABI from '../constants/abis/easyAuction/easyAuction.json'
@@ -47,40 +47,22 @@ export const DEPOSIT_AND_PLACE_ORDER: { [key: number]: string } = {
 }
 
 type NetworkConfig = {
-  name: string
-  rpc: string
-  symbol: string | undefined
-  explorer?: string
-  etherscan_prefix?: string
+  etherscanUrl?: string
 }
 
 export const NETWORK_CONFIGS: { [key: number]: NetworkConfig } = {
   [chain.mainnet.id]: {
-    name: chain.mainnet.name,
-    symbol: chain.mainnet.nativeCurrency?.symbol,
-    rpc: chain.mainnet.rpcUrls.default.toString(),
-    etherscan_prefix: '',
+    etherscanUrl: etherscanBlockExplorers.mainnet.url,
   },
   [chain.rinkeby.id]: {
-    name: chain.rinkeby.name,
-    symbol: chain.rinkeby.nativeCurrency?.symbol,
-    rpc: chain.rinkeby.rpcUrls.default.toString(),
-    etherscan_prefix: 'rinkeby.',
+    etherscanUrl: etherscanBlockExplorers.rinkeby.url,
   },
   [chain.hardhat.id]: {
-    name: chain.hardhat.name,
-    symbol: chain.hardhat.nativeCurrency?.symbol,
-    rpc: chain.hardhat.rpcUrls.default.toString(),
-    etherscan_prefix: 'rinkeby.',
+    etherscanUrl: etherscanBlockExplorers.rinkeby.url,
   },
 }
 
-const getExplorerPrefix = (chainId: ChainId) => {
-  return (
-    NETWORK_CONFIGS[chainId].explorer ||
-    `https://${NETWORK_CONFIGS[chainId].etherscan_prefix || ''}etherscan.io`
-  )
-}
+const getExplorerPrefix = (chainId: ChainId) => NETWORK_CONFIGS[chainId].etherscanUrl
 
 export function getExplorerLink(data: string, type: 'transaction' | 'address'): string {
   const prefix = getExplorerPrefix(requiredChain.id)
