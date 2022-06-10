@@ -31,6 +31,7 @@ interface CreatePanelProps {
     icon: ReactElement
     title: string
     description: string
+    disabled?: boolean
   }[]
 }
 
@@ -49,7 +50,8 @@ export const CreatePanel = ({ panels }: CreatePanelProps) => {
               <p className="text-[#696969]">{panel.description}</p>
               <button
                 className="flex self-start mt-4 !text-2sm font-normal text-white normal-case bg-[#181A1C] !border-[#2A2B2C] btn btn-sm"
-                onClick={() => navigate(panel.url)}
+                disabled={panel.disabled}
+                onClick={() => !panel.disabled && navigate(panel.url)}
               >
                 Learn more
               </button>
