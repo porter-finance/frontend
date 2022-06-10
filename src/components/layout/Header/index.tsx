@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
@@ -9,6 +9,12 @@ import { Logo } from '../../common/Logo'
 import { Mainmenu } from '../../navigation/Mainmenu'
 import { Mobilemenu } from '../../navigation/Mobilemenu'
 import { InnerContainer } from '../../pureStyledComponents/InnerContainer'
+
+import { tokenLogosServiceApi } from '@/api'
+import { useTokenListActionHandlers } from '@/state/tokenList/hooks'
+import { getLogger } from '@/utils/logger'
+
+const logger = getLogger('Web3ReactManager')
 
 const Wrapper = styled.header`
   width: 100%;
@@ -70,6 +76,29 @@ export const Error = styled.span`
 
 export const Component = (props) => {
   const [mobileMenuVisible, setMobileMenuVisible] = useState(false)
+  const { onLoadTokenList } = useTokenListActionHandlers()
+
+  // Fetch token logos by chain ID
+  useEffect(() => {
+    let cancelled = false
+    const fetchTokenList = async (): Promise<void> => {
+      try {
+        const data = await tokenLogosServiceApi.getAllTokens()
+        if (!cancelled) {
+          onLoadTokenList(data)
+        }
+      } catch (error) {
+        logger.error('Error getting token list', error)
+        if (cancelled) return
+        onLoadTokenList(null)
+      }
+    }
+
+    fetchTokenList()
+    return (): void => {
+      cancelled = true
+    }
+  }, [onLoadTokenList])
 
   const mobileMenuToggle = () => {
     setMobileMenuVisible(!mobileMenuVisible)
