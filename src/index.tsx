@@ -6,7 +6,7 @@ import { RainbowKitProvider, Theme, darkTheme, getDefaultWallets } from '@rainbo
 import { merge } from 'lodash'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
-import { WagmiConfig, chain, configureChains, createClient } from 'wagmi'
+import { WagmiConfig, chain, configureChains, createClient, etherscanBlockExplorers } from 'wagmi'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
 
@@ -37,6 +37,23 @@ const wagmiClient = createClient({
   autoConnect: true,
   connectors,
   provider,
+})
+
+window.ethereum.request({
+  method: 'wallet_addEthereumChain',
+  params: [
+    {
+      chainId: chain.hardhat.id,
+      chainName: chain.hardhat.name,
+      nativeCurrency: {
+        name: chain.rinkeby.nativeCurrency?.name,
+        symbol: chain.rinkeby.nativeCurrency?.symbol,
+        decimals: chain.rinkeby.nativeCurrency?.decimals,
+      },
+      rpcUrls: [chain.hardhat.rpcUrls.default],
+      blockExplorerUrls: [etherscanBlockExplorers.rinkeby.url],
+    },
+  ],
 })
 
 const Updaters = () => {

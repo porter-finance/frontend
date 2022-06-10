@@ -7,12 +7,12 @@ import { Contract } from '@ethersproject/contracts'
 import { parseBytes32String } from '@ethersproject/strings'
 import { JSBI, Percent, Token, TokenAmount, WETH } from '@josojo/honeyswap-sdk'
 import IUniswapV2PairABI from '@uniswap/v2-core/build/IUniswapV2Pair.json'
+import { chain } from 'wagmi'
 
 import { EasyAuction } from '../../gen/types'
 import easyAuctionABI from '../constants/abis/easyAuction/easyAuction.json'
 import ERC20_ABI from '../constants/abis/erc20.json'
 import ERC20_BYTES32_ABI from '../constants/abis/erc20_bytes32.json'
-import { NETWORK_URL_MAINNET, NETWORK_URL_RINKEBY } from '../constants/config'
 import { getLogger } from '../utils/logger'
 
 import { requiredChain } from '@/connectors'
@@ -37,40 +37,40 @@ export enum ChainId {
 export const EASY_AUCTION_NETWORKS: { [key: number]: string } = {
   [ChainId.MAINNET]: '0x0b7fFc1f4AD541A4Ed16b40D8c37f0929158D101',
   [ChainId.RINKEBY]: '0xC5992c0e0A3267C7F75493D0F717201E26BE35f7',
-  [31337]: '0xC5992c0e0A3267C7F75493D0F717201E26BE35f7',
+  [chain.hardhat.id]: '0xC5992c0e0A3267C7F75493D0F717201E26BE35f7',
 }
 
 export const DEPOSIT_AND_PLACE_ORDER: { [key: number]: string } = {
   [ChainId.MAINNET]: '0x10D15DEA67f7C95e2F9Fe4eCC245a8862b9B5B96',
   [ChainId.RINKEBY]: '0x8624fbDf455D51B967ff40aaB4019281A855f008',
-  [31337]: '0x8624fbDf455D51B967ff40aaB4019281A855f008',
+  [chain.hardhat.id]: '0x8624fbDf455D51B967ff40aaB4019281A855f008',
 }
 
 type NetworkConfig = {
   name: string
   rpc: string
-  symbol: string
+  symbol: string | undefined
   explorer?: string
   etherscan_prefix?: string
 }
 
 export const NETWORK_CONFIGS: { [key: number]: NetworkConfig } = {
-  1: {
-    name: 'Mainnet',
-    symbol: 'ETH',
-    rpc: NETWORK_URL_MAINNET,
+  [chain.mainnet.id]: {
+    name: chain.mainnet.name,
+    symbol: chain.mainnet.nativeCurrency?.symbol,
+    rpc: chain.mainnet.rpcUrls.default.toString(),
     etherscan_prefix: '',
   },
-  4: {
-    name: 'Rinkeby',
-    symbol: 'ETH',
-    rpc: NETWORK_URL_RINKEBY,
+  [chain.rinkeby.id]: {
+    name: chain.rinkeby.name,
+    symbol: chain.rinkeby.nativeCurrency?.symbol,
+    rpc: chain.rinkeby.rpcUrls.default.toString(),
     etherscan_prefix: 'rinkeby.',
   },
-  31337: {
-    name: 'Hardhat',
-    symbol: 'ETH',
-    rpc: 'http://localhost:8545',
+  [chain.hardhat.id]: {
+    name: chain.hardhat.name,
+    symbol: chain.hardhat.nativeCurrency?.symbol,
+    rpc: chain.hardhat.rpcUrls.default.toString(),
     etherscan_prefix: 'rinkeby.',
   },
 }
