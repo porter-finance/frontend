@@ -57,7 +57,6 @@ const StepOne = () => {
         </label>
         <input
           className="w-full input input-bordered"
-          name="amountOfBonds"
           placeholder="0"
           type="number"
           {...register('amountOfBonds', { required: true })}
@@ -73,10 +72,9 @@ const StepOne = () => {
         </label>
         <input
           className="w-full input input-bordered"
-          name="minSalePrice"
           placeholder="0"
           type="number"
-          {...register('amountOfBonds', { required: true })}
+          {...register('minSalePrice', { required: true })}
         />
       </div>
 
@@ -134,122 +132,129 @@ const StepTwo = () => {
       <div className="w-full form-control">
         <label className="label">
           <TooltipElement
-            left={<span className="label-text">Collateral token</span>}
-            tip="Collateral token that will be used"
-          />
-        </label>
-
-        <CollateralTokenSelector />
-      </div>
-      <div className="w-full form-control">
-        <label className="label">
-          <TooltipElement
-            left={<span className="label-text">Amount of collateral tokens</span>}
-            tip="Amount of collateral tokens that will be used to secure the whole bond issuance"
+            left={<span className="label-text">Start date</span>}
+            tip="Date the auction will start."
           />
         </label>
         <input
           className="w-full input input-bordered"
-          name="amountOfCollateral"
-          placeholder="0"
-          type="number"
-          {...register('amountOfCollateral', { required: true })}
+          placeholder="DD/MM/YYYY"
+          type="date"
+          {...register('startDate', { required: true })}
         />
       </div>
-
-      <FieldRowWrapper className="py-1 my-4 space-y-3">
-        <div className="flex flex-row justify-between">
-          <div className="text-sm text-[#E0E0E0]">
-            <p>-</p>
-          </div>
-
+      <div className="w-full form-control">
+        <label className="label">
           <TooltipElement
-            left={<FieldRowLabelStyledText>Collateral value</FieldRowLabelStyledText>}
-            tip="Value of the collateral in the borrow token"
+            left={<span className="label-text">End date</span>}
+            tip="Date the auction will end."
           />
-        </div>
-        <div className="flex flex-row justify-between">
-          <div className="text-sm text-[#E0E0E0]">
-            <p>-</p>
-          </div>
-
-          <TooltipElement
-            left={<FieldRowLabelStyledText>Collateralization value</FieldRowLabelStyledText>}
-            tip="Value of the collateral divided by the amount owed at maturity"
-          />
-        </div>
-      </FieldRowWrapper>
+        </label>
+        <input
+          className="w-full input input-bordered"
+          placeholder="DD/MM/YYYY"
+          type="date"
+          {...register('endDate', { required: true })}
+        />
+      </div>
     </>
   )
 }
 
 const StepThree = () => {
   const { register } = useFormContext()
+  const [isPrivate, setIsPrivate] = useState(false)
 
   return (
     <>
       <div className="w-full form-control">
         <label className="label">
           <TooltipElement
-            left={<span className="label-text">Convertible token</span>}
-            tip="Token that each bond will be convertible into"
-          />
-        </label>
-        <div className="border border-[#2C2C2C]">
-          <TokenDetails option={{ name: 'DAI' }} />
-        </div>
-      </div>
-      <div className="w-full form-control">
-        <label className="label">
-          <TooltipElement
-            left={<span className="label-text">Amount of convertible tokens</span>}
-            tip="Number of tokens the whole bond issuance will be convertible into"
+            left={<span className="label-text">Minimum bid size (optional)</span>}
+            tip="Minimum order size allowed."
           />
         </label>
         <input
           className="w-full input input-bordered"
-          name="amountOfConvertible"
           placeholder="0"
           type="number"
+          {...register('minBidSize', { required: true })}
         />
       </div>
-
-      <FieldRowWrapper className="py-1 my-4 space-y-3">
-        <div className="flex flex-row justify-between">
-          <div className="text-sm text-[#E0E0E0]">
-            <p>-</p>
-          </div>
-
+      <div className="w-full form-control">
+        <label className="label">
           <TooltipElement
-            left={<FieldRowLabelStyledText>Convertible token value</FieldRowLabelStyledText>}
-            tip="Current value of all the convertible tokens for the bond issuance"
+            left={<span className="label-text">Last date to cancel bids (optional)</span>}
+            tip="Last date bids can be cancelled.."
+          />
+        </label>
+        <input
+          className="w-full input input-bordered"
+          placeholder="DD/MM/YYYY"
+          type="date"
+          {...register('cancellationDate', { required: true })}
+        />
+      </div>
+      <div className="w-full form-control">
+        <label className="label">
+          <TooltipElement
+            left={<span className="label-text">Accessibility</span>}
+            tip='If "public", anyone will be able to bid on the auction. If "private", only approved wallets will be able to bid.'
+          />
+        </label>
+
+        <div className="flex items-center">
+          <div className="btn-group">
+            <button
+              className={`btn ${!isPrivate && 'btn-active'} w-[85px]`}
+              onClick={() => isPrivate && setIsPrivate(false)}
+            >
+              Public
+            </button>
+            <button
+              className={`btn ${isPrivate && 'btn-active'} w-[85px]`}
+              onClick={() => !isPrivate && setIsPrivate(true)}
+            >
+              Private
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {isPrivate && (
+        <div className="w-full form-control">
+          <label className="label">
+            <TooltipElement
+              left={<span className="label-text">Access signer wallet address</span>}
+              tip="The wallet that will be used to give access to auction participants. This needs to be an EOA that is not used to custody funds. Using an EOA that custodies funds will put those funds at risk."
+            />
+          </label>
+          <input
+            className="w-full input input-bordered"
+            defaultValue=""
+            placeholder="0x0"
+            type="text"
+            {...register('signerAddress')}
           />
         </div>
-        <div className="flex flex-row justify-between">
-          <div className="text-sm text-[#E0E0E0]">
-            <p>-</p>
-          </div>
-
-          <TooltipElement
-            left={<FieldRowLabelStyledText>Strike price</FieldRowLabelStyledText>}
-            tip="Price at which the value of the convertible tokens equals the amount owed at maturity"
-          />
-        </div>
-      </FieldRowWrapper>
+      )}
     </>
   )
 }
 
 const confirmSteps = [
   {
-    text: 'Approve UNI as collateral',
-    tip: 'The collateral token needs to be approved so it can be transferred into the bond contract and used as collateral.',
+    text: 'Approve UNI CONVERT for sale',
+    tip: 'The bonds need to be approved so they can be offered for sale.',
   },
-  { text: 'Mint Uniswap Convertible Bonds', tip: 'Mint the bonds to the connected wallet.' },
+  {
+    text: 'Schedule auction',
+    tip: 'Transfer your bonds into the auction contract and schedule the auction.',
+  },
 ]
 const steps = ['Setup auction', 'Schedule auction', 'Bidding config', 'Confirm creation']
 
-const SummaryItem = ({ text, tip, title }) => (
+const SummaryItem = ({ text, tip = null, title }) => (
   <div className="pb-4 space-y-2 border-b border-[#2C2C2C]">
     <div className="text-base text-white">{text}</div>
     <div className="text-xs text-[#696969]">
@@ -258,32 +263,50 @@ const SummaryItem = ({ text, tip, title }) => (
   </div>
 )
 
-const Summary = ({ currentStep }) => (
-  <div className="overflow-visible w-[425px] card">
-    <div className="card-body">
-      <h1 className="pb-4 !text-xs uppercase border-b border-[#2C2C2C] card-title">Summary</h1>
-      <div className="space-y-4">
-        <SummaryItem text="Uniswap Convertible Bond" tip="Name" title="Name" />
-        <SummaryItem text="400,000" tip="Supply" title="Supply" />
-        <SummaryItem text="400,000 USDC" tip="Owed at maturity" title="Owed at maturity" />
-        <SummaryItem text="07/01/2022" tip="Maturity date" title="Maturity date" />
+const Summary = ({ currentStep }) => {
+  if (currentStep === 1) {
+    return (
+      <div className="overflow-visible w-[425px] card">
+        <div className="card-body">
+          <h1 className="pb-4 !text-xs uppercase border-b border-[#2C2C2C] card-title">
+            Length of offering
+          </h1>
+          <div className="space-y-4">
+            <SummaryItem text="3 days" title="21/04/2022 - 24/04/2022" />
+          </div>
+        </div>
+      </div>
+    )
+  }
 
-        {currentStep >= 2 && (
-          <>
-            <SummaryItem text="400,000 UNI" tip="Collateral tokens" title="Collateral tokens" />
-            <SummaryItem text="1,000%" tip="Collateral tokens" title="Collateral tokens" />
-          </>
-        )}
-        {currentStep >= 3 && (
-          <>
-            <SummaryItem text="10,000 UNI" tip="Convertible tokens" title="Collateral tokens" />
-            <SummaryItem text="40 USDC/UNI" tip="Strike price" title="Strike price" />
-          </>
-        )}
+  if (currentStep < 3) return null
+
+  return (
+    <div className="overflow-visible w-[425px] card">
+      <div className="card-body">
+        <h1 className="pb-4 !text-xs uppercase border-b border-[#2C2C2C] card-title">Summary</h1>
+        <div className="space-y-4">
+          <SummaryItem text="Uniswap Convertible Bond" tip="Bond for sale" title="Bond for sale" />
+          <SummaryItem
+            text="1,000,000 UNI CONVERT"
+            tip="Number of bonds to auction"
+            title="Number of bonds to auction"
+          />
+          <SummaryItem text="0.975 USDC" tip="Owed at maturity" title="Minimum sales price" />
+          <SummaryItem text="07/01/2022" tip="Start date" title="Start date" />
+          <SummaryItem text="07/01/2022" tip="End date" title="End date" />
+          <SummaryItem text="1,000 USDC" tip="Minimum bid size" title="Minimum bid size" />
+          <SummaryItem
+            text="07/01/2022"
+            tip="Last date to cancel bids"
+            title="Last date to cancel bids"
+          />
+          <SummaryItem text="Public" tip="Accessibility" title="Accessibility" />
+        </div>
       </div>
     </div>
-  </div>
-)
+  )
+}
 
 type Inputs = {
   issuerName: string
@@ -310,7 +333,7 @@ const SetupOffering = () => {
           <div className="overflow-visible w-[326px] card">
             <div className="card-body">
               <div className="flex items-center pb-4 space-x-4 border-b border-[#2C2C2C]">
-                <DoubleArrowRightIcon className="p-1 w-6 h-6 bg-[#532DBE] rounded-md border border-[#ffffff22]" />
+                <DoubleArrowRightIcon className="p-1 w-6 h-6 bg-[#404EED] rounded-md border border-[#ffffff22]" />
                 <span className="text-xs text-white uppercase">Auction Creation</span>
               </div>
 
@@ -318,7 +341,7 @@ const SetupOffering = () => {
                 {steps.map((step, i) => (
                   <li
                     className={`step ${
-                      i <= currentStep ? 'step-primary hover:underline hover:cursor-pointer' : ''
+                      i <= currentStep ? 'step-secondary hover:underline hover:cursor-pointer' : ''
                     }`}
                     key={i}
                     onClick={() => {
@@ -339,7 +362,7 @@ const SetupOffering = () => {
 
                 {currentStep < 3 && (
                   <ActionButton
-                    color="purple"
+                    color="blue"
                     onClick={() => setCurrentStep(currentStep + 1)}
                     type="submit"
                   >
@@ -351,7 +374,7 @@ const SetupOffering = () => {
                     <ul className="steps steps-vertical">
                       {confirmSteps.map((step, i) => (
                         <li
-                          className={`step ${i <= currentConfirmStep ? 'step-primary' : ''}`}
+                          className={`step ${i <= currentConfirmStep ? 'step-secondary' : ''}`}
                           key={i}
                         >
                           <TooltipElement left={step.text} tip={step.tip} />
@@ -360,12 +383,12 @@ const SetupOffering = () => {
                     </ul>
 
                     <ActionButton
-                      color="purple"
+                      color="blue"
                       onClick={() => {
                         console.log('click')
                       }}
                     >
-                      Approve UNI as collateral
+                      Approve UNI CONVERT for sale
                     </ActionButton>
                   </>
                 )}
