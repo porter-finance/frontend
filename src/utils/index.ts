@@ -58,7 +58,7 @@ export const NETWORK_CONFIGS: { [key: number]: NetworkConfig } = {
     etherscanUrl: etherscanBlockExplorers.rinkeby.url,
   },
   [chain.hardhat.id]: {
-    etherscanUrl: etherscanBlockExplorers.rinkeby.url,
+    etherscanUrl: 'https://app.tryethernal.com',
   },
 }
 
