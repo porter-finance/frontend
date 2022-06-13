@@ -35,12 +35,15 @@ const { connectors } = getDefaultWallets({
   chains,
 })
 
-const safeConnector = new GnosisConnector({ chains })
-const connectors2 = (connectorArgs: ConnectorArgs) => [safeConnector, ...connectors(connectorArgs)]
-
+// Initialize the wagmi client with the GnosisConnector along with the default
+// connectors. This is to support the Gnosis Safe website. It does not show up
+// as a connector in the list, but that's OK as you must be on the site to work
 const wagmiClient = createClient({
   autoConnect: true,
-  connectors: connectors2,
+  connectors: (connectorArgs: ConnectorArgs) => [
+    new GnosisConnector({ chains }),
+    ...connectors(connectorArgs),
+  ],
   provider,
 })
 
