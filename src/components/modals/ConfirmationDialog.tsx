@@ -1,6 +1,7 @@
 import React, { ReactElement, useEffect, useState } from 'react'
 
 import { useApolloClient } from '@apollo/client'
+import { useWaitForTransaction } from 'wagmi'
 
 import { ActionButton, GhostActionLink } from '../auction/Claimer'
 import { TokenInfo } from '../bond/BondAction'
@@ -10,7 +11,6 @@ import Modal, { DialogTitle } from './common/Modal'
 import { ReactComponent as GreenCheckIcon } from '@/assets/svg/greencheck.svg'
 import { ReactComponent as PurplePorterIcon } from '@/assets/svg/porter-purple.svg'
 import { ReactComponent as PorterIcon } from '@/assets/svg/porter.svg'
-import { useActiveWeb3React } from '@/hooks'
 import { useAllTransactions } from '@/state/transactions/hooks'
 import { getExplorerLink } from '@/utils'
 
@@ -167,10 +167,10 @@ const BodyPanel = ({ after, before, color = 'blue', during }) => (
   </>
 )
 
-const GhostTransactionLink = ({ chainId, hash }) => (
+const GhostTransactionLink = ({ hash }) => (
   <GhostActionLink
     className="group space-x-3"
-    href={getExplorerLink(chainId, hash, 'transaction')}
+    href={getExplorerLink(hash, 'transaction')}
     target="_blank"
   >
     <span>View eth transaction</span>
@@ -210,33 +210,28 @@ const ConfirmationDialog = ({
   onOpenChange: (open: boolean) => void
   open: boolean
 }) => {
-  const { chainId } = useActiveWeb3React()
   const allTransactions = useAllTransactions()
   const apolloClient = useApolloClient()
 
-  const [transactionError, setTransactionError] = useState(false)
+  const [transactionError, setTransactionError] = useState('')
   const [transactionPendingWalletConfirm, setTransactionPendingWalletConfirm] = useState(false)
   const [transactionComplete, setTransactionComplete] = useState(false)
   const [showTransactionCreated, setShowTransactionCreated] = useState('')
+  const { error, isError, isSuccess } = useWaitForTransaction({
+    hash: showTransactionCreated,
+  })
 
-  // get the latest transaction that created the bond
-  // TODO: so bad, should wagmi/usedapp instead
   useEffect(() => {
-    if (!allTransactions) return
-    Object.keys(allTransactions)
-      .reverse()
-      .some((hash) => {
-        if (hash !== showTransactionCreated) return false
-        const tx = allTransactions[hash]
-        // the first one is always the new order
-        if (tx.receipt?.logs) {
-          setTransactionComplete(true)
-          if (onFinished) onFinished()
-        }
-
-        return true
+    if (isSuccess) {
+      apolloClient.refetchQueries({
+        include: 'all',
       })
-  }, [showTransactionCreated, onFinished, allTransactions, apolloClient])
+      setTransactionComplete(true)
+      if (onFinished) onFinished()
+    } else if (isError) {
+      setTransactionError(error.message)
+    }
+  }, [isSuccess, onFinished, apolloClient, isError, error])
 
   const waitingTransactionToComplete = showTransactionCreated && !transactionComplete
 
@@ -247,7 +242,7 @@ const ConfirmationDialog = ({
     // Prevent changing state during transition
     setTimeout(() => {
       if (transactionError) {
-        setTransactionError(null)
+        setTransactionError('')
       }
 
       if (transactionComplete) {
@@ -313,9 +308,7 @@ const ConfirmationDialog = ({
 
           {(showTransactionCreated || transactionComplete) && (
             <div className="flex flex-col justify-center items-center mt-20 space-y-4">
-              {showTransactionCreated && (
-                <GhostTransactionLink chainId={chainId} hash={showTransactionCreated} />
-              )}
+              {showTransactionCreated && <GhostTransactionLink hash={showTransactionCreated} />}
 
               {transactionComplete && (
                 <ActionButton aria-label="Done" color={actionColor} onClick={onDismiss}>
@@ -330,7 +323,7 @@ const ConfirmationDialog = ({
       {transactionError && (
         <OopsWarning
           actionClick={() => {
-            setTransactionError(null)
+            setTransactionError('')
           }}
           actionColor={actionColor}
           message={transactionError}

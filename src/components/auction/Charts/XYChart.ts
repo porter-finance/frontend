@@ -4,7 +4,7 @@ import am4themesSpiritedaway from '@amcharts/amcharts4/themes/spiritedaway'
 import { Token } from '@josojo/honeyswap-sdk'
 import { round } from 'lodash'
 
-import { ChainId, getTokenDisplay } from '../../../utils'
+import { getTokenDisplay } from '../../../utils'
 import { calculateInterestRate } from '../../form/InterestRateInputPanel'
 import { tooltipRender } from './BondChart'
 
@@ -189,7 +189,6 @@ interface DrawInformation {
   chart: am4charts.XYChart
   baseToken: Token
   quoteToken: Token
-  chainId: ChainId
   auctionEndDate: Maybe<number>
   maturityDate: Maybe<number>
 }

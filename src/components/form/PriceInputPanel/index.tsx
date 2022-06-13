@@ -32,7 +32,6 @@ export const FieldRowLabelStyled = styled(FieldRowLabel)`
 interface Props {
   auctionId?: number
   account: string
-  chainId: number
   disabled?: boolean
   info?: FieldRowInfoProps
   onUserPriceInput: (val: string) => void

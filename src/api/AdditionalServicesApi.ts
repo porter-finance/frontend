@@ -1,10 +1,10 @@
 import { BigNumber } from '@ethersproject/bignumber'
 
-import { requiredChain } from '../connectors'
 import { Order, decodeOrder, encodeOrder } from '../hooks/Order'
 import { AuctionInfoDetail } from '../hooks/useAuctionDetails'
 import { getLogger } from '../utils/logger'
 
+import { requiredChain } from '@/connectors'
 import { Auction } from '@/generated/graphql'
 
 const logger = getLogger('AdditionalServicesApi')
@@ -104,7 +104,7 @@ function getAdditionalServiceUrl(baseUrl: string): string {
 }
 
 export type AdditionalServicesApiParams = AdditionalServicesEndpoint[]
-const networkId = requiredChain.chainId
+const networkId = requiredChain.id
 
 export class AdditionalServicesApiImpl implements AdditionalServicesApi {
   private urlsByNetwork: { [networkId: number]: string } = {}

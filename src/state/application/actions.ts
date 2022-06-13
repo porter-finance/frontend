@@ -26,6 +26,5 @@ export const updateBlockNumber = createAction<{
   blockNumber: number
 }>('updateBlockNumber')
 export const toggleWalletModal = createAction<void>('toggleWalletModal')
-export const closeWalletModal = createAction<void>('closeWalletModal')
 export const addPopup = createAction<{ content: PopupContent }>('addPopup')
 export const removePopup = createAction<{ key: string }>('removePopup')

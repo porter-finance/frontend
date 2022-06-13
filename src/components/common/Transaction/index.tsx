@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { useActiveWeb3React } from '../../../hooks'
 import { useAllTransactions } from '../../../state/transactions/hooks'
 import { ExternalLink } from '../../../theme'
 import { getExplorerLink } from '../../../utils'
@@ -57,7 +56,6 @@ const Alert = styled(AlertIcon)`
 `
 
 const Transaction = ({ hash }: { hash: string }) => {
-  const { chainId } = useActiveWeb3React()
   const allTransactions = useAllTransactions()
 
   const summary = allTransactions?.[hash]?.summary
@@ -68,7 +66,7 @@ const Transaction = ({ hash }: { hash: string }) => {
       typeof allTransactions[hash].receipt.status === 'undefined')
 
   return (
-    <Wrapper href={getExplorerLink(chainId, hash, 'transaction')}>
+    <Wrapper href={getExplorerLink(hash, 'transaction')}>
       <IconWrapper>
         {pending ? <Spinner size={SpinnerSize.small} /> : success ? <OrderPlaced /> : <Alert />}
       </IconWrapper>

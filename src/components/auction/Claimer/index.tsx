@@ -21,6 +21,10 @@ import { FieldRowLabelStyled } from '../../form/PriceInputPanel'
 import ConfirmationDialog from '../../modals/ConfirmationDialog'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 
+import WarningModal from '@/components/modals/WarningModal'
+import { requiredChain } from '@/connectors'
+import { getChainName } from '@/utils/tools'
+
 const Wrapper = styled(BaseCard)`
   max-width: 100%;
   min-width: 100%;
@@ -91,6 +95,7 @@ const Claimer: React.FC<Props> = (props) => {
   const { account, chainId: Web3ChainId } = useActiveWeb3React()
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const participatingBids = useParticipatingAuctionBids()
+  const [showWarningWrongChainId, setShowWarningWrongChainId] = useState<boolean>(false)
 
   const [claimStatus, claimOrderCallback] = useClaimOrderCallback(auctionIdentifier)
   const { error, isLoading: isDerivedClaimInfoLoading } = useDerivedClaimInfo(
@@ -113,13 +118,8 @@ const Claimer: React.FC<Props> = (props) => {
   )
 
   const isClaimButtonDisabled = useMemo(
-    () =>
-      !isValid ||
-      showConfirm ||
-      isLoading ||
-      claimStatus != ClaimState.NOT_CLAIMED ||
-      chainId !== Web3ChainId,
-    [isValid, showConfirm, isLoading, claimStatus, chainId, Web3ChainId],
+    () => !isValid || showConfirm || isLoading || claimStatus != ClaimState.NOT_CLAIMED,
+    [isValid, showConfirm, isLoading, claimStatus],
   )
 
   const claimStatusString =
@@ -193,7 +193,11 @@ const Claimer: React.FC<Props> = (props) => {
             <ActionButton
               disabled={isClaimButtonDisabled}
               onClick={() => {
-                setShowConfirm(true)
+                if (Web3ChainId !== requiredChain.id) {
+                  setShowWarningWrongChainId(true)
+                } else {
+                  setShowConfirm(true)
+                }
               }}
             >
               Review claim
@@ -247,6 +251,15 @@ const Claimer: React.FC<Props> = (props) => {
             pendingText="Confirm claiming in wallet"
             placeOrder={claimOrderCallback}
             title="Review claim"
+          />
+          <WarningModal
+            content={`In order to place this claim, please connect to the ${getChainName(
+              requiredChain.id,
+            )} network`}
+            isOpen={showWarningWrongChainId}
+            onDismiss={() => {
+              setShowWarningWrongChainId(false)
+            }}
           />
         </Wrapper>
       </div>
