@@ -3,6 +3,7 @@ import { BrowserRouter } from 'react-router-dom'
 
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { RainbowKitProvider, Theme, darkTheme, getDefaultWallets } from '@rainbow-me/rainbowkit'
+import { ConnectorArgs } from '@rainbow-me/rainbowkit/dist/wallets/Wallet'
 import { merge } from 'lodash'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
@@ -22,6 +23,7 @@ import ThemeProvider from './theme'
 import { GlobalStyle } from './theme/globalStyle'
 import './index.css'
 import '@rainbow-me/rainbowkit/styles.css'
+import { GnosisConnector } from './utils/gnosisConnector'
 
 const { chains, provider } = configureChains(
   [!isRinkeby ? chain.mainnet : chain.rinkeby],
@@ -33,9 +35,12 @@ const { connectors } = getDefaultWallets({
   chains,
 })
 
+const safeConnector = new GnosisConnector({ chains })
+const connectors2 = (connectorArgs: ConnectorArgs) => [safeConnector, ...connectors(connectorArgs)]
+
 const wagmiClient = createClient({
   autoConnect: true,
-  connectors,
+  connectors: connectors2,
   provider,
 })
 
