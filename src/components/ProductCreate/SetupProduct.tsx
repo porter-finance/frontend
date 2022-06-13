@@ -11,27 +11,39 @@ import CollateralTokenSelector from './CollateralTokenSelector'
 
 import { ReactComponent as UnicornSvg } from '@/assets/svg/simple-bond.svg'
 
-export const TokenDetails = ({ option }) => (
-  <div className="p-4 space-y-4 w-full text-xs text-white rounded-md form-control">
-    <div className="flex justify-between w-full">
-      <span className="flex items-center space-x-2">
-        {option.icon || <UnicornSvg height={20} width={20} />}
-        <span>{option.name}</span>
-      </span>
-      <span>
-        <span className="text-[#696969]">Price:</span> 10.00 USDC
-      </span>
+export const TokenDetails = ({ option }) => {
+  if (!option) {
+    return (
+      <div className="p-4 space-y-4 w-full text-xs text-white rounded-md form-control">
+        <div className="flex justify-between w-full">
+          <span>Select an option</span>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="p-4 space-y-4 w-full text-xs text-white rounded-md form-control">
+      <div className="flex justify-between w-full">
+        <span className="flex items-center space-x-2">
+          {option.icon || <UnicornSvg height={20} width={20} />}
+          <span>{option.name}</span>
+        </span>
+        <span>
+          <span className="text-[#696969]">Price:</span> 10.00 USDC
+        </span>
+      </div>
+      <div className="flex justify-between w-full">
+        <span>
+          <span className="text-[#696969]">Balance:</span> 1,000,000
+        </span>
+        <span>
+          <span className="text-[#696969]">Value:</span> 10,000,000 USDC
+        </span>
+      </div>
     </div>
-    <div className="flex justify-between w-full">
-      <span>
-        <span className="text-[#696969]">Balance:</span> 1,000,000
-      </span>
-      <span>
-        <span className="text-[#696969]">Value:</span> 10,000,000 USDC
-      </span>
-    </div>
-  </div>
-)
+  )
+}
 
 export const StepOne = () => {
   const { register } = useFormContext()

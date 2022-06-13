@@ -112,7 +112,7 @@ const SetupSimpleProduct = () => {
 
   const methods = useForm<Inputs>()
   const {
-    formState: { errors },
+    formState: { isValid },
     handleSubmit,
   } = methods
   const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data)
@@ -156,6 +156,7 @@ const SetupSimpleProduct = () => {
                 {currentStep < steps.length - 1 && (
                   <ActionButton
                     color="purple"
+                    disabled={!isValid}
                     onClick={() => setCurrentStep(currentStep + 1)}
                     type="submit"
                   >

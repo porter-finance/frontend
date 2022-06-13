@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { DoubleArrowRightIcon } from '@radix-ui/react-icons'
 import { FormProvider, SubmitHandler, useForm, useFormContext } from 'react-hook-form'
 
-import CollateralTokenSelector from '../ProductCreate/CollateralTokenSelector'
+import { BondSelector } from '../ProductCreate/CollateralTokenSelector'
 import { ActionButton } from '../auction/Claimer'
 import TooltipElement from '../common/Tooltip'
 import { FieldRowLabelStyledText, FieldRowWrapper } from '../form/InterestRateInputPanel'
@@ -45,7 +45,7 @@ const StepOne = () => {
           />
         </label>
 
-        <CollateralTokenSelector />
+        <BondSelector />
       </div>
 
       <div className="w-full form-control">
@@ -319,9 +319,10 @@ const SetupOffering = () => {
 
   const methods = useForm<Inputs>()
   const {
-    formState: { errors },
+    formState: { isDirty, isValid },
     handleSubmit,
   } = methods
+
   const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data)
 
   const midComponents = [<StepOne key={0} />, <StepTwo key={1} />, <StepThree key={2} />]
@@ -363,6 +364,7 @@ const SetupOffering = () => {
                 {currentStep < 3 && (
                   <ActionButton
                     color="blue"
+                    disabled={!isValid || !isDirty}
                     onClick={() => setCurrentStep(currentStep + 1)}
                     type="submit"
                   >

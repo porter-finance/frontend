@@ -1,8 +1,8 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment } from 'react'
 
 import { Listbox, Transition } from '@headlessui/react'
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
-import { useFormContext } from 'react-hook-form'
+import { useFormContext, useWatch } from 'react-hook-form'
 
 import { ReactComponent as UnicornSvg } from '@/assets/svg/simple-bond.svg'
 
@@ -97,13 +97,23 @@ const BorrowToken = ({ option }) => (
   </span>
 )
 
-export const Selector = ({ OptionEl, name, onChange, options, selected }) => {
-  // We assume options will have "name" key
-  const { register } = useFormContext()
+export const Selector = ({ OptionEl, name, options }) => {
+  // We assume `options` will have "name" key
+  const { register, setValue } = useFormContext()
+  const fieldValue = useWatch({ name })
+  const selected = options.find((o) => o.name === fieldValue)
+
+  const setList = (e) => {
+    setValue(name, e?.name, {
+      shouldValidate: true,
+      shouldDirty: true,
+      shouldTouch: true,
+    })
+  }
 
   return (
-    <Listbox onChange={onChange} value={selected}>
-      <input className="hidden" readOnly value={selected?.name} {...register(name)} />
+    <Listbox onChange={setList} value={selected}>
+      <input readOnly {...register(name, { required: true })} defaultValue={selected?.name} />
       <div className="relative mt-1">
         <Listbox.Button className="relative pr-4 w-full text-sm text-left text-white bg-transparent rounded-lg border border-[#2A2B2C] shadow-md cursor-pointer">
           <OptionEl option={selected} />
@@ -148,21 +158,7 @@ export const Selector = ({ OptionEl, name, onChange, options, selected }) => {
 }
 
 const BorrowTokenSelector = () => {
-  const [selected, setSelected] = useState(tokens[0])
-  const setList = (e) => {
-    // Can't just use form onchange handler, even with a hidden input field that changes
-    setSelected(e)
-  }
-
-  return (
-    <Selector
-      OptionEl={BorrowToken}
-      name="borrowToken"
-      onChange={setList}
-      options={tokens}
-      selected={selected}
-    />
-  )
+  return <Selector OptionEl={BorrowToken} name="borrowToken" options={tokens} />
 }
 
 export default BorrowTokenSelector

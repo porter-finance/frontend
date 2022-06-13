@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 import { Selector } from './BorrowTokenSelector'
 import { TokenDetails } from './SetupProduct'
@@ -41,21 +41,11 @@ const tokens = [
 ]
 
 const CollateralTokenSelector = () => {
-  const [selected, setSelected] = useState(tokens[0])
-  const setList = (e) => {
-    // Can't just use form onchange handler, even with a hidden input field that changes
-    setSelected(e)
-  }
+  return <Selector OptionEl={TokenDetails} name="collateralToken" options={tokens} />
+}
 
-  return (
-    <Selector
-      OptionEl={TokenDetails}
-      name="collateralToken"
-      onChange={setList}
-      options={tokens}
-      selected={selected}
-    />
-  )
+export const BondSelector = () => {
+  return <Selector OptionEl={TokenDetails} name="bondToAuction" options={tokens} />
 }
 
 export default CollateralTokenSelector
