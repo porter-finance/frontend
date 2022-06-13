@@ -110,11 +110,12 @@ const SetupSimpleProduct = () => {
   const [currentStep, setCurrentStep] = useState(0)
   const [currentConfirmStep, setCurrentConfirmStep] = useState(0)
 
-  const methods = useForm<Inputs>()
+  const methods = useForm<Inputs>({ mode: 'onChange' })
   const {
     formState: { isValid },
     handleSubmit,
   } = methods
+
   const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data)
 
   const midComponents = [<StepOne key={0} />, <StepTwo key={1} />]

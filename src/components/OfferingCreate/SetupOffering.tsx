@@ -317,7 +317,7 @@ const SetupOffering = () => {
   const [currentStep, setCurrentStep] = useState(0)
   const [currentConfirmStep, setCurrentConfirmStep] = useState(0)
 
-  const methods = useForm<Inputs>()
+  const methods = useForm<Inputs>({ mode: 'onChange' })
   const {
     formState: { isDirty, isValid },
     handleSubmit,

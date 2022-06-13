@@ -277,15 +277,15 @@ const SetupProduct = () => {
   const [currentStep, setCurrentStep] = useState(0)
   const [currentConfirmStep, setCurrentConfirmStep] = useState(0)
 
-  const methods = useForm<Inputs>()
-  const {
-    formState: { isValid },
-    handleSubmit,
-  } = methods
+  const methods = useForm<Inputs>({ mode: 'onChange' })
+  const { formState, handleSubmit } = methods
   const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data)
-
+  console.log(formState)
+  console.log(formState.errors)
   const midComponents = [<StepOne key={0} />, <StepTwo key={1} />, <StepThree key={2} />]
+  const { isValid } = methods.formState
 
+  console.log(isValid)
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -323,7 +323,7 @@ const SetupProduct = () => {
                 {currentStep < 3 && (
                   <ActionButton
                     color="purple"
-                    disabled={!isValid}
+                    disabled={!formState.isValid}
                     onClick={() => setCurrentStep(currentStep + 1)}
                     type="submit"
                   >
