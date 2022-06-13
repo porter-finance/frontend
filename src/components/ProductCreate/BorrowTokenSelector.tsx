@@ -93,7 +93,7 @@ const tokens = [
 const BorrowToken = ({ option }) => (
   <span className="flex items-center py-3 px-4 space-x-4 text-xs">
     {option?.icon || <UnicornSvg height={20} width={20} />}
-    <span>{option.name}</span>
+    <span>{option?.name}</span>
   </span>
 )
 
@@ -101,7 +101,7 @@ export const Selector = ({ OptionEl, name, options }) => {
   // We assume `options` will have "name" key
   const { register, setValue } = useFormContext()
   const fieldValue = useWatch({ name })
-  const selected = options.find((o) => o.name === fieldValue)
+  const selected = options.find((o) => o?.name === fieldValue) || options?.[0]
 
   const setList = (e) => {
     setValue(name, e?.name, {
