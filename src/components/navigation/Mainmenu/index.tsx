@@ -49,26 +49,24 @@ export const Mainmenu: React.FC = (props) => {
     <Wrapper {...props}>
       <ul className="menu menu-horizontal">
         {navItems.map((item, index) => (
-          <>
-            <li key={index}>
-              <NavItem
-                className={({ isActive }) => 'nav-link ' + (isActive && 'active')}
-                to={item.url}
-              >
-                {item.title}
-                {item.children && <CaretDownIcon />}
-              </NavItem>
-              {item.children && (
-                <ul className="z-10">
-                  {item.children.map((link, linkI) => (
-                    <li key={linkI}>
-                      <NavItem to={link.url}>{link.title}</NavItem>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </li>
-          </>
+          <li key={item.title + index.toString()}>
+            <NavItem
+              className={({ isActive }) => 'nav-link ' + (isActive && 'active')}
+              to={item.url}
+            >
+              {item.title}
+              {item.children && <CaretDownIcon />}
+            </NavItem>
+            {item.children && (
+              <ul className="z-10">
+                {item.children.map((link, linkI) => (
+                  <li key={link.title + linkI.toString()}>
+                    <NavItem to={link.url}>{link.title}</NavItem>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
         ))}
       </ul>
     </Wrapper>
