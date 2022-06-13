@@ -113,7 +113,12 @@ export const Selector = ({ OptionEl, name, options }) => {
 
   return (
     <Listbox onChange={setList} value={selected}>
-      <input readOnly {...register(name, { required: true })} defaultValue={selected?.name} />
+      <input
+        className="hidden"
+        readOnly
+        {...register(name, { required: true })}
+        defaultValue={selected?.name}
+      />
       <div className="relative mt-1">
         <Listbox.Button className="relative pr-4 w-full text-sm text-left text-white bg-transparent rounded-lg border border-[#2A2B2C] shadow-md cursor-pointer">
           <OptionEl option={selected} />
