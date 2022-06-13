@@ -21,10 +21,8 @@ export class GnosisConnector extends Connector<SafeAppProvider, SafeConnectOptio
 
   constructor(config: { chains?: Chain[]; options?: SafeConnectOptions }) {
     super({ ...config, options: config?.options })
-    console.log('hi')
     this.isSafeApp()
       .then((isSafeApp) => {
-        console.log(isSafeApp)
         if (isSafeApp) {
           this.ready = true
           // Auto connect on safe environment
@@ -47,7 +45,6 @@ export class GnosisConnector extends Connector<SafeAppProvider, SafeConnectOptio
     }
 
     const provider = await this.getProvider()
-    console.log(provider, 'get provider connect')
     if (provider.on) {
       provider.on('accountsChanged', this.onAccountsChanged)
       provider.on('chainChanged', this.onChainChanged)
@@ -117,22 +114,18 @@ export class GnosisConnector extends Connector<SafeAppProvider, SafeConnectOptio
 
   getProvider() {
     if (!this.provider) {
-      console.log('no provider')
       const safe = this.safe
       if (!safe || !this.sdk) {
         throw new Error('Could not load Safe information')
       }
       this.provider = new SafeAppProvider(safe, this.sdk)
     }
-    console.log('did get provider')
-
-    console.log(this.provider)
 
     return Promise.resolve(this.provider)
   }
 
   async getSigner() {
-    const provider = this.getProvider()
+    const provider = await this.getProvider()
     const account = await this.getAccount()
     return new Web3Provider(<SafeAppProvider>(<unknown>provider)).getSigner(account)
   }
