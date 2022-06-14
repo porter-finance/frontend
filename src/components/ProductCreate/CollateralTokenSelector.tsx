@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react'
 
 import { Selector } from './BorrowTokenSelector'
-import { CollateralTokens } from './SelectableTokens'
-import { TokenDetails } from './SetupProduct'
+import { BondTokenDetails, TokenDetails } from './SetupProduct'
 
-import { requiredChain } from '@/connectors'
+import { useBondsPortfolio } from '@/hooks/useBondsPortfolio'
 import { useTokenAllowList } from '@/hooks/useTokenPermissions'
+import { useTokenListState } from '@/state/tokenList/hooks'
 import { getLogger } from '@/utils/logger'
 
 const logger = getLogger('useTokenAllowList')
@@ -16,25 +16,23 @@ const CollateralTokenSelector = () => {
   if (error) {
     logger.error('Error getting useTokenAllowList info', error)
   }
-  const tokens = useMemo(
-    () =>
-      CollateralTokens[requiredChain?.id]?.filter(({ address }) =>
-        allowedTokens?.includes(address.toLowerCase()),
-      ),
-    [allowedTokens],
-  )
+  const { tokens: tokenList } = useTokenListState()
+  const tokens = useMemo(() => {
+    return allowedTokens?.map((address) => {
+      return {
+        iconUrl: tokenList[address.toLowerCase()],
+        address,
+      }
+    })
+  }, [allowedTokens, tokenList])
 
   return <Selector OptionEl={TokenDetails} name="collateralToken" options={tokens} />
 }
 
 export const BondSelector = () => {
-  return (
-    <Selector
-      OptionEl={TokenDetails}
-      name="bondToAuction"
-      options={CollateralTokens[requiredChain.id]}
-    />
-  )
+  const { data, loading } = useBondsPortfolio()
+  if (loading) return null
+  return <Selector OptionEl={BondTokenDetails} name="bondToAuction" options={data} />
 }
 
 export default CollateralTokenSelector

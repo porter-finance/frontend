@@ -18,8 +18,8 @@ const confirmSteps = [
 ]
 
 const StepTwo = () => {
-  const { register } = useFormContext()
-
+  const { getValues, register } = useFormContext()
+  const amountOfCollateral = getValues('amountOfCollateral')
   return (
     <>
       <div className="w-full form-control">
@@ -51,7 +51,7 @@ const StepTwo = () => {
       <FieldRowWrapper className="py-1 my-4 space-y-3">
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>-</p>
+            <p>{amountOfCollateral}</p>
           </div>
 
           <TooltipElement
@@ -61,7 +61,7 @@ const StepTwo = () => {
         </div>
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>-</p>
+            <p>{amountOfCollateral}</p>
           </div>
 
           <TooltipElement
