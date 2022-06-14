@@ -3,9 +3,10 @@ import React, { Fragment } from 'react'
 import { Listbox, Transition } from '@headlessui/react'
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
 import { useFormContext, useWatch } from 'react-hook-form'
-import { useNetwork } from 'wagmi'
 
 import { BorrowTokens } from './SelectableTokens'
+
+import { requiredChain } from '@/connectors'
 
 const BorrowToken = ({ option }) => (
   <span className="flex items-center py-3 px-4 space-x-4 text-xs" key={option?.name}>
@@ -18,6 +19,7 @@ export const Selector = ({ OptionEl, name, options }) => {
   // We assume `options` will have "name" key
   const { register, setValue } = useFormContext()
   const fieldValue = useWatch({ name })
+
   const selected = options?.find((o) => o?.name === fieldValue?.name)
 
   const setList = (e) => {
@@ -86,9 +88,8 @@ export const Selector = ({ OptionEl, name, options }) => {
 }
 
 const BorrowTokenSelector = () => {
-  const { activeChain } = useNetwork()
   return (
-    <Selector OptionEl={BorrowToken} name="borrowToken" options={BorrowTokens[activeChain?.id]} />
+    <Selector OptionEl={BorrowToken} name="borrowToken" options={BorrowTokens[requiredChain?.id]} />
   )
 }
 
