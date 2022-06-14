@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { DoubleArrowRightIcon } from '@radix-ui/react-icons'
 import { FormProvider, SubmitHandler, useForm, useFormContext } from 'react-hook-form'
@@ -170,8 +170,16 @@ const StepTwo = () => {
 }
 
 const StepThree = () => {
-  const { register } = useFormContext()
-  const [isPrivate, setIsPrivate] = useState(false)
+  const { getValues, register, setValue, unregister } = useFormContext()
+  const accessibility = getValues('accessibility')
+  const [isPrivate, setIsPrivate] = useState(accessibility === 'private')
+
+  useEffect(() => {
+    setValue('accessibility', isPrivate ? 'private' : 'public')
+    if (!isPrivate) {
+      unregister('signerAddress')
+    }
+  }, [setValue, unregister, isPrivate])
 
   return (
     <>
@@ -186,7 +194,7 @@ const StepThree = () => {
           className="w-full input input-bordered"
           placeholder="0"
           type="number"
-          {...register('minBidSize', { required: true })}
+          {...register('minBidSize', { required: false })}
         />
       </div>
       <div className="w-full form-control">
@@ -200,7 +208,7 @@ const StepThree = () => {
           className="w-full input input-bordered"
           placeholder="DD/MM/YYYY"
           type="date"
-          {...register('cancellationDate', { required: true })}
+          {...register('cancellationDate', { required: false })}
         />
       </div>
       <div className="w-full form-control">
@@ -210,7 +218,6 @@ const StepThree = () => {
             tip='If "public", anyone will be able to bid on the auction. If "private", only approved wallets will be able to bid.'
           />
         </label>
-
         <div className="flex items-center">
           <div className="btn-group">
             <button
@@ -242,7 +249,7 @@ const StepThree = () => {
             defaultValue=""
             placeholder="0x0"
             type="text"
-            {...register('signerAddress')}
+            {...register('signerAddress', { required: true })}
           />
         </div>
       )}
