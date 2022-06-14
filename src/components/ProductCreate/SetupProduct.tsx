@@ -24,7 +24,7 @@ export const TokenDetails = ({ option }) => {
     <div className="p-4 space-y-4 w-full text-xs text-white rounded-md form-control">
       <div className="flex justify-between w-full">
         <span className="flex items-center space-x-2">
-          {option?.icon}
+          {option?.icon?.()}
           <span>{option.name}</span>
         </span>
         <span>
@@ -166,7 +166,6 @@ export const StepTwo = () => {
 export const StepThree = () => {
   const { getValues, register } = useFormContext()
   const collateralToken = getValues('collateralToken')
-  console.log(collateralToken)
   return (
     <>
       <div className="w-full form-control">
@@ -279,12 +278,8 @@ const SetupProduct = () => {
   const methods = useForm<Inputs>({ mode: 'onChange' })
   const { formState, handleSubmit } = methods
   const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data)
-  console.log(formState)
-  console.log(formState.errors)
   const midComponents = [<StepOne key={0} />, <StepTwo key={1} />, <StepThree key={2} />]
-  const { isValid } = methods.formState
 
-  console.log(isValid)
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
