@@ -33,7 +33,9 @@ export const TokenDetails = ({ option }) => (
 )
 
 const StepOne = () => {
-  const { register } = useFormContext()
+  const { register, watch } = useFormContext()
+
+  const [amountOfBonds, minSalePrice] = watch(['amountOfBonds', 'minSalePrice'])
 
   return (
     <>
@@ -59,7 +61,7 @@ const StepOne = () => {
           className="w-full input input-bordered"
           placeholder="0"
           type="number"
-          {...register('amountOfBonds', { required: true })}
+          {...register('amountOfBonds', { required: true, valueAsNumber: true })}
         />
       </div>
 
@@ -74,14 +76,16 @@ const StepOne = () => {
           className="w-full input input-bordered"
           placeholder="0"
           type="number"
-          {...register('minSalePrice', { required: true })}
+          {...register('minSalePrice', { required: true, valueAsNumber: true })}
         />
       </div>
 
       <FieldRowWrapper className="py-1 my-4 space-y-3">
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>-</p>
+            <p>
+              {amountOfBonds && minSalePrice && (amountOfBonds * minSalePrice).toLocaleString()}
+            </p>
           </div>
 
           <TooltipElement
@@ -91,7 +95,7 @@ const StepOne = () => {
         </div>
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>-</p>
+            <p>{amountOfBonds && amountOfBonds.toLocaleString()}</p>
           </div>
 
           <TooltipElement
@@ -101,7 +105,11 @@ const StepOne = () => {
         </div>
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>-</p>
+            <p>
+              {amountOfBonds &&
+                minSalePrice &&
+                (amountOfBonds - amountOfBonds * minSalePrice).toLocaleString()}
+            </p>
           </div>
 
           <TooltipElement
