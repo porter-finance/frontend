@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { DoubleArrowRightIcon } from '@radix-ui/react-icons'
 import dayjs from 'dayjs'
 import { FormProvider, SubmitHandler, useForm, useFormContext } from 'react-hook-form'
+import { useContractWrite } from 'wagmi'
 
 import { BondSelector } from '../ProductCreate/CollateralTokenSelector'
 import { ActionButton } from '../auction/Claimer'
@@ -10,6 +11,9 @@ import TooltipElement from '../common/Tooltip'
 import { FieldRowLabelStyledText, FieldRowWrapper } from '../form/InterestRateInputPanel'
 
 import { ReactComponent as UnicornSvg } from '@/assets/svg/simple-bond.svg'
+import { requiredChain } from '@/connectors'
+import easyAuctionABI from '@/constants/abis/easyAuction/easyAuction.json'
+import { EASY_AUCTION_NETWORKS } from '@/utils'
 
 type Inputs = {
   issuerName: string
@@ -365,13 +369,25 @@ const Summary = ({ currentStep }) => {
 const SetupOffering = () => {
   const [currentStep, setCurrentStep] = useState(0)
   const [currentConfirmStep, setCurrentConfirmStep] = useState(0)
-
   const methods = useForm<Inputs>({ mode: 'onChange' })
   const {
     formState: { isDirty, isValid },
     handleSubmit,
     watch,
   } = methods
+
+  const { data, isError, isLoading, write } = useContractWrite(
+    {
+      addressOrName: EASY_AUCTION_NETWORKS[requiredChain.id],
+      contractInterface: easyAuctionABI,
+    },
+    'approve',
+    {
+      args: [],
+    },
+  )
+
+  console.log({ data, isError, isLoading })
 
   const bondName = watch('bondToAuction')
 
@@ -437,10 +453,9 @@ const SetupOffering = () => {
                     </ul>
 
                     <ActionButton
+                      className={isLoading ? 'loading' : ''}
                       color="blue"
-                      onClick={() => {
-                        console.log('click')
-                      }}
+                      onClick={write}
                     >
                       Approve {bondName?.name} for sale
                     </ActionButton>
