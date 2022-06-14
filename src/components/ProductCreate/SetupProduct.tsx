@@ -151,7 +151,6 @@ export const StepOne = () => {
 export const StepTwo = () => {
   const { getValues, register } = useFormContext()
   const amountOfCollateral = getValues('amountOfCollateral')
-  console.log(amountOfCollateral)
   return (
     <>
       <div className="w-full form-control">

@@ -20,9 +20,9 @@ export const Selector = ({ OptionEl, name, options }) => {
   const { register, setValue } = useFormContext()
   const fieldValue = useWatch({ name })
   const selected = options?.find(
-    (o) => o?.address === fieldValue?.address || o?.id === fieldValue?.id,
+    (o) =>
+      (o?.address && o?.address === fieldValue?.address) || (o?.id && o?.id === fieldValue?.id),
   )
-
   const setList = (e) => {
     setValue(name, e, {
       shouldValidate: true,
