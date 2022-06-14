@@ -9,14 +9,12 @@ import { FieldRowLabelStyledText, FieldRowWrapper } from '../form/InterestRateIn
 import BorrowTokenSelector from './BorrowTokenSelector'
 import CollateralTokenSelector from './CollateralTokenSelector'
 
-import { ReactComponent as UnicornSvg } from '@/assets/svg/simple-bond.svg'
-
 export const TokenDetails = ({ option }) => {
   if (!option) {
     return (
       <div className="p-4 space-y-4 w-full text-xs text-white rounded-md form-control">
         <div className="flex justify-between w-full">
-          <span>Select an option</span>
+          <span>Pick a token</span>
         </div>
       </div>
     )
@@ -26,7 +24,7 @@ export const TokenDetails = ({ option }) => {
     <div className="p-4 space-y-4 w-full text-xs text-white rounded-md form-control">
       <div className="flex justify-between w-full">
         <span className="flex items-center space-x-2">
-          {option.icon || <UnicornSvg height={20} width={20} />}
+          {option?.icon}
           <span>{option.name}</span>
         </span>
         <span>
@@ -166,8 +164,9 @@ export const StepTwo = () => {
 }
 
 export const StepThree = () => {
-  const { register } = useFormContext()
-
+  const { getValues, register } = useFormContext()
+  const collateralToken = getValues('collateralToken')
+  console.log(collateralToken)
   return (
     <>
       <div className="w-full form-control">
@@ -178,7 +177,7 @@ export const StepThree = () => {
           />
         </label>
         <div className="border border-[#2C2C2C]">
-          <TokenDetails option={{ name: 'DAI' }} />
+          <TokenDetails option={collateralToken} />
         </div>
       </div>
       <div className="w-full form-control">
