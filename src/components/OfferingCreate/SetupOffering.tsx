@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 import { DoubleArrowRightIcon } from '@radix-ui/react-icons'
+import dayjs from 'dayjs'
 import { FormProvider, SubmitHandler, useForm, useFormContext } from 'react-hook-form'
 
 import { BondSelector } from '../ProductCreate/CollateralTokenSelector'
@@ -9,6 +10,19 @@ import TooltipElement from '../common/Tooltip'
 import { FieldRowLabelStyledText, FieldRowWrapper } from '../form/InterestRateInputPanel'
 
 import { ReactComponent as UnicornSvg } from '@/assets/svg/simple-bond.svg'
+
+type Inputs = {
+  issuerName: string
+  exampleRequired: string
+  amountOfBonds: string
+  minSalePrice: string
+  startDate: Date
+  endDate: Date
+  signerAddress: string
+  minBidSize: string
+  cancellationDate: string
+  bondToAuction: { name: string; icon: string }
+}
 
 export const TokenDetails = ({ option }) => (
   <div className="p-4 space-y-4 w-full text-xs text-white rounded-md form-control">
@@ -146,7 +160,7 @@ const StepTwo = () => {
         </label>
         <input
           className="w-full input input-bordered"
-          placeholder="DD/MM/YYYY"
+          placeholder="MM/DD/YYYY"
           type="date"
           {...register('startDate', { required: true })}
         />
@@ -160,7 +174,7 @@ const StepTwo = () => {
         </label>
         <input
           className="w-full input input-bordered"
-          placeholder="DD/MM/YYYY"
+          placeholder="MM/DD/YYYY"
           type="date"
           {...register('endDate', { required: true })}
         />
@@ -206,7 +220,7 @@ const StepThree = () => {
         </label>
         <input
           className="w-full input input-bordered"
-          placeholder="DD/MM/YYYY"
+          placeholder="MM/DD/YYYY"
           type="date"
           {...register('cancellationDate', { required: false })}
         />
@@ -279,7 +293,13 @@ const SummaryItem = ({ text, tip = null, title }) => (
 )
 
 const Summary = ({ currentStep }) => {
+  const { getValues, watch } = useFormContext()
+  const formValues = getValues() as Inputs
+
   if (currentStep === 1) {
+    const [startDate, endDate] = watch(['startDate', 'endDate'])
+    const days = dayjs(endDate).diff(startDate, 'day')
+
     return (
       <div className="overflow-visible w-[425px] card">
         <div className="card-body">
@@ -287,7 +307,12 @@ const Summary = ({ currentStep }) => {
             Length of offering
           </h1>
           <div className="space-y-4">
-            <SummaryItem text="3 days" title="21/04/2022 - 24/04/2022" />
+            <SummaryItem
+              text={`${days} ${days === 1 ? 'day' : 'days'}`}
+              title={`${dayjs(startDate).utc().format('LL UTC')} - ${dayjs(endDate)
+                .utc()
+                .format('LL UTC')}`}
+            />
           </div>
         </div>
       </div>
@@ -301,31 +326,40 @@ const Summary = ({ currentStep }) => {
       <div className="card-body">
         <h1 className="pb-4 !text-xs uppercase border-b border-[#2C2C2C] card-title">Summary</h1>
         <div className="space-y-4">
-          <SummaryItem text="Uniswap Convertible Bond" tip="Bond for sale" title="Bond for sale" />
           <SummaryItem
-            text="1,000,000 UNI CONVERT"
+            text={formValues?.bondToAuction?.name}
+            tip="Bond for sale"
+            title="Bond for sale"
+          />
+          <SummaryItem
+            text={`${formValues.amountOfBonds} ${formValues?.bondToAuction?.name}`}
             tip="Number of bonds to auction"
             title="Number of bonds to auction"
           />
-          <SummaryItem text="0.975 USDC" tip="Owed at maturity" title="Minimum sales price" />
-          <SummaryItem text="07/01/2022" tip="Start date" title="Start date" />
-          <SummaryItem text="07/01/2022" tip="End date" title="End date" />
-          <SummaryItem text="1,000 USDC" tip="Minimum bid size" title="Minimum bid size" />
           <SummaryItem
-            text="07/01/2022"
-            tip="Last date to cancel bids"
-            title="Last date to cancel bids"
+            text={`${formValues.minSalePrice} USDC`}
+            tip="Owed at maturity"
+            title="Minimum sales price"
           />
+          <SummaryItem text={formValues.startDate} tip="Start date" title="Start date" />
+          <SummaryItem text={formValues.startDate} tip="End date" title="End date" />
+          <SummaryItem
+            text={formValues.minBidSize ? `${formValues.minBidSize} USDC` : 'No mininimum bid'}
+            tip="Minimum bid size"
+            title="Minimum bid size"
+          />
+          {formValues.cancellationDate && (
+            <SummaryItem
+              text={formValues.cancellationDate}
+              tip="Last date to cancel bids"
+              title="Last date to cancel bids"
+            />
+          )}
           <SummaryItem text="Public" tip="Accessibility" title="Accessibility" />
         </div>
       </div>
     </div>
   )
-}
-
-type Inputs = {
-  issuerName: string
-  exampleRequired: string
 }
 
 const SetupOffering = () => {
@@ -336,7 +370,10 @@ const SetupOffering = () => {
   const {
     formState: { isDirty, isValid },
     handleSubmit,
+    watch,
   } = methods
+
+  const bondName = watch('bondToAuction')
 
   const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data)
 
@@ -405,7 +442,7 @@ const SetupOffering = () => {
                         console.log('click')
                       }}
                     >
-                      Approve UNI CONVERT for sale
+                      Approve {bondName?.name} for sale
                     </ActionButton>
                   </>
                 )}
