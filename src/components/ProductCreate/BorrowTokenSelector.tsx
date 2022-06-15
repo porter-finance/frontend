@@ -3,10 +3,12 @@ import React, { Fragment } from 'react'
 import { Listbox, Transition } from '@headlessui/react'
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
 import { useFormContext, useWatch } from 'react-hook-form'
+import { useToken } from 'wagmi'
 
 import { BorrowTokens } from './SelectableTokens'
 
 import { requiredChain } from '@/connectors'
+import { useTokenPrice } from '@/hooks/useTokenPrice'
 
 const BorrowToken = ({ option }) => (
   <span className="flex items-center py-3 px-4 space-x-4 text-xs" key={option?.name}>
@@ -23,12 +25,19 @@ export const Selector = ({ OptionEl, name, options }) => {
     (o) =>
       (o?.address && o?.address === fieldValue?.address) || (o?.id && o?.id === fieldValue?.id),
   )
+  const { data } = useToken({ address: fieldValue?.address || fieldValue?.id })
+  const { data: price } = useTokenPrice(fieldValue?.address || fieldValue?.id)
+
   const setList = (e) => {
-    setValue(name, e, {
-      shouldValidate: true,
-      shouldDirty: true,
-      shouldTouch: true,
-    })
+    setValue(
+      name,
+      { ...e, ...data, price },
+      {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      },
+    )
   }
 
   return (
