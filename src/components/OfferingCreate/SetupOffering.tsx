@@ -174,7 +174,7 @@ const StepOne = () => {
 }
 
 const StepTwo = () => {
-  const { register } = useFormContext()
+  const { getValues, register } = useFormContext()
 
   return (
     <>
@@ -189,7 +189,16 @@ const StepTwo = () => {
           className="w-full input input-bordered"
           placeholder="MM/DD/YYYY"
           type="date"
-          {...register('startDate', { required: true })}
+          {...register('startDate', {
+            required: true,
+            validate: {
+              dateValid: (startDate) => dayjs(startDate).isValid(),
+              dateBefore: (startDate) => {
+                const endDate = getValues('endDate')
+                return dayjs(endDate).diff(startDate) > 0
+              },
+            },
+          })}
         />
       </div>
       <div className="w-full form-control">
@@ -203,7 +212,12 @@ const StepTwo = () => {
           className="w-full input input-bordered"
           placeholder="MM/DD/YYYY"
           type="date"
-          {...register('endDate', { required: true })}
+          {...register('endDate', {
+            required: true,
+            validate: {
+              dateValid: (endDate) => dayjs(endDate).isValid(),
+            },
+          })}
         />
       </div>
     </>
@@ -334,12 +348,16 @@ const Summary = ({ currentStep }) => {
             Length of offering
           </h1>
           <div className="space-y-4">
-            <SummaryItem
-              text={`${days} ${days === 1 ? 'day' : 'days'}`}
-              title={`${dayjs(startDate).utc().format('LL UTC')} - ${dayjs(endDate)
-                .utc()
-                .format('LL UTC')}`}
-            />
+            {dayjs(startDate).isValid() && dayjs(endDate).isValid() ? (
+              <SummaryItem
+                text={days <= 0 ? 'Dates Misconfigured' : `${days} ${days === 1 ? 'day' : 'days'}`}
+                title={`${dayjs(startDate).utc().format('LL UTC')} - ${dayjs(endDate)
+                  .utc()
+                  .format('LL UTC')}`}
+              />
+            ) : (
+              <SummaryItem text="0 days" title="Enter a start and end date." />
+            )}
           </div>
         </div>
       </div>
