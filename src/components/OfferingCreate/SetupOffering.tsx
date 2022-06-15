@@ -366,7 +366,6 @@ const Summary = ({ currentStep }) => {
 
 const SetupOffering = () => {
   const [currentStep, setCurrentStep] = useState(0)
-  const [currentConfirmStep, setCurrentConfirmStep] = useState(0)
   const methods = useForm<Inputs>({ mode: 'onChange' })
 
   const {
@@ -444,10 +443,7 @@ const SetupOffering = () => {
                   <>
                     <ul className="steps steps-vertical">
                       {confirmSteps.map((step, i) => (
-                        <li
-                          className={`step ${i <= currentConfirmStep ? 'step-secondary' : ''}`}
-                          key={i}
-                        >
+                        <li className={`step ${i <= currentStep ? 'step-secondary' : ''}`} key={i}>
                           <TooltipElement left={step.text} tip={step.tip} />
                         </li>
                       ))}

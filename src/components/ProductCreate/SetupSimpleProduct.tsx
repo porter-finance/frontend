@@ -108,7 +108,6 @@ type Inputs = {
 
 const SetupSimpleProduct = () => {
   const [currentStep, setCurrentStep] = useState(0)
-  const [currentConfirmStep, setCurrentConfirmStep] = useState(0)
 
   const methods = useForm<Inputs>({ mode: 'onChange' })
   const {
@@ -168,10 +167,7 @@ const SetupSimpleProduct = () => {
                   <>
                     <ul className="steps steps-vertical">
                       {confirmSteps.map((step, i) => (
-                        <li
-                          className={`step ${i <= currentConfirmStep ? 'step-primary' : ''}`}
-                          key={i}
-                        >
+                        <li className={`step ${i <= currentStep ? 'step-primary' : ''}`} key={i}>
                           <TooltipElement left={step.text} tip={step.tip} />
                         </li>
                       ))}
