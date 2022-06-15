@@ -324,11 +324,11 @@ const confirmSteps = [
     tip: 'The bonds need to be approved so they can be offered for sale.',
   },
   {
-    text: 'Initiate auction',
-    tip: 'Transfer your bonds into the auction contract and initiate the auction.',
+    text: 'Initialize auction',
+    tip: 'Transfer your bonds into the auction contract and initialize the auction.',
   },
 ]
-const steps = ['Setup auction', 'Initiate auction', 'Bidding config', 'Confirm creation']
+const steps = ['Setup auction', 'Initialize auction', 'Bidding config', 'Confirm creation']
 
 const SummaryItem = ({ text, tip = null, title }) => (
   <div className="pb-4 space-y-2 border-b border-[#2C2C2C]">
@@ -413,7 +413,7 @@ const Summary = ({ currentStep }) => {
   )
 }
 
-const InitiateAuctionAction = ({ setCurrentApproveStep }) => {
+const InitializeAuctionAction = ({ setCurrentApproveStep }) => {
   // state 0 for none, 1 for metamask confirmation, 2 for block confirmation
   const [waitingWalletApprove, setWaitingWalletApprove] = useState(0)
   const { account, signer } = useActiveWeb3React()
@@ -436,7 +436,7 @@ const InitiateAuctionAction = ({ setCurrentApproveStep }) => {
         onClick={() => {
           setWaitingWalletApprove(1)
           contract
-            .initiate([amountOfBonds])
+            .initialize([amountOfBonds])
             .then((result) => {
               setWaitingWalletApprove(2)
               addRecentTransaction({
@@ -456,9 +456,9 @@ const InitiateAuctionAction = ({ setCurrentApproveStep }) => {
             })
         }}
       >
-        {!waitingWalletApprove && `Initiate auction`}
-        {waitingWalletApprove === 1 && 'Confirm initiation in wallet'}
-        {waitingWalletApprove === 2 && `Initiating auction...`}
+        {!waitingWalletApprove && `Initialize auction`}
+        {waitingWalletApprove === 1 && 'Confirm initialization in wallet'}
+        {waitingWalletApprove === 2 && `initializing auction...`}
       </ActionButton>
       {waitingWalletApprove === 3 && (
         <ActionButton
@@ -552,7 +552,7 @@ const ActionSteps = () => {
         </ActionButton>
       )}
       {(currentApproveStep === 1 || currentApproveStep === 3) && (
-        <InitiateAuctionAction setCurrentApproveStep={setCurrentApproveStep} />
+        <InitializeAuctionAction setCurrentApproveStep={setCurrentApproveStep} />
       )}
     </>
   )
