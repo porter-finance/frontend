@@ -114,7 +114,6 @@ export const StepOne = () => {
         </label>
         <input
           className="w-full input input-bordered"
-          name="amountOfBonds"
           placeholder="0"
           type="number"
           {...register('amountOfBonds', { required: true })}
@@ -138,7 +137,6 @@ export const StepOne = () => {
         </label>
         <input
           className="w-full input input-bordered"
-          name="maturityDate"
           placeholder="DD/MM/YYYY"
           type="date"
           {...register('maturityDate', { required: true })}
@@ -149,8 +147,8 @@ export const StepOne = () => {
 }
 
 export const StepTwo = () => {
-  const { getValues, register } = useFormContext()
-  const amountOfCollateral = getValues('amountOfCollateral')
+  const { register, watch } = useFormContext()
+  const amountOfCollateral = watch('amountOfCollateral')
   return (
     <>
       <div className="w-full form-control">
@@ -172,7 +170,6 @@ export const StepTwo = () => {
         </label>
         <input
           className="w-full input input-bordered"
-          name="amountOfCollateral"
           placeholder="0"
           type="number"
           {...register('amountOfCollateral', { required: true })}
@@ -206,8 +203,8 @@ export const StepTwo = () => {
 }
 
 export const StepThree = () => {
-  const { getValues, register } = useFormContext()
-  const collateralToken = getValues('collateralToken')
+  const { register, watch } = useFormContext()
+  const collateralToken = watch('collateralToken')
   return (
     <>
       <div className="w-full form-control">
@@ -230,7 +227,6 @@ export const StepThree = () => {
         </label>
         <input
           className="w-full input input-bordered"
-          name="amountOfConvertible"
           placeholder="0"
           {...register('amountOfConvertible', { required: true })}
           type="number"
