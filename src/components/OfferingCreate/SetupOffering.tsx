@@ -210,10 +210,6 @@ const StepTwo = () => {
               dateValid: (auctionStartDate) => dayjs(auctionStartDate).isValid(),
               dateBefore: (auctionStartDate) => {
                 const auctionEndDate = getValues('auctionEndDate')
-                console.log(auctionStartDate)
-
-                console.log(dayjs(auctionEndDate).diff(auctionStartDate), 'days')
-
                 return dayjs(auctionEndDate).diff(auctionStartDate) > 0
               },
             },
