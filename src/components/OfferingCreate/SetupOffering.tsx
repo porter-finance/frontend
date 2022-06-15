@@ -19,7 +19,7 @@ import {
 
 import { ReactComponent as UnicornSvg } from '@/assets/svg/simple-bond.svg'
 import { requiredChain } from '@/connectors'
-import ERC20_ABI from '@/constants/abis/erc20.json'
+import BOND_ABI from '@/constants/abis/bond.json'
 import { Token } from '@/generated/graphql'
 import { useActiveWeb3React } from '@/hooks'
 import { EASY_AUCTION_NETWORKS } from '@/utils'
@@ -424,7 +424,7 @@ const InitializeAuctionAction = ({ setCurrentApproveStep }) => {
 
   const contract = useContract({
     addressOrName: bondToAuction?.id,
-    contractInterface: ERC20_ABI,
+    contractInterface: BOND_ABI,
     signerOrProvider: signer,
   })
 
@@ -482,7 +482,7 @@ const ActionSteps = () => {
   const { data } = useContractRead(
     {
       addressOrName: bondToAuction?.id,
-      contractInterface: ERC20_ABI,
+      contractInterface: BOND_ABI,
     },
     'allowance',
     {
@@ -503,7 +503,7 @@ const ActionSteps = () => {
   const addRecentTransaction = useAddRecentTransaction()
   const contract = useContract({
     addressOrName: bondToAuction?.id,
-    contractInterface: ERC20_ABI,
+    contractInterface: BOND_ABI,
     signerOrProvider: signer,
   })
 
