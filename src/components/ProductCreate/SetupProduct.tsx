@@ -310,8 +310,8 @@ type Inputs = {
 }
 
 const SetupProduct = () => {
-  const [currentStep, setCurrentStep] = useState(1)
-  const [currentConfirmStep, setCurrentConfirmStep] = useState(1)
+  const [currentStep, setCurrentStep] = useState(0)
+  const [currentConfirmStep, setCurrentConfirmStep] = useState(0)
 
   const methods = useForm<Inputs>({ mode: 'onChange' })
   const {
