@@ -21,6 +21,7 @@ import WarningModal from '../modals/WarningModal'
 import { ReactComponent as UnicornSvg } from '@/assets/svg/simple-bond.svg'
 import { requiredChain } from '@/connectors'
 import BOND_ABI from '@/constants/abis/bond.json'
+import easyAuctionABI from '@/constants/abis/easyAuction/easyAuction.json'
 import { Token } from '@/generated/graphql'
 import { useActiveWeb3React } from '@/hooks'
 import { EASY_AUCTION_NETWORKS } from '@/utils'
@@ -28,13 +29,13 @@ import { EASY_AUCTION_NETWORKS } from '@/utils'
 type Inputs = {
   issuerName: string
   exampleRequired: string
-  amountOfBonds: number
-  minSalePrice: number
-  startDate: Date
-  endDate: Date
+  auctionedSellAmount: number
+  minimumBiddingAmountPerOrder: number
+  auctionStartDate: Date
+  auctionEndDate: Date
   signerAddress: string
   minBidSize: string
-  cancellationDate: string
+  orderCancellationEndDate: string
   // TODO: its actually type Bond but we only need a few values off there
   bondToAuction: Token
 }
@@ -64,28 +65,31 @@ export const TokenDetails = ({ option }) => (
 const StepOne = () => {
   const { register, watch } = useFormContext()
 
-  const [amountOfBonds, minSalePrice, bondToAuction] = watch([
-    'amountOfBonds',
-    'minSalePrice',
+  const [auctionedSellAmount, minimumBiddingAmountPerOrder, bondToAuction] = watch([
+    'auctionedSellAmount',
+    'minimumBiddingAmountPerOrder',
     'bondToAuction',
   ])
-  let minFundsRaised = '-'
-  if (amountOfBonds && minSalePrice) {
+  let minBuyAmount = '-'
+  if (auctionedSellAmount && minimumBiddingAmountPerOrder) {
     // Might need to replace this with BigNumbers
-    minFundsRaised = (amountOfBonds * minSalePrice).toLocaleString()
+    minBuyAmount = (auctionedSellAmount * minimumBiddingAmountPerOrder).toLocaleString()
   }
   let amountOwed = '-'
-  if (amountOfBonds) {
-    amountOwed = amountOfBonds.toLocaleString()
+  if (auctionedSellAmount) {
+    amountOwed = auctionedSellAmount.toLocaleString()
   }
   let maximumInterestOwed = '-'
-  if (amountOfBonds && minSalePrice) {
-    maximumInterestOwed = (amountOfBonds - amountOfBonds * minSalePrice).toLocaleString()
+  if (auctionedSellAmount && minimumBiddingAmountPerOrder) {
+    maximumInterestOwed = (
+      auctionedSellAmount -
+      auctionedSellAmount * minimumBiddingAmountPerOrder
+    ).toLocaleString()
   }
   let maximumYTM = '-'
-  if (amountOfBonds && bondToAuction && minSalePrice) {
+  if (auctionedSellAmount && bondToAuction && minimumBiddingAmountPerOrder) {
     maximumYTM = calculateInterestRate({
-      price: minSalePrice,
+      price: minimumBiddingAmountPerOrder,
       maturityDate: bondToAuction?.maturityDate,
       startDate: new Date().getTime(),
     }).toLocaleString()
@@ -114,7 +118,7 @@ const StepOne = () => {
           className="w-full input input-bordered"
           placeholder="0"
           type="number"
-          {...register('amountOfBonds', { required: true, valueAsNumber: true })}
+          {...register('auctionedSellAmount', { required: true, valueAsNumber: true })}
         />
       </div>
 
@@ -130,14 +134,14 @@ const StepOne = () => {
           placeholder="0"
           step="0.001"
           type="number"
-          {...register('minSalePrice', { required: true, valueAsNumber: true })}
+          {...register('minimumBiddingAmountPerOrder', { required: true, valueAsNumber: true })}
         />
       </div>
 
       <FieldRowWrapper className="py-1 my-4 space-y-3">
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>{!minFundsRaised ? '-' : minFundsRaised.toLocaleString()}</p>
+            <p>{!minBuyAmount ? '-' : minBuyAmount.toLocaleString()}</p>
           </div>
 
           <TooltipElement
@@ -196,13 +200,13 @@ const StepTwo = () => {
           className="w-full input input-bordered"
           placeholder="MM/DD/YYYY"
           type="date"
-          {...register('startDate', {
+          {...register('auctionStartDate', {
             required: true,
             validate: {
-              dateValid: (startDate) => dayjs(startDate).isValid(),
-              dateBefore: (startDate) => {
-                const endDate = getValues('endDate')
-                return dayjs(endDate).diff(startDate) > 0
+              dateValid: (auctionStartDate) => dayjs(auctionStartDate).isValid(),
+              dateBefore: (auctionStartDate) => {
+                const auctionEndDate = getValues('auctionEndDate')
+                return dayjs(auctionEndDate).diff(auctionStartDate) > 0
               },
             },
           })}
@@ -219,10 +223,10 @@ const StepTwo = () => {
           className="w-full input input-bordered"
           placeholder="MM/DD/YYYY"
           type="date"
-          {...register('endDate', {
+          {...register('auctionEndDate', {
             required: true,
             validate: {
-              dateValid: (endDate) => dayjs(endDate).isValid(),
+              dateValid: (auctionEndDate) => dayjs(auctionEndDate).isValid(),
             },
           })}
         />
@@ -270,7 +274,7 @@ const StepThree = () => {
           className="w-full input input-bordered"
           placeholder="MM/DD/YYYY"
           type="date"
-          {...register('cancellationDate', { required: false })}
+          {...register('orderCancellationEndDate', { required: false })}
         />
       </div>
       <div className="w-full form-control">
@@ -345,8 +349,8 @@ const Summary = ({ currentStep }) => {
   const formValues = getValues() as Inputs
 
   if (currentStep === 1) {
-    const [startDate, endDate] = watch(['startDate', 'endDate'])
-    const days = dayjs(endDate).diff(startDate, 'day')
+    const [auctionStartDate, auctionEndDate] = watch(['auctionStartDate', 'auctionEndDate'])
+    const days = dayjs(auctionEndDate).diff(auctionStartDate, 'day')
 
     return (
       <div className="overflow-visible w-[425px] card">
@@ -355,10 +359,10 @@ const Summary = ({ currentStep }) => {
             Length of offering
           </h1>
           <div className="space-y-4">
-            {dayjs(startDate).isValid() && dayjs(endDate).isValid() ? (
+            {dayjs(auctionStartDate).isValid() && dayjs(auctionEndDate).isValid() ? (
               <SummaryItem
                 text={days <= 0 ? 'Dates Misconfigured' : `${days} ${days === 1 ? 'day' : 'days'}`}
-                title={`${dayjs(startDate).utc().format('LL UTC')} - ${dayjs(endDate)
+                title={`${dayjs(auctionStartDate).utc().format('LL UTC')} - ${dayjs(auctionEndDate)
                   .utc()
                   .format('LL UTC')}`}
               />
@@ -384,25 +388,25 @@ const Summary = ({ currentStep }) => {
             title="Bond for sale"
           />
           <SummaryItem
-            text={`${formValues.amountOfBonds} ${formValues?.bondToAuction?.name}`}
+            text={`${formValues.auctionedSellAmount} ${formValues?.bondToAuction?.name}`}
             tip="Number of bonds to auction"
             title="Number of bonds to auction"
           />
           <SummaryItem
-            text={`${formValues.minSalePrice} USDC`}
+            text={`${formValues.minimumBiddingAmountPerOrder} USDC`}
             tip="Owed at maturity"
             title="Minimum sales price"
           />
-          <SummaryItem text={formValues.startDate} tip="Start date" title="Start date" />
-          <SummaryItem text={formValues.startDate} tip="End date" title="End date" />
+          <SummaryItem text={formValues.auctionStartDate} tip="Start date" title="Start date" />
+          <SummaryItem text={formValues.auctionStartDate} tip="End date" title="End date" />
           <SummaryItem
             text={formValues.minBidSize ? `${formValues.minBidSize} USDC` : 'No mininimum bid'}
             tip="Minimum bid size"
             title="Minimum bid size"
           />
-          {formValues.cancellationDate && (
+          {formValues.orderCancellationEndDate && (
             <SummaryItem
-              text={formValues.cancellationDate}
+              text={formValues.orderCancellationEndDate}
               tip="Last date to cancel bids"
               title="Last date to cancel bids"
             />
@@ -421,27 +425,31 @@ const InitiateAuctionAction = () => {
   const addRecentTransaction = useAddRecentTransaction()
   const { getValues } = useFormContext()
   const [transactionError, setTransactionError] = useState('')
-  const [amountOfBonds, bondToAuction] = getValues(['amountOfBonds', 'bondToAuction'])
+  const [auctionedSellAmount, bondToAuction] = getValues(['auctionedSellAmount', 'bondToAuction'])
   const navigate = useNavigate()
 
   const contract = useContract({
-    addressOrName: bondToAuction?.id,
-    contractInterface: BOND_ABI,
+    addressOrName: EASY_AUCTION_NETWORKS[requiredChain.id],
+    contractInterface: easyAuctionABI,
     signerOrProvider: signer,
   })
 
   // Initiate called with order:
-  // bondName
-  // bondSymbol
-  // bondOwner
-  // maturity
-  // paymentToken
-  // collateralToken
-  // collateralRatio
-  // convertibleRatio
-  // maxSupply
+  /*
+    auctioningToken (address)
+    biddingToken (address)
+    orderCancellationEndDate (uint256)
+    auctionEndDate (uint256)
+    auctionedSellAmount (uint96)
+    minBuyAmount (uint96)
+    minimumBiddingAmountPerOrder (uint256)
+    minFundingThreshold (uint256)
+    isAtomicClosureAllowed (bool)
+    accessManagerContract (address)
+    accessManagerContractData (bytes)
+  */
   const args = [
-    bondToAuction.name,
+    bondToAuction.id,
     bondToAuction.symbol,
     bondToAuction.bondOwner,
     bondToAuction.maturityDate,
@@ -457,8 +465,10 @@ const InitiateAuctionAction = () => {
         onClick={() => {
           setWaitingWalletApprove(1)
           contract
-            .initiate([amountOfBonds])
+            .initiateAuction([auctionedSellAmount])
             .then((result) => {
+              console.log(result)
+
               setWaitingWalletApprove(2)
               addRecentTransaction({
                 hash: result?.hash,
@@ -470,6 +480,8 @@ const InitiateAuctionAction = () => {
               console.log(result)
             })
             .catch((e) => {
+              console.log(e)
+
               setTransactionError(e?.message || e)
             })
             .finally(() => {
@@ -506,7 +518,7 @@ const ActionSteps = () => {
   const { getValues } = useFormContext()
   const [transactionError, setTransactionError] = useState('')
 
-  const [amountOfBonds, bondToAuction] = getValues(['amountOfBonds', 'bondToAuction'])
+  const [auctionedSellAmount, bondToAuction] = getValues(['auctionedSellAmount', 'bondToAuction'])
 
   const { data } = useContractRead(
     {
@@ -521,10 +533,10 @@ const ActionSteps = () => {
 
   useEffect(() => {
     // Already approved the token
-    if (data && data.gte(parseUnits(`${amountOfBonds}`, bondToAuction.decimals))) {
+    if (data && data.gte(parseUnits(`${auctionedSellAmount}`, bondToAuction.decimals))) {
       setCurrentApproveStep(1)
     }
-  }, [data, amountOfBonds, bondToAuction.decimals])
+  }, [data, auctionedSellAmount, bondToAuction.decimals])
 
   // state 0 for none, 1 for metamask confirmation, 2 for block confirmation
   const [waitingWalletApprove, setWaitingWalletApprove] = useState(0)
@@ -554,13 +566,13 @@ const ActionSteps = () => {
             contract
               .approve(
                 EASY_AUCTION_NETWORKS[requiredChain.id],
-                parseUnits(`${amountOfBonds}` || `0`, bondToAuction.decimals),
+                parseUnits(`${auctionedSellAmount}` || `0`, bondToAuction.decimals),
               )
               .then((result) => {
                 setWaitingWalletApprove(2)
                 addRecentTransaction({
                   hash: result?.hash,
-                  description: `Approve ${bondToAuction.name} for ${amountOfBonds}`,
+                  description: `Approve ${bondToAuction.name} for ${auctionedSellAmount}`,
                 })
                 return result.wait()
               })
