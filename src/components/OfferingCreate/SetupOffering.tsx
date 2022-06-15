@@ -33,7 +33,7 @@ type Inputs = {
   minimumBiddingAmountPerOrder: number
   auctionStartDate: Date
   auctionEndDate: Date
-  signerAddress: string
+  accessManagerContractData: string
   minBidSize: string
   orderCancellationEndDate: string
   // TODO: its actually type Bond but we only need a few values off there
@@ -247,7 +247,7 @@ const StepThree = () => {
   useEffect(() => {
     setValue('accessibility', isPrivate ? 'private' : 'public')
     if (!isPrivate) {
-      unregister('signerAddress')
+      unregister('accessManagerContractData')
     }
   }, [setValue, unregister, isPrivate])
 
@@ -329,7 +329,7 @@ const StepThree = () => {
             defaultValue=""
             placeholder="0x0"
             type="text"
-            {...register('signerAddress', { required: true })}
+            {...register('accessManagerContractData', { required: true })}
           />
         </div>
       )}
@@ -439,7 +439,23 @@ const InitiateAuctionAction = () => {
   const addRecentTransaction = useAddRecentTransaction()
   const { getValues } = useFormContext()
   const [transactionError, setTransactionError] = useState('')
-  const [auctionedSellAmount, bondToAuction] = getValues(['auctionedSellAmount', 'bondToAuction'])
+  const [
+    orderCancellationEndDate,
+    auctionEndDate,
+    auctionedSellAmount,
+    minBidSize,
+    minimumBiddingAmountPerOrder,
+    accessManagerContractData,
+    bondToAuction,
+  ] = getValues([
+    'orderCancellationEndDate',
+    'auctionEndDate',
+    'auctionedSellAmount',
+    'minBidSize',
+    'minimumBiddingAmountPerOrder',
+    'accessManagerContractData',
+    'bondToAuction',
+  ])
   const navigate = useNavigate()
 
   const contract = useContract({
@@ -448,26 +464,19 @@ const InitiateAuctionAction = () => {
     signerOrProvider: signer,
   })
 
-  // Initiate called with order:
-  /*
-    auctioningToken (address)
-    biddingToken (address)
-    orderCancellationEndDate (uint256)
-    auctionEndDate (uint256)
-    auctionedSellAmount (uint96)
-    minBuyAmount (uint96)
-    minimumBiddingAmountPerOrder (uint256)
-    minFundingThreshold (uint256)
-    isAtomicClosureAllowed (bool)
-    accessManagerContract (address)
-    accessManagerContractData (bytes)
-  */
+  const minBuyAmount = minBidSize * minimumBiddingAmountPerOrder
   const args = [
-    bondToAuction.id,
-    bondToAuction.symbol,
-    bondToAuction.bondOwner,
-    bondToAuction.maturityDate,
-    bondToAuction.paymentToken,
+    bondToAuction.id, // auctioningToken (address)
+    bondToAuction.collateralToken.id, // biddingToken (address)
+    orderCancellationEndDate, // orderCancellationEndDate (uint256)
+    auctionEndDate, // auctionEndDate (uint256)
+    auctionedSellAmount, // auctionedSellAmount (uint96)
+    minBuyAmount, // minBuyAmount (uint96)
+    minimumBiddingAmountPerOrder, // minimumBiddingAmountPerOrder (uint256)
+    0, // minFundingThreshold (uint256)
+    false, // isAtomicClosureAllowed (bool)
+    '0x0', // accessManagerContract (address)
+    '0x0', // accessManagerContractData (bytes)
   ]
 
   return (
@@ -478,7 +487,7 @@ const InitiateAuctionAction = () => {
         onClick={() => {
           setWaitingWalletApprove(1)
           contract
-            .initiateAuction([auctionedSellAmount])
+            .initiateAuction(args)
             .then((result) => {
               console.log(result)
 
