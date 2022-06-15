@@ -325,11 +325,11 @@ const confirmSteps = [
     tip: 'The bonds need to be approved so they can be offered for sale.',
   },
   {
-    text: 'Initialize auction',
-    tip: 'Transfer your bonds into the auction contract and initialize the auction.',
+    text: 'Initiate auction',
+    tip: 'Transfer your bonds into the auction contract and initiate the auction.',
   },
 ]
-const steps = ['Setup auction', 'Initialize auction', 'Bidding config', 'Confirm creation']
+const steps = ['Setup auction', 'Initiate auction', 'Bidding config', 'Confirm creation']
 
 const SummaryItem = ({ text, tip = null, title }) => (
   <div className="pb-4 space-y-2 border-b border-[#2C2C2C]">
@@ -414,7 +414,7 @@ const Summary = ({ currentStep }) => {
   )
 }
 
-const InitializeAuctionAction = () => {
+const InitiateAuctionAction = () => {
   // state 0 for none, 1 for metamask confirmation, 2 for block confirmation
   const [waitingWalletApprove, setWaitingWalletApprove] = useState(0)
   const { signer } = useActiveWeb3React()
@@ -430,6 +430,25 @@ const InitializeAuctionAction = () => {
     signerOrProvider: signer,
   })
 
+  // Initiate called with order:
+  // bondName
+  // bondSymbol
+  // bondOwner
+  // maturity
+  // paymentToken
+  // collateralToken
+  // collateralRatio
+  // convertibleRatio
+  // maxSupply
+  const args = [
+    bondToAuction.name,
+    bondToAuction.symbol,
+    bondToAuction.bondOwner,
+    bondToAuction.maturityDate,
+    bondToAuction.paymentToken,
+  ]
+  console.log(bondToAuction, args)
+
   return (
     <>
       <ActionButton
@@ -438,7 +457,7 @@ const InitializeAuctionAction = () => {
         onClick={() => {
           setWaitingWalletApprove(1)
           contract
-            .initialize([amountOfBonds])
+            .initiate([amountOfBonds])
             .then((result) => {
               setWaitingWalletApprove(2)
               addRecentTransaction({
@@ -458,9 +477,9 @@ const InitializeAuctionAction = () => {
             })
         }}
       >
-        {!waitingWalletApprove && `Initialize auction`}
-        {waitingWalletApprove === 1 && 'Confirm initialization in wallet'}
-        {waitingWalletApprove === 2 && `initializing auction...`}
+        {!waitingWalletApprove && `Initiate auction`}
+        {waitingWalletApprove === 1 && 'Confirm initiation in wallet'}
+        {waitingWalletApprove === 2 && `Initiating auction...`}
       </ActionButton>
       {waitingWalletApprove === 3 && (
         <ActionButton
@@ -561,7 +580,7 @@ const ActionSteps = () => {
           {waitingWalletApprove === 2 && `Approving ${bondToAuction?.name}...`}
         </ActionButton>
       )}
-      {(currentApproveStep === 1 || currentApproveStep === 3) && <InitializeAuctionAction />}
+      {(currentApproveStep === 1 || currentApproveStep === 3) && <InitiateAuctionAction />}
       <WarningModal
         content={transactionError}
         isOpen={!!transactionError}
