@@ -2,12 +2,15 @@ import React, { useState } from 'react'
 
 import { DoubleArrowRightIcon } from '@radix-ui/react-icons'
 import { FormProvider, SubmitHandler, useForm, useFormContext } from 'react-hook-form'
+import { useToken } from 'wagmi'
 
 import { ActionButton } from '../auction/Claimer'
 import TooltipElement from '../common/Tooltip'
 import { FieldRowLabelStyledText, FieldRowWrapper } from '../form/InterestRateInputPanel'
 import CollateralTokenSelector from './CollateralTokenSelector'
 import { StepOne, SummaryItem } from './SetupProduct'
+
+import { useTokenPrice } from '@/hooks/useTokenPrice'
 
 const confirmSteps = [
   {
@@ -18,8 +21,15 @@ const confirmSteps = [
 ]
 
 const StepTwo = () => {
-  const { getValues, register } = useFormContext()
-  const amountOfCollateral = getValues('amountOfCollateral')
+  const { register, watch } = useFormContext()
+  const [amountOfCollateral, collateralToken, amountOfBonds] = watch([
+    'amountOfCollateral',
+    'collateralToken',
+    'amountOfBonds',
+  ])
+  const { data } = useTokenPrice(collateralToken?.address)
+  const collateralValue = amountOfCollateral * data
+  const collateralizationValue = collateralValue / amountOfBonds
   return (
     <>
       <div className="w-full form-control">
@@ -51,7 +61,7 @@ const StepTwo = () => {
       <FieldRowWrapper className="py-1 my-4 space-y-3">
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>{amountOfCollateral}</p>
+            <p>{Number(collateralValue.toFixed(3)).toLocaleString()}</p>
           </div>
 
           <TooltipElement
@@ -61,7 +71,7 @@ const StepTwo = () => {
         </div>
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>{amountOfCollateral}</p>
+            <p>{Number(collateralizationValue.toFixed(3)).toLocaleString()}</p>
           </div>
 
           <TooltipElement
@@ -76,30 +86,61 @@ const StepTwo = () => {
 
 const steps = ['Setup product', 'Choose collateral', 'Confirm creation']
 
-const Summary = ({ currentStep }) => (
-  <div className="overflow-visible w-[425px] card">
-    <div className="card-body">
-      <h1 className="pb-4 !text-xs uppercase border-b border-[#2C2C2C] card-title">Summary</h1>
-      <div className="space-y-4">
-        <SummaryItem text="Uniswap Convertible Bond" tip="Name" title="Name" />
-        <SummaryItem text="400,000" tip="Supply" title="Supply" />
-        <SummaryItem text="400,000 USDC" tip="Owed at maturity" title="Owed at maturity" />
-        <SummaryItem text="07/01/2022" tip="Maturity date" title="Maturity date" />
+const Summary = ({ currentStep }) => {
+  const { watch } = useFormContext()
+  const [borrowToken, collateralToken, amountOfBonds, maturityDate, amountOfCollateral] = watch([
+    'borrowToken',
+    'collateralToken',
+    'amountOfBonds',
+    'maturityDate',
+    'amountOfCollateral',
+  ])
+  const { data: borrowTokenData } = useToken({ address: borrowToken?.address })
+  const { data: collateralTokenData } = useToken({ address: collateralToken?.address })
 
-        {currentStep >= steps.length - 1 && (
-          <>
-            <SummaryItem text="400,000 UNI" tip="Collateral tokens" title="Collateral tokens" />
-            <SummaryItem
-              text="1,000%"
-              tip="Collateralization ratio"
-              title="Collateralization ratio"
-            />
-          </>
-        )}
+  const borrowTokenSymbol = borrowTokenData?.symbol || '-'
+  const collateralTokenSymbol = collateralTokenData?.symbol || '-'
+  const collateralizationRatio = amountOfCollateral / amountOfBonds
+  return (
+    <div className="overflow-visible w-[425px] card ">
+      <div className="card-body">
+        <h1 className="pb-4 !text-xs uppercase border-b border-[#2C2C2C] card-title">Summary</h1>
+        <div className="space-y-4">
+          <SummaryItem
+            text={`
+          ${collateralTokenSymbol ? `${collateralTokenSymbol} Simple Bond` : '-'}`}
+            tip="Name"
+            title="Name"
+          />
+          <SummaryItem text={amountOfBonds} tip="Supply" title="Supply" />
+          <SummaryItem
+            text={`${amountOfBonds?.toLocaleString()} ${borrowTokenSymbol}`}
+            tip="Owed at maturity"
+            title="Owed at maturity"
+          />
+          <SummaryItem text={maturityDate} tip="Maturity date" title="Maturity date" />
+
+          {currentStep >= steps.length - 1 && (
+            <>
+              <SummaryItem
+                text={`${amountOfCollateral?.toLocaleString() || '-'} ${
+                  collateralTokenSymbol || ''
+                }`}
+                tip="Collateral tokens"
+                title="Collateral tokens"
+              />
+              <SummaryItem
+                text={collateralizationRatio.toFixed(3) + '%'}
+                tip="Collateralization ratio"
+                title="Collateralization ratio"
+              />
+            </>
+          )}
+        </div>
       </div>
     </div>
-  </div>
-)
+  )
+}
 
 type Inputs = {
   issuerName: string
