@@ -487,7 +487,7 @@ const InitiateAuctionAction = () => {
         onClick={() => {
           setWaitingWalletApprove(1)
           contract
-            .initiateAuction(args)
+            .initiateAuction(...args)
             .then((result) => {
               console.log(result)
 
