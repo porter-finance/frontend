@@ -11,7 +11,7 @@ interface Props {
 }
 
 const WarningModal: React.FC<Props> = (props) => {
-  const { content, isOpen, onDismiss, title = '' } = props
+  const { content, isOpen, onDismiss, title } = props
 
   return (
     <Modal isOpen={isOpen} onDismiss={onDismiss}>

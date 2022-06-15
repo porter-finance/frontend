@@ -16,6 +16,7 @@ import {
   FieldRowWrapper,
   calculateInterestRate,
 } from '../form/InterestRateInputPanel'
+import WarningModal from '../modals/WarningModal'
 
 import { ReactComponent as UnicornSvg } from '@/assets/svg/simple-bond.svg'
 import { requiredChain } from '@/connectors'
@@ -413,12 +414,13 @@ const Summary = ({ currentStep }) => {
   )
 }
 
-const InitializeAuctionAction = ({ setCurrentApproveStep }) => {
+const InitializeAuctionAction = () => {
   // state 0 for none, 1 for metamask confirmation, 2 for block confirmation
   const [waitingWalletApprove, setWaitingWalletApprove] = useState(0)
-  const { account, signer } = useActiveWeb3React()
+  const { signer } = useActiveWeb3React()
   const addRecentTransaction = useAddRecentTransaction()
   const { getValues } = useFormContext()
+  const [transactionError, setTransactionError] = useState('')
   const [amountOfBonds, bondToAuction] = getValues(['amountOfBonds', 'bondToAuction'])
   const navigate = useNavigate()
 
@@ -449,7 +451,7 @@ const InitializeAuctionAction = ({ setCurrentApproveStep }) => {
               console.log(result)
             })
             .catch((e) => {
-              // todo show error?
+              setTransactionError(e?.message || e)
             })
             .finally(() => {
               setWaitingWalletApprove(0)
@@ -469,6 +471,13 @@ const InitializeAuctionAction = ({ setCurrentApproveStep }) => {
           View auction page
         </ActionButton>
       )}
+      <WarningModal
+        content={transactionError}
+        isOpen={!!transactionError}
+        onDismiss={() => {
+          setTransactionError('')
+        }}
+      />
     </>
   )
 }
@@ -476,6 +485,7 @@ const InitializeAuctionAction = ({ setCurrentApproveStep }) => {
 const ActionSteps = () => {
   const { account, signer } = useActiveWeb3React()
   const { getValues } = useFormContext()
+  const [transactionError, setTransactionError] = useState('')
 
   const [amountOfBonds, bondToAuction] = getValues(['amountOfBonds', 'bondToAuction'])
 
@@ -492,7 +502,7 @@ const ActionSteps = () => {
 
   useEffect(() => {
     // Already approved the token
-    if (data && data.lte(parseUnits(`${amountOfBonds}`, bondToAuction.decimals))) {
+    if (data && data.gte(parseUnits(`${amountOfBonds}`, bondToAuction.decimals))) {
       setCurrentApproveStep(1)
     }
   }, [data, amountOfBonds, bondToAuction.decimals])
@@ -539,7 +549,7 @@ const ActionSteps = () => {
                 setCurrentApproveStep(1)
               })
               .catch((e) => {
-                // todo show error?
+                setTransactionError(e?.message || e)
               })
               .finally(() => {
                 setWaitingWalletApprove(0)
@@ -551,9 +561,14 @@ const ActionSteps = () => {
           {waitingWalletApprove === 2 && `Approving ${bondToAuction?.name}...`}
         </ActionButton>
       )}
-      {(currentApproveStep === 1 || currentApproveStep === 3) && (
-        <InitializeAuctionAction setCurrentApproveStep={setCurrentApproveStep} />
-      )}
+      {(currentApproveStep === 1 || currentApproveStep === 3) && <InitializeAuctionAction />}
+      <WarningModal
+        content={transactionError}
+        isOpen={!!transactionError}
+        onDismiss={() => {
+          setTransactionError('')
+        }}
+      />
     </>
   )
 }
