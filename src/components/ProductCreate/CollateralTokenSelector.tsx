@@ -30,8 +30,7 @@ const CollateralTokenSelector = () => {
 }
 
 export const BondSelector = () => {
-  const { data, loading } = useBondsPortfolio()
-  if (loading) return null
+  const { data } = useBondsPortfolio()
   return <Selector OptionEl={BondTokenDetails} name="bondToAuction" options={data} />
 }
 
