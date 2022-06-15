@@ -54,10 +54,8 @@ const StepOne = () => {
   const { register, watch } = useFormContext()
 
   const [amountOfBonds, minSalePrice] = watch(['amountOfBonds', 'minSalePrice'])
-  let minFundsRaised = amountOfBonds || 0 * minSalePrice || 0
-  minFundsRaised = !minFundsRaised ? '-' : minFundsRaised.toLocaleString()
-  let amountOwed = amountOfBonds || 0 - amountOfBonds || 0 * minSalePrice || 0
-  amountOwed = !amountOwed ? '-' : amountOwed.toLocaleString()
+  const minFundsRaised = (amountOfBonds || 0) * (minSalePrice || 0)
+  const amountOwed = (amountOfBonds || 0) - (amountOfBonds || 0) * (minSalePrice || 0)
 
   return (
     <>
@@ -105,7 +103,7 @@ const StepOne = () => {
       <FieldRowWrapper className="py-1 my-4 space-y-3">
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>{minFundsRaised}</p>
+            <p>{!minFundsRaised ? '-' : minFundsRaised.toLocaleString()}</p>
           </div>
 
           <TooltipElement
@@ -125,7 +123,7 @@ const StepOne = () => {
         </div>
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>{amountOwed}</p>
+            <p>{!amountOwed ? '-' : amountOwed.toLocaleString()}</p>
           </div>
 
           <TooltipElement
