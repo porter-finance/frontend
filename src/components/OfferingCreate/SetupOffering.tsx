@@ -210,6 +210,10 @@ const StepTwo = () => {
               dateValid: (auctionStartDate) => dayjs(auctionStartDate).isValid(),
               dateBefore: (auctionStartDate) => {
                 const auctionEndDate = getValues('auctionEndDate')
+                console.log(auctionStartDate)
+
+                console.log(dayjs(auctionEndDate).diff(auctionStartDate), 'days')
+
                 return dayjs(auctionEndDate).diff(auctionStartDate) > 0
               },
             },
@@ -278,7 +282,17 @@ const StepThree = () => {
           className="w-full input input-bordered"
           placeholder="MM/DD/YYYY"
           type="date"
-          {...register('orderCancellationEndDate', { required: false })}
+          {...register('orderCancellationEndDate', {
+            required: false,
+            validate: {
+              dateValid: (orderCancellationEndDate) => dayjs(orderCancellationEndDate).isValid(),
+              dateBefore: (orderCancellationEndDate) => {
+                const auctionEndDate = getValues('auctionEndDate')
+
+                return dayjs(orderCancellationEndDate).isBetween(new Date(), auctionEndDate)
+              },
+            },
+          })}
         />
       </div>
       <div className="w-full form-control">
@@ -337,7 +351,7 @@ const confirmSteps = [
     tip: 'Transfer your bonds into the auction contract and initiate the auction.',
   },
 ]
-const steps = ['Setup auction', 'Initiate auction', 'Bidding config', 'Confirm creation']
+const steps = ['Setup auction', 'Schedule auction', 'Bidding config', 'Confirm creation']
 
 const SummaryItem = ({ text, tip = null, title }) => (
   <div className="pb-4 space-y-2 border-b border-[#2C2C2C]">
@@ -459,7 +473,6 @@ const InitiateAuctionAction = () => {
     bondToAuction.maturityDate,
     bondToAuction.paymentToken,
   ]
-  console.log(bondToAuction, args)
 
   return (
     <>
