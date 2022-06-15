@@ -116,6 +116,7 @@ const StepOne = () => {
         </label>
         <input
           className="w-full input input-bordered"
+          min={1}
           placeholder="0"
           type="number"
           {...register('auctionedSellAmount', { required: true, valueAsNumber: true })}
@@ -131,6 +132,7 @@ const StepOne = () => {
         </label>
         <input
           className="w-full input input-bordered"
+          min="0"
           placeholder="0"
           step="0.001"
           type="number"
@@ -199,7 +201,9 @@ const StepTwo = () => {
         <input
           className="w-full input input-bordered"
           placeholder="MM/DD/YYYY"
+          readOnly
           type="date"
+          value={new Date().toISOString().substring(0, 10)}
           {...register('auctionStartDate', {
             required: true,
             validate: {
