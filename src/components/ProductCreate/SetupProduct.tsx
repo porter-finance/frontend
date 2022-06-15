@@ -160,8 +160,7 @@ export const StepTwo = () => {
     'collateralToken',
     'amountOfBonds',
   ])
-  const { data } = useTokenPrice(collateralToken?.address)
-  const collateralValue = amountOfCollateral * data
+  const collateralValue = amountOfCollateral * collateralToken?.price
   const collateralizationValue = collateralValue / amountOfBonds
   return (
     <>
@@ -193,7 +192,7 @@ export const StepTwo = () => {
       <FieldRowWrapper className="py-1 my-4 space-y-3">
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>{collateralValue.toFixed(3)}</p>
+            <p>{Number(collateralValue.toFixed(3)).toLocaleString()}</p>
           </div>
 
           <TooltipElement
@@ -203,7 +202,7 @@ export const StepTwo = () => {
         </div>
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>{collateralizationValue.toFixed(3)}</p>
+            <p>{Number(collateralizationValue.toFixed(3)).toLocaleString()}</p>
           </div>
 
           <TooltipElement
@@ -218,7 +217,14 @@ export const StepTwo = () => {
 
 export const StepThree = () => {
   const { register, watch } = useFormContext()
-  const collateralToken = watch('collateralToken')
+  const [borrowToken, collateralToken, amountOfConvertible] = watch([
+    'borrowToken',
+    'collateralToken',
+    'amountOfConvertible',
+  ])
+  const convertibleTokenValue = amountOfConvertible * collateralToken?.price
+  console.log(borrowToken)
+  const strikePrice = `${borrowToken?.symbol}/${collateralToken?.symbol}`
   return (
     <>
       <div className="w-full form-control">
@@ -250,7 +256,7 @@ export const StepThree = () => {
       <FieldRowWrapper className="py-1 my-4 space-y-3">
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>-</p>
+            <p>{`${convertibleTokenValue} USDC`}</p>
           </div>
 
           <TooltipElement
@@ -260,7 +266,7 @@ export const StepThree = () => {
         </div>
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>-</p>
+            <p>{strikePrice}</p>
           </div>
 
           <TooltipElement
@@ -291,32 +297,80 @@ export const SummaryItem = ({ text, tip, title }) => (
   </div>
 )
 
-const Summary = ({ currentStep }) => (
-  <div className="overflow-visible w-[425px] card">
-    <div className="card-body">
-      <h1 className="pb-4 !text-xs uppercase border-b border-[#2C2C2C] card-title">Summary</h1>
-      <div className="space-y-4">
-        <SummaryItem text="Uniswap Convertible Bond" tip="Name" title="Name" />
-        <SummaryItem text="400,000" tip="Supply" title="Supply" />
-        <SummaryItem text="400,000 USDC" tip="Owed at maturity" title="Owed at maturity" />
-        <SummaryItem text="07/01/2022" tip="Maturity date" title="Maturity date" />
+const Summary = ({ currentStep }) => {
+  const { watch } = useFormContext()
+  const [
+    borrowToken,
+    collateralToken,
+    amountOfBonds,
+    maturityDate,
+    amountOfCollateral,
+    amountOfConvertible,
+  ] = watch([
+    'borrowToken',
+    'collateralToken',
+    'amountOfBonds',
+    'maturityDate',
+    'amountOfCollateral',
+    'amountOfConvertible',
+  ])
+  const borrowTokenSymbol = borrowToken?.symbol || '-'
+  const collateralTokenSymbol = collateralToken?.symbol || '-'
+  const collateralizationRatio = amountOfCollateral / amountOfBonds
+  const strikePrice = 1 / ((amountOfCollateral / amountOfBonds) * collateralToken?.price)
+  return (
+    <div className="overflow-visible w-[425px] card">
+      <div className="card-body">
+        <h1 className="pb-4 !text-xs uppercase border-b border-[#2C2C2C] card-title">Summary</h1>
+        <div className="space-y-4">
+          <SummaryItem
+            text={`${collateralTokenSymbol ? `${collateralTokenSymbol} Convertible Bond` : '-'}`}
+            tip="Name"
+            title="Name"
+          />
+          <SummaryItem text={amountOfBonds} tip="Supply" title="Supply" />
+          <SummaryItem
+            text={`${amountOfBonds?.toLocaleString()} USDC`}
+            tip="Owed at maturity"
+            title="Owed at maturity"
+          />
+          <SummaryItem text={maturityDate} tip="Maturity date" title="Maturity date" />
 
-        {currentStep >= 2 && (
-          <>
-            <SummaryItem text="400,000 UNI" tip="Collateral tokens" title="Collateral tokens" />
-            <SummaryItem text="1,000%" tip="Collateral tokens" title="Collateral tokens" />
-          </>
-        )}
-        {currentStep >= 3 && (
-          <>
-            <SummaryItem text="10,000 UNI" tip="Convertible tokens" title="Collateral tokens" />
-            <SummaryItem text="40 USDC/UNI" tip="Strike price" title="Strike price" />
-          </>
-        )}
+          {currentStep >= 2 && (
+            <>
+              <SummaryItem
+                text={`${amountOfCollateral?.toLocaleString() || '-'} ${
+                  collateralTokenSymbol || ''
+                }`}
+                tip="Collateral tokens"
+                title="Collateral tokens"
+              />
+              <SummaryItem
+                text={collateralizationRatio.toFixed(3) + '%'}
+                tip="Collateral tokens"
+                title="Collateralization ratio"
+              />
+            </>
+          )}
+          {currentStep >= 3 && (
+            <>
+              <SummaryItem
+                text={`${amountOfConvertible || '-'} ${collateralTokenSymbol || ''}`}
+                tip="Convertible tokens"
+                title="Collateral tokens"
+              />
+              <SummaryItem
+                text={`${strikePrice} ${borrowTokenSymbol}/${collateralTokenSymbol}`}
+                tip="Strike price"
+                title="Strike price"
+              />
+            </>
+          )}
+        </div>
       </div>
     </div>
-  </div>
-)
+  )
+}
 
 type Inputs = {
   issuerName: string
