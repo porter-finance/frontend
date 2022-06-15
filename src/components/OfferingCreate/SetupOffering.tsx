@@ -11,21 +11,21 @@ import TooltipElement from '../common/Tooltip'
 import { FieldRowLabelStyledText, FieldRowWrapper } from '../form/InterestRateInputPanel'
 
 import { ReactComponent as UnicornSvg } from '@/assets/svg/simple-bond.svg'
-import { requiredChain } from '@/connectors'
 import easyAuctionABI from '@/constants/abis/easyAuction/easyAuction.json'
-import { EASY_AUCTION_NETWORKS } from '@/utils'
+import { Token } from '@/generated/graphql'
 
 type Inputs = {
   issuerName: string
   exampleRequired: string
-  amountOfBonds: string
-  minSalePrice: string
+  amountOfBonds: number
+  minSalePrice: number
   startDate: Date
   endDate: Date
   signerAddress: string
   minBidSize: string
   cancellationDate: string
-  bondToAuction: { name: string; icon: string }
+  // TODO: its actually type Bond but we only need a few values off there
+  bondToAuction: Token
 }
 
 export const TokenDetails = ({ option }) => (
@@ -54,6 +54,10 @@ const StepOne = () => {
   const { register, watch } = useFormContext()
 
   const [amountOfBonds, minSalePrice] = watch(['amountOfBonds', 'minSalePrice'])
+  let minFundsRaised = amountOfBonds || 0 * minSalePrice || 0
+  minFundsRaised = !minFundsRaised ? '-' : minFundsRaised.toLocaleString()
+  let amountOwed = amountOfBonds || 0 - amountOfBonds || 0 * minSalePrice || 0
+  amountOwed = !amountOwed ? '-' : amountOwed.toLocaleString()
 
   return (
     <>
@@ -101,9 +105,7 @@ const StepOne = () => {
       <FieldRowWrapper className="py-1 my-4 space-y-3">
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>
-              {amountOfBonds && minSalePrice && (amountOfBonds * minSalePrice).toLocaleString()}
-            </p>
+            <p>{minFundsRaised}</p>
           </div>
 
           <TooltipElement
@@ -113,7 +115,7 @@ const StepOne = () => {
         </div>
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>{amountOfBonds && amountOfBonds.toLocaleString()}</p>
+            <p>{!amountOfBonds ? '-' : amountOfBonds.toLocaleString()}</p>
           </div>
 
           <TooltipElement
@@ -123,11 +125,7 @@ const StepOne = () => {
         </div>
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>
-              {amountOfBonds &&
-                minSalePrice &&
-                (amountOfBonds - amountOfBonds * minSalePrice).toLocaleString()}
-            </p>
+            <p>{amountOwed}</p>
           </div>
 
           <TooltipElement
@@ -370,15 +368,21 @@ const SetupOffering = () => {
   const [currentStep, setCurrentStep] = useState(0)
   const [currentConfirmStep, setCurrentConfirmStep] = useState(0)
   const methods = useForm<Inputs>({ mode: 'onChange' })
+
   const {
     formState: { isDirty, isValid },
+    getValues,
     handleSubmit,
     watch,
   } = methods
 
+  const ok = getValues()
+
+  const bondName = watch('bondToAuction')
+
   const { data, isError, isLoading, write } = useContractWrite(
     {
-      addressOrName: EASY_AUCTION_NETWORKS[requiredChain.id],
+      addressOrName: bondName?.id,
       contractInterface: easyAuctionABI,
     },
     'approve',
@@ -389,10 +393,7 @@ const SetupOffering = () => {
 
   console.log({ data, isError, isLoading })
 
-  const bondName = watch('bondToAuction')
-
   const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data)
-
   const midComponents = [<StepOne key={0} />, <StepTwo key={1} />, <StepThree key={2} />]
 
   return (
