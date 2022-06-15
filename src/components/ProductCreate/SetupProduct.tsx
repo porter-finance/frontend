@@ -314,7 +314,10 @@ const SetupProduct = () => {
   const [currentConfirmStep, setCurrentConfirmStep] = useState(1)
 
   const methods = useForm<Inputs>({ mode: 'onChange' })
-  const { formState, handleSubmit } = methods
+  const {
+    formState: { isDirty, isValid },
+    handleSubmit,
+  } = methods
   const onSubmit: SubmitHandler<Inputs> = (data) => console.log('onSubmit', data)
   const midComponents = [<StepOne key={0} />, <StepTwo key={1} />, <StepThree key={2} />]
 
@@ -355,7 +358,7 @@ const SetupProduct = () => {
                 {currentStep < 3 && (
                   <ActionButton
                     color="purple"
-                    disabled={!formState.isValid}
+                    disabled={!isValid || !isDirty}
                     onClick={() => setCurrentStep(currentStep + 1)}
                     type="submit"
                   >
