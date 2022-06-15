@@ -57,7 +57,7 @@ export const TokenDetails = ({ option }) => {
 }
 
 export const BondTokenDetails = ({ option }: { option: Bond }) => {
-  const balance = option?.tokenBalances?.[0].amount
+  const balance = Number(option?.tokenBalances?.[0].amount)
   if (balance == 0) return null
   if (!option) {
     return (
@@ -78,7 +78,7 @@ export const BondTokenDetails = ({ option }: { option: Bond }) => {
       </div>
       <div className="flex justify-between w-full">
         <span>
-          <span className="text-[#696969]">Balance:</span> {balance}
+          <span className="text-[#696969]">Balance:</span> {balance?.toLocaleString()}
         </span>
       </div>
     </div>

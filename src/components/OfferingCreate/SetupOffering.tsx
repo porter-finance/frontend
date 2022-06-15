@@ -8,7 +8,11 @@ import { useContractWrite } from 'wagmi'
 import { BondSelector } from '../ProductCreate/CollateralTokenSelector'
 import { ActionButton } from '../auction/Claimer'
 import TooltipElement from '../common/Tooltip'
-import { FieldRowLabelStyledText, FieldRowWrapper } from '../form/InterestRateInputPanel'
+import {
+  FieldRowLabelStyledText,
+  FieldRowWrapper,
+  calculateInterestRate,
+} from '../form/InterestRateInputPanel'
 
 import { ReactComponent as UnicornSvg } from '@/assets/svg/simple-bond.svg'
 import easyAuctionABI from '@/constants/abis/easyAuction/easyAuction.json'
@@ -53,12 +57,32 @@ export const TokenDetails = ({ option }) => (
 const StepOne = () => {
   const { register, watch } = useFormContext()
 
-  const [amountOfBonds, minSalePrice] = watch(['amountOfBonds', 'minSalePrice'])
-  let minFundsRaised = amountOfBonds || 0 * minSalePrice || 0
-  minFundsRaised = !minFundsRaised ? '-' : minFundsRaised.toLocaleString()
-  let amountOwed = amountOfBonds || 0 - amountOfBonds || 0 * minSalePrice || 0
-  amountOwed = !amountOwed ? '-' : amountOwed.toLocaleString()
-
+  const [amountOfBonds, minSalePrice, bondToAuction] = watch([
+    'amountOfBonds',
+    'minSalePrice',
+    'bondToAuction',
+  ])
+  let minFundsRaised = '-'
+  if (amountOfBonds && minSalePrice) {
+    // Might need to replace this with BigNumbers
+    minFundsRaised = (amountOfBonds * minSalePrice).toLocaleString()
+  }
+  let amountOwed = '-'
+  if (amountOfBonds) {
+    amountOwed = amountOfBonds.toLocaleString()
+  }
+  let maximumInterestOwed = '-'
+  if (amountOfBonds && minSalePrice) {
+    maximumInterestOwed = (amountOfBonds - amountOfBonds * minSalePrice).toLocaleString()
+  }
+  let maximumYTM = '-'
+  if (amountOfBonds && bondToAuction && minSalePrice) {
+    maximumYTM = calculateInterestRate({
+      price: minSalePrice,
+      maturityDate: bondToAuction?.maturityDate,
+      startDate: new Date().getTime(),
+    }).toLocaleString()
+  }
   return (
     <>
       <div className="w-full form-control">
@@ -97,6 +121,7 @@ const StepOne = () => {
         <input
           className="w-full input input-bordered"
           placeholder="0"
+          step="0.001"
           type="number"
           {...register('minSalePrice', { required: true, valueAsNumber: true })}
         />
@@ -115,7 +140,7 @@ const StepOne = () => {
         </div>
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>{!amountOfBonds ? '-' : amountOfBonds.toLocaleString()}</p>
+            <p>{amountOwed}</p>
           </div>
 
           <TooltipElement
@@ -125,7 +150,7 @@ const StepOne = () => {
         </div>
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>{amountOwed}</p>
+            <p>{maximumInterestOwed}</p>
           </div>
 
           <TooltipElement
@@ -135,12 +160,12 @@ const StepOne = () => {
         </div>
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>-</p>
+            <p>{maximumYTM}</p>
           </div>
 
           <TooltipElement
-            left={<FieldRowLabelStyledText>Maximum APR</FieldRowLabelStyledText>}
-            tip="Maximum APR you will be required to pay. The settlement APR might be lower than your maximum set."
+            left={<FieldRowLabelStyledText>Maximum YTM</FieldRowLabelStyledText>}
+            tip="Maximum YTM you will be required to pay. The settlement YTM might be lower than your maximum set."
           />
         </div>
       </FieldRowWrapper>
