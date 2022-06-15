@@ -2,6 +2,7 @@ import { BigNumber } from 'ethers'
 import React, { useEffect, useState } from 'react'
 
 import { DoubleArrowRightIcon } from '@radix-ui/react-icons'
+import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import dayjs from 'dayjs'
 import { FormProvider, SubmitHandler, useForm, useFormContext } from 'react-hook-form'
 import { useContract } from 'wagmi'
@@ -414,6 +415,9 @@ const Summary = ({ currentStep }) => {
 const SetupOffering = () => {
   const [currentStep, setCurrentStep] = useState(0)
   const methods = useForm<Inputs>({ mode: 'onChange' })
+  // state 0 for none, 1 for metamask confirmation, 2 for block confirmation
+  const [waitingWalletApprove, setWaitingWalletApprove] = useState(0)
+  const addRecentTransaction = useAddRecentTransaction()
 
   const {
     formState: { isDirty, isValid },
@@ -429,7 +433,6 @@ const SetupOffering = () => {
     contractInterface: ERC20_ABI,
     signerOrProvider: signer,
   })
-  const isLoading = false
 
   const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data)
   const midComponents = [<StepOne key={0} />, <StepTwo key={1} />, <StepThree key={2} />]
@@ -489,16 +492,31 @@ const SetupOffering = () => {
                     </ul>
 
                     <ActionButton
-                      className={isLoading ? 'loading' : ''}
+                      className={waitingWalletApprove ? 'loading' : ''}
                       color="blue"
                       onClick={() => {
-                        contract.approve(
-                          EASY_AUCTION_NETWORKS[requiredChain.id],
-                          BigNumber.from(amountOfBonds || 0),
-                        )
+                        setWaitingWalletApprove(1)
+                        contract
+                          .approve(
+                            EASY_AUCTION_NETWORKS[requiredChain.id],
+                            BigNumber.from(amountOfBonds || 0),
+                          )
+                          .then((result) => {
+                            setWaitingWalletApprove(2)
+                            addRecentTransaction({
+                              hash: result?.hash,
+                              description: `Approve ${bondToAuction.name} for ${amountOfBonds}`,
+                            })
+                            return result.wait()
+                          })
+                          .finally(() => {
+                            setWaitingWalletApprove(0)
+                          })
                       }}
                     >
-                      Approve {bondToAuction?.name} for sale
+                      {!waitingWalletApprove && `Approve ${bondToAuction?.name} for sale`}
+                      {waitingWalletApprove === 1 && 'Confirm approval in wallet'}
+                      {waitingWalletApprove === 2 && `Approving ${bondToAuction?.name}...`}
                     </ActionButton>
                   </>
                 )}
