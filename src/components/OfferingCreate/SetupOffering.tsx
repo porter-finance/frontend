@@ -1,9 +1,10 @@
+import { BigNumber } from 'ethers'
 import React, { useEffect, useState } from 'react'
 
 import { DoubleArrowRightIcon } from '@radix-ui/react-icons'
 import dayjs from 'dayjs'
 import { FormProvider, SubmitHandler, useForm, useFormContext } from 'react-hook-form'
-import { useContractWrite } from 'wagmi'
+import { useContract } from 'wagmi'
 
 import { BondSelector } from '../ProductCreate/CollateralTokenSelector'
 import { ActionButton } from '../auction/Claimer'
@@ -15,8 +16,11 @@ import {
 } from '../form/InterestRateInputPanel'
 
 import { ReactComponent as UnicornSvg } from '@/assets/svg/simple-bond.svg'
-import easyAuctionABI from '@/constants/abis/easyAuction/easyAuction.json'
+import { requiredChain } from '@/connectors'
+import ERC20_ABI from '@/constants/abis/erc20.json'
 import { Token } from '@/generated/graphql'
+import { useActiveWeb3React } from '@/hooks'
+import { EASY_AUCTION_NETWORKS } from '@/utils'
 
 type Inputs = {
   issuerName: string
@@ -415,25 +419,17 @@ const SetupOffering = () => {
     formState: { isDirty, isValid },
     getValues,
     handleSubmit,
-    watch,
   } = methods
 
-  const ok = getValues()
+  const { signer } = useActiveWeb3React()
+  const [amountOfBonds, bondToAuction] = getValues(['amountOfBonds', 'bondToAuction'])
 
-  const bondName = watch('bondToAuction')
-
-  const { data, isError, isLoading, write } = useContractWrite(
-    {
-      addressOrName: bondName?.id,
-      contractInterface: easyAuctionABI,
-    },
-    'approve',
-    {
-      args: [],
-    },
-  )
-
-  console.log({ data, isError, isLoading })
+  const contract = useContract({
+    addressOrName: bondToAuction?.id || '0x0',
+    contractInterface: ERC20_ABI,
+    signerOrProvider: signer,
+  })
+  const isLoading = false
 
   const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data)
   const midComponents = [<StepOne key={0} />, <StepTwo key={1} />, <StepThree key={2} />]
@@ -495,9 +491,14 @@ const SetupOffering = () => {
                     <ActionButton
                       className={isLoading ? 'loading' : ''}
                       color="blue"
-                      onClick={write}
+                      onClick={() => {
+                        contract.approve(
+                          EASY_AUCTION_NETWORKS[requiredChain.id],
+                          BigNumber.from(amountOfBonds || 0),
+                        )
+                      }}
                     >
-                      Approve {bondName?.name} for sale
+                      Approve {bondToAuction?.name} for sale
                     </ActionButton>
                   </>
                 )}
