@@ -8,7 +8,11 @@ import { useContractWrite } from 'wagmi'
 import { BondSelector } from '../ProductCreate/CollateralTokenSelector'
 import { ActionButton } from '../auction/Claimer'
 import TooltipElement from '../common/Tooltip'
-import { FieldRowLabelStyledText, FieldRowWrapper } from '../form/InterestRateInputPanel'
+import {
+  FieldRowLabelStyledText,
+  FieldRowWrapper,
+  calculateInterestRate,
+} from '../form/InterestRateInputPanel'
 
 import { ReactComponent as UnicornSvg } from '@/assets/svg/simple-bond.svg'
 import easyAuctionABI from '@/constants/abis/easyAuction/easyAuction.json'
@@ -53,10 +57,32 @@ export const TokenDetails = ({ option }) => (
 const StepOne = () => {
   const { register, watch } = useFormContext()
 
-  const [amountOfBonds, minSalePrice] = watch(['amountOfBonds', 'minSalePrice'])
-  const minFundsRaised = (amountOfBonds || 0) * (minSalePrice || 0)
-  const amountOwed = (amountOfBonds || 0) - (amountOfBonds || 0) * (minSalePrice || 0)
-
+  const [amountOfBonds, minSalePrice, bondToAuction] = watch([
+    'amountOfBonds',
+    'minSalePrice',
+    'bondToAuction',
+  ])
+  let minFundsRaised = '-'
+  if (amountOfBonds && minSalePrice) {
+    // Might need to replace this with BigNumbers
+    minFundsRaised = (amountOfBonds * minSalePrice).toLocaleString()
+  }
+  let amountOwed = '-'
+  if (amountOfBonds) {
+    amountOwed = amountOfBonds.toLocaleString()
+  }
+  let maximumInterestOwed = '-'
+  if (amountOfBonds && minSalePrice) {
+    maximumInterestOwed = (amountOfBonds - amountOfBonds * minSalePrice).toLocaleString()
+  }
+  let maximumYTM = '-'
+  if (amountOfBonds && bondToAuction && minSalePrice) {
+    maximumYTM = calculateInterestRate({
+      price: minSalePrice,
+      maturityDate: bondToAuction?.maturityDate,
+      startDate: new Date().getTime(),
+    }).toLocaleString()
+  }
   return (
     <>
       <div className="w-full form-control">
@@ -95,6 +121,7 @@ const StepOne = () => {
         <input
           className="w-full input input-bordered"
           placeholder="0"
+          step="0.001"
           type="number"
           {...register('minSalePrice', { required: true, valueAsNumber: true })}
         />
@@ -113,7 +140,7 @@ const StepOne = () => {
         </div>
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>{!amountOfBonds ? '-' : amountOfBonds.toLocaleString()}</p>
+            <p>{amountOwed}</p>
           </div>
 
           <TooltipElement
@@ -123,7 +150,7 @@ const StepOne = () => {
         </div>
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>{!amountOwed ? '-' : amountOwed.toLocaleString()}</p>
+            <p>{maximumInterestOwed}</p>
           </div>
 
           <TooltipElement
@@ -133,12 +160,12 @@ const StepOne = () => {
         </div>
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>-</p>
+            <p>{maximumYTM}</p>
           </div>
 
           <TooltipElement
-            left={<FieldRowLabelStyledText>Maximum APR</FieldRowLabelStyledText>}
-            tip="Maximum APR you will be required to pay. The settlement APR might be lower than your maximum set."
+            left={<FieldRowLabelStyledText>Maximum YTM</FieldRowLabelStyledText>}
+            tip="Maximum YTM you will be required to pay. The settlement YTM might be lower than your maximum set."
           />
         </div>
       </FieldRowWrapper>
@@ -147,7 +174,7 @@ const StepOne = () => {
 }
 
 const StepTwo = () => {
-  const { register } = useFormContext()
+  const { getValues, register } = useFormContext()
 
   return (
     <>
@@ -162,7 +189,16 @@ const StepTwo = () => {
           className="w-full input input-bordered"
           placeholder="MM/DD/YYYY"
           type="date"
-          {...register('startDate', { required: true })}
+          {...register('startDate', {
+            required: true,
+            validate: {
+              dateValid: (startDate) => dayjs(startDate).isValid(),
+              dateBefore: (startDate) => {
+                const endDate = getValues('endDate')
+                return dayjs(endDate).diff(startDate) > 0
+              },
+            },
+          })}
         />
       </div>
       <div className="w-full form-control">
@@ -176,7 +212,12 @@ const StepTwo = () => {
           className="w-full input input-bordered"
           placeholder="MM/DD/YYYY"
           type="date"
-          {...register('endDate', { required: true })}
+          {...register('endDate', {
+            required: true,
+            validate: {
+              dateValid: (endDate) => dayjs(endDate).isValid(),
+            },
+          })}
         />
       </div>
     </>
@@ -307,12 +348,16 @@ const Summary = ({ currentStep }) => {
             Length of offering
           </h1>
           <div className="space-y-4">
-            <SummaryItem
-              text={`${days} ${days === 1 ? 'day' : 'days'}`}
-              title={`${dayjs(startDate).utc().format('LL UTC')} - ${dayjs(endDate)
-                .utc()
-                .format('LL UTC')}`}
-            />
+            {dayjs(startDate).isValid() && dayjs(endDate).isValid() ? (
+              <SummaryItem
+                text={days <= 0 ? 'Dates Misconfigured' : `${days} ${days === 1 ? 'day' : 'days'}`}
+                title={`${dayjs(startDate).utc().format('LL UTC')} - ${dayjs(endDate)
+                  .utc()
+                  .format('LL UTC')}`}
+              />
+            ) : (
+              <SummaryItem text="0 days" title="Enter a start and end date." />
+            )}
           </div>
         </div>
       </div>
