@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 
 import { formatUnits } from '@ethersproject/units'
 import { DoubleArrowRightIcon } from '@radix-ui/react-icons'
+import dayjs from 'dayjs'
 import { round } from 'lodash'
 import { FormProvider, SubmitHandler, useForm, useFormContext } from 'react-hook-form'
 import { useBalance } from 'wagmi'
@@ -139,7 +140,13 @@ export const StepOne = () => {
           className="w-full input input-bordered"
           placeholder="DD/MM/YYYY"
           type="date"
-          {...register('maturityDate', { required: true })}
+          {...register('maturityDate', {
+            required: true,
+            validate: {
+              validDate: (maturityDate) => dayjs(maturityDate).isValid(),
+              afterNow: (maturityDate) => dayjs(maturityDate).diff(new Date()) > 0,
+            },
+          })}
         />
       </div>
     </>
@@ -148,7 +155,14 @@ export const StepOne = () => {
 
 export const StepTwo = () => {
   const { register, watch } = useFormContext()
-  const amountOfCollateral = watch('amountOfCollateral')
+  const [amountOfCollateral, collateralToken, amountOfBonds] = watch([
+    'amountOfCollateral',
+    'collateralToken',
+    'amountOfBonds',
+  ])
+  const { data } = useTokenPrice(collateralToken?.address)
+  const collateralValue = amountOfCollateral * data
+  const collateralizationValue = collateralValue / amountOfBonds
   return (
     <>
       <div className="w-full form-control">
@@ -179,7 +193,7 @@ export const StepTwo = () => {
       <FieldRowWrapper className="py-1 my-4 space-y-3">
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>{amountOfCollateral}</p>
+            <p>{collateralValue.toFixed(3)}</p>
           </div>
 
           <TooltipElement
@@ -189,7 +203,7 @@ export const StepTwo = () => {
         </div>
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>{amountOfCollateral}</p>
+            <p>{collateralizationValue.toFixed(3)}</p>
           </div>
 
           <TooltipElement
