@@ -5,7 +5,7 @@ import { DoubleArrowRightIcon } from '@radix-ui/react-icons'
 import dayjs from 'dayjs'
 import { round } from 'lodash'
 import { FormProvider, SubmitHandler, useForm, useFormContext } from 'react-hook-form'
-import { useBalance } from 'wagmi'
+import { useBalance, useToken } from 'wagmi'
 
 import { ActionButton } from '../auction/Claimer'
 import TooltipElement from '../common/Tooltip'
@@ -160,7 +160,8 @@ export const StepTwo = () => {
     'collateralToken',
     'amountOfBonds',
   ])
-  const collateralValue = amountOfCollateral * collateralToken?.price
+  const { data } = useTokenPrice(collateralToken?.address)
+  const collateralValue = amountOfCollateral * data
   const collateralizationValue = collateralValue / amountOfBonds
   return (
     <>
@@ -222,9 +223,11 @@ export const StepThree = () => {
     'collateralToken',
     'amountOfConvertible',
   ])
-  const convertibleTokenValue = amountOfConvertible * collateralToken?.price
-  console.log(borrowToken)
-  const strikePrice = `${borrowToken?.symbol}/${collateralToken?.symbol}`
+  const { data: collateralTokenPrice } = useTokenPrice(collateralToken?.address)
+  const { data: collateralTokenData } = useToken({ address: collateralToken?.address })
+  const { data: borrowTokenData } = useToken({ address: borrowToken?.address })
+  const convertibleTokenValue = amountOfConvertible * collateralTokenPrice
+  const strikePrice = `${borrowTokenData?.symbol}/${collateralTokenData?.symbol}`
   return (
     <>
       <div className="w-full form-control">
@@ -314,10 +317,13 @@ const Summary = ({ currentStep }) => {
     'amountOfCollateral',
     'amountOfConvertible',
   ])
-  const borrowTokenSymbol = borrowToken?.symbol || '-'
-  const collateralTokenSymbol = collateralToken?.symbol || '-'
+  const { data: collateralTokenData } = useToken({ address: collateralToken?.address })
+  const { data: borrowTokenData } = useToken({ address: borrowToken?.address })
+  const { data: collateralTokenPrice } = useTokenPrice(collateralToken)
+  const borrowTokenSymbol = borrowTokenData?.symbol || '-'
+  const collateralTokenSymbol = collateralTokenData?.symbol || '-'
   const collateralizationRatio = amountOfCollateral / amountOfBonds
-  const strikePrice = 1 / ((amountOfCollateral / amountOfBonds) * collateralToken?.price)
+  const strikePrice = 1 / ((amountOfCollateral / amountOfBonds) * collateralTokenPrice)
   return (
     <div className="overflow-visible w-[425px] card">
       <div className="card-body">
