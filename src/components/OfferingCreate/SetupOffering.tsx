@@ -1,11 +1,12 @@
-import { BigNumber } from 'ethers'
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
+import { parseUnits } from '@ethersproject/units'
 import { DoubleArrowRightIcon } from '@radix-ui/react-icons'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import dayjs from 'dayjs'
 import { FormProvider, SubmitHandler, useForm, useFormContext } from 'react-hook-form'
-import { useContract } from 'wagmi'
+import { useContract, useContractRead } from 'wagmi'
 
 import { BondSelector } from '../ProductCreate/CollateralTokenSelector'
 import { ActionButton } from '../auction/Claimer'
@@ -323,11 +324,11 @@ const confirmSteps = [
     tip: 'The bonds need to be approved so they can be offered for sale.',
   },
   {
-    text: 'Schedule auction',
-    tip: 'Transfer your bonds into the auction contract and schedule the auction.',
+    text: 'Initiate auction',
+    tip: 'Transfer your bonds into the auction contract and initiate the auction.',
   },
 ]
-const steps = ['Setup auction', 'Schedule auction', 'Bidding config', 'Confirm creation']
+const steps = ['Setup auction', 'Initiate auction', 'Bidding config', 'Confirm creation']
 
 const SummaryItem = ({ text, tip = null, title }) => (
   <div className="pb-4 space-y-2 border-b border-[#2C2C2C]">
@@ -412,27 +413,159 @@ const Summary = ({ currentStep }) => {
   )
 }
 
-const SetupOffering = () => {
-  const [currentStep, setCurrentStep] = useState(0)
-  const methods = useForm<Inputs>({ mode: 'onChange' })
+const InitiateAuctionAction = ({ setCurrentApproveStep }) => {
   // state 0 for none, 1 for metamask confirmation, 2 for block confirmation
   const [waitingWalletApprove, setWaitingWalletApprove] = useState(0)
+  const { account, signer } = useActiveWeb3React()
   const addRecentTransaction = useAddRecentTransaction()
-
-  const {
-    formState: { isDirty, isValid },
-    getValues,
-    handleSubmit,
-  } = methods
-
-  const { signer } = useActiveWeb3React()
+  const { getValues } = useFormContext()
   const [amountOfBonds, bondToAuction] = getValues(['amountOfBonds', 'bondToAuction'])
+  const navigate = useNavigate()
 
   const contract = useContract({
-    addressOrName: bondToAuction?.id || '0x0',
+    addressOrName: bondToAuction?.id,
     contractInterface: ERC20_ABI,
     signerOrProvider: signer,
   })
+
+  return (
+    <>
+      <ActionButton
+        className={waitingWalletApprove ? 'loading' : ''}
+        color="blue"
+        onClick={() => {
+          setWaitingWalletApprove(1)
+          contract
+            .initiate([amountOfBonds])
+            .then((result) => {
+              setWaitingWalletApprove(2)
+              addRecentTransaction({
+                hash: result?.hash,
+                description: `Created auction`,
+              })
+              return result.wait()
+            })
+            .then((result) => {
+              console.log(result)
+            })
+            .catch((e) => {
+              // todo show error?
+            })
+            .finally(() => {
+              setWaitingWalletApprove(0)
+            })
+        }}
+      >
+        {!waitingWalletApprove && `Initiate auction`}
+        {waitingWalletApprove === 1 && 'Confirm initiation in wallet'}
+        {waitingWalletApprove === 2 && `Initiating auction...`}
+      </ActionButton>
+      {waitingWalletApprove === 3 && (
+        <ActionButton
+          onClick={() => {
+            navigate('/offerings')
+          }}
+        >
+          View auction page
+        </ActionButton>
+      )}
+    </>
+  )
+}
+
+const ActionSteps = () => {
+  const { account, signer } = useActiveWeb3React()
+  const { getValues } = useFormContext()
+
+  const [amountOfBonds, bondToAuction] = getValues(['amountOfBonds', 'bondToAuction'])
+
+  const { data } = useContractRead(
+    {
+      addressOrName: bondToAuction?.id,
+      contractInterface: ERC20_ABI,
+    },
+    'allowance',
+    {
+      args: [account, EASY_AUCTION_NETWORKS[requiredChain.id]],
+    },
+  )
+
+  useEffect(() => {
+    // Already approved the token
+    if (data && data.lte(parseUnits(`${amountOfBonds}`, bondToAuction.decimals))) {
+      setCurrentApproveStep(1)
+    }
+  }, [data, amountOfBonds, bondToAuction.decimals])
+
+  // state 0 for none, 1 for metamask confirmation, 2 for block confirmation
+  const [waitingWalletApprove, setWaitingWalletApprove] = useState(0)
+  const [currentApproveStep, setCurrentApproveStep] = useState(0)
+  const addRecentTransaction = useAddRecentTransaction()
+  const contract = useContract({
+    addressOrName: bondToAuction?.id,
+    contractInterface: ERC20_ABI,
+    signerOrProvider: signer,
+  })
+
+  return (
+    <>
+      <ul className="steps steps-vertical">
+        {confirmSteps.map((step, i) => (
+          <li className={`step ${i <= currentApproveStep ? 'step-secondary' : ''}`} key={i}>
+            <TooltipElement left={step.text} tip={step.tip} />
+          </li>
+        ))}
+      </ul>
+      {!currentApproveStep && (
+        <ActionButton
+          className={waitingWalletApprove ? 'loading' : ''}
+          color="blue"
+          onClick={() => {
+            setWaitingWalletApprove(1)
+            contract
+              .approve(
+                EASY_AUCTION_NETWORKS[requiredChain.id],
+                parseUnits(`${amountOfBonds}` || `0`, bondToAuction.decimals),
+              )
+              .then((result) => {
+                setWaitingWalletApprove(2)
+                addRecentTransaction({
+                  hash: result?.hash,
+                  description: `Approve ${bondToAuction.name} for ${amountOfBonds}`,
+                })
+                return result.wait()
+              })
+              .then((result) => {
+                setCurrentApproveStep(1)
+              })
+              .catch((e) => {
+                // todo show error?
+              })
+              .finally(() => {
+                setWaitingWalletApprove(0)
+              })
+          }}
+        >
+          {!waitingWalletApprove && `Approve ${bondToAuction?.name} for sale`}
+          {waitingWalletApprove === 1 && 'Confirm approval in wallet'}
+          {waitingWalletApprove === 2 && `Approving ${bondToAuction?.name}...`}
+        </ActionButton>
+      )}
+      {(currentApproveStep === 1 || currentApproveStep === 3) && (
+        <InitiateAuctionAction setCurrentApproveStep={setCurrentApproveStep} />
+      )}
+    </>
+  )
+}
+
+const SetupOffering = () => {
+  const [currentStep, setCurrentStep] = useState(0)
+  const methods = useForm<Inputs>({ mode: 'onChange' })
+
+  const {
+    formState: { isDirty, isValid },
+    handleSubmit,
+  } = methods
 
   const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data)
   const midComponents = [<StepOne key={0} />, <StepTwo key={1} />, <StepThree key={2} />]
@@ -481,45 +614,7 @@ const SetupOffering = () => {
                     Continue
                   </ActionButton>
                 )}
-                {currentStep === 3 && (
-                  <>
-                    <ul className="steps steps-vertical">
-                      {confirmSteps.map((step, i) => (
-                        <li className={`step ${i <= currentStep ? 'step-secondary' : ''}`} key={i}>
-                          <TooltipElement left={step.text} tip={step.tip} />
-                        </li>
-                      ))}
-                    </ul>
-
-                    <ActionButton
-                      className={waitingWalletApprove ? 'loading' : ''}
-                      color="blue"
-                      onClick={() => {
-                        setWaitingWalletApprove(1)
-                        contract
-                          .approve(
-                            EASY_AUCTION_NETWORKS[requiredChain.id],
-                            BigNumber.from(amountOfBonds || 0),
-                          )
-                          .then((result) => {
-                            setWaitingWalletApprove(2)
-                            addRecentTransaction({
-                              hash: result?.hash,
-                              description: `Approve ${bondToAuction.name} for ${amountOfBonds}`,
-                            })
-                            return result.wait()
-                          })
-                          .finally(() => {
-                            setWaitingWalletApprove(0)
-                          })
-                      }}
-                    >
-                      {!waitingWalletApprove && `Approve ${bondToAuction?.name} for sale`}
-                      {waitingWalletApprove === 1 && 'Confirm approval in wallet'}
-                      {waitingWalletApprove === 2 && `Approving ${bondToAuction?.name}...`}
-                    </ActionButton>
-                  </>
-                )}
+                {currentStep === 3 && <ActionSteps />}
               </div>
             </div>
           </div>
