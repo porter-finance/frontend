@@ -39,7 +39,7 @@ const MintAction = () => {
     minBidSize,
     minimumBiddingAmountPerOrder,
     accessManagerContractData,
-    bondToAuction,
+    collateralToken,
   ] = getValues([
     'orderCancellationEndDate',
     'auctionEndDate',
@@ -47,7 +47,7 @@ const MintAction = () => {
     'minBidSize',
     'minimumBiddingAmountPerOrder',
     'accessManagerContractData',
-    'bondToAuction',
+    'collateralToken',
   ])
   const navigate = useNavigate()
 
@@ -59,8 +59,8 @@ const MintAction = () => {
 
   const minBuyAmount = minBidSize * minimumBiddingAmountPerOrder
   const args = [
-    bondToAuction.id, // auctioningToken (address)
-    bondToAuction.collateralToken.id, // biddingToken (address)
+    collateralToken.id, // auctioningToken (address)
+    collateralToken.collateralToken.id, // biddingToken (address)
     orderCancellationEndDate, // orderCancellationEndDate (uint256)
     auctionEndDate, // auctionEndDate (uint256)
     auctionedSellAmount, // auctionedSellAmount (uint96)
@@ -133,11 +133,14 @@ const ActionSteps = () => {
   const { getValues } = useFormContext()
   const [transactionError, setTransactionError] = useState('')
 
-  const [auctionedSellAmount, bondToAuction] = getValues(['auctionedSellAmount', 'bondToAuction'])
+  const [auctionedSellAmount, collateralToken] = getValues([
+    'auctionedSellAmount',
+    'collateralToken',
+  ])
 
   const { data } = useContractRead(
     {
-      addressOrName: bondToAuction?.id,
+      addressOrName: collateralToken?.id,
       contractInterface: BOND_ABI,
     },
     'allowance',
@@ -151,17 +154,17 @@ const ActionSteps = () => {
   const [currentApproveStep, setCurrentApproveStep] = useState(0)
   const addRecentTransaction = useAddRecentTransaction()
   const contract = useContract({
-    addressOrName: bondToAuction?.id,
+    addressOrName: collateralToken?.id,
     contractInterface: BOND_ABI,
     signerOrProvider: signer,
   })
 
   useEffect(() => {
     // Already approved the token
-    if (data && data.gte(parseUnits(`${auctionedSellAmount}`, bondToAuction.decimals))) {
+    if (data && data.gte(parseUnits(`${auctionedSellAmount}`, collateralToken.decimals))) {
       setCurrentApproveStep(1)
     }
-  }, [data, auctionedSellAmount, bondToAuction.decimals])
+  }, [data, auctionedSellAmount, collateralToken.decimals])
 
   return (
     <>
@@ -181,13 +184,13 @@ const ActionSteps = () => {
             contract
               .approve(
                 EASY_AUCTION_NETWORKS[requiredChain.id],
-                parseUnits(`${auctionedSellAmount}` || `0`, bondToAuction.decimals),
+                parseUnits(`${auctionedSellAmount}` || `0`, collateralToken.decimals),
               )
               .then((result) => {
                 setWaitingWalletApprove(2)
                 addRecentTransaction({
                   hash: result?.hash,
-                  description: `Approve ${bondToAuction.name} for ${auctionedSellAmount}`,
+                  description: `Approve ${collateralToken.name} for ${auctionedSellAmount}`,
                 })
                 return result.wait()
               })
@@ -202,9 +205,9 @@ const ActionSteps = () => {
               })
           }}
         >
-          {!waitingWalletApprove && `Approve ${bondToAuction?.name} for sale`}
+          {!waitingWalletApprove && `Approve ${collateralToken?.name} for sale`}
           {waitingWalletApprove === 1 && 'Confirm approval in wallet'}
-          {waitingWalletApprove === 2 && `Approving ${bondToAuction?.name}...`}
+          {waitingWalletApprove === 2 && `Approving ${collateralToken?.name}...`}
         </ActionButton>
       )}
       {(currentApproveStep === 1 || currentApproveStep === 3) && <MintAction />}
