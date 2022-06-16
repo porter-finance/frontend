@@ -80,7 +80,7 @@ const MintAction = () => {
         onClick={() => {
           setWaitingWalletApprove(1)
           contract
-            .initiateAuction(...args)
+            .mint(...args)
             .then((result) => {
               console.log(result)
 
