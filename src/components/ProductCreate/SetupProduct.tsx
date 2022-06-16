@@ -7,7 +7,7 @@ import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import dayjs from 'dayjs'
 import { round } from 'lodash'
 import { FormProvider, SubmitHandler, useForm, useFormContext } from 'react-hook-form'
-import { useBalance, useContract, useContractRead, useToken } from 'wagmi'
+import { useAccount, useBalance, useContract, useContractRead, useToken } from 'wagmi'
 
 import { ActionButton } from '../auction/Claimer'
 import TooltipElement from '../common/Tooltip'
@@ -28,15 +28,17 @@ import { EASY_AUCTION_NETWORKS } from '@/utils'
 const MintAction = () => {
   // state 0 for none, 1 for metamask confirmation, 2 for block confirmation
   const [waitingWalletApprove, setWaitingWalletApprove] = useState(0)
-  const { signer } = useActiveWeb3React()
+  const { account } = useActiveWeb3React()
   const addRecentTransaction = useAddRecentTransaction()
+  const navigate = useNavigate()
+  const contract = useBondFactoryContract()
   const { getValues } = useFormContext()
   const [transactionError, setTransactionError] = useState('')
   const [
     issuerName,
     amountOfBonds,
     maturityDate,
-    paymentToken,
+    borrowToken,
     collateralToken,
     amountOfCollateral,
     amountOfConvertible,
@@ -44,38 +46,22 @@ const MintAction = () => {
     'issuerName',
     'amountOfBonds',
     'maturityDate',
-    'paymentToken',
+    'borrowToken',
     'collateralToken',
     'amountOfCollateral',
     'amountOfConvertible',
   ])
-  const navigate = useNavigate()
-
-  const contract = useBondFactoryContract()
-
-  // correct args to send
-  // name (string)
-  // symbol (string)
-  // owner (address)
-  // maturityDate (uint256)
-  // paymentToken (address)
-  // collateralToken (address)
-  // collateralRatio (uint256)
-  // convertibleRatio (uint256)
-  // maxSupply (uint256)
-
   const args = [
     issuerName, // name (string)
-    collateralToken?.symbol, // symbol (string) NOT CAPTURED ? AUTO GENERATED ?
-    maturityDate, // maturity (uint256)
-    paymentToken?.address, // paymentToken (address)
+    'BOND SYMBOL todo', // symbol (string) NOT CAPTURED ? AUTO GENERATED ?
+    account, // owner (address)
+    new Date(maturityDate).getTime(), // maturity (uint256)
+    borrowToken?.address, // paymentToken (address)
     collateralToken?.address, // collateralToken (address)
-    amountOfCollateral, // collateralTokenAmount (uint256)
-    amountOfConvertible, // convertibleTokenAmount (uint256)
-    amountOfBonds, // bonds (uint256)
+    amountOfCollateral, // collateralRatio (uint256)
+    amountOfConvertible, // convertibleRatio (uint256)
+    amountOfBonds, // maxSupply (uint256)
   ]
-
-  console.log(args)
 
   return (
     <>
@@ -233,7 +219,10 @@ const ActionSteps = () => {
 
 export const TokenDetails = ({ option }) => {
   const { data: price } = useTokenPrice(option?.address)
-  const { data } = useBalance({ addressOrName: option?.address })
+  console.log(option)
+  const { data: account } = useAccount()
+  const { data } = useBalance({ addressOrName: account?.address, token: option?.address })
+  console.log(data)
   const balanceString = data?.formatted
   if (!option) {
     return (
@@ -587,7 +576,7 @@ const Summary = ({ currentStep }) => {
                 title="Collateral tokens"
               />
               <SummaryItem
-                text={collateralizationRatio.toFixed(2) + '%'}
+                text={collateralizationRatio.toLocaleString() + '%'}
                 tip="Collateral tokens"
                 title="Collateralization ratio"
               />

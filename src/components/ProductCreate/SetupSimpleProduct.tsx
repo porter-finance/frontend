@@ -136,7 +136,7 @@ const Summary = ({ currentStep }) => {
                 title="Collateral tokens"
               />
               <SummaryItem
-                text={collateralizationRatio.toFixed(2) + '%'}
+                text={collateralizationRatio.toLocaleString() + '%'}
                 tip="Collateralization ratio"
                 title="Collateralization ratio"
               />
