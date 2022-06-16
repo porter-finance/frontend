@@ -33,6 +33,7 @@ const MintAction = () => {
   const { getValues } = useFormContext()
   const [transactionError, setTransactionError] = useState('')
   const [
+    issuerName,
     amountOfBonds,
     maturityDate,
     paymentToken,
@@ -40,6 +41,7 @@ const MintAction = () => {
     amountOfCollateral,
     amountOfConvertible,
   ] = getValues([
+    'issuerName',
     'amountOfBonds',
     'maturityDate',
     'paymentToken',
@@ -51,9 +53,20 @@ const MintAction = () => {
 
   const contract = useBondFactoryContract()
 
+  // correct args to send
+  // name (string)
+  // symbol (string)
+  // owner (address)
+  // maturityDate (uint256)
+  // paymentToken (address)
+  // collateralToken (address)
+  // collateralRatio (uint256)
+  // convertibleRatio (uint256)
+  // maxSupply (uint256)
+
   const args = [
-    collateralToken?.address, // name (string) WRONG
-    collateralToken?.address, // symbol (string) WRONG
+    issuerName, // name (string)
+    collateralToken?.symbol, // symbol (string) NOT CAPTURED ? AUTO GENERATED ?
     maturityDate, // maturity (uint256)
     paymentToken?.address, // paymentToken (address)
     collateralToken?.address, // collateralToken (address)
@@ -61,6 +74,8 @@ const MintAction = () => {
     amountOfConvertible, // convertibleTokenAmount (uint256)
     amountOfBonds, // bonds (uint256)
   ]
+
+  console.log(args)
 
   return (
     <>
