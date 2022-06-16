@@ -500,7 +500,9 @@ const InitiateAuctionAction = () => {
   const args = [
     bondToAuction.id, // auctioningToken (address)
     bondToAuction.collateralToken.id, // biddingToken (address)
-    orderCancellationEndDate ? new Date(orderCancellationEndDate).getTime() / 1000 : 0, // orderCancellationEndDate (uint256)
+    orderCancellationEndDate
+      ? new Date(orderCancellationEndDate).getTime() / 1000
+      : new Date(auctionEndDate).getTime() / 1000, // orderCancellationEndDate (uint256)
     new Date(auctionEndDate).getTime() / 1000, // auctionEndDate (uint256)
     auctionedSellAmount, // auctionedSellAmount (uint96)
     minBuyAmount, // minBuyAmount (uint96)
