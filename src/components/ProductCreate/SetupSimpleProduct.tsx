@@ -100,7 +100,7 @@ const Summary = ({ currentStep }) => {
 
   const borrowTokenSymbol = borrowTokenData?.symbol || '-'
   const collateralTokenSymbol = collateralTokenData?.symbol || '-'
-  const collateralizationRatio = amountOfCollateral / amountOfBonds
+  const collateralizationRatio = (amountOfCollateral / amountOfBonds) * 100
   return (
     <div className="overflow-visible w-[425px] card ">
       <div className="card-body">
@@ -130,7 +130,7 @@ const Summary = ({ currentStep }) => {
                 title="Collateral tokens"
               />
               <SummaryItem
-                text={collateralizationRatio.toFixed(3) + '%'}
+                text={collateralizationRatio.toFixed(2) + '%'}
                 tip="Collateralization ratio"
                 title="Collateralization ratio"
               />

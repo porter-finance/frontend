@@ -19,9 +19,9 @@ import { PRTRIcon } from './SelectableTokens'
 
 import { requiredChain } from '@/connectors'
 import BOND_ABI from '@/constants/abis/bond.json'
-import easyAuctionABI from '@/constants/abis/easyAuction/easyAuction.json'
 import { Bond } from '@/generated/graphql'
 import { useActiveWeb3React } from '@/hooks'
+import { useBondFactoryContract } from '@/hooks/useContract'
 import { useTokenPrice } from '@/hooks/useTokenPrice'
 import { EASY_AUCTION_NETWORKS } from '@/utils'
 
@@ -33,43 +33,33 @@ const MintAction = () => {
   const { getValues } = useFormContext()
   const [transactionError, setTransactionError] = useState('')
   const [
-    orderCancellationEndDate,
-    auctionEndDate,
-    auctionedSellAmount,
-    minBidSize,
-    minimumBiddingAmountPerOrder,
-    accessManagerContractData,
+    amountOfBonds,
+    maturityDate,
+    paymentToken,
     collateralToken,
+    amountOfCollateral,
+    amountOfConvertible,
   ] = getValues([
-    'orderCancellationEndDate',
-    'auctionEndDate',
-    'auctionedSellAmount',
-    'minBidSize',
-    'minimumBiddingAmountPerOrder',
-    'accessManagerContractData',
+    'amountOfBonds',
+    'maturityDate',
+    'paymentToken',
     'collateralToken',
+    'amountOfCollateral',
+    'amountOfConvertible',
   ])
   const navigate = useNavigate()
 
-  const contract = useContract({
-    addressOrName: EASY_AUCTION_NETWORKS[requiredChain.id],
-    contractInterface: easyAuctionABI,
-    signerOrProvider: signer,
-  })
+  const contract = useBondFactoryContract()
 
-  const minBuyAmount = minBidSize * minimumBiddingAmountPerOrder
   const args = [
-    collateralToken.id, // auctioningToken (address)
-    collateralToken.collateralToken.id, // biddingToken (address)
-    orderCancellationEndDate, // orderCancellationEndDate (uint256)
-    auctionEndDate, // auctionEndDate (uint256)
-    auctionedSellAmount, // auctionedSellAmount (uint96)
-    minBuyAmount, // minBuyAmount (uint96)
-    minimumBiddingAmountPerOrder, // minimumBiddingAmountPerOrder (uint256)
-    0, // minFundingThreshold (uint256)
-    false, // isAtomicClosureAllowed (bool)
-    '0x0', // accessManagerContract (address)
-    '0x0', // accessManagerContractData (bytes)
+    collateralToken?.address, // name (string) WRONG
+    collateralToken?.address, // symbol (string) WRONG
+    maturityDate, // maturity (uint256)
+    paymentToken?.address, // paymentToken (address)
+    collateralToken?.address, // collateralToken (address)
+    amountOfCollateral, // collateralTokenAmount (uint256)
+    amountOfConvertible, // convertibleTokenAmount (uint256)
+    amountOfBonds, // bonds (uint256)
   ]
 
   return (
@@ -80,14 +70,14 @@ const MintAction = () => {
         onClick={() => {
           setWaitingWalletApprove(1)
           contract
-            .mint(...args)
+            .createBond(...args)
             .then((result) => {
               console.log(result)
 
               setWaitingWalletApprove(2)
               addRecentTransaction({
                 hash: result?.hash,
-                description: `Created auction`,
+                description: `Created bond`,
               })
               return result.wait()
             })
@@ -133,14 +123,14 @@ const ActionSteps = () => {
   const { getValues } = useFormContext()
   const [transactionError, setTransactionError] = useState('')
 
-  const [auctionedSellAmount, collateralToken] = getValues([
-    'auctionedSellAmount',
-    'collateralToken',
-  ])
+  const [collateralToken, amountOfcollateral] = getValues(['collateralToken', 'amountOfcollateral'])
+  const { data: collateralTokenData } = useToken({
+    address: collateralToken?.address,
+  })
 
   const { data } = useContractRead(
     {
-      addressOrName: collateralToken?.id,
+      addressOrName: collateralTokenData?.address,
       contractInterface: BOND_ABI,
     },
     'allowance',
@@ -154,17 +144,21 @@ const ActionSteps = () => {
   const [currentApproveStep, setCurrentApproveStep] = useState(0)
   const addRecentTransaction = useAddRecentTransaction()
   const contract = useContract({
-    addressOrName: collateralToken?.id,
+    addressOrName: collateralTokenData?.address,
     contractInterface: BOND_ABI,
     signerOrProvider: signer,
   })
 
   useEffect(() => {
     // Already approved the token
-    if (data && data.gte(parseUnits(`${auctionedSellAmount}`, collateralToken.decimals))) {
+    if (
+      data &&
+      collateralTokenData?.decimals &&
+      data.gte(parseUnits(`${amountOfcollateral || 0}`, collateralTokenData?.decimals))
+    ) {
       setCurrentApproveStep(1)
     }
-  }, [data, auctionedSellAmount, collateralToken.decimals])
+  }, [data, amountOfcollateral, collateralTokenData])
 
   return (
     <>
@@ -184,13 +178,13 @@ const ActionSteps = () => {
             contract
               .approve(
                 EASY_AUCTION_NETWORKS[requiredChain.id],
-                parseUnits(`${auctionedSellAmount}` || `0`, collateralToken.decimals),
+                parseUnits(`${amountOfcollateral || 0}`, collateralToken?.decimals),
               )
               .then((result) => {
                 setWaitingWalletApprove(2)
                 addRecentTransaction({
                   hash: result?.hash,
-                  description: `Approve ${collateralToken.name} for ${auctionedSellAmount}`,
+                  description: `Approve ${collateralToken?.symbol} for ${amountOfcollateral}`,
                 })
                 return result.wait()
               })
@@ -205,9 +199,9 @@ const ActionSteps = () => {
               })
           }}
         >
-          {!waitingWalletApprove && `Approve ${collateralToken?.name} for sale`}
+          {!waitingWalletApprove && `Approve ${collateralToken?.symbol} for sale`}
           {waitingWalletApprove === 1 && 'Confirm approval in wallet'}
-          {waitingWalletApprove === 2 && `Approving ${collateralToken?.name}...`}
+          {waitingWalletApprove === 2 && `Approving ${collateralToken?.symbol}...`}
         </ActionButton>
       )}
       {(currentApproveStep === 1 || currentApproveStep === 3) && <MintAction />}
@@ -537,7 +531,7 @@ const Summary = ({ currentStep }) => {
   const { data: collateralTokenData } = useToken({ address: collateralToken?.address })
   const borrowTokenSymbol = borrowTokenData?.symbol || '-'
   const collateralTokenSymbol = collateralTokenData?.symbol || '-'
-  const collateralizationRatio = amountOfCollateral / amountOfBonds
+  const collateralizationRatio = (amountOfCollateral / amountOfBonds) * 100
   const strikePrice = useStrikePrice()
   return (
     <div className="overflow-visible w-[425px] card">
@@ -567,7 +561,7 @@ const Summary = ({ currentStep }) => {
                 title="Collateral tokens"
               />
               <SummaryItem
-                text={collateralizationRatio.toLocaleString() + '%'}
+                text={collateralizationRatio.toFixed(2) + '%'}
                 tip="Collateral tokens"
                 title="Collateralization ratio"
               />
