@@ -35,7 +35,6 @@ export const MintAction = ({ convertible = true }) => {
   const { getValues } = useFormContext()
   const [transactionError, setTransactionError] = useState('')
   const [
-    issuerName,
     amountOfBonds,
     maturityDate,
     borrowToken,
@@ -43,7 +42,6 @@ export const MintAction = ({ convertible = true }) => {
     amountOfCollateral,
     amountOfConvertible,
   ] = getValues([
-    'issuerName',
     'amountOfBonds',
     'maturityDate',
     'borrowToken',
@@ -51,14 +49,15 @@ export const MintAction = ({ convertible = true }) => {
     'amountOfCollateral',
     'amountOfConvertible',
   ])
+  const { data: bondData } = useBondName(false, maturityDate)
   const { data: collateralTokenData } = useToken({ address: collateralToken?.address })
   const { data: borrowTokenData } = useToken({ address: borrowToken?.address })
 
   const args = [
-    issuerName, // name (string)
-    'BOND SYMBOL todo', // symbol (string) NOT CAPTURED ? AUTO GENERATED ?
+    bondData?.bondName, // name (string)
+    bondData?.bondSymbol, // symbol (string)
     account, // owner (address)
-    new Date(maturityDate).getTime(), // maturity (uint256)
+    new Date(maturityDate).getTime() / 1000, // maturity (uint256)
     borrowToken?.address, // paymentToken (address)
     collateralToken?.address, // collateralToken (address)
     parseUnits(amountOfCollateral, collateralTokenData?.decimals).toString(), // collateralRatio (uint256)

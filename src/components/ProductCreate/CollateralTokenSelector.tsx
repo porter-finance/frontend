@@ -1,8 +1,10 @@
 import React, { useMemo } from 'react'
 
 import { Selector } from './BorrowTokenSelector'
+import { BorrowTokens } from './SelectableTokens'
 import { BondTokenDetails, TokenDetails } from './SetupProduct'
 
+import { requiredChain } from '@/connectors'
 import { useBondsPortfolio } from '@/hooks/useBondsPortfolio'
 import { useTokenAllowList } from '@/hooks/useTokenPermissions'
 import { useTokenListState } from '@/state/tokenList/hooks'
@@ -19,12 +21,17 @@ const CollateralTokenSelector = () => {
   const { tokens: tokenList } = useTokenListState()
 
   const tokens = useMemo(() => {
-    return allowedTokens?.map((address) => {
-      return {
+    return allowedTokens
+      ?.filter(
+        (address) =>
+          !BorrowTokens[requiredChain.id].find(
+            (borrow) => borrow.address.toLowerCase() === address.toLowerCase(),
+          ),
+      )
+      .map((address) => ({
         iconUrl: tokenList[address.toLowerCase()],
         address,
-      }
-    })
+      }))
   }, [allowedTokens, tokenList])
 
   return <Selector OptionEl={TokenDetails} name="collateralToken" options={tokens} />
