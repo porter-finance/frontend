@@ -10,6 +10,7 @@ import { FormProvider, SubmitHandler, useForm, useFormContext } from 'react-hook
 import { useContract, useContractRead } from 'wagmi'
 
 import { BondSelector } from '../ProductCreate/CollateralTokenSelector'
+import { AccessManagerContract } from '../ProductCreate/SelectableTokens'
 import { ActionButton } from '../auction/Claimer'
 import TooltipElement from '../common/Tooltip'
 import {
@@ -499,16 +500,20 @@ const InitiateAuctionAction = () => {
   const args = [
     bondToAuction.id, // auctioningToken (address)
     bondToAuction.collateralToken.id, // biddingToken (address)
-    orderCancellationEndDate, // orderCancellationEndDate (uint256)
-    auctionEndDate, // auctionEndDate (uint256)
+    new Date(orderCancellationEndDate).getTime() / 1000, // orderCancellationEndDate (uint256)
+    new Date(auctionEndDate).getTime() / 1000, // auctionEndDate (uint256)
     auctionedSellAmount, // auctionedSellAmount (uint96)
     minBuyAmount, // minBuyAmount (uint96)
     minimumBiddingAmountPerOrder, // minimumBiddingAmountPerOrder (uint256)
     0, // minFundingThreshold (uint256)
     false, // isAtomicClosureAllowed (bool)
-    '0x0', // accessManagerContract (address)
-    '0x0', // accessManagerContractData (bytes)
+    accessManagerContractData
+      ? AccessManagerContract[requiredChain.id]
+      : '0x0000000000000000000000000000000000000000', // accessManagerContract (address)
+    accessManagerContractData ?? '0x0000000000000000000000000000000000000000', // accessManagerContractData (bytes)
   ]
+
+  console.log(args)
 
   return (
     <>
