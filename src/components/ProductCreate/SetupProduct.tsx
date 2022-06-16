@@ -317,7 +317,10 @@ export const StepOne = () => {
           min={1}
           placeholder="0"
           type="number"
-          {...register('amountOfBonds', { required: true })}
+          {...register('amountOfBonds', {
+            required: true,
+            validate: { nonNegative: (amountOfBonds) => amountOfBonds >= 0 },
+          })}
         />
       </div>
       <div className="w-full form-control">
@@ -338,6 +341,7 @@ export const StepOne = () => {
         </label>
         <input
           className="w-full input input-bordered"
+          min={dayjs(new Date()).utc().add(1, 'day').format('YYYY-MM-DD')}
           placeholder="DD/MM/YYYY"
           type="date"
           {...register('maturityDate', {
@@ -384,16 +388,22 @@ export const StepTwo = () => {
         </label>
         <input
           className="w-full input input-bordered"
+          min="0"
           placeholder="0"
           type="number"
-          {...register('amountOfCollateral', { required: true })}
+          {...register('amountOfCollateral', {
+            required: true,
+            validate: {
+              nonNegative: (amountOfCollateral) => amountOfCollateral >= 0,
+            },
+          })}
         />
       </div>
 
       <FieldRowWrapper className="py-1 my-4 space-y-3">
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>{collateralValue.toLocaleString()}</p>
+            <p>{collateralToken?.address ? collateralValue.toLocaleString() : '-'}</p>
           </div>
 
           <TooltipElement
@@ -403,7 +413,7 @@ export const StepTwo = () => {
         </div>
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>{collateralizationRatio.toLocaleString()}</p>
+            <p>{collateralToken?.address ? collateralizationRatio.toLocaleString() + '%' : '-'}</p>
           </div>
 
           <TooltipElement
@@ -463,8 +473,11 @@ export const StepThree = () => {
         <input
           className="w-full input input-bordered"
           placeholder="0"
-          {...register('amountOfConvertible', { required: true })}
           type="number"
+          {...register('amountOfConvertible', {
+            required: true,
+            validate: { nonNegative: (amountOfConvertible) => amountOfConvertible >= 0 },
+          })}
         />
       </div>
 

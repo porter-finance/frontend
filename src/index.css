@@ -218,3 +218,8 @@ g[role='tooltip'] {
 .input.input-bordered {
   border-color: #2c2c2c;
 }
+
+input[type='date'],
+input[type='datetime-local'] {
+  text-transform: uppercase;
+}

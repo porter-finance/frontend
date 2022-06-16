@@ -51,17 +51,23 @@ const StepTwo = () => {
         </label>
         <input
           className="w-full input input-bordered"
+          min="0"
           name="amountOfCollateral"
           placeholder="0"
           type="number"
-          {...register('amountOfCollateral', { required: true })}
+          {...register('amountOfCollateral', {
+            required: true,
+            validate: {
+              nonNegative: (amountOfCollateral) => amountOfCollateral >= 0,
+            },
+          })}
         />
       </div>
 
       <FieldRowWrapper className="py-1 my-4 space-y-3">
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>{Number(collateralValue.toFixed(3)).toLocaleString()}</p>
+            <p>{collateralToken?.address ? collateralValue.toLocaleString() : '-'}</p>
           </div>
 
           <TooltipElement
@@ -71,7 +77,7 @@ const StepTwo = () => {
         </div>
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>{Number(collateralizationRatio.toFixed(3)).toLocaleString()}</p>
+            <p>{collateralToken?.address ? collateralizationRatio.toLocaleString() + '%' : '-'}</p>
           </div>
 
           <TooltipElement

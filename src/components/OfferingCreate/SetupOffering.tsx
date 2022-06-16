@@ -119,7 +119,13 @@ const StepOne = () => {
           min={1}
           placeholder="0"
           type="number"
-          {...register('auctionedSellAmount', { required: true, valueAsNumber: true })}
+          {...register('auctionedSellAmount', {
+            required: true,
+            valueAsNumber: true,
+            validate: {
+              greaterThanZero: (auctionedSellAmount) => auctionedSellAmount > 0,
+            },
+          })}
         />
       </div>
 
@@ -136,7 +142,13 @@ const StepOne = () => {
           placeholder="0"
           step="0.001"
           type="number"
-          {...register('minimumBiddingAmountPerOrder', { required: true, valueAsNumber: true })}
+          {...register('minimumBiddingAmountPerOrder', {
+            required: true,
+            valueAsNumber: true,
+            validate: {
+              greaterThanZero: (minimumBiddingAmountPerOrder) => minimumBiddingAmountPerOrder > 0,
+            },
+          })}
         />
       </div>
 
@@ -225,12 +237,12 @@ const StepTwo = () => {
         </label>
         <input
           className="w-full input input-bordered"
-          placeholder="MM/DD/YYYY"
-          type="date"
+          type="datetime-local"
           {...register('auctionEndDate', {
             required: true,
             validate: {
               dateValid: (auctionEndDate) => dayjs(auctionEndDate).isValid(),
+              afterToday: (auctionEndDate) => dayjs(auctionEndDate).isAfter(new Date()),
             },
           })}
         />
@@ -364,7 +376,8 @@ const Summary = ({ currentStep }) => {
 
   if (currentStep === 1) {
     const [auctionStartDate, auctionEndDate] = watch(['auctionStartDate', 'auctionEndDate'])
-    const days = dayjs(auctionEndDate).diff(auctionStartDate, 'day')
+    const diff = dayjs(auctionEndDate).diff(auctionStartDate)
+    const display = dayjs(auctionEndDate).from(auctionStartDate)
 
     return (
       <div className="overflow-visible w-[425px] card">
@@ -375,7 +388,7 @@ const Summary = ({ currentStep }) => {
           <div className="space-y-4">
             {dayjs(auctionStartDate).isValid() && dayjs(auctionEndDate).isValid() ? (
               <SummaryItem
-                text={days <= 0 ? 'Dates Misconfigured' : `${days} ${days === 1 ? 'day' : 'days'}`}
+                text={diff <= 0 ? 'Dates Misconfigured' : `${display}`}
                 title={`${dayjs(auctionStartDate).utc().format('LL UTC')} - ${dayjs(auctionEndDate)
                   .utc()
                   .format('LL UTC')}`}
