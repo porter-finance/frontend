@@ -504,7 +504,7 @@ const InitiateAuctionAction = () => {
       ? new Date(orderCancellationEndDate).getTime() / 1000
       : new Date(auctionEndDate).getTime() / 1000, // orderCancellationEndDate (uint256)
     new Date(auctionEndDate).getTime() / 1000, // auctionEndDate (uint256)
-    parseUnits(auctionedSellAmount, bondToAuction?.decimals).toString(), // auctionedSellAmount (uint96)
+    parseUnits(auctionedSellAmount.toString(), bondToAuction?.decimals).toString(), // auctionedSellAmount (uint96)
     parseUnits(minBuyAmount.toString(), bondToAuction?.paymentToken?.decimals).toString(), // minBuyAmount (uint96)
     parseUnits(
       minimumBiddingAmountPerOrder.toString(),
