@@ -51,6 +51,7 @@ const MintAction = () => {
     'amountOfCollateral',
     'amountOfConvertible',
   ])
+
   const args = [
     issuerName, // name (string)
     'BOND SYMBOL todo', // symbol (string) NOT CAPTURED ? AUTO GENERATED ?
@@ -58,10 +59,12 @@ const MintAction = () => {
     new Date(maturityDate).getTime(), // maturity (uint256)
     borrowToken?.address, // paymentToken (address)
     collateralToken?.address, // collateralToken (address)
-    amountOfCollateral, // collateralRatio (uint256)
-    amountOfConvertible, // convertibleRatio (uint256)
-    amountOfBonds, // maxSupply (uint256)
+    parseUnits(amountOfCollateral, collateralToken?.decimals), // collateralRatio (uint256)
+    parseUnits(amountOfConvertible, collateralToken?.decimals), // convertibleRatio (uint256)
+    parseUnits(amountOfBonds, borrowToken?.decimals), // maxSupply (uint256)
   ]
+
+  console.log(args)
 
   return (
     <>
