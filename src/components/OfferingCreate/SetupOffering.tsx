@@ -495,7 +495,7 @@ const InitiateAuctionAction = () => {
     signerOrProvider: signer,
   })
 
-  const minBuyAmount = minBidSize * minimumBiddingAmountPerOrder
+  const minBuyAmount = minBidSize * auctionedSellAmount
   const args = [
     bondToAuction.id, // auctioningToken (address)
     bondToAuction.collateralToken.id, // biddingToken (address)
