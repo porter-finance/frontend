@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { formatUnits, parseUnits } from '@ethersproject/units'
+import { parseUnits } from '@ethersproject/units'
 import { DoubleArrowRightIcon } from '@radix-ui/react-icons'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import dayjs from 'dayjs'
@@ -219,9 +219,7 @@ const ActionSteps = () => {
 export const TokenDetails = ({ option }) => {
   const { data: price } = useTokenPrice(option?.address)
   const { data } = useBalance({ addressOrName: option?.address })
-  const balanceString = data?.value
-    ? Number(formatUnits(data?.value, data?.decimals)).toLocaleString()
-    : '0.00'
+  const balanceString = data?.formatted
   if (!option) {
     return (
       <div className="p-4 space-y-4 w-full text-xs text-white rounded-md form-control">
@@ -248,8 +246,8 @@ export const TokenDetails = ({ option }) => {
           <span className="text-[#696969]">Balance:</span> {balanceString}
         </span>
         <span>
-          <span className="text-[#696969]">Value:</span> {round(Number(balanceString) * price, 3)}{' '}
-          USDC
+          <span className="text-[#696969]">Value: </span>
+          {(Number(balanceString) * price).toLocaleString()} USDC
         </span>
       </div>
     </div>
