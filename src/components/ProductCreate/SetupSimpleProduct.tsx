@@ -8,7 +8,7 @@ import { ActionButton } from '../auction/Claimer'
 import TooltipElement from '../common/Tooltip'
 import { FieldRowLabelStyledText, FieldRowWrapper } from '../form/InterestRateInputPanel'
 import CollateralTokenSelector from './CollateralTokenSelector'
-import { ActionSteps, StepOne, SummaryItem } from './SetupProduct'
+import { ActionSteps, StepOne, SummaryItem, useBondName } from './SetupProduct'
 
 import { useTokenPrice } from '@/hooks/useTokenPrice'
 
@@ -93,6 +93,9 @@ const Summary = ({ currentStep }) => {
     'maturityDate',
     'amountOfCollateral',
   ])
+  const { data: bondData } = useBondName(false, maturityDate)
+  console.log(bondData?.bondSymbol)
+
   const { data: borrowTokenData } = useToken({ address: borrowToken?.address })
   const { data: collateralTokenData } = useToken({ address: collateralToken?.address })
 
@@ -104,12 +107,7 @@ const Summary = ({ currentStep }) => {
       <div className="card-body">
         <h1 className="pb-4 !text-xs uppercase border-b border-[#2C2C2C] card-title">Summary</h1>
         <div className="space-y-4">
-          <SummaryItem
-            text={`
-          ${collateralTokenSymbol ? `${collateralTokenSymbol} Simple Bond` : '-'}`}
-            tip="Name"
-            title="Name"
-          />
+          <SummaryItem text={bondData?.bondName || ''} tip="Name" title="Name" />
           <SummaryItem text={amountOfBonds} tip="Supply" title="Supply" />
           <SummaryItem
             text={`${amountOfBonds?.toLocaleString()} ${borrowTokenSymbol}`}

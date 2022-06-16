@@ -234,32 +234,33 @@ export const ActionSteps = ({ convertible = true }) => {
 }
 
 export const useBondName = (isConvertible: boolean, maturityDate: Date) => {
-  const collateralTokenSymbol = '' // collateralToken?.symbol
-  const paymentTokenSymbol = '' // borrowToken?.symbol
+  const { watch } = useFormContext()
+  const [issuerName, collateralToken, borrowToken] = watch([
+    'issuerName',
+    'collateralToken',
+    'borrowToken',
+  ])
+  const { data: collateralTokenData } = useToken({ address: collateralToken?.address })
+  const { data: borrowTokenData } = useToken({ address: borrowToken?.address })
+  const collateralTokenSymbol = collateralTokenData?.symbol
+  const borrowTokenSymbol = borrowTokenData?.symbol
   const productNameShort = isConvertible ? 'CONVERT' : 'SIMPLE'
   const productNameLong = `${isConvertible ? 'Convertible' : 'Simple'} Bond`
   maturityDate
-    .toLocaleString('en-gb', {
+    ?.toLocaleString('en-gb', {
       day: '2-digit',
       year: 'numeric',
       month: 'short',
     })
     .toUpperCase()
     .replace(/ /g, '')
-  // This call value will be calculated on the front-end with acutal prices
-  const bondName = `${getDAONameFromSymbol(collateralTokenSymbol)} ${productNameLong}`
-  const bondSymbol = `${collateralTokenSymbol.toUpperCase()} ${productNameShort} ${maturityDate}${
-    isConvertible ? ' 25C' : ''
-  } ${paymentTokenSymbol.toUpperCase()}`
-  return { data: { bondName, bondSymbol } }
-}
+  const { data: strikePrice } = useStrikePrice()
 
-export const getDAONameFromSymbol = (tokenSymbol: string): string => {
-  return (
-    {
-      rbn: 'Ribbon',
-    }[tokenSymbol.toLowerCase()] || tokenSymbol
-  )
+  const bondName = `${issuerName} ${productNameLong}`
+  const bondSymbol = `${collateralTokenSymbol?.toUpperCase()} ${productNameShort} ${maturityDate}${
+    isConvertible ? `${(strikePrice?.value || 0).toLocaleString()}C` : ''
+  } ${borrowTokenSymbol?.toUpperCase()}`
+  return { data: { bondName, bondSymbol } }
 }
 
 export const TokenDetails = ({ option }) => {
@@ -483,10 +484,12 @@ export const useStrikePrice = () => {
   const { data: collateralTokenPrice } = useTokenPrice(collateralToken?.address)
   const { data: collateralTokenData } = useToken({ address: collateralToken?.address })
   const { data: borrowTokenData } = useToken({ address: borrowToken?.address })
-  const strikePrice = 1 / ((amountOfConvertible / amountOfBonds) * collateralTokenPrice)
+  const value = 1 / ((amountOfConvertible / amountOfBonds) * collateralTokenPrice)
 
-  const strikePriceLabel = `${borrowTokenData?.symbol}/${collateralTokenData?.symbol}`
-  return `${strikePrice.toLocaleString()} ${strikePriceLabel}`
+  const display = `${(value || 0).toLocaleString()} ${borrowTokenData?.symbol}/${
+    collateralTokenData?.symbol
+  }`
+  return { data: { value, display } }
 }
 
 export const StepThree = () => {
@@ -494,7 +497,7 @@ export const StepThree = () => {
   const [collateralToken, amountOfConvertible] = watch(['collateralToken', 'amountOfConvertible'])
   const { data: collateralTokenPrice } = useTokenPrice(collateralToken?.address)
   const convertibleTokenValue = amountOfConvertible * collateralTokenPrice
-  const strikePrice = useStrikePrice()
+  const { data: strikePrice } = useStrikePrice()
   return (
     <>
       <div className="w-full form-control">
@@ -538,7 +541,7 @@ export const StepThree = () => {
           />
         </div>
         <div className="flex flex-row justify-between">
-          <div className="text-sm text-[#E0E0E0]">{strikePrice}</div>
+          <div className="text-sm text-[#E0E0E0]">{strikePrice?.display}</div>
 
           <TooltipElement
             left={<FieldRowLabelStyledText>Strike price</FieldRowLabelStyledText>}
@@ -578,22 +581,21 @@ const Summary = ({ currentStep }) => {
     'amountOfCollateral',
     'amountOfConvertible',
   ])
+  const { data: bondData } = useBondName(true, maturityDate)
+  console.log(bondData?.bondSymbol)
+
   const { data: borrowTokenData } = useToken({ address: borrowToken?.address })
   const { data: collateralTokenData } = useToken({ address: collateralToken?.address })
   const borrowTokenSymbol = borrowTokenData?.symbol || '-'
   const collateralTokenSymbol = collateralTokenData?.symbol || '-'
   const collateralizationRatio = (amountOfCollateral / amountOfBonds) * 100
-  const strikePrice = useStrikePrice()
+  const { data: strikePrice } = useStrikePrice()
   return (
     <div className="overflow-visible w-[425px] card">
       <div className="card-body">
         <h1 className="pb-4 !text-xs uppercase border-b border-[#2C2C2C] card-title">Summary</h1>
         <div className="space-y-4">
-          <SummaryItem
-            text={`${collateralTokenSymbol ? `${collateralTokenSymbol} Convertible Bond` : '-'}`}
-            tip="Name"
-            title="Name"
-          />
+          <SummaryItem text={bondData?.bondName} tip="Name" title="Name" />
           <SummaryItem text={amountOfBonds} tip="Supply" title="Supply" />
           <SummaryItem
             text={`${amountOfBonds?.toLocaleString()} ${borrowTokenSymbol}`}
@@ -625,7 +627,7 @@ const Summary = ({ currentStep }) => {
                 tip="Convertible tokens"
                 title="Collateral tokens"
               />
-              <SummaryItem text={strikePrice} tip="Strike price" title="Strike price" />
+              <SummaryItem text={strikePrice?.display} tip="Strike price" title="Strike price" />
             </>
           )}
         </div>
