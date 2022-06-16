@@ -504,9 +504,12 @@ const InitiateAuctionAction = () => {
       ? new Date(orderCancellationEndDate).getTime() / 1000
       : new Date(auctionEndDate).getTime() / 1000, // orderCancellationEndDate (uint256)
     new Date(auctionEndDate).getTime() / 1000, // auctionEndDate (uint256)
-    auctionedSellAmount, // auctionedSellAmount (uint96)
-    minBuyAmount, // minBuyAmount (uint96)
-    minimumBiddingAmountPerOrder, // minimumBiddingAmountPerOrder (uint256)
+    parseUnits(auctionedSellAmount.toString(), bondToAuction?.decimals).toString(), // auctionedSellAmount (uint96)
+    parseUnits(minBuyAmount.toString(), bondToAuction?.paymentToken?.decimals).toString(), // minBuyAmount (uint96)
+    parseUnits(
+      minimumBiddingAmountPerOrder.toString(),
+      bondToAuction?.paymentToken?.decimals,
+    ).toString(), // minimumBiddingAmountPerOrder (uint256)
     0, // minFundingThreshold (uint256)
     false, // isAtomicClosureAllowed (bool)
     accessManagerContractData
