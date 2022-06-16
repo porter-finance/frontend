@@ -258,7 +258,7 @@ export const useBondName = (isConvertible: boolean, maturityDate: Date) => {
 
   const bondName = `${issuerName} ${productNameLong}`
   const bondSymbol = `${collateralTokenSymbol?.toUpperCase()} ${productNameShort} ${maturityDate}${
-    isConvertible ? `${(strikePrice?.value || 0).toLocaleString()}C` : ''
+    isConvertible ? ` ${(strikePrice?.value || 0).toLocaleString()}C` : ''
   } ${borrowTokenSymbol?.toUpperCase()}`
   return { data: { bondName, bondSymbol } }
 }
