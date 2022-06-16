@@ -1,3 +1,4 @@
+import { utils } from 'ethers'
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -276,28 +277,40 @@ const StepThree = () => {
           className="w-full input input-bordered"
           placeholder="0"
           type="number"
-          {...register('minBidSize', { required: false })}
+          {...register('minBidSize', {
+            required: false,
+            validate: {
+              nonNegative: (minBidSize) => minBidSize >= 0,
+            },
+          })}
         />
       </div>
       <div className="w-full form-control">
         <label className="label">
           <TooltipElement
-            left={<span className="label-text">Last date to cancel bids (optional)</span>}
-            tip="Last date bids can be cancelled.."
+            left={<span className="label-text">Last time to cancel bids (optional)</span>}
+            tip="Last time bids can be cancelled.."
           />
         </label>
         <input
           className="w-full input input-bordered"
           placeholder="MM/DD/YYYY"
-          type="date"
+          type="datetime-local"
           {...register('orderCancellationEndDate', {
             required: false,
             validate: {
-              dateValid: (orderCancellationEndDate) => dayjs(orderCancellationEndDate).isValid(),
+              dateValid: (orderCancellationEndDate) => {
+                if (!orderCancellationEndDate) return true
+                return dayjs(orderCancellationEndDate).isValid()
+              },
               dateBefore: (orderCancellationEndDate) => {
+                if (!orderCancellationEndDate) return true
                 const auctionEndDate = getValues('auctionEndDate')
 
-                return dayjs(orderCancellationEndDate).isBetween(new Date(), auctionEndDate)
+                return (
+                  dayjs(orderCancellationEndDate).isAfter(new Date()) &&
+                  dayjs(orderCancellationEndDate).isBefore(auctionEndDate)
+                )
               },
             },
           })}
@@ -341,7 +354,12 @@ const StepThree = () => {
             defaultValue=""
             placeholder="0x0"
             type="text"
-            {...register('accessManagerContractData', { required: true })}
+            {...register('accessManagerAddress', {
+              required: true,
+              validate: {
+                isAddress: (accessManagerAddress) => utils.isAddress(accessManagerAddress),
+              },
+            })}
           />
         </div>
       )}
@@ -377,7 +395,7 @@ const Summary = ({ currentStep }) => {
   if (currentStep === 1) {
     const [auctionStartDate, auctionEndDate] = watch(['auctionStartDate', 'auctionEndDate'])
     const diff = dayjs(auctionEndDate).diff(auctionStartDate)
-    const display = dayjs(auctionEndDate).from(auctionStartDate)
+    const display = dayjs(auctionEndDate).fromNow()
 
     return (
       <div className="overflow-visible w-[425px] card">
@@ -388,10 +406,10 @@ const Summary = ({ currentStep }) => {
           <div className="space-y-4">
             {dayjs(auctionStartDate).isValid() && dayjs(auctionEndDate).isValid() ? (
               <SummaryItem
-                text={diff <= 0 ? 'Dates Misconfigured' : `${display}`}
-                title={`${dayjs(auctionStartDate).utc().format('LL UTC')} - ${dayjs(auctionEndDate)
-                  .utc()
-                  .format('LL UTC')}`}
+                text={diff <= 0 ? 'Dates Misconfigured' : `Ending ${display}`}
+                title={`${dayjs(new Date()).format('LL hh:mm')} - ${dayjs(auctionEndDate).format(
+                  'LL hh:mm',
+                )}`}
               />
             ) : (
               <SummaryItem text="0 days" title="Enter a start and end date." />
@@ -644,10 +662,10 @@ const SetupOffering = () => {
   const methods = useForm<Inputs>({ mode: 'onChange' })
 
   const {
-    formState: { isDirty, isValid },
+    formState: { errors, isDirty, isValid },
     handleSubmit,
   } = methods
-
+  console.log(errors)
   const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data)
   const midComponents = [<StepOne key={0} />, <StepTwo key={1} />, <StepThree key={2} />]
 
