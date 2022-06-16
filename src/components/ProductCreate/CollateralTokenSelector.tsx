@@ -17,6 +17,7 @@ const CollateralTokenSelector = () => {
     logger.error('Error getting useTokenAllowList info', error)
   }
   const { tokens: tokenList } = useTokenListState()
+
   const tokens = useMemo(() => {
     return allowedTokens?.map((address) => {
       return {
