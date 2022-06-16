@@ -37,7 +37,6 @@ const MintAction = () => {
     borrowToken,
     collateralToken,
     amountOfCollateral,
-    amountOfConvertible,
   ] = getValues([
     'issuerName',
     'amountOfBonds',
@@ -45,8 +44,10 @@ const MintAction = () => {
     'borrowToken',
     'collateralToken',
     'amountOfCollateral',
-    'amountOfConvertible',
   ])
+  const { data: collateralTokenData } = useToken({ address: collateralToken?.address })
+  const { data: borrowTokenData } = useToken({ address: borrowToken?.address })
+
   const args = [
     issuerName, // name (string)
     'BOND SYMBOL todo', // symbol (string) NOT CAPTURED ? AUTO GENERATED ?
@@ -54,9 +55,9 @@ const MintAction = () => {
     new Date(maturityDate).getTime(), // maturity (uint256)
     borrowToken?.address, // paymentToken (address)
     collateralToken?.address, // collateralToken (address)
-    amountOfCollateral, // collateralRatio (uint256)
-    amountOfConvertible, // convertibleRatio (uint256)
-    amountOfBonds, // maxSupply (uint256)
+    parseUnits(amountOfCollateral, collateralTokenData?.decimals).toString(), // collateralRatio (uint256)
+    0, // convertibleRatio (uint256)
+    parseUnits(amountOfBonds, borrowTokenData?.decimals).toString(), // maxSupply (uint256)
   ]
 
   return (
@@ -98,10 +99,10 @@ const MintAction = () => {
       {waitingWalletApprove === 3 && (
         <ActionButton
           onClick={() => {
-            navigate('/offerings')
+            navigate('/offerings/create')
           }}
         >
-          View auction page
+          Create offering
         </ActionButton>
       )}
       <WarningModal

@@ -105,10 +105,10 @@ const MintAction = () => {
       {waitingWalletApprove === 3 && (
         <ActionButton
           onClick={() => {
-            navigate('/offerings')
+            navigate('/offerings/create')
           }}
         >
-          View auction page
+          Create offering
         </ActionButton>
       )}
       <WarningModal
