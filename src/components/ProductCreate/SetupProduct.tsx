@@ -362,7 +362,7 @@ export const StepTwo = () => {
   ])
   const { data } = useTokenPrice(collateralToken?.address)
   const collateralValue = amountOfCollateral * data
-  const collateralizationValue = collateralValue / amountOfBonds
+  const collateralizationRatio = (amountOfCollateral / amountOfBonds) * 100
   return (
     <>
       <div className="w-full form-control">
@@ -403,12 +403,12 @@ export const StepTwo = () => {
         </div>
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>{collateralizationValue.toLocaleString()}</p>
+            <p>{collateralizationRatio.toLocaleString()}</p>
           </div>
 
           <TooltipElement
-            left={<FieldRowLabelStyledText>Collateralization value</FieldRowLabelStyledText>}
-            tip="Value of the collateral divided by the amount owed at maturity"
+            left={<FieldRowLabelStyledText>Collateralization ratio</FieldRowLabelStyledText>}
+            tip="Value of the collateral backing each bond share"
           />
         </div>
       </FieldRowWrapper>
