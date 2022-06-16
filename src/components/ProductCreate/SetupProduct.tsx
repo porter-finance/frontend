@@ -51,6 +51,8 @@ const MintAction = () => {
     'amountOfCollateral',
     'amountOfConvertible',
   ])
+  const { data: collateralTokenData } = useToken({ address: collateralToken?.address })
+  const { data: borrowTokenData } = useToken({ address: borrowToken?.address })
 
   const args = [
     issuerName, // name (string)
@@ -59,12 +61,10 @@ const MintAction = () => {
     new Date(maturityDate).getTime(), // maturity (uint256)
     borrowToken?.address, // paymentToken (address)
     collateralToken?.address, // collateralToken (address)
-    parseUnits(amountOfCollateral, collateralToken?.decimals), // collateralRatio (uint256)
-    parseUnits(amountOfConvertible, collateralToken?.decimals), // convertibleRatio (uint256)
-    parseUnits(amountOfBonds, borrowToken?.decimals), // maxSupply (uint256)
+    parseUnits(amountOfCollateral, collateralTokenData?.decimals).toString(), // collateralRatio (uint256)
+    parseUnits(amountOfConvertible, collateralTokenData?.decimals).toString(), // convertibleRatio (uint256)
+    parseUnits(amountOfBonds, borrowTokenData?.decimals).toString(), // maxSupply (uint256)
   ]
-
-  console.log(args)
 
   return (
     <>
@@ -222,10 +222,8 @@ const ActionSteps = () => {
 
 export const TokenDetails = ({ option }) => {
   const { data: price } = useTokenPrice(option?.address)
-  console.log(option)
   const { data: account } = useAccount()
   const { data } = useBalance({ addressOrName: account?.address, token: option?.address })
-  console.log(data)
   const balanceString = data?.formatted
   if (!option) {
     return (
