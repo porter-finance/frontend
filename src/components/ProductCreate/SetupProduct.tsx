@@ -25,7 +25,7 @@ import { useBondFactoryContract } from '@/hooks/useContract'
 import { useTokenPrice } from '@/hooks/useTokenPrice'
 import { EASY_AUCTION_NETWORKS } from '@/utils'
 
-const MintAction = () => {
+export const MintAction = ({ convertible = true }) => {
   // state 0 for none, 1 for metamask confirmation, 2 for block confirmation
   const [waitingWalletApprove, setWaitingWalletApprove] = useState(0)
   const { account } = useActiveWeb3React()
@@ -62,7 +62,7 @@ const MintAction = () => {
     borrowToken?.address, // paymentToken (address)
     collateralToken?.address, // collateralToken (address)
     parseUnits(amountOfCollateral, collateralTokenData?.decimals).toString(), // collateralRatio (uint256)
-    parseUnits(amountOfConvertible, collateralTokenData?.decimals).toString(), // convertibleRatio (uint256)
+    !convertible ? 0 : parseUnits(amountOfConvertible, collateralTokenData?.decimals).toString(), // convertibleRatio (uint256)
     parseUnits(amountOfBonds, borrowTokenData?.decimals).toString(), // maxSupply (uint256)
   ]
 
@@ -122,7 +122,7 @@ const MintAction = () => {
   )
 }
 
-const ActionSteps = () => {
+export const ActionSteps = ({ convertible = true }) => {
   const { account, signer } = useActiveWeb3React()
   const { getValues } = useFormContext()
   const [transactionError, setTransactionError] = useState('')
@@ -163,6 +163,17 @@ const ActionSteps = () => {
       setCurrentApproveStep(1)
     }
   }, [data, amountOfcollateral, collateralTokenData])
+
+  const confirmSteps = [
+    {
+      text: `Approve ${collateralTokenData.symbol} as collateral`,
+      tip: 'The collateral token needs to be approved so it can be transferred into the bond contract and used as collateral.',
+    },
+    {
+      text: `Mint ${collateralTokenData.symbol} Convertible Bonds`,
+      tip: 'Mint the bonds to the connected wallet.',
+    },
+  ]
 
   return (
     <>
@@ -208,7 +219,9 @@ const ActionSteps = () => {
           {waitingWalletApprove === 2 && `Approving ${collateralToken?.symbol}...`}
         </ActionButton>
       )}
-      {(currentApproveStep === 1 || currentApproveStep === 3) && <MintAction />}
+      {(currentApproveStep === 1 || currentApproveStep === 3) && (
+        <MintAction convertible={convertible} />
+      )}
       <WarningModal
         content={transactionError}
         isOpen={!!transactionError}
@@ -537,13 +550,6 @@ export const StepThree = () => {
   )
 }
 
-export const confirmSteps = [
-  {
-    text: 'Approve UNI as collateral',
-    tip: 'The collateral token needs to be approved so it can be transferred into the bond contract and used as collateral.',
-  },
-  { text: 'Mint Uniswap Convertible Bonds', tip: 'Mint the bonds to the connected wallet.' },
-]
 const steps = ['Setup product', 'Choose collateral', 'Set convertibility', 'Confirm creation']
 
 export const SummaryItem = ({ text, tip, title }) => (
