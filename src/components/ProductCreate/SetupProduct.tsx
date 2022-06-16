@@ -1,21 +1,223 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-import { formatUnits } from '@ethersproject/units'
+import { formatUnits, parseUnits } from '@ethersproject/units'
 import { DoubleArrowRightIcon } from '@radix-ui/react-icons'
+import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import dayjs from 'dayjs'
 import { round } from 'lodash'
 import { FormProvider, SubmitHandler, useForm, useFormContext } from 'react-hook-form'
-import { useBalance, useToken } from 'wagmi'
+import { useBalance, useContract, useContractRead, useToken } from 'wagmi'
 
 import { ActionButton } from '../auction/Claimer'
 import TooltipElement from '../common/Tooltip'
 import { FieldRowLabelStyledText, FieldRowWrapper } from '../form/InterestRateInputPanel'
+import WarningModal from '../modals/WarningModal'
 import BorrowTokenSelector from './BorrowTokenSelector'
 import CollateralTokenSelector from './CollateralTokenSelector'
 import { PRTRIcon } from './SelectableTokens'
 
+import { requiredChain } from '@/connectors'
+import BOND_ABI from '@/constants/abis/bond.json'
+import easyAuctionABI from '@/constants/abis/easyAuction/easyAuction.json'
 import { Bond } from '@/generated/graphql'
+import { useActiveWeb3React } from '@/hooks'
 import { useTokenPrice } from '@/hooks/useTokenPrice'
+import { EASY_AUCTION_NETWORKS } from '@/utils'
+
+const MintAction = () => {
+  // state 0 for none, 1 for metamask confirmation, 2 for block confirmation
+  const [waitingWalletApprove, setWaitingWalletApprove] = useState(0)
+  const { signer } = useActiveWeb3React()
+  const addRecentTransaction = useAddRecentTransaction()
+  const { getValues } = useFormContext()
+  const [transactionError, setTransactionError] = useState('')
+  const [
+    orderCancellationEndDate,
+    auctionEndDate,
+    auctionedSellAmount,
+    minBidSize,
+    minimumBiddingAmountPerOrder,
+    accessManagerContractData,
+    bondToAuction,
+  ] = getValues([
+    'orderCancellationEndDate',
+    'auctionEndDate',
+    'auctionedSellAmount',
+    'minBidSize',
+    'minimumBiddingAmountPerOrder',
+    'accessManagerContractData',
+    'bondToAuction',
+  ])
+  const navigate = useNavigate()
+
+  const contract = useContract({
+    addressOrName: EASY_AUCTION_NETWORKS[requiredChain.id],
+    contractInterface: easyAuctionABI,
+    signerOrProvider: signer,
+  })
+
+  const minBuyAmount = minBidSize * minimumBiddingAmountPerOrder
+  const args = [
+    bondToAuction.id, // auctioningToken (address)
+    bondToAuction.collateralToken.id, // biddingToken (address)
+    orderCancellationEndDate, // orderCancellationEndDate (uint256)
+    auctionEndDate, // auctionEndDate (uint256)
+    auctionedSellAmount, // auctionedSellAmount (uint96)
+    minBuyAmount, // minBuyAmount (uint96)
+    minimumBiddingAmountPerOrder, // minimumBiddingAmountPerOrder (uint256)
+    0, // minFundingThreshold (uint256)
+    false, // isAtomicClosureAllowed (bool)
+    '0x0', // accessManagerContract (address)
+    '0x0', // accessManagerContractData (bytes)
+  ]
+
+  return (
+    <>
+      <ActionButton
+        className={waitingWalletApprove ? 'loading' : ''}
+        color="blue"
+        onClick={() => {
+          setWaitingWalletApprove(1)
+          contract
+            .initiateAuction(...args)
+            .then((result) => {
+              console.log(result)
+
+              setWaitingWalletApprove(2)
+              addRecentTransaction({
+                hash: result?.hash,
+                description: `Created auction`,
+              })
+              return result.wait()
+            })
+            .then((result) => {
+              console.log(result)
+            })
+            .catch((e) => {
+              console.log(e)
+
+              setTransactionError(e?.message || e)
+            })
+            .finally(() => {
+              setWaitingWalletApprove(0)
+            })
+        }}
+      >
+        {!waitingWalletApprove && `Mint bonds`}
+        {waitingWalletApprove === 1 && 'Confirm mint in wallet'}
+        {waitingWalletApprove === 2 && `Minting bonds...`}
+      </ActionButton>
+      {waitingWalletApprove === 3 && (
+        <ActionButton
+          onClick={() => {
+            navigate('/offerings')
+          }}
+        >
+          View auction page
+        </ActionButton>
+      )}
+      <WarningModal
+        content={transactionError}
+        isOpen={!!transactionError}
+        onDismiss={() => {
+          setTransactionError('')
+        }}
+      />
+    </>
+  )
+}
+
+const ActionSteps = () => {
+  const { account, signer } = useActiveWeb3React()
+  const { getValues } = useFormContext()
+  const [transactionError, setTransactionError] = useState('')
+
+  const [auctionedSellAmount, bondToAuction] = getValues(['auctionedSellAmount', 'bondToAuction'])
+
+  const { data } = useContractRead(
+    {
+      addressOrName: bondToAuction?.id,
+      contractInterface: BOND_ABI,
+    },
+    'allowance',
+    {
+      args: [account, EASY_AUCTION_NETWORKS[requiredChain.id]],
+    },
+  )
+
+  // state 0 for none, 1 for metamask confirmation, 2 for block confirmation
+  const [waitingWalletApprove, setWaitingWalletApprove] = useState(0)
+  const [currentApproveStep, setCurrentApproveStep] = useState(0)
+  const addRecentTransaction = useAddRecentTransaction()
+  const contract = useContract({
+    addressOrName: bondToAuction?.id,
+    contractInterface: BOND_ABI,
+    signerOrProvider: signer,
+  })
+
+  useEffect(() => {
+    // Already approved the token
+    if (data && data.gte(parseUnits(`${auctionedSellAmount}`, bondToAuction.decimals))) {
+      setCurrentApproveStep(1)
+    }
+  }, [data, auctionedSellAmount, bondToAuction.decimals])
+
+  return (
+    <>
+      <ul className="steps steps-vertical">
+        {confirmSteps.map((step, i) => (
+          <li className={`step ${i <= currentApproveStep ? 'step-secondary' : ''}`} key={i}>
+            <TooltipElement left={step.text} tip={step.tip} />
+          </li>
+        ))}
+      </ul>
+      {!currentApproveStep && (
+        <ActionButton
+          className={waitingWalletApprove ? 'loading' : ''}
+          color="blue"
+          onClick={() => {
+            setWaitingWalletApprove(1)
+            contract
+              .approve(
+                EASY_AUCTION_NETWORKS[requiredChain.id],
+                parseUnits(`${auctionedSellAmount}` || `0`, bondToAuction.decimals),
+              )
+              .then((result) => {
+                setWaitingWalletApprove(2)
+                addRecentTransaction({
+                  hash: result?.hash,
+                  description: `Approve ${bondToAuction.name} for ${auctionedSellAmount}`,
+                })
+                return result.wait()
+              })
+              .then((result) => {
+                setCurrentApproveStep(1)
+              })
+              .catch((e) => {
+                setTransactionError(e?.message || e)
+              })
+              .finally(() => {
+                setWaitingWalletApprove(0)
+              })
+          }}
+        >
+          {!waitingWalletApprove && `Approve ${bondToAuction?.name} for sale`}
+          {waitingWalletApprove === 1 && 'Confirm approval in wallet'}
+          {waitingWalletApprove === 2 && `Approving ${bondToAuction?.name}...`}
+        </ActionButton>
+      )}
+      {(currentApproveStep === 1 || currentApproveStep === 3) && <MintAction />}
+      <WarningModal
+        content={transactionError}
+        isOpen={!!transactionError}
+        onDismiss={() => {
+          setTransactionError('')
+        }}
+      />
+    </>
+  )
+}
 
 export const TokenDetails = ({ option }) => {
   const { data: price } = useTokenPrice(option?.address)
@@ -115,6 +317,7 @@ export const StepOne = () => {
         </label>
         <input
           className="w-full input input-bordered"
+          min={1}
           placeholder="0"
           type="number"
           {...register('amountOfBonds', { required: true })}
@@ -193,7 +396,7 @@ export const StepTwo = () => {
       <FieldRowWrapper className="py-1 my-4 space-y-3">
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>{Number(collateralValue.toFixed(3)).toLocaleString()}</p>
+            <p>{collateralValue.toLocaleString()}</p>
           </div>
 
           <TooltipElement
@@ -203,7 +406,7 @@ export const StepTwo = () => {
         </div>
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>{Number(collateralizationValue.toFixed(3)).toLocaleString()}</p>
+            <p>{collateralizationValue.toLocaleString()}</p>
           </div>
 
           <TooltipElement
@@ -231,7 +434,7 @@ export const useStrikePrice = () => {
   const strikePrice = 1 / ((amountOfConvertible / amountOfBonds) * collateralTokenPrice)
 
   const strikePriceLabel = `${borrowTokenData?.symbol}/${collateralTokenData?.symbol}`
-  return `${strikePrice} ${strikePriceLabel}`
+  return `${strikePrice.toLocaleString()} ${strikePriceLabel}`
 }
 
 export const StepThree = () => {
@@ -271,7 +474,7 @@ export const StepThree = () => {
       <FieldRowWrapper className="py-1 my-4 space-y-3">
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>{`${convertibleTokenValue} USDC`}</p>
+            <p>{`${convertibleTokenValue.toLocaleString()} USDC`}</p>
           </div>
 
           <TooltipElement
@@ -361,7 +564,7 @@ const Summary = ({ currentStep }) => {
                 title="Collateral tokens"
               />
               <SummaryItem
-                text={collateralizationRatio.toFixed(3) + '%'}
+                text={collateralizationRatio.toLocaleString() + '%'}
                 tip="Collateral tokens"
                 title="Collateralization ratio"
               />
@@ -443,27 +646,7 @@ const SetupProduct = () => {
                     Continue
                   </ActionButton>
                 )}
-                {currentStep === 3 && (
-                  <>
-                    <ul className="steps steps-vertical">
-                      {confirmSteps.map((step, i) => (
-                        <li className={`step ${i <= currentStep ? 'step-primary' : ''}`} key={i}>
-                          <TooltipElement left={step.text} tip={step.tip} />
-                        </li>
-                      ))}
-                    </ul>
-
-                    <ActionButton
-                      color="purple"
-                      disabled={false}
-                      onClick={() => {
-                        console.log('click')
-                      }}
-                    >
-                      Approve UNI as collateral
-                    </ActionButton>
-                  </>
-                )}
+                {currentStep === 3 && <ActionSteps />}
               </div>
             </div>
           </div>

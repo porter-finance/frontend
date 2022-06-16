@@ -553,13 +553,6 @@ const ActionSteps = () => {
     },
   )
 
-  useEffect(() => {
-    // Already approved the token
-    if (data && data.gte(parseUnits(`${auctionedSellAmount}`, bondToAuction.decimals))) {
-      setCurrentApproveStep(1)
-    }
-  }, [data, auctionedSellAmount, bondToAuction.decimals])
-
   // state 0 for none, 1 for metamask confirmation, 2 for block confirmation
   const [waitingWalletApprove, setWaitingWalletApprove] = useState(0)
   const [currentApproveStep, setCurrentApproveStep] = useState(0)
@@ -569,6 +562,13 @@ const ActionSteps = () => {
     contractInterface: BOND_ABI,
     signerOrProvider: signer,
   })
+
+  useEffect(() => {
+    // Already approved the token
+    if (data && data.gte(parseUnits(`${auctionedSellAmount}`, bondToAuction.decimals))) {
+      setCurrentApproveStep(1)
+    }
+  }, [data, auctionedSellAmount, bondToAuction.decimals])
 
   return (
     <>
