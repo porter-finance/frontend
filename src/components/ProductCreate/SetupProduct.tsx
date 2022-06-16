@@ -221,32 +221,30 @@ const ActionSteps = () => {
 }
 
 export const useBondName = (isConvertible: boolean, maturityDate: Date) => {
-  const collateralTokenSymbol = '' // collateralToken?.symbol
-  const paymentTokenSymbol = '' // borrowToken?.symbol
+  const { watch } = useFormContext()
+  const [issuerName, collateralToken, borrowToken] = watch([
+    'issuerName',
+    'collateralToken',
+    'borrowToken',
+  ])
+  const collateralTokenSymbol = collateralToken?.symbol
+  const borrowTokenSymbol = borrowToken?.symbol
   const productNameShort = isConvertible ? 'CONVERT' : 'SIMPLE'
   const productNameLong = `${isConvertible ? 'Convertible' : 'Simple'} Bond`
   maturityDate
-    .toLocaleString('en-gb', {
+    ?.toLocaleString('en-gb', {
       day: '2-digit',
       year: 'numeric',
       month: 'short',
     })
     .toUpperCase()
     .replace(/ /g, '')
-  // This call value will be calculated on the front-end with acutal prices
-  const bondName = `${getDAONameFromSymbol(collateralTokenSymbol)} ${productNameLong}`
-  const bondSymbol = `${collateralTokenSymbol.toUpperCase()} ${productNameShort} ${maturityDate}${
-    isConvertible ? ' 25C' : ''
-  } ${paymentTokenSymbol.toUpperCase()}`
+  const strikePrice = (useStrikePrice() || 0).toLocaleString(null, { maximumFractionDigits: 0 })
+  const bondName = `${issuerName} ${productNameLong}`
+  const bondSymbol = `${collateralTokenSymbol?.toUpperCase()} ${productNameShort} ${maturityDate}${
+    isConvertible ? strikePrice + 'C' : ''
+  } ${borrowTokenSymbol?.toUpperCase()}`
   return { data: { bondName, bondSymbol } }
-}
-
-export const getDAONameFromSymbol = (tokenSymbol: string): string => {
-  return (
-    {
-      rbn: 'Ribbon',
-    }[tokenSymbol.toLowerCase()] || tokenSymbol
-  )
 }
 
 export const TokenDetails = ({ option }) => {
@@ -574,6 +572,9 @@ const Summary = ({ currentStep }) => {
     'amountOfCollateral',
     'amountOfConvertible',
   ])
+  const { data: bondData } = useBondName(true, maturityDate)
+  console.log(bondData?.bondSymbol)
+
   const { data: borrowTokenData } = useToken({ address: borrowToken?.address })
   const { data: collateralTokenData } = useToken({ address: collateralToken?.address })
   const borrowTokenSymbol = borrowTokenData?.symbol || '-'
@@ -585,11 +586,7 @@ const Summary = ({ currentStep }) => {
       <div className="card-body">
         <h1 className="pb-4 !text-xs uppercase border-b border-[#2C2C2C] card-title">Summary</h1>
         <div className="space-y-4">
-          <SummaryItem
-            text={`${collateralTokenSymbol ? `${collateralTokenSymbol} Convertible Bond` : '-'}`}
-            tip="Name"
-            title="Name"
-          />
+          <SummaryItem text={bondData?.bondName} tip="Name" title="Name" />
           <SummaryItem text={amountOfBonds} tip="Supply" title="Supply" />
           <SummaryItem
             text={`${amountOfBonds?.toLocaleString()} ${borrowTokenSymbol}`}
