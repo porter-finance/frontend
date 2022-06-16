@@ -1,16 +1,217 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
+import { parseUnits } from '@ethersproject/units'
 import { DoubleArrowRightIcon } from '@radix-ui/react-icons'
+import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { FormProvider, SubmitHandler, useForm, useFormContext } from 'react-hook-form'
-import { useToken } from 'wagmi'
+import { useContract, useContractRead, useToken } from 'wagmi'
 
 import { ActionButton } from '../auction/Claimer'
 import TooltipElement from '../common/Tooltip'
 import { FieldRowLabelStyledText, FieldRowWrapper } from '../form/InterestRateInputPanel'
+import WarningModal from '../modals/WarningModal'
 import CollateralTokenSelector from './CollateralTokenSelector'
 import { StepOne, SummaryItem } from './SetupProduct'
 
+import { requiredChain } from '@/connectors'
+import BOND_ABI from '@/constants/abis/bond.json'
+import { useActiveWeb3React } from '@/hooks'
+import { useBondFactoryContract } from '@/hooks/useContract'
 import { useTokenPrice } from '@/hooks/useTokenPrice'
+import { EASY_AUCTION_NETWORKS } from '@/utils'
+
+const MintAction = () => {
+  // state 0 for none, 1 for metamask confirmation, 2 for block confirmation
+  const [waitingWalletApprove, setWaitingWalletApprove] = useState(0)
+  const { account } = useActiveWeb3React()
+  const addRecentTransaction = useAddRecentTransaction()
+  const navigate = useNavigate()
+  const contract = useBondFactoryContract()
+  const { getValues } = useFormContext()
+  const [transactionError, setTransactionError] = useState('')
+  const [
+    issuerName,
+    amountOfBonds,
+    maturityDate,
+    borrowToken,
+    collateralToken,
+    amountOfCollateral,
+    amountOfConvertible,
+  ] = getValues([
+    'issuerName',
+    'amountOfBonds',
+    'maturityDate',
+    'borrowToken',
+    'collateralToken',
+    'amountOfCollateral',
+    'amountOfConvertible',
+  ])
+  const args = [
+    issuerName, // name (string)
+    'BOND SYMBOL todo', // symbol (string) NOT CAPTURED ? AUTO GENERATED ?
+    account, // owner (address)
+    new Date(maturityDate).getTime(), // maturity (uint256)
+    borrowToken?.address, // paymentToken (address)
+    collateralToken?.address, // collateralToken (address)
+    amountOfCollateral, // collateralRatio (uint256)
+    amountOfConvertible, // convertibleRatio (uint256)
+    amountOfBonds, // maxSupply (uint256)
+  ]
+
+  return (
+    <>
+      <ActionButton
+        className={waitingWalletApprove ? 'loading' : ''}
+        color="blue"
+        onClick={() => {
+          setWaitingWalletApprove(1)
+          contract
+            .createBond(...args)
+            .then((result) => {
+              console.log(result)
+
+              setWaitingWalletApprove(2)
+              addRecentTransaction({
+                hash: result?.hash,
+                description: `Created bond`,
+              })
+              return result.wait()
+            })
+            .then((result) => {
+              console.log(result)
+            })
+            .catch((e) => {
+              console.log(e)
+
+              setTransactionError(e?.message || e)
+            })
+            .finally(() => {
+              setWaitingWalletApprove(0)
+            })
+        }}
+      >
+        {!waitingWalletApprove && `Mint bonds`}
+        {waitingWalletApprove === 1 && 'Confirm mint in wallet'}
+        {waitingWalletApprove === 2 && `Minting bonds...`}
+      </ActionButton>
+      {waitingWalletApprove === 3 && (
+        <ActionButton
+          onClick={() => {
+            navigate('/offerings')
+          }}
+        >
+          View auction page
+        </ActionButton>
+      )}
+      <WarningModal
+        content={transactionError}
+        isOpen={!!transactionError}
+        onDismiss={() => {
+          setTransactionError('')
+        }}
+      />
+    </>
+  )
+}
+
+const ActionSteps = () => {
+  const { account, signer } = useActiveWeb3React()
+  const { getValues } = useFormContext()
+  const [transactionError, setTransactionError] = useState('')
+
+  const [collateralToken, amountOfcollateral] = getValues(['collateralToken', 'amountOfcollateral'])
+  const { data: collateralTokenData } = useToken({
+    address: collateralToken?.address,
+  })
+
+  const { data } = useContractRead(
+    {
+      addressOrName: collateralTokenData?.address,
+      contractInterface: BOND_ABI,
+    },
+    'allowance',
+    {
+      args: [account, EASY_AUCTION_NETWORKS[requiredChain.id]],
+    },
+  )
+
+  // state 0 for none, 1 for metamask confirmation, 2 for block confirmation
+  const [waitingWalletApprove, setWaitingWalletApprove] = useState(0)
+  const [currentApproveStep, setCurrentApproveStep] = useState(0)
+  const addRecentTransaction = useAddRecentTransaction()
+  const contract = useContract({
+    addressOrName: collateralTokenData?.address,
+    contractInterface: BOND_ABI,
+    signerOrProvider: signer,
+  })
+
+  useEffect(() => {
+    // Already approved the token
+    if (
+      data &&
+      collateralTokenData?.decimals &&
+      data.gte(parseUnits(`${amountOfcollateral || 0}`, collateralTokenData?.decimals))
+    ) {
+      setCurrentApproveStep(1)
+    }
+  }, [data, amountOfcollateral, collateralTokenData])
+
+  return (
+    <>
+      <ul className="steps steps-vertical">
+        {confirmSteps.map((step, i) => (
+          <li className={`step ${i <= currentApproveStep ? 'step-secondary' : ''}`} key={i}>
+            <TooltipElement left={step.text} tip={step.tip} />
+          </li>
+        ))}
+      </ul>
+      {!currentApproveStep && (
+        <ActionButton
+          className={waitingWalletApprove ? 'loading' : ''}
+          color="blue"
+          onClick={() => {
+            setWaitingWalletApprove(1)
+            contract
+              .approve(
+                EASY_AUCTION_NETWORKS[requiredChain.id],
+                parseUnits(`${amountOfcollateral || 0}`, collateralToken?.decimals),
+              )
+              .then((result) => {
+                setWaitingWalletApprove(2)
+                addRecentTransaction({
+                  hash: result?.hash,
+                  description: `Approve ${collateralToken?.symbol} for ${amountOfcollateral}`,
+                })
+                return result.wait()
+              })
+              .then((result) => {
+                setCurrentApproveStep(1)
+              })
+              .catch((e) => {
+                setTransactionError(e?.message || e)
+              })
+              .finally(() => {
+                setWaitingWalletApprove(0)
+              })
+          }}
+        >
+          {!waitingWalletApprove && `Approve ${collateralToken?.symbol} for sale`}
+          {waitingWalletApprove === 1 && 'Confirm approval in wallet'}
+          {waitingWalletApprove === 2 && `Approving ${collateralToken?.symbol}...`}
+        </ActionButton>
+      )}
+      {(currentApproveStep === 1 || currentApproveStep === 3) && <MintAction />}
+      <WarningModal
+        content={transactionError}
+        isOpen={!!transactionError}
+        onDismiss={() => {
+          setTransactionError('')
+        }}
+      />
+    </>
+  )
+}
 
 const confirmSteps = [
   {
@@ -210,26 +411,7 @@ const SetupSimpleProduct = () => {
                     Continue
                   </ActionButton>
                 )}
-                {currentStep === steps.length - 1 && (
-                  <>
-                    <ul className="steps steps-vertical">
-                      {confirmSteps.map((step, i) => (
-                        <li className={`step ${i <= currentStep ? 'step-primary' : ''}`} key={i}>
-                          <TooltipElement left={step.text} tip={step.tip} />
-                        </li>
-                      ))}
-                    </ul>
-
-                    <ActionButton
-                      color="purple"
-                      onClick={() => {
-                        console.log('click')
-                      }}
-                    >
-                      Approve UNI as collateral
-                    </ActionButton>
-                  </>
-                )}
+                {currentStep === steps.length - 1 && <ActionSteps />}
               </div>
             </div>
           </div>

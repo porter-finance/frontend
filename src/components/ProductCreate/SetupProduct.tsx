@@ -220,6 +220,35 @@ const ActionSteps = () => {
   )
 }
 
+export const useBondName = (isConvertible: boolean, maturityDate: Date) => {
+  const collateralTokenSymbol = '' // collateralToken?.symbol
+  const paymentTokenSymbol = '' // borrowToken?.symbol
+  const productNameShort = isConvertible ? 'CONVERT' : 'SIMPLE'
+  const productNameLong = `${isConvertible ? 'Convertible' : 'Simple'} Bond`
+  maturityDate
+    .toLocaleString('en-gb', {
+      day: '2-digit',
+      year: 'numeric',
+      month: 'short',
+    })
+    .toUpperCase()
+    .replace(/ /g, '')
+  // This call value will be calculated on the front-end with acutal prices
+  const bondName = `${getDAONameFromSymbol(collateralTokenSymbol)} ${productNameLong}`
+  const bondSymbol = `${collateralTokenSymbol.toUpperCase()} ${productNameShort} ${maturityDate}${
+    isConvertible ? ' 25C' : ''
+  } ${paymentTokenSymbol.toUpperCase()}`
+  return { data: { bondName, bondSymbol } }
+}
+
+export const getDAONameFromSymbol = (tokenSymbol: string): string => {
+  return (
+    {
+      rbn: 'Ribbon',
+    }[tokenSymbol.toLowerCase()] || tokenSymbol
+  )
+}
+
 export const TokenDetails = ({ option }) => {
   const { data: price } = useTokenPrice(option?.address)
   const { data: account } = useAccount()
