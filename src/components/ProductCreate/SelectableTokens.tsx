@@ -128,3 +128,5 @@ export const CollateralTokens = {
     },
   ],
 }
+
+export const IssuerAllowList = ['0xfab4af4ea2eb609868cdb4f744155d67f0a5bf41']

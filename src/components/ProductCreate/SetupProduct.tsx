@@ -15,7 +15,7 @@ import { FieldRowLabelStyledText, FieldRowWrapper } from '../form/InterestRateIn
 import WarningModal from '../modals/WarningModal'
 import BorrowTokenSelector from './BorrowTokenSelector'
 import CollateralTokenSelector from './CollateralTokenSelector'
-import { PRTRIcon } from './SelectableTokens'
+import { IssuerAllowList, PRTRIcon } from './SelectableTokens'
 
 import { requiredChain } from '@/connectors'
 import BOND_ABI from '@/constants/abis/bond.json'
@@ -26,7 +26,7 @@ import { useTokenPrice } from '@/hooks/useTokenPrice'
 import { useWalletModalToggle } from '@/state/application/hooks'
 import { EASY_AUCTION_NETWORKS } from '@/utils'
 
-export const MintAction = ({ convertible = true, setCurrentApproveStep }) => {
+export const MintAction = ({ convertible = true, disabled, setCurrentApproveStep }) => {
   // state 0 for none, 1 for metamask confirmation, 2 for block confirmation
   const [waitingWalletApprove, setWaitingWalletApprove] = useState(0)
   const { account } = useActiveWeb3React()
@@ -73,6 +73,7 @@ export const MintAction = ({ convertible = true, setCurrentApproveStep }) => {
         <ActionButton
           className={waitingWalletApprove ? 'loading' : ''}
           color="purple"
+          disabled={disabled}
           onClick={() => {
             setWaitingWalletApprove(1)
             contract
@@ -113,7 +114,7 @@ export const MintAction = ({ convertible = true, setCurrentApproveStep }) => {
   )
 }
 
-export const BondActionSteps = ({ convertible = true }) => {
+export const BondActionSteps = ({ convertible = true, disabled }) => {
   const { account, signer } = useActiveWeb3React()
   const { getValues } = useFormContext()
   const navigate = useNavigate()
@@ -180,6 +181,7 @@ export const BondActionSteps = ({ convertible = true }) => {
         <ActionButton
           className={waitingWalletApprove ? 'loading' : ''}
           color="blue"
+          disabled={disabled}
           onClick={() => {
             setWaitingWalletApprove(1)
             contract
@@ -210,7 +212,11 @@ export const BondActionSteps = ({ convertible = true }) => {
         </ActionButton>
       )}
       {currentApproveStep === 1 && (
-        <MintAction convertible={convertible} setCurrentApproveStep={setCurrentApproveStep} />
+        <MintAction
+          convertible={convertible}
+          disabled={disabled}
+          setCurrentApproveStep={setCurrentApproveStep}
+        />
       )}
       {currentApproveStep === 2 && (
         <ActionButton
@@ -668,6 +674,41 @@ export const FormSteps = ({
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
+        {!IssuerAllowList.includes(account.toLowerCase()) && (
+          <div className="w-full">
+            <div className="p-4 bg-red-50 rounded-md border-l-4 border-red-400">
+              <div className="flex">
+                <div className="shrink-0">
+                  <svg
+                    aria-hidden="true"
+                    className="w-5 h-5 text-red-400"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      clipRule="evenodd"
+                      d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                      fillRule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="space-x-1 text-sm text-red-700">
+                    <span>
+                      Your address it not on the issuer allow list. You will not be able to submit
+                      this form.
+                    </span>
+                    <a className="font-medium text-red-700 hover:text-red-600 underline" href="#">
+                      Request access
+                    </a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="flex justify-center space-x-8">
           <div className="overflow-visible w-[326px] card">
             <div className="card-body">
@@ -725,7 +766,12 @@ export const FormSteps = ({
                         Continue
                       </ActionButton>
                     )}
-                    {currentStep === steps.length - 1 && <ActionSteps convertible={convertible} />}
+                    {currentStep === steps.length - 1 && (
+                      <ActionSteps
+                        convertible={convertible}
+                        disabled={!IssuerAllowList.includes(account.toLowerCase())}
+                      />
+                    )}
                   </>
                 )}
               </div>

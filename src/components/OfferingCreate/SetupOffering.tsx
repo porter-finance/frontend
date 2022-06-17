@@ -455,7 +455,7 @@ const Summary = ({ currentStep }) => {
   )
 }
 
-const InitiateAuctionAction = ({ setCurrentApproveStep }) => {
+const InitiateAuctionAction = ({ disabled, setCurrentApproveStep }) => {
   // state 0 for none, 1 for metamask confirmation, 2 for block confirmation
   const [waitingWalletApprove, setWaitingWalletApprove] = useState(0)
   const { signer } = useActiveWeb3React()
@@ -513,6 +513,7 @@ const InitiateAuctionAction = ({ setCurrentApproveStep }) => {
         <ActionButton
           className={waitingWalletApprove ? 'loading' : ''}
           color="blue"
+          disabled={disabled}
           onClick={() => {
             setWaitingWalletApprove(1)
             contract
@@ -553,7 +554,7 @@ const InitiateAuctionAction = ({ setCurrentApproveStep }) => {
   )
 }
 
-const ActionSteps = () => {
+const ActionSteps = ({ disabled }) => {
   const { account, signer } = useActiveWeb3React()
   const { getValues } = useFormContext()
   const [transactionError, setTransactionError] = useState('')
@@ -603,6 +604,7 @@ const ActionSteps = () => {
         <ActionButton
           className={waitingWalletApprove ? 'loading' : ''}
           color="blue"
+          disabled={disabled}
           onClick={() => {
             setWaitingWalletApprove(1)
             contract
@@ -633,7 +635,7 @@ const ActionSteps = () => {
         </ActionButton>
       )}
       {currentApproveStep === 1 && (
-        <InitiateAuctionAction setCurrentApproveStep={setCurrentApproveStep} />
+        <InitiateAuctionAction disabled={disabled} setCurrentApproveStep={setCurrentApproveStep} />
       )}
       {currentApproveStep === 2 && (
         <ActionButton
