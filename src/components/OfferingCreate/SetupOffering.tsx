@@ -383,8 +383,8 @@ const Summary = ({ currentStep }) => {
             {dayjs(auctionStartDate).isValid() && dayjs(auctionEndDate).isValid() ? (
               <SummaryItem
                 text={diff <= 0 ? 'Dates Misconfigured' : `Ending ${display}`}
-                title={`${dayjs(new Date()).format('LL hh:mm')} - ${dayjs(auctionEndDate).format(
-                  'LL hh:mm',
+                title={`${dayjs(new Date()).format('LL hh:mm z')} - ${dayjs(auctionEndDate).format(
+                  'LL hh:mm z',
                 )}`}
               />
             ) : (
