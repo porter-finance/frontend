@@ -253,6 +253,7 @@ const StepThree = () => {
         </label>
         <input
           className="w-full input input-bordered"
+          min="0"
           placeholder="0"
           type="number"
           {...register('minBidSize', {

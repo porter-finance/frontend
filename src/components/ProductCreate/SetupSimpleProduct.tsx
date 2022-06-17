@@ -49,9 +49,7 @@ const StepTwo = () => {
           type="number"
           {...register('amountOfCollateral', {
             required: true,
-            validate: {
-              nonNegative: (amountOfCollateral) => amountOfCollateral >= 0,
-            },
+            min: 0,
           })}
         />
       </div>
