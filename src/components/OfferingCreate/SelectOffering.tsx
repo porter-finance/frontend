@@ -12,9 +12,11 @@ export const SelectOffering = () => {
           icon: <AuctionCreateIcon />,
           url: '/offerings/create/auction',
           title: 'Auction',
+          learn: 'https://docs.porter.finance/portal/protocol/offerings/auctions',
           description: 'An auction built for DeFi.',
         },
         {
+          learn: 'https://docs.porter.finance/portal/protocol/offerings/otc-sales',
           icon: <OTCCreateIcon />,
           url: '/offerings/create/otc',
           title: 'OTC',
