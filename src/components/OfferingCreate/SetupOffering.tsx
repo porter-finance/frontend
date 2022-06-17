@@ -259,9 +259,7 @@ const StepThree = () => {
           type="number"
           {...register('minBidSize', {
             required: false,
-            validate: {
-              nonNegative: (minBidSize) => minBidSize >= 0,
-            },
+            min: 0,
           })}
         />
       </div>
