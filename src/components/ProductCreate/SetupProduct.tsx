@@ -59,9 +59,11 @@ export const MintAction = ({ convertible = true, setCurrentApproveStep }) => {
     round(dayjs(maturityDate).utc().valueOf() / 1000), // maturity (uint256)
     borrowToken?.address, // paymentToken (address)
     collateralToken?.address, // collateralToken (address)
-    parseUnits(amountOfCollateral, collateralTokenData?.decimals).toString(), // collateralRatio (uint256)
-    !convertible ? 0 : parseUnits(amountOfConvertible, collateralTokenData?.decimals).toString(), // convertibleRatio (uint256)
-    parseUnits(amountOfBonds, borrowTokenData?.decimals).toString(), // maxSupply (uint256)
+    parseUnits(`${amountOfCollateral || 0}`, collateralTokenData?.decimals).toString(), // collateralRatio (uint256)
+    !convertible
+      ? 0
+      : parseUnits(`${amountOfConvertible || 0}`, collateralTokenData?.decimals).toString(), // convertibleRatio (uint256)
+    parseUnits(`${amountOfBonds || 0}`, borrowTokenData?.decimals).toString(), // maxSupply (uint256)
   ]
 
   return (
@@ -285,12 +287,12 @@ export const TokenDetails = ({ option }) => {
           <span>{tokenBalance?.symbol}</span>
         </span>
         <span>
-          <span className="text-[#696969]">Price: </span> {round(price, 3)} USDC
+          <span className="text-[#696969]">Price: </span> {round(price, 3).toLocaleString()} USDC
         </span>
       </div>
       <div className="flex justify-between w-full">
         <span>
-          <span className="text-[#696969]">Balance:</span> {balanceString}
+          <span className="text-[#696969]">Balance:</span> {Number(balanceString).toLocaleString()}
         </span>
         <span>
           <span className="text-[#696969]">Value: </span>
@@ -363,6 +365,7 @@ export const StepOne = () => {
           placeholder="0"
           type="number"
           {...register('amountOfBonds', {
+            valueAsNumber: true,
             required: true,
             min: 1,
           })}
@@ -438,6 +441,7 @@ export const StepTwo = () => {
           type="number"
           {...register('amountOfCollateral', {
             required: true,
+            valueAsNumber: true,
             min: 0,
           })}
         />
@@ -522,6 +526,7 @@ export const StepThree = () => {
           type="number"
           {...register('amountOfConvertible', {
             required: true,
+            valueAsNumber: true,
             min: 0,
           })}
         />
@@ -598,7 +603,11 @@ const Summary = ({ currentStep }) => {
             tip="Owed at maturity"
             title="Owed at maturity"
           />
-          <SummaryItem text={maturityDate} tip="Maturity date" title="Maturity date" />
+          <SummaryItem
+            text={`${dayjs(maturityDate).format('LL hh:mm z')}`}
+            tip="Maturity date"
+            title="Maturity date"
+          />
 
           {currentStep >= 2 && (
             <>

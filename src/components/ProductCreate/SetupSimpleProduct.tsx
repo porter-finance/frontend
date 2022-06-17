@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 
 import { DoubleArrowRightIcon } from '@radix-ui/react-icons'
+import dayjs from 'dayjs'
 import { FormProvider, SubmitHandler, useForm, useFormContext } from 'react-hook-form'
 import { useToken } from 'wagmi'
 
@@ -49,6 +50,7 @@ const StepTwo = () => {
           type="number"
           {...register('amountOfCollateral', {
             required: true,
+            valueAsNumber: true,
             min: 0,
           })}
         />
@@ -106,13 +108,17 @@ const Summary = ({ currentStep }) => {
         <h1 className="pb-4 !text-xs uppercase border-b border-[#2C2C2C] card-title">Summary</h1>
         <div className="space-y-4">
           <SummaryItem text={bondData?.bondName || ''} tip="Name" title="Name" />
-          <SummaryItem text={amountOfBonds} tip="Supply" title="Supply" />
+          <SummaryItem text={amountOfBonds.toLocaleString()} tip="Supply" title="Supply" />
           <SummaryItem
-            text={`${amountOfBonds?.toLocaleString()} ${borrowTokenSymbol}`}
+            text={`${amountOfBonds.toLocaleString()} ${borrowTokenSymbol}`}
             tip="Owed at maturity"
             title="Owed at maturity"
           />
-          <SummaryItem text={maturityDate} tip="Maturity date" title="Maturity date" />
+          <SummaryItem
+            text={`${dayjs(maturityDate).format('LL hh:mm z')}`}
+            tip="Maturity date"
+            title="Maturity date"
+          />
 
           {currentStep >= steps.length - 1 && (
             <>

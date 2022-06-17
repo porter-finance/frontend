@@ -413,29 +413,39 @@ const Summary = ({ currentStep }) => {
             title="Bond for sale"
           />
           <SummaryItem
-            text={`${formValues.auctionedSellAmount} ${formValues?.bondToAuction?.name}s`}
+            text={`${formValues.auctionedSellAmount.toLocaleString()} ${
+              formValues?.bondToAuction?.name
+            }s`}
             tip="Maximum number of bonds that will be auctioned"
             title="Number of bonds to auction"
           />
           <SummaryItem
-            text={`${formValues.minimumBiddingAmountPerOrder} USDC`}
+            text={`${formValues.minimumBiddingAmountPerOrder.toLocaleString()} USDC`}
             tip="Owed at maturity"
             title="Minimum sales price"
           />
-          <SummaryItem text={formValues.auctionStartDate} tip="Start date" title="Start date" />
           <SummaryItem
-            text={`${dayjs(formValues.auctionEndDate).format('LL hh:mm')}`}
+            text={`${dayjs(new Date()).format('LL hh:mm z')}`}
+            tip="Start date"
+            title="Start date"
+          />
+          <SummaryItem
+            text={`${dayjs(formValues.auctionEndDate).format('LL hh:mm z')}`}
             tip="End date"
             title="End date"
           />
           <SummaryItem
-            text={formValues.minBidSize ? `${formValues.minBidSize} USDC` : 'No minimum bid'}
+            text={
+              formValues.minBidSize
+                ? `${Number(formValues.minBidSize).toLocaleString()} USDC`
+                : 'No minimum bid'
+            }
             tip="The smallest number of bonds to bid on"
             title="Minimum bid size"
           />
           {formValues.orderCancellationEndDate && (
             <SummaryItem
-              text={formValues.orderCancellationEndDate}
+              text={`${dayjs(formValues.orderCancellationEndDate).format('LL hh:mm z')}`}
               tip="The last time that a bidder can cancel a placed bid"
               title="Last date to cancel bids"
             />
