@@ -22,6 +22,9 @@ const CollateralTokenSelector = () => {
   }
   const { tokens: tokenList } = useTokenListState()
 
+  // The options available for the collateral token selector are all of the
+  // options from theBondFactory's allowed token list. The hard-coded payment
+  // tokens are removed from this list.
   const tokens = useMemo(() => {
     return allowedTokens
       ?.filter(
