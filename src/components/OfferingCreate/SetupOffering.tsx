@@ -423,7 +423,7 @@ const Summary = ({ currentStep }) => {
             title="Minimum sales price"
           />
           <SummaryItem text={formValues.auctionStartDate} tip="Start date" title="Start date" />
-          <SummaryItem text={formValues.auctionStartDate} tip="End date" title="End date" />
+          <SummaryItem text={formValues.auctionEndDate} tip="End date" title="End date" />
           <SummaryItem
             text={formValues.minBidSize ? `${formValues.minBidSize} USDC` : 'No minimum bid'}
             tip="The smallest number of bonds to bid on"
@@ -482,7 +482,7 @@ const InitiateAuctionAction = () => {
     orderCancellationEndDate
       ? round(dayjs(orderCancellationEndDate).utc().get('seconds'))
       : round(currentTimeInUTC() / 1000), // orderCancellationEndDate (uint256)
-    round(currentTimeInUTC() / 1000), // auctionEndDate (uint256)
+    round(auctionEndDate / 1000), // auctionEndDate (uint256)
     parseUnits(auctionedSellAmount.toString(), bondToAuction?.decimals).toString(), // auctionedSellAmount (uint96)
     parseUnits(minBuyAmount.toString(), bondToAuction?.paymentToken?.decimals).toString(), // minBuyAmount (uint96)
     parseUnits(
