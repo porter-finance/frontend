@@ -347,11 +347,11 @@ const StepThree = () => {
 
 const confirmSteps = [
   {
-    text: 'Approve UNI CONVERT for sale',
+    text: (bondSymbol = '') => `Approve ${bondSymbol} for sale`,
     tip: 'The bonds need to be approved so they can be offered for sale.',
   },
   {
-    text: 'Initiate auction',
+    text: () => 'Initiate auction',
     tip: 'Transfer your bonds into the auction contract and initiate the auction.',
   },
 ]
@@ -412,7 +412,7 @@ const Summary = ({ currentStep }) => {
           />
           <SummaryItem
             text={`${formValues.auctionedSellAmount} ${formValues?.bondToAuction?.name}s`}
-            tip="Number of bonds to auction"
+            tip="Maximum number of bonds that will be auctioned"
             title="Number of bonds to auction"
           />
           <SummaryItem
@@ -423,14 +423,14 @@ const Summary = ({ currentStep }) => {
           <SummaryItem text={formValues.auctionStartDate} tip="Start date" title="Start date" />
           <SummaryItem text={formValues.auctionStartDate} tip="End date" title="End date" />
           <SummaryItem
-            text={formValues.minBidSize ? `${formValues.minBidSize} USDC` : 'No mininimum bid'}
-            tip="Minimum bid size"
+            text={formValues.minBidSize ? `${formValues.minBidSize} USDC` : 'No minimum bid'}
+            tip="The smallest number of bonds to bid on"
             title="Minimum bid size"
           />
           {formValues.orderCancellationEndDate && (
             <SummaryItem
               text={formValues.orderCancellationEndDate}
-              tip="Last date to cancel bids"
+              tip="The last time that a bidder can cancel a placed bid"
               title="Last date to cancel bids"
             />
           )}
@@ -478,9 +478,9 @@ const InitiateAuctionAction = () => {
     bondToAuction.id, // auctioningToken (address)
     bondToAuction.collateralToken.id, // biddingToken (address)
     orderCancellationEndDate
-      ? new Date(orderCancellationEndDate).getTime() / 1000
-      : new Date(auctionEndDate).getTime() / 1000, // orderCancellationEndDate (uint256)
-    new Date(auctionEndDate).getTime() / 1000, // auctionEndDate (uint256)
+      ? dayjs(orderCancellationEndDate).utc().get('seconds')
+      : dayjs(auctionEndDate).utc().get('seconds'), // orderCancellationEndDate (uint256)
+    dayjs(auctionEndDate).utc().get('seconds'), // auctionEndDate (uint256)
     parseUnits(auctionedSellAmount.toString(), bondToAuction?.decimals).toString(), // auctionedSellAmount (uint96)
     parseUnits(minBuyAmount.toString(), bondToAuction?.paymentToken?.decimals).toString(), // minBuyAmount (uint96)
     parseUnits(
@@ -559,8 +559,8 @@ const ActionSteps = () => {
   const [transactionError, setTransactionError] = useState('')
 
   const [auctionedSellAmount, bondToAuction] = getValues(['auctionedSellAmount', 'bondToAuction'])
-
-  const { data } = useContractRead(
+  console.log(bondToAuction)
+  const { data: bondAllowance } = useContractRead(
     {
       addressOrName: bondToAuction?.id,
       contractInterface: BOND_ABI,
@@ -580,20 +580,22 @@ const ActionSteps = () => {
     contractInterface: BOND_ABI,
     signerOrProvider: signer,
   })
-
   useEffect(() => {
     // Already approved the token
-    if (data && data.gte(parseUnits(`${auctionedSellAmount}`, bondToAuction.decimals))) {
+    if (
+      bondAllowance &&
+      bondAllowance.gte(parseUnits(`${auctionedSellAmount}`, bondToAuction.decimals))
+    ) {
       setCurrentApproveStep(1)
     }
-  }, [data, auctionedSellAmount, bondToAuction.decimals])
+  }, [bondAllowance, auctionedSellAmount, bondToAuction.decimals])
 
   return (
     <>
       <ul className="steps steps-vertical">
         {confirmSteps.map((step, i) => (
           <li className={`step ${i <= currentApproveStep ? 'step-secondary' : ''}`} key={i}>
-            <TooltipElement left={step.text} tip={step.tip} />
+            <TooltipElement left={step.text(bondToAuction?.name)} tip={step.tip} />
           </li>
         ))}
       </ul>
