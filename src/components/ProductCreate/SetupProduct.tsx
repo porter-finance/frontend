@@ -113,7 +113,7 @@ export const MintAction = ({ convertible = true, setCurrentApproveStep }) => {
   )
 }
 
-export const ActionSteps = ({ convertible = true }) => {
+export const BondActionSteps = ({ convertible = true }) => {
   const { account, signer } = useActiveWeb3React()
   const { getValues } = useFormContext()
   const navigate = useNavigate()
@@ -646,9 +646,10 @@ type Inputs = {
 }
 
 export const FormSteps = ({
+  ActionSteps,
   Summary,
   color = 'blue',
-  convertible,
+  convertible = true,
   midComponents,
   steps,
   title,
@@ -671,7 +672,11 @@ export const FormSteps = ({
           <div className="overflow-visible w-[326px] card">
             <div className="card-body">
               <div className="flex items-center pb-4 space-x-4 border-b border-[#2C2C2C]">
-                <DoubleArrowRightIcon className="p-1 w-6 h-6 bg-[#532DBE] rounded-md border border-[#ffffff22]" />
+                <DoubleArrowRightIcon
+                  className={`p-1 w-6 h-6 rounded-md border border-[#ffffff22] ${
+                    color === 'blue' ? 'bg-[#404EED]' : 'bg-[#532DBE]'
+                  }`}
+                />
                 <span className="text-xs text-white uppercase">{title}</span>
               </div>
 
@@ -679,7 +684,11 @@ export const FormSteps = ({
                 {steps.map((step, i) => (
                   <li
                     className={`step ${
-                      i <= currentStep ? 'step-primary hover:underline hover:cursor-pointer' : ''
+                      i <= currentStep
+                        ? `step-${
+                            color === 'purple' ? 'primary' : 'secondary'
+                          } hover:underline hover:cursor-pointer`
+                        : ''
                     }`}
                     key={i}
                     onClick={() => {
@@ -697,7 +706,7 @@ export const FormSteps = ({
               <h1 className="!text-2xl card-title">{steps[currentStep]}</h1>
               <div className="space-y-4">
                 {!account && (
-                  <ActionButton className="mt-4" onClick={toggleWalletModal}>
+                  <ActionButton className="mt-4" color={color} onClick={toggleWalletModal}>
                     Connect wallet
                   </ActionButton>
                 )}
@@ -708,7 +717,7 @@ export const FormSteps = ({
 
                     {currentStep < steps.length - 1 && (
                       <ActionButton
-                        color="purple"
+                        color={color}
                         disabled={!isValid || !isDirty}
                         onClick={() => setCurrentStep(currentStep + 1)}
                         type="submit"
@@ -735,6 +744,7 @@ const SetupProduct = () => {
 
   return (
     <FormSteps
+      ActionSteps={BondActionSteps}
       Summary={Summary}
       color="purple"
       convertible

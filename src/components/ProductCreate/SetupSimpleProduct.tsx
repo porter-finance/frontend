@@ -7,7 +7,7 @@ import { useToken } from 'wagmi'
 import TooltipElement from '../common/Tooltip'
 import { FieldRowLabelStyledText, FieldRowWrapper } from '../form/InterestRateInputPanel'
 import CollateralTokenSelector from './CollateralTokenSelector'
-import { FormSteps, StepOne, SummaryItem, useBondName } from './SetupProduct'
+import { BondActionSteps, FormSteps, StepOne, SummaryItem, useBondName } from './SetupProduct'
 
 import { useTokenPrice } from '@/hooks/useTokenPrice'
 
@@ -138,17 +138,13 @@ const Summary = ({ currentStep }) => {
   )
 }
 
-type Inputs = {
-  issuerName: string
-  exampleRequired: string
-}
-
 const SetupSimpleProduct = () => {
   const midComponents = [<StepOne key={0} />, <StepTwo key={1} />]
   const steps = ['Setup product', 'Choose collateral', 'Confirm creation']
 
   return (
     <FormSteps
+      ActionSteps={BondActionSteps}
       Summary={Summary}
       color="purple"
       convertible={false}

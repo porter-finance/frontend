@@ -3,15 +3,15 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { parseUnits } from '@ethersproject/units'
-import { DoubleArrowRightIcon } from '@radix-ui/react-icons'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import dayjs from 'dayjs'
 import { round } from 'lodash'
-import { FormProvider, SubmitHandler, useForm, useFormContext } from 'react-hook-form'
+import { useFormContext } from 'react-hook-form'
 import { useContract, useContractRead } from 'wagmi'
 
 import { BondSelector } from '../ProductCreate/CollateralTokenSelector'
 import { AccessManagerContract } from '../ProductCreate/SelectableTokens'
+import { FormSteps } from '../ProductCreate/SetupProduct'
 import { ActionButton } from '../auction/Claimer'
 import TooltipElement from '../common/Tooltip'
 import {
@@ -26,7 +26,6 @@ import BOND_ABI from '@/constants/abis/bond.json'
 import easyAuctionABI from '@/constants/abis/easyAuction/easyAuction.json'
 import { Token } from '@/generated/graphql'
 import { useActiveWeb3React } from '@/hooks'
-import { useWalletModalToggle } from '@/state/application/hooks'
 import { EASY_AUCTION_NETWORKS } from '@/utils'
 import { currentTimeInUTC } from '@/utils/tools'
 
@@ -358,8 +357,6 @@ const confirmSteps = [
     tip: 'Transfer your bonds into the auction contract and initiate the auction.',
   },
 ]
-const steps = ['Setup auction', 'Schedule auction', 'Bidding config', 'Confirm creation']
-
 const SummaryItem = ({ text, tip = null, title }) => (
   <div className="pb-4 space-y-2 border-b border-[#2C2C2C]">
     <div className="text-base text-white">{text}</div>
@@ -659,80 +656,17 @@ const ActionSteps = () => {
 }
 
 const SetupOffering = () => {
-  const [currentStep, setCurrentStep] = useState(0)
-  const methods = useForm<Inputs>({ mode: 'onChange' })
-
-  const {
-    formState: { errors, isDirty, isValid },
-    handleSubmit,
-  } = methods
-  const { account } = useActiveWeb3React()
-  const toggleWalletModal = useWalletModalToggle()
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data)
   const midComponents = [<StepOne key={0} />, <StepTwo key={1} />, <StepThree key={2} />]
+  const steps = ['Setup auction', 'Schedule auction', 'Bidding config', 'Confirm creation']
 
   return (
-    <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex justify-center space-x-8">
-          <div className="overflow-visible w-[326px] card">
-            <div className="card-body">
-              <div className="flex items-center pb-4 space-x-4 border-b border-[#2C2C2C]">
-                <DoubleArrowRightIcon className="p-1 w-6 h-6 bg-[#404EED] rounded-md border border-[#ffffff22]" />
-                <span className="text-xs text-white uppercase">Auction Creation</span>
-              </div>
-
-              <ul className="steps steps-vertical">
-                {steps.map((step, i) => (
-                  <li
-                    className={`step ${
-                      i <= currentStep ? 'step-secondary hover:underline hover:cursor-pointer' : ''
-                    }`}
-                    key={i}
-                    onClick={() => {
-                      if (i !== currentStep && i <= currentStep) setCurrentStep(i)
-                    }}
-                  >
-                    {step}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-          <div className="overflow-visible w-[425px] card">
-            <div className="card-body">
-              <h1 className="!text-2xl card-title">{steps[currentStep]}</h1>
-              <div className="space-y-4">
-                {!account && (
-                  <ActionButton className="mt-4" onClick={toggleWalletModal}>
-                    Connect wallet
-                  </ActionButton>
-                )}
-
-                {account && (
-                  <>
-                    {midComponents[currentStep]}
-
-                    {currentStep < 3 && (
-                      <ActionButton
-                        color="blue"
-                        disabled={!isValid || !isDirty}
-                        onClick={() => setCurrentStep(currentStep + 1)}
-                        type="submit"
-                      >
-                        Continue
-                      </ActionButton>
-                    )}
-                    {currentStep === 3 && <ActionSteps />}
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-          {currentStep >= 1 && <Summary currentStep={currentStep} />}
-        </div>
-      </form>
-    </FormProvider>
+    <FormSteps
+      ActionSteps={ActionSteps}
+      Summary={Summary}
+      midComponents={midComponents}
+      steps={steps}
+      title="Auction Creation"
+    />
   )
 }
 
