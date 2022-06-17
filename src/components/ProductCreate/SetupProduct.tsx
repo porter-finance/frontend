@@ -55,12 +55,12 @@ export const MintAction = ({ convertible = true, disabled, setCurrentApproveStep
   const { data: borrowTokenData } = useToken({ address: borrowToken?.address })
 
   const args = [
-    bondData?.bondName, // name (string)
-    bondData?.bondSymbol, // symbol (string)
+    bondData.bondName, // name (string)
+    bondData.bondSymbol, // symbol (string)
     account, // owner (address)
     round(dayjs(maturityDate).utc().valueOf() / 1000), // maturity (uint256)
-    borrowToken?.address, // paymentToken (address)
-    collateralToken?.address, // collateralToken (address)
+    borrowToken.address, // paymentToken (address)
+    collateralToken.address, // collateralToken (address)
     parseUnits(`${amountOfCollateral || 0}`, collateralTokenData?.decimals).toString(), // collateralRatio (uint256)
     !convertible
       ? 0
