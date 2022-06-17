@@ -17,7 +17,7 @@ import BorrowTokenSelector from './BorrowTokenSelector'
 import CollateralTokenSelector from './CollateralTokenSelector'
 import { IssuerAllowList, PRTRIcon } from './SelectableTokens'
 
-import { requiredChain } from '@/connectors'
+import { isRinkeby, requiredChain } from '@/connectors'
 import BOND_ABI from '@/constants/abis/bond.json'
 import { Bond } from '@/generated/graphql'
 import { useActiveWeb3React } from '@/hooks'
@@ -674,7 +674,7 @@ export const FormSteps = ({
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        {!IssuerAllowList.includes(account.toLowerCase()) && (
+        {!isRinkeby && !IssuerAllowList.includes(account.toLowerCase()) && (
           <div className="w-full">
             <div className="p-4 bg-red-50 rounded-md border-l-4 border-red-400">
               <div className="flex">
@@ -699,8 +699,18 @@ export const FormSteps = ({
                       Your address it not on the issuer allow list. You will not be able to submit
                       this form.
                     </span>
-                    <a className="font-medium text-red-700 hover:text-red-600 underline" href="#">
+                    <a
+                      className="font-medium text-red-700 hover:text-red-600 underline"
+                      href="https://forms.gle/NaLa8GV4eBJSAx9s7"
+                    >
                       Request access
+                    </a>
+                    <span>or</span>
+                    <a
+                      className="font-medium text-red-700 hover:text-red-600 underline"
+                      href="https://rinkeby.porter.finance/"
+                    >
+                      Continue on Rinkeby
                     </a>
                   </p>
                 </div>
@@ -769,7 +779,7 @@ export const FormSteps = ({
                     {currentStep === steps.length - 1 && (
                       <ActionSteps
                         convertible={convertible}
-                        disabled={!IssuerAllowList.includes(account.toLowerCase())}
+                        disabled={!isRinkeby && !IssuerAllowList.includes(account.toLowerCase())}
                       />
                     )}
                   </>
