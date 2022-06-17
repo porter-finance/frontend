@@ -22,6 +22,7 @@ import BOND_ABI from '@/constants/abis/bond.json'
 import { Bond } from '@/generated/graphql'
 import { useActiveWeb3React } from '@/hooks'
 import { useBondFactoryContract } from '@/hooks/useContract'
+import { useStrikePrice } from '@/hooks/useStrikePrice'
 import { useTokenPrice } from '@/hooks/useTokenPrice'
 import { useWalletModalToggle } from '@/state/application/hooks'
 import { EASY_AUCTION_NETWORKS } from '@/utils'
@@ -478,26 +479,6 @@ export const StepTwo = () => {
       </FieldRowWrapper>
     </>
   )
-}
-
-export const useStrikePrice = () => {
-  const { watch } = useFormContext()
-
-  const [amountOfBonds, amountOfConvertible, borrowToken, collateralToken] = watch([
-    'amountOfBonds',
-    'amountOfConvertible',
-    'borrowToken',
-    'collateralToken',
-  ])
-  const { data: collateralTokenPrice } = useTokenPrice(collateralToken?.address)
-  const { data: collateralTokenData } = useToken({ address: collateralToken?.address })
-  const { data: borrowTokenData } = useToken({ address: borrowToken?.address })
-  const value = 1 / ((amountOfConvertible / amountOfBonds) * collateralTokenPrice)
-
-  const display = `${(value || 0).toLocaleString()} ${borrowTokenData?.symbol}/${
-    collateralTokenData?.symbol
-  }`
-  return { data: { value, display } }
 }
 
 export const StepThree = () => {
