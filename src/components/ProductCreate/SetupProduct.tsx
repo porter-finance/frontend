@@ -23,6 +23,7 @@ import { Bond } from '@/generated/graphql'
 import { useActiveWeb3React } from '@/hooks'
 import { useBondFactoryContract } from '@/hooks/useContract'
 import { useTokenPrice } from '@/hooks/useTokenPrice'
+import { useWalletModalToggle } from '@/state/application/hooks'
 import { EASY_AUCTION_NETWORKS } from '@/utils'
 
 export const MintAction = ({ convertible = true, setCurrentApproveStep }) => {
@@ -556,8 +557,6 @@ export const StepThree = () => {
   )
 }
 
-const steps = ['Setup product', 'Choose collateral', 'Set convertibility', 'Confirm creation']
-
 export const SummaryItem = ({ text, tip, title }) => (
   <div className="pb-4 space-y-2 border-b border-[#2C2C2C]">
     <div className="text-base text-white">{text}</div>
@@ -646,7 +645,14 @@ type Inputs = {
   exampleRequired: string
 }
 
-const SetupProduct = () => {
+export const FormSteps = ({
+  Summary,
+  color = 'blue',
+  convertible,
+  midComponents,
+  steps,
+  title,
+}) => {
   const [currentStep, setCurrentStep] = useState(0)
 
   const methods = useForm<Inputs>({ mode: 'onChange' })
@@ -654,8 +660,9 @@ const SetupProduct = () => {
     formState: { isDirty, isValid },
     handleSubmit,
   } = methods
+  const { account } = useActiveWeb3React()
+  const toggleWalletModal = useWalletModalToggle()
   const onSubmit: SubmitHandler<Inputs> = (data) => console.log('onSubmit', data)
-  const midComponents = [<StepOne key={0} />, <StepTwo key={1} />, <StepThree key={2} />]
 
   return (
     <FormProvider {...methods}>
@@ -665,7 +672,7 @@ const SetupProduct = () => {
             <div className="card-body">
               <div className="flex items-center pb-4 space-x-4 border-b border-[#2C2C2C]">
                 <DoubleArrowRightIcon className="p-1 w-6 h-6 bg-[#532DBE] rounded-md border border-[#ffffff22]" />
-                <span className="text-xs text-white uppercase">Convertible Bond Creation</span>
+                <span className="text-xs text-white uppercase">{title}</span>
               </div>
 
               <ul className="steps steps-vertical">
@@ -689,19 +696,29 @@ const SetupProduct = () => {
             <div className="card-body">
               <h1 className="!text-2xl card-title">{steps[currentStep]}</h1>
               <div className="space-y-4">
-                {midComponents[currentStep]}
-
-                {currentStep < 3 && (
-                  <ActionButton
-                    color="purple"
-                    disabled={!isValid || !isDirty}
-                    onClick={() => setCurrentStep(currentStep + 1)}
-                    type="submit"
-                  >
-                    Continue
+                {!account && (
+                  <ActionButton className="mt-4" onClick={toggleWalletModal}>
+                    Connect wallet
                   </ActionButton>
                 )}
-                {currentStep === 3 && <ActionSteps />}
+
+                {account && (
+                  <>
+                    {midComponents[currentStep]}
+
+                    {currentStep < steps.length - 1 && (
+                      <ActionButton
+                        color="purple"
+                        disabled={!isValid || !isDirty}
+                        onClick={() => setCurrentStep(currentStep + 1)}
+                        type="submit"
+                      >
+                        Continue
+                      </ActionButton>
+                    )}
+                    {currentStep === steps.length - 1 && <ActionSteps convertible={convertible} />}
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -709,6 +726,22 @@ const SetupProduct = () => {
         </div>
       </form>
     </FormProvider>
+  )
+}
+
+const SetupProduct = () => {
+  const midComponents = [<StepOne key={0} />, <StepTwo key={1} />, <StepThree key={2} />]
+  const steps = ['Setup product', 'Choose collateral', 'Set convertibility', 'Confirm creation']
+
+  return (
+    <FormSteps
+      Summary={Summary}
+      color="purple"
+      convertible
+      midComponents={midComponents}
+      steps={steps}
+      title="Convertible Bond Creation"
+    />
   )
 }
 

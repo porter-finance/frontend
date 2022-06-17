@@ -1,15 +1,13 @@
-import React, { useState } from 'react'
+import React from 'react'
 
-import { DoubleArrowRightIcon } from '@radix-ui/react-icons'
 import dayjs from 'dayjs'
-import { FormProvider, SubmitHandler, useForm, useFormContext } from 'react-hook-form'
+import { useFormContext } from 'react-hook-form'
 import { useToken } from 'wagmi'
 
-import { ActionButton } from '../auction/Claimer'
 import TooltipElement from '../common/Tooltip'
 import { FieldRowLabelStyledText, FieldRowWrapper } from '../form/InterestRateInputPanel'
 import CollateralTokenSelector from './CollateralTokenSelector'
-import { ActionSteps, StepOne, SummaryItem, useBondName } from './SetupProduct'
+import { FormSteps, StepOne, SummaryItem, useBondName } from './SetupProduct'
 
 import { useTokenPrice } from '@/hooks/useTokenPrice'
 
@@ -82,8 +80,6 @@ const StepTwo = () => {
   )
 }
 
-const steps = ['Setup product', 'Choose collateral', 'Confirm creation']
-
 const Summary = ({ currentStep }) => {
   const { watch } = useFormContext()
   const [borrowToken, collateralToken, amountOfBonds, maturityDate, amountOfCollateral] = watch([
@@ -120,7 +116,7 @@ const Summary = ({ currentStep }) => {
             title="Maturity date"
           />
 
-          {currentStep >= steps.length - 1 && (
+          {currentStep && (
             <>
               <SummaryItem
                 text={`${amountOfCollateral?.toLocaleString() || '-'} ${
@@ -148,70 +144,18 @@ type Inputs = {
 }
 
 const SetupSimpleProduct = () => {
-  const [currentStep, setCurrentStep] = useState(0)
-
-  const methods = useForm<Inputs>({ mode: 'onChange' })
-  const {
-    formState: { isValid },
-    handleSubmit,
-  } = methods
-
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data)
-
   const midComponents = [<StepOne key={0} />, <StepTwo key={1} />]
+  const steps = ['Setup product', 'Choose collateral', 'Confirm creation']
 
   return (
-    <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex justify-center space-x-8">
-          <div className="overflow-visible w-[326px] card">
-            <div className="card-body">
-              <div className="flex items-center pb-4 space-x-4 border-b border-[#2C2C2C]">
-                <DoubleArrowRightIcon className="p-1 w-6 h-6 bg-[#532DBE] rounded-md border border-[#ffffff22]" />
-                <span className="text-xs text-white uppercase">Simple Bond Creation</span>
-              </div>
-
-              <ul className="steps steps-vertical">
-                {steps.map((step, i) => (
-                  <li
-                    className={`step ${
-                      i <= currentStep ? 'step-primary hover:underline hover:cursor-pointer' : ''
-                    }`}
-                    key={i}
-                    onClick={() => {
-                      if (i !== currentStep && i <= currentStep) setCurrentStep(i)
-                    }}
-                  >
-                    {step}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-          <div className="overflow-visible w-[425px] card">
-            <div className="card-body">
-              <h1 className="!text-2xl card-title">{steps[currentStep]}</h1>
-              <div className="space-y-4">
-                {midComponents[currentStep]}
-
-                {currentStep < steps.length - 1 && (
-                  <ActionButton
-                    color="purple"
-                    disabled={!isValid}
-                    onClick={() => setCurrentStep(currentStep + 1)}
-                    type="submit"
-                  >
-                    Continue
-                  </ActionButton>
-                )}
-                {currentStep === steps.length - 1 && <ActionSteps convertible={false} />}
-              </div>
-            </div>
-          </div>
-          {currentStep >= 1 && <Summary currentStep={currentStep} />}
-        </div>
-      </form>
-    </FormProvider>
+    <FormSteps
+      Summary={Summary}
+      color="purple"
+      convertible={false}
+      midComponents={midComponents}
+      steps={steps}
+      title="Simple Bond Creation"
+    />
   )
 }
 

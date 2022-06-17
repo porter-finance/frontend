@@ -26,6 +26,7 @@ import BOND_ABI from '@/constants/abis/bond.json'
 import easyAuctionABI from '@/constants/abis/easyAuction/easyAuction.json'
 import { Token } from '@/generated/graphql'
 import { useActiveWeb3React } from '@/hooks'
+import { useWalletModalToggle } from '@/state/application/hooks'
 import { EASY_AUCTION_NETWORKS } from '@/utils'
 import { currentTimeInUTC } from '@/utils/tools'
 
@@ -665,6 +666,8 @@ const SetupOffering = () => {
     formState: { errors, isDirty, isValid },
     handleSubmit,
   } = methods
+  const { account } = useActiveWeb3React()
+  const toggleWalletModal = useWalletModalToggle()
   const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data)
   const midComponents = [<StepOne key={0} />, <StepTwo key={1} />, <StepThree key={2} />]
 
@@ -700,19 +703,29 @@ const SetupOffering = () => {
             <div className="card-body">
               <h1 className="!text-2xl card-title">{steps[currentStep]}</h1>
               <div className="space-y-4">
-                {midComponents[currentStep]}
-
-                {currentStep < 3 && (
-                  <ActionButton
-                    color="blue"
-                    disabled={!isValid || !isDirty}
-                    onClick={() => setCurrentStep(currentStep + 1)}
-                    type="submit"
-                  >
-                    Continue
+                {!account && (
+                  <ActionButton className="mt-4" onClick={toggleWalletModal}>
+                    Connect wallet
                   </ActionButton>
                 )}
-                {currentStep === 3 && <ActionSteps />}
+
+                {account && (
+                  <>
+                    {midComponents[currentStep]}
+
+                    {currentStep < 3 && (
+                      <ActionButton
+                        color="blue"
+                        disabled={!isValid || !isDirty}
+                        onClick={() => setCurrentStep(currentStep + 1)}
+                        type="submit"
+                      >
+                        Continue
+                      </ActionButton>
+                    )}
+                    {currentStep === 3 && <ActionSteps />}
+                  </>
+                )}
               </div>
             </div>
           </div>
