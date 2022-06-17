@@ -16,6 +16,7 @@ import { MainWrapper } from '../components/pureStyledComponents/MainWrapper'
 
 export const InnerApp = styled(InnerContainer)`
   margin-top: -100px;
+  margin-bottom: 75px;
 
   @media (max-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     margin-top: -110px;
