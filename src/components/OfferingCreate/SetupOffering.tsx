@@ -186,7 +186,7 @@ const StepTwo = () => {
         <label className="label">
           <TooltipElement
             left={<span className="label-text">Start date</span>}
-            tip="Date the auction will start."
+            tip="The auction will immediately start. This date is not configurable."
           />
         </label>
         <input
@@ -211,7 +211,7 @@ const StepTwo = () => {
         <label className="label">
           <TooltipElement
             left={<span className="label-text">End date</span>}
-            tip="Date the auction will end."
+            tip="Date the auction will end. This is UTC time."
           />
         </label>
         <input
