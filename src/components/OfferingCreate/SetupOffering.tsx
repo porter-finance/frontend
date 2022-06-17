@@ -484,9 +484,9 @@ const InitiateAuctionAction = () => {
     bondToAuction.id, // auctioningToken (address)
     bondToAuction.collateralToken.id, // biddingToken (address)
     orderCancellationEndDate
-      ? round(dayjs(orderCancellationEndDate).utc().get('seconds'))
+      ? round(dayjs(orderCancellationEndDate).utc().valueOf() / 1000)
       : round(currentTimeInUTC() / 1000), // orderCancellationEndDate (uint256)
-    round(dayjs(auctionEndDate).utc().get('seconds')), // auctionEndDate (uint256)
+    round(dayjs(auctionEndDate).utc().valueOf() / 1000), // auctionEndDate (uint256)
     parseUnits(auctionedSellAmount.toString(), bondToAuction?.decimals).toString(), // auctionedSellAmount (uint96)
     parseUnits(minBuyAmount.toString(), bondToAuction?.paymentToken?.decimals).toString(), // minBuyAmount (uint96)
     parseUnits(

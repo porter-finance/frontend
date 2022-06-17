@@ -24,7 +24,6 @@ import { useActiveWeb3React } from '@/hooks'
 import { useBondFactoryContract } from '@/hooks/useContract'
 import { useTokenPrice } from '@/hooks/useTokenPrice'
 import { EASY_AUCTION_NETWORKS } from '@/utils'
-import { currentTimeInUTC } from '@/utils/tools'
 
 export const MintAction = ({ convertible = true }) => {
   // state 0 for none, 1 for metamask confirmation, 2 for block confirmation
@@ -58,7 +57,7 @@ export const MintAction = ({ convertible = true }) => {
     bondData?.bondName, // name (string)
     bondData?.bondSymbol, // symbol (string)
     account, // owner (address)
-    round(currentTimeInUTC() / 1000), // maturity (uint256)
+    round(dayjs(maturityDate).utc().valueOf() / 1000), // maturity (uint256)
     borrowToken?.address, // paymentToken (address)
     collateralToken?.address, // collateralToken (address)
     parseUnits(amountOfCollateral, collateralTokenData?.decimals).toString(), // collateralRatio (uint256)
