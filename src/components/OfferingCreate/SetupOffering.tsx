@@ -20,7 +20,6 @@ import {
 } from '../form/InterestRateInputPanel'
 import WarningModal from '../modals/WarningModal'
 
-import { ReactComponent as UnicornSvg } from '@/assets/svg/simple-bond.svg'
 import { requiredChain } from '@/connectors'
 import BOND_ABI from '@/constants/abis/bond.json'
 import easyAuctionABI from '@/constants/abis/easyAuction/easyAuction.json'
@@ -41,28 +40,6 @@ type Inputs = {
   // TODO: its actually type Bond but we only need a few values off there
   bondToAuction: Token
 }
-
-export const TokenDetails = ({ option }) => (
-  <div className="p-4 space-y-4 w-full text-xs text-white rounded-md form-control">
-    <div className="flex justify-between w-full">
-      <span className="flex items-center space-x-2">
-        {option.icon || <UnicornSvg height={20} width={20} />}
-        <span>{option.name}</span>
-      </span>
-      <span>
-        <span className="text-[#696969]">Price:</span> 10.00 USDC
-      </span>
-    </div>
-    <div className="flex justify-between w-full">
-      <span>
-        <span className="text-[#696969]">Balance:</span> 1,000,000
-      </span>
-      <span>
-        <span className="text-[#696969]">Value:</span> 10,000,000 USDC
-      </span>
-    </div>
-  </div>
-)
 
 const StepOne = () => {
   const { register, watch } = useFormContext()
@@ -434,7 +411,7 @@ const Summary = ({ currentStep }) => {
             title="Bond for sale"
           />
           <SummaryItem
-            text={`${formValues.auctionedSellAmount} ${formValues?.bondToAuction?.name}`}
+            text={`${formValues.auctionedSellAmount} ${formValues?.bondToAuction?.name}s`}
             tip="Number of bonds to auction"
             title="Number of bonds to auction"
           />
