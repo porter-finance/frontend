@@ -365,7 +365,7 @@ export const StepOne = () => {
           type="number"
           {...register('amountOfBonds', {
             required: true,
-            validate: { nonNegative: (amountOfBonds) => amountOfBonds >= 0 },
+            min: 1,
           })}
         />
       </div>
@@ -439,9 +439,7 @@ export const StepTwo = () => {
           type="number"
           {...register('amountOfCollateral', {
             required: true,
-            validate: {
-              nonNegative: (amountOfCollateral) => amountOfCollateral >= 0,
-            },
+            min: 0,
           })}
         />
       </div>
@@ -520,11 +518,12 @@ export const StepThree = () => {
         </label>
         <input
           className="w-full input input-bordered"
+          min="0"
           placeholder="0"
           type="number"
           {...register('amountOfConvertible', {
             required: true,
-            validate: { nonNegative: (amountOfConvertible) => amountOfConvertible >= 0 },
+            min: 0,
           })}
         />
       </div>
