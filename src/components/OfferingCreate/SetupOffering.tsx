@@ -71,7 +71,7 @@ const StepOne = () => {
     maximumYTM = calculateInterestRate({
       price: minimumBiddingAmountPerOrder,
       maturityDate: bondToAuction?.maturityDate,
-      startDate: new Date().getTime() / 1000,
+      startDate: currentTimeInUTC() / 1000,
     }).toLocaleString()
   }
   return (
