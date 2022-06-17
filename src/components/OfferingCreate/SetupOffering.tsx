@@ -26,6 +26,7 @@ import easyAuctionABI from '@/constants/abis/easyAuction/easyAuction.json'
 import { Token } from '@/generated/graphql'
 import { useActiveWeb3React } from '@/hooks'
 import { EASY_AUCTION_NETWORKS } from '@/utils'
+import { currentTimeInUTC } from '@/utils/tools'
 
 type Inputs = {
   issuerName: string
@@ -479,8 +480,8 @@ const InitiateAuctionAction = () => {
     bondToAuction.collateralToken.id, // biddingToken (address)
     orderCancellationEndDate
       ? dayjs(orderCancellationEndDate).utc().get('seconds')
-      : dayjs(auctionEndDate).utc().get('seconds'), // orderCancellationEndDate (uint256)
-    dayjs(auctionEndDate).utc().get('seconds'), // auctionEndDate (uint256)
+      : currentTimeInUTC() / 1000, // orderCancellationEndDate (uint256)
+    currentTimeInUTC() / 1000, // auctionEndDate (uint256)
     parseUnits(auctionedSellAmount.toString(), bondToAuction?.decimals).toString(), // auctionedSellAmount (uint96)
     parseUnits(minBuyAmount.toString(), bondToAuction?.paymentToken?.decimals).toString(), // minBuyAmount (uint96)
     parseUnits(
