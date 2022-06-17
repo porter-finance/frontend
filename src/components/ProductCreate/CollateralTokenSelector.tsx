@@ -59,7 +59,7 @@ const NoBondFound = () => {
 export const BondSelector = () => {
   const { data, loading } = useBondsPortfolio()
   if (!data?.length && !loading) {
-    return <Selector OptionEl={NoBondFound} name="bondToAuction" options={data} />
+    return <Selector OptionEl={NoBondFound} disabled name="bondToAuction" options={data} />
   }
   return <Selector OptionEl={BondTokenDetails} name="bondToAuction" options={data} />
 }

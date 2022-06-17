@@ -15,7 +15,7 @@ const BorrowToken = ({ option }) => (
   </span>
 )
 
-export const Selector = ({ OptionEl, name, options }) => {
+export const Selector = ({ OptionEl, disabled = false, name, options }) => {
   // We assume `options` will have "name" key
   const { register, setValue } = useFormContext()
   const fieldValue = useWatch({ name })
@@ -32,7 +32,7 @@ export const Selector = ({ OptionEl, name, options }) => {
   }
 
   return (
-    <Listbox onChange={setList} value={selected}>
+    <Listbox disabled={disabled} onChange={setList} value={selected}>
       <input
         className="hidden"
         readOnly

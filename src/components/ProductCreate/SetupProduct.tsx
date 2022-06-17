@@ -170,7 +170,7 @@ export const ActionSteps = ({ convertible = true }) => {
     <>
       <ul className="steps steps-vertical">
         {confirmSteps.map((step, i) => (
-          <li className={`step step-primary ${i < currentApproveStep ? 'checked' : ''}`} key={i}>
+          <li className={`step ${i < currentApproveStep ? 'step-primary checked' : ''}`} key={i}>
             <TooltipElement left={step.text} tip={step.tip} />
           </li>
         ))}
