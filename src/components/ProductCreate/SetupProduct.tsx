@@ -25,12 +25,11 @@ import { useBondFactoryContract } from '@/hooks/useContract'
 import { useTokenPrice } from '@/hooks/useTokenPrice'
 import { EASY_AUCTION_NETWORKS } from '@/utils'
 
-export const MintAction = ({ convertible = true }) => {
+export const MintAction = ({ convertible = true, setCurrentApproveStep }) => {
   // state 0 for none, 1 for metamask confirmation, 2 for block confirmation
   const [waitingWalletApprove, setWaitingWalletApprove] = useState(0)
   const { account } = useActiveWeb3React()
   const addRecentTransaction = useAddRecentTransaction()
-  const navigate = useNavigate()
   const contract = useBondFactoryContract()
   const { getValues } = useFormContext()
   const [transactionError, setTransactionError] = useState('')
@@ -70,7 +69,7 @@ export const MintAction = ({ convertible = true }) => {
       {waitingWalletApprove !== 3 && (
         <ActionButton
           className={waitingWalletApprove ? 'loading' : ''}
-          color="blue"
+          color="purple"
           onClick={() => {
             setWaitingWalletApprove(1)
             contract
@@ -85,7 +84,9 @@ export const MintAction = ({ convertible = true }) => {
               })
               .then((result) => {
                 console.log(result, 'bond created')
+
                 setWaitingWalletApprove(3)
+                setCurrentApproveStep(2)
               })
               .catch((e) => {
                 setTransactionError(e?.message || e)
@@ -96,15 +97,6 @@ export const MintAction = ({ convertible = true }) => {
           {!waitingWalletApprove && `Mint bonds`}
           {waitingWalletApprove === 1 && 'Confirm mint in wallet'}
           {waitingWalletApprove === 2 && `Minting bonds...`}
-        </ActionButton>
-      )}
-      {waitingWalletApprove === 3 && (
-        <ActionButton
-          onClick={() => {
-            navigate('/offerings/create')
-          }}
-        >
-          Create offering
         </ActionButton>
       )}
       <WarningModal
@@ -121,6 +113,7 @@ export const MintAction = ({ convertible = true }) => {
 export const ActionSteps = ({ convertible = true }) => {
   const { account, signer } = useActiveWeb3React()
   const { getValues } = useFormContext()
+  const navigate = useNavigate()
   const [transactionError, setTransactionError] = useState('')
 
   const [collateralToken, amountOfcollateral] = getValues(['collateralToken', 'amountOfcollateral'])
@@ -175,7 +168,7 @@ export const ActionSteps = ({ convertible = true }) => {
     <>
       <ul className="steps steps-vertical">
         {confirmSteps.map((step, i) => (
-          <li className={`step ${i <= currentApproveStep ? 'step-secondary' : ''}`} key={i}>
+          <li className={`step step-primary ${i < currentApproveStep ? 'checked' : ''}`} key={i}>
             <TooltipElement left={step.text} tip={step.tip} />
           </li>
         ))}
@@ -199,14 +192,12 @@ export const ActionSteps = ({ convertible = true }) => {
                 })
                 return result.wait()
               })
-              .then((result) => {
+              .then(() => {
                 setCurrentApproveStep(1)
               })
               .catch((e) => {
-                setTransactionError(e?.message || e)
-              })
-              .finally(() => {
                 setWaitingWalletApprove(0)
+                setTransactionError(e?.message || e)
               })
           }}
         >
@@ -215,8 +206,17 @@ export const ActionSteps = ({ convertible = true }) => {
           {waitingWalletApprove === 2 && `Approving ${collateralToken?.symbol}...`}
         </ActionButton>
       )}
-      {(currentApproveStep === 1 || currentApproveStep === 3) && (
-        <MintAction convertible={convertible} />
+      {currentApproveStep === 1 && (
+        <MintAction convertible={convertible} setCurrentApproveStep={setCurrentApproveStep} />
+      )}
+      {currentApproveStep === 2 && (
+        <ActionButton
+          onClick={() => {
+            navigate('/offerings/create')
+          }}
+        >
+          Create offering
+        </ActionButton>
       )}
       <WarningModal
         content={transactionError}
