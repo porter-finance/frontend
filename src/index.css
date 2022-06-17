@@ -166,6 +166,12 @@ g[role='tooltip'] {
   background: #2c2c2c;
 }
 
+.steps .step-secondary.checked + .step-secondary.checked:before,
+.steps .step-secondary.checked:after {
+  content: '✓';
+  background-color: green;
+}
+
 .steps .step-secondary + .step-secondary:before,
 .steps .step-secondary:after {
   background-color: #404eed;

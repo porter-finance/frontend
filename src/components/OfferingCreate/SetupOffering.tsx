@@ -447,7 +447,7 @@ const Summary = ({ currentStep }) => {
   )
 }
 
-const InitiateAuctionAction = () => {
+const InitiateAuctionAction = ({ setCurrentApproveStep }) => {
   // state 0 for none, 1 for metamask confirmation, 2 for block confirmation
   const [waitingWalletApprove, setWaitingWalletApprove] = useState(0)
   const { signer } = useActiveWeb3React()
@@ -471,8 +471,6 @@ const InitiateAuctionAction = () => {
     'accessManagerContractData',
     'bondToAuction',
   ])
-  const navigate = useNavigate()
-
   const contract = useContract({
     addressOrName: EASY_AUCTION_NETWORKS[requiredChain.id],
     contractInterface: easyAuctionABI,
@@ -523,6 +521,7 @@ const InitiateAuctionAction = () => {
                 console.log(result, 'auction created')
 
                 setWaitingWalletApprove(3)
+                setCurrentApproveStep(2)
               })
               .catch((e) => {
                 setTransactionError(e?.message || e)
@@ -533,15 +532,6 @@ const InitiateAuctionAction = () => {
           {!waitingWalletApprove && `Initiate auction`}
           {waitingWalletApprove === 1 && 'Confirm initiation in wallet'}
           {waitingWalletApprove === 2 && `Initiating auction...`}
-        </ActionButton>
-      )}
-      {waitingWalletApprove === 3 && (
-        <ActionButton
-          onClick={() => {
-            navigate('/offerings')
-          }}
-        >
-          View auction page
         </ActionButton>
       )}
       <WarningModal
@@ -559,6 +549,7 @@ const ActionSteps = () => {
   const { account, signer } = useActiveWeb3React()
   const { getValues } = useFormContext()
   const [transactionError, setTransactionError] = useState('')
+  const navigate = useNavigate()
 
   const [auctionedSellAmount, bondToAuction] = getValues(['auctionedSellAmount', 'bondToAuction'])
   const { data: bondAllowance } = useContractRead(
@@ -595,7 +586,7 @@ const ActionSteps = () => {
     <>
       <ul className="steps steps-vertical">
         {confirmSteps.map((step, i) => (
-          <li className={`step ${i <= currentApproveStep ? 'step-secondary' : ''}`} key={i}>
+          <li className={`step step-secondary ${i < currentApproveStep ? 'checked' : ''}`} key={i}>
             <TooltipElement left={step.text(bondToAuction?.name)} tip={step.tip} />
           </li>
         ))}
@@ -619,14 +610,12 @@ const ActionSteps = () => {
                 })
                 return result.wait()
               })
-              .then((result) => {
+              .then(() => {
                 setCurrentApproveStep(1)
               })
               .catch((e) => {
-                setTransactionError(e?.message || e)
-              })
-              .finally(() => {
                 setWaitingWalletApprove(0)
+                setTransactionError(e?.message || e)
               })
           }}
         >
@@ -635,7 +624,18 @@ const ActionSteps = () => {
           {waitingWalletApprove === 2 && `Approving ${bondToAuction?.name}...`}
         </ActionButton>
       )}
-      {(currentApproveStep === 1 || currentApproveStep === 3) && <InitiateAuctionAction />}
+      {currentApproveStep === 1 && (
+        <InitiateAuctionAction setCurrentApproveStep={setCurrentApproveStep} />
+      )}
+      {currentApproveStep === 2 && (
+        <ActionButton
+          onClick={() => {
+            navigate('/offerings')
+          }}
+        >
+          View auction page
+        </ActionButton>
+      )}
       <WarningModal
         content={transactionError}
         isOpen={!!transactionError}
