@@ -67,40 +67,37 @@ export const MintAction = ({ convertible = true }) => {
 
   return (
     <>
-      <ActionButton
-        className={waitingWalletApprove ? 'loading' : ''}
-        color="blue"
-        onClick={() => {
-          setWaitingWalletApprove(1)
-          contract
-            .createBond(...args)
-            .then((result) => {
-              console.log(result)
-
-              setWaitingWalletApprove(2)
-              addRecentTransaction({
-                hash: result?.hash,
-                description: `Created bond`,
+      {waitingWalletApprove !== 3 && (
+        <ActionButton
+          className={waitingWalletApprove ? 'loading' : ''}
+          color="blue"
+          onClick={() => {
+            setWaitingWalletApprove(1)
+            contract
+              .createBond(...args)
+              .then((result) => {
+                setWaitingWalletApprove(2)
+                addRecentTransaction({
+                  hash: result?.hash,
+                  description: `Created bond`,
+                })
+                return result.wait()
               })
-              return result.wait()
-            })
-            .then((result) => {
-              console.log(result)
-            })
-            .catch((e) => {
-              console.log(e)
-
-              setTransactionError(e?.message || e)
-            })
-            .finally(() => {
-              setWaitingWalletApprove(0)
-            })
-        }}
-      >
-        {!waitingWalletApprove && `Mint bonds`}
-        {waitingWalletApprove === 1 && 'Confirm mint in wallet'}
-        {waitingWalletApprove === 2 && `Minting bonds...`}
-      </ActionButton>
+              .then((result) => {
+                console.log(result, 'bond created')
+                setWaitingWalletApprove(3)
+              })
+              .catch((e) => {
+                setTransactionError(e?.message || e)
+                setWaitingWalletApprove(0)
+              })
+          }}
+        >
+          {!waitingWalletApprove && `Mint bonds`}
+          {waitingWalletApprove === 1 && 'Confirm mint in wallet'}
+          {waitingWalletApprove === 2 && `Minting bonds...`}
+        </ActionButton>
+      )}
       {waitingWalletApprove === 3 && (
         <ActionButton
           onClick={() => {
@@ -583,8 +580,6 @@ const Summary = ({ currentStep }) => {
     'amountOfConvertible',
   ])
   const { data: bondData } = useBondName(true, maturityDate)
-  console.log(bondData?.bondSymbol)
-
   const { data: borrowTokenData } = useToken({ address: borrowToken?.address })
   const { data: collateralTokenData } = useToken({ address: collateralToken?.address })
   const borrowTokenSymbol = borrowTokenData?.symbol || '-'

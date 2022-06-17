@@ -501,44 +501,40 @@ const InitiateAuctionAction = () => {
     accessManagerContractData ?? '0x0000000000000000000000000000000000000000', // accessManagerContractData (bytes)
   ]
 
-  console.log(args)
-
   return (
     <>
-      <ActionButton
-        className={waitingWalletApprove ? 'loading' : ''}
-        color="blue"
-        onClick={() => {
-          setWaitingWalletApprove(1)
-          contract
-            .initiateAuction(...args)
-            .then((result) => {
-              console.log(result)
-
-              setWaitingWalletApprove(2)
-              addRecentTransaction({
-                hash: result?.hash,
-                description: `Created auction`,
+      {waitingWalletApprove !== 3 && (
+        <ActionButton
+          className={waitingWalletApprove ? 'loading' : ''}
+          color="blue"
+          onClick={() => {
+            setWaitingWalletApprove(1)
+            contract
+              .initiateAuction(...args)
+              .then((result) => {
+                setWaitingWalletApprove(2)
+                addRecentTransaction({
+                  hash: result?.hash,
+                  description: `Created auction`,
+                })
+                return result.wait()
               })
-              return result.wait()
-            })
-            .then((result) => {
-              console.log(result)
-            })
-            .catch((e) => {
-              console.log(e)
+              .then((result) => {
+                console.log(result, 'auction created')
 
-              setTransactionError(e?.message || e)
-            })
-            .finally(() => {
-              setWaitingWalletApprove(0)
-            })
-        }}
-      >
-        {!waitingWalletApprove && `Initiate auction`}
-        {waitingWalletApprove === 1 && 'Confirm initiation in wallet'}
-        {waitingWalletApprove === 2 && `Initiating auction...`}
-      </ActionButton>
+                setWaitingWalletApprove(3)
+              })
+              .catch((e) => {
+                setTransactionError(e?.message || e)
+                setWaitingWalletApprove(0)
+              })
+          }}
+        >
+          {!waitingWalletApprove && `Initiate auction`}
+          {waitingWalletApprove === 1 && 'Confirm initiation in wallet'}
+          {waitingWalletApprove === 2 && `Initiating auction...`}
+        </ActionButton>
+      )}
       {waitingWalletApprove === 3 && (
         <ActionButton
           onClick={() => {
@@ -565,7 +561,6 @@ const ActionSteps = () => {
   const [transactionError, setTransactionError] = useState('')
 
   const [auctionedSellAmount, bondToAuction] = getValues(['auctionedSellAmount', 'bondToAuction'])
-  console.log(bondToAuction)
   const { data: bondAllowance } = useContractRead(
     {
       addressOrName: bondToAuction?.id,
@@ -660,7 +655,6 @@ const SetupOffering = () => {
     formState: { errors, isDirty, isValid },
     handleSubmit,
   } = methods
-  console.log(errors)
   const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data)
   const midComponents = [<StepOne key={0} />, <StepTwo key={1} />, <StepThree key={2} />]
 
