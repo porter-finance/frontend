@@ -19,8 +19,8 @@ const StepTwo = () => {
     'collateralToken',
     'amountOfBonds',
   ])
-  const { data } = useTokenPrice(collateralToken?.address)
-  const collateralValue = amountOfCollateral * data
+  const { data: tokenPrice } = useTokenPrice(collateralToken?.address)
+  const collateralValue = amountOfCollateral * tokenPrice
   const collateralizationRatio = (amountOfCollateral / amountOfBonds) * 100
   return (
     <>

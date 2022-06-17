@@ -132,7 +132,7 @@ export const ActionSteps = ({ convertible = true }) => {
     address: collateralToken?.address,
   })
 
-  const { data } = useContractRead(
+  const { data: bondAllowance } = useContractRead(
     {
       addressOrName: collateralTokenData?.address,
       contractInterface: BOND_ABI,
@@ -156,13 +156,13 @@ export const ActionSteps = ({ convertible = true }) => {
   useEffect(() => {
     // Already approved the token
     if (
-      data &&
+      bondAllowance &&
       collateralTokenData?.decimals &&
-      data.gte(parseUnits(`${amountOfcollateral || 0}`, collateralTokenData?.decimals))
+      bondAllowance.gte(parseUnits(`${amountOfcollateral || 0}`, collateralTokenData?.decimals))
     ) {
       setCurrentApproveStep(1)
     }
-  }, [data, amountOfcollateral, collateralTokenData])
+  }, [bondAllowance, amountOfcollateral, collateralTokenData])
 
   const confirmSteps = [
     {
@@ -266,8 +266,11 @@ export const useBondName = (isConvertible: boolean, maturityDate: Date) => {
 export const TokenDetails = ({ option }) => {
   const { data: price } = useTokenPrice(option?.address)
   const { data: account } = useAccount()
-  const { data } = useBalance({ addressOrName: account?.address, token: option?.address })
-  const balanceString = data?.formatted
+  const { data: tokenBalance } = useBalance({
+    addressOrName: account?.address,
+    token: option?.address,
+  })
+  const balanceString = tokenBalance?.formatted
   if (!option) {
     return (
       <div className="p-4 space-y-4 w-full text-xs text-white rounded-md form-control">
@@ -283,7 +286,7 @@ export const TokenDetails = ({ option }) => {
       <div className="flex justify-between w-full">
         <span className="flex items-center space-x-2">
           <img className="w-6" src={option?.iconUrl} />
-          <span>{data?.symbol}</span>
+          <span>{tokenBalance?.symbol}</span>
         </span>
         <span>
           <span className="text-[#696969]">Price: </span> {round(price, 3)} USDC
@@ -410,8 +413,8 @@ export const StepTwo = () => {
     'collateralToken',
     'amountOfBonds',
   ])
-  const { data } = useTokenPrice(collateralToken?.address)
-  const collateralValue = amountOfCollateral * data
+  const { data: tokenPrice } = useTokenPrice(collateralToken?.address)
+  const collateralValue = amountOfCollateral * tokenPrice
   const collateralizationRatio = (amountOfCollateral / amountOfBonds) * 100
   return (
     <>
