@@ -58,7 +58,7 @@ export const MintAction = ({ convertible = true }) => {
     bondData?.bondName, // name (string)
     bondData?.bondSymbol, // symbol (string)
     account, // owner (address)
-    currentTimeInUTC() / 1000, // maturity (uint256)
+    round(currentTimeInUTC() / 1000), // maturity (uint256)
     borrowToken?.address, // paymentToken (address)
     collateralToken?.address, // collateralToken (address)
     parseUnits(amountOfCollateral, collateralTokenData?.decimals).toString(), // collateralRatio (uint256)

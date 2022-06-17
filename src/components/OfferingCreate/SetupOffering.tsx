@@ -6,6 +6,7 @@ import { parseUnits } from '@ethersproject/units'
 import { DoubleArrowRightIcon } from '@radix-ui/react-icons'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import dayjs from 'dayjs'
+import { round } from 'lodash'
 import { FormProvider, SubmitHandler, useForm, useFormContext } from 'react-hook-form'
 import { useContract, useContractRead } from 'wagmi'
 
@@ -192,7 +193,6 @@ const StepTwo = () => {
         </label>
         <input
           className="w-full input input-bordered"
-          placeholder="MM/DD/YYYY"
           readOnly
           type="date"
           value={new Date().toISOString().substring(0, 10)}
@@ -480,9 +480,9 @@ const InitiateAuctionAction = () => {
     bondToAuction.id, // auctioningToken (address)
     bondToAuction.collateralToken.id, // biddingToken (address)
     orderCancellationEndDate
-      ? dayjs(orderCancellationEndDate).utc().get('seconds')
-      : currentTimeInUTC() / 1000, // orderCancellationEndDate (uint256)
-    currentTimeInUTC() / 1000, // auctionEndDate (uint256)
+      ? round(dayjs(orderCancellationEndDate).utc().get('seconds'))
+      : round(currentTimeInUTC() / 1000), // orderCancellationEndDate (uint256)
+    round(currentTimeInUTC() / 1000), // auctionEndDate (uint256)
     parseUnits(auctionedSellAmount.toString(), bondToAuction?.decimals).toString(), // auctionedSellAmount (uint96)
     parseUnits(minBuyAmount.toString(), bondToAuction?.paymentToken?.decimals).toString(), // minBuyAmount (uint96)
     parseUnits(

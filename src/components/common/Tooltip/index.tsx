@@ -25,7 +25,7 @@ const Tooltip = ({
   if (left) {
     return (
       <div className="flex flex-row items-center space-x-2" {...props}>
-        <div className="flex">{left}</div>
+        <div className="flex text-left">{left}</div>
         {tipEl && <div className="flex">{tipEl}</div>}
       </div>
     )
