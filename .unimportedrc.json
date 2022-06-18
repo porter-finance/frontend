@@ -1,0 +1,5 @@
+{
+  "ignoreUnresolved": ["./styled"],
+  "ignoreUnused": ["react-app-rewired"],
+  "ignoreUnimported": ["src/hooks/useHasRole.ts"]
+}
