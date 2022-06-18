@@ -1,7 +1,7 @@
 import React from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 
-import SelectOffering from '@/components/OfferingCreate/SelectOffering'
+import SelectOffering from '@/components/OfferingCreate'
 import SetupOffering from '@/components/OfferingCreate/auction/SetupOffering'
 import SelectProduct from '@/components/ProductCreate'
 import SetupProduct from '@/components/ProductCreate/convert/SetupProduct'

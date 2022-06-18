@@ -3,7 +3,7 @@ import React from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import { FieldRowLabelStyledText, FieldRowWrapper } from '../../form/InterestRateInputPanel'
-import CollateralTokenSelector from '../CollateralTokenSelector'
+import CollateralTokenSelector from '../selectors/CollateralTokenSelector'
 
 import TooltipElement from '@/components/common/Tooltip'
 import { useTokenPrice } from '@/hooks/useTokenPrice'

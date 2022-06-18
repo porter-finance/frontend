@@ -11,7 +11,6 @@ import { Token } from '@/generated/graphql'
 
 export type Inputs = {
   issuerName: string
-  exampleRequired: string
   auctionedSellAmount: number
   minimumBiddingAmountPerOrder: number
   auctionStartDate: Date

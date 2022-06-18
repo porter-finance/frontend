@@ -4,7 +4,7 @@ import { Listbox, Transition } from '@headlessui/react'
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
 import { useFormContext, useWatch } from 'react-hook-form'
 
-import { BorrowTokens } from './SelectableTokens'
+import { BorrowTokens } from '../SelectableTokens'
 
 import { requiredChain } from '@/connectors'
 

@@ -2,7 +2,7 @@ import React from 'react'
 
 import { useFormContext } from 'react-hook-form'
 
-import { BondSelector } from '../../ProductCreate/CollateralTokenSelector'
+import { BondSelector } from '../../ProductCreate/selectors/CollateralTokenSelector'
 import {
   FieldRowLabelStyledText,
   FieldRowWrapper,

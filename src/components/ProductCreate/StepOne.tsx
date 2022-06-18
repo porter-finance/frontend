@@ -3,7 +3,7 @@ import React from 'react'
 import dayjs from 'dayjs'
 import { useFormContext } from 'react-hook-form'
 
-import BorrowTokenSelector from './BorrowTokenSelector'
+import BorrowTokenSelector from './selectors/BorrowTokenSelector'
 
 import TooltipElement from '@/components/common/Tooltip'
 

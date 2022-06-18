@@ -2,11 +2,11 @@ import React, { useMemo } from 'react'
 
 import { useAccount } from 'wagmi'
 
-import { BondTokenDetails } from './BondTokenDetails'
+import { BondTokenDetails } from '../BondTokenDetails'
+import { BorrowTokens } from '../SelectableTokens'
+import { TokenDetails } from '../TokenDetails'
+import { PRTRIcon } from '../icons/PRTRIcon'
 import { Selector } from './BorrowTokenSelector'
-import { BorrowTokens } from './SelectableTokens'
-import { TokenDetails } from './TokenDetails'
-import { PRTRIcon } from './icons/PRTRIcon'
 
 import { requiredChain } from '@/connectors'
 import { useBondsPortfolio } from '@/hooks/useBondsPortfolio'

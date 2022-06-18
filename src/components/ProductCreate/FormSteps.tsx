@@ -5,11 +5,15 @@ import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 
 import { ActionButton } from '../auction/Claimer'
 import { IssuerAllowList } from './SelectableTokens'
-import { Inputs } from './convert/SetupProduct'
 
 import { isRinkeby } from '@/connectors'
 import { useActiveWeb3React } from '@/hooks'
 import { useWalletModalToggle } from '@/state/application/hooks'
+
+export type Inputs = {
+  amountOfCollateral: number
+  // todo there's more but seems like its not important to have them all listed?
+}
 
 export const FormSteps = ({
   ActionSteps,

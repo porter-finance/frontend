@@ -1,8 +1,8 @@
 import React from 'react'
 
-import ConvertCreateIcon from './ConvertCreateIcon'
 import { CreatePanel } from './CreatePanel'
-import SimpleCreateIcon from './SimpleCreateIcon'
+import ConvertCreateIcon from './icons/ConvertCreateIcon'
+import SimpleCreateIcon from './icons/SimpleCreateIcon'
 
 const SelectProduct = () => {
   return (
