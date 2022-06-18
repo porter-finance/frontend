@@ -5,22 +5,22 @@
   "homepage": "https://porter-app.vercel.app/",
   "private": true,
   "engines": {
-    "node": ">=12"
+    "node": ">=16"
   },
   "scripts": {
     "start": "react-app-rewired start",
-    "prebuild": "yarn format",
-    "build": "cross-env REACT_APP_GIT_COMMIT_HASH=$(git show -s --format=%H) yarn typechain:all && react-app-rewired build",
+    "prebuild": "pnpm run format",
+    "build": "pnpm run typechain:all && react-app-rewired build",
     "test": "react-app-rewired test --env=jsdom",
     "format:eslint": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --fix",
     "format:prettier": "prettier \"src/**/*.{js,jsx,ts,tsx}\" --write",
-    "format": "yarn format:eslint && yarn format:prettier",
+    "format": "pnpm run format:eslint && pnpm run format:prettier",
     "eject": "react-app-rewired eject",
     "prepare": "husky install",
-    "postinstall": "yarn typechain:all",
-    "typechain:abi": "yarn typechain --target=ethers-v5 ./src/constants/abis/**/*.json --out-dir=./gen/types",
+    "postinstall": "pnpm run typechain:all",
+    "typechain:abi": "typechain --target=ethers-v5 ./src/constants/abis/**/*.json --out-dir=./gen/types",
     "typechain:gql": "graphql-codegen --require dotenv/config --config .graphqlrc",
-    "typechain:all": "yarn typechain:abi && yarn typechain:gql"
+    "typechain:all": "pnpm run typechain:abi && pnpm run typechain:gql"
   },
   "browserslist": {
     "production": [
