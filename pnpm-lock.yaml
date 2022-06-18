@@ -3,6 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@amcharts/amcharts4': ^4.10.24
   '@apollo/client': ^3.6.8
+  '@ethersproject/abi': ^5.6.4
   '@ethersproject/address': ^5.6.1
   '@ethersproject/bignumber': ^5.6.2
   '@ethersproject/constants': ^5.6.1
@@ -111,6 +112,7 @@ specifiers:
 dependencies:
   '@amcharts/amcharts4': 4.10.25
   '@apollo/client': 3.6.8_aez2jvt6lsvokp3l4ousdbdxf4
+  '@ethersproject/abi': 5.6.4
   '@ethersproject/address': 5.6.1
   '@ethersproject/bignumber': 5.6.2
   '@ethersproject/constants': 5.6.1
