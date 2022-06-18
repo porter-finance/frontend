@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { OopsWarning } from '../ConfirmationDialog'
+import { OopsWarning } from '../OopsWarning'
 import Modal from '../common/Modal'
 
 interface Props {

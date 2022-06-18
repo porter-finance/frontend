@@ -6,7 +6,6 @@ import { Fraction } from '@josojo/honeyswap-sdk'
 
 import { useAuction } from '../../../hooks/useAuction'
 import { TokenPill } from '../../bond/BondAction'
-import Tooltip from '../../common/Tooltip'
 import {
   FieldRowBottom,
   FieldRowInfo,
@@ -18,6 +17,7 @@ import {
   InfoType,
 } from '../../pureStyledComponents/FieldRow'
 
+import Tooltip from '@/components/common/Tooltip'
 import { DerivedAuctionInfo } from '@/state/orderPlacement/hooks'
 
 export const FieldRowLabelStyled = styled(FieldRowLabel)`

@@ -1,32 +1,6 @@
 import React, { ReactElement } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import ConvertCreateIcon from './ConvertCreateIcon'
-import SimpleCreateIcon from './SimpleCreateIcon'
-
-export const SelectProduct = () => {
-  return (
-    <CreatePanel
-      panels={[
-        {
-          icon: <ConvertCreateIcon />,
-          url: '/bonds/create/convertible',
-          learn: 'https://docs.porter.finance/portal/protocol/bonds/convert',
-          title: 'Convertible Bond',
-          description: 'A convertible bond built for DeFi.',
-        },
-        {
-          icon: <SimpleCreateIcon />,
-          url: '/bonds/create/simple',
-          learn: 'https://docs.porter.finance/portal/protocol/bonds/simple',
-          title: 'Simple Bond',
-          description: 'A simple bond built for DeFi.',
-        },
-      ]}
-    />
-  )
-}
-
 interface CreatePanelProps {
   panels: {
     url: string
@@ -75,5 +49,3 @@ export const CreatePanel = ({ panels }: CreatePanelProps) => {
     </>
   )
 }
-
-export default SelectProduct

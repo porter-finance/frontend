@@ -5,7 +5,8 @@ import dayjs from 'dayjs'
 import { round } from 'lodash'
 
 import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuction'
-import Tooltip from '../../common/Tooltip'
+
+import Tooltip from '@/components/common/Tooltip'
 
 export const FieldRowLabelStyledText = styled.span`
   margin-right: 5px;

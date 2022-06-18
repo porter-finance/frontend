@@ -1,8 +1,8 @@
 import React from 'react'
 
-import { CreatePanel } from '../ProductCreate/SelectProduct'
-import AuctionCreateIcon from './AuctionCreateIcon'
-import OTCCreateIcon from './OTCCreateIcon'
+import { CreatePanel } from '../ProductCreate/CreatePanel'
+import AuctionCreateIcon from './auction/AuctionCreateIcon'
+import OTCCreateIcon from './otc/OTCCreateIcon'
 
 export const SelectOffering = () => {
   return (

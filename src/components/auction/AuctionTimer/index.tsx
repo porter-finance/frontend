@@ -12,7 +12,8 @@ import utc from 'dayjs/plugin/utc'
 import Countdown from 'react-countdown'
 
 import { calculateTimeProgress, currentTimeInUTC, setLocale } from '../../../utils/tools'
-import Tooltip from '../../common/Tooltip'
+
+import Tooltip from '@/components/common/Tooltip'
 
 // Used for abbreviated named timezone offset 'z' when formatting.
 dayjs.extend(advancedFormat)

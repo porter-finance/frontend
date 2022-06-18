@@ -2,7 +2,8 @@ import React, { useCallback, useState } from 'react'
 
 import { BidTransactionLink, TableDesign, calculateRow } from '../OrderbookTable'
 
-import ConfirmationDialog, { OopsWarning } from '@/components/modals/ConfirmationDialog'
+import ConfirmationDialog from '@/components/modals/ConfirmationDialog'
+import { OopsWarning } from '@/components/modals/OopsWarning'
 import { Bid } from '@/generated/graphql'
 import { useBondMaturityForAuction } from '@/hooks/useBondMaturityForAuction'
 import { useCancelOrderCallback } from '@/hooks/useCancelOrderCallback'

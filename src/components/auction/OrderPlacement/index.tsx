@@ -36,16 +36,18 @@ import { OrderState } from '../../../state/orders/reducer'
 import { ChainId, EASY_AUCTION_NETWORKS, getFullTokenDisplay } from '../../../utils'
 import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
-import Tooltip from '../../common/Tooltip'
 import AmountInputPanel from '../../form/AmountInputPanel'
 import InterestRateInputPanel, { getReviewData } from '../../form/InterestRateInputPanel'
 import PriceInputPanel from '../../form/PriceInputPanel'
-import ConfirmationDialog, { ReviewOrder } from '../../modals/ConfirmationDialog'
+import ConfirmationDialog from '../../modals/ConfirmationDialog'
+import { ReviewOrder } from '../../modals/ReviewOrder'
 import WarningModal from '../../modals/WarningModal'
 import Modal from '../../modals/common/Modal'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { EmptyContentText } from '../../pureStyledComponents/EmptyContent'
 import { InfoType } from '../../pureStyledComponents/FieldRow'
+
+import Tooltip from '@/components/common/Tooltip'
 
 const LinkCSS = css`
   color: ${({ theme }) => theme.text1};
