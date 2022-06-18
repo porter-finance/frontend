@@ -19,7 +19,6 @@
     "jsx": "react",
     "downlevelIteration": true,
     "allowSyntheticDefaultImports": true,
-    "types": ["jest"],
     "noFallthroughCasesInSwitch": true
   },
   "exclude": ["node_modules"],

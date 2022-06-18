@@ -1,4 +1,3 @@
-import { NetworkConnector } from '@web3-react/network-connector'
 import { chain } from 'wagmi'
 
 import { ChainId, NETWORK_CONFIGS } from './../utils/index'
@@ -18,5 +17,3 @@ chainIds.forEach((chainId: ChainId) => {
 
 export const isRinkeby = !window.location.href.includes('app.porter')
 export const requiredChain = isRinkeby ? chain.rinkeby : chain.mainnet
-
-export const network = new NetworkConnector({ urls, defaultChainId: requiredChain.id })
