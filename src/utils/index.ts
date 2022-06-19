@@ -7,12 +7,12 @@ import { Contract } from '@ethersproject/contracts'
 import { parseBytes32String } from '@ethersproject/strings'
 import { JSBI, Percent, Token, TokenAmount, WETH } from '@josojo/honeyswap-sdk'
 import IUniswapV2PairABI from '@uniswap/v2-core/build/IUniswapV2Pair.json'
+import { chain, etherscanBlockExplorers } from 'wagmi'
 
 import { EasyAuction } from '../../gen/types'
 import easyAuctionABI from '../constants/abis/easyAuction/easyAuction.json'
 import ERC20_ABI from '../constants/abis/erc20.json'
 import ERC20_BYTES32_ABI from '../constants/abis/erc20_bytes32.json'
-import { NETWORK_URL_MAINNET, NETWORK_URL_RINKEBY } from '../constants/config'
 import { getLogger } from '../utils/logger'
 
 import { requiredChain } from '@/connectors'
@@ -34,45 +34,35 @@ export enum ChainId {
   RINKEBY = 4,
 }
 
-export const EASY_AUCTION_NETWORKS: { [chainId in ChainId]: string } = {
+export const EASY_AUCTION_NETWORKS: { [key: number]: string } = {
   [ChainId.MAINNET]: '0x0b7fFc1f4AD541A4Ed16b40D8c37f0929158D101',
   [ChainId.RINKEBY]: '0xC5992c0e0A3267C7F75493D0F717201E26BE35f7',
+  [chain.hardhat.id]: '0xC5992c0e0A3267C7F75493D0F717201E26BE35f7',
 }
 
-export const DEPOSIT_AND_PLACE_ORDER: { [chainId in ChainId]: string } = {
+export const DEPOSIT_AND_PLACE_ORDER: { [key: number]: string } = {
   [ChainId.MAINNET]: '0x10D15DEA67f7C95e2F9Fe4eCC245a8862b9B5B96',
   [ChainId.RINKEBY]: '0x8624fbDf455D51B967ff40aaB4019281A855f008',
+  [chain.hardhat.id]: '0x8624fbDf455D51B967ff40aaB4019281A855f008',
 }
 
 type NetworkConfig = {
-  name: string
-  rpc: string
-  symbol: string
-  explorer?: string
-  etherscan_prefix?: string
+  etherscanUrl?: string
 }
 
-export const NETWORK_CONFIGS: { [chainId in ChainId]: NetworkConfig } = {
-  1: {
-    name: 'Mainnet',
-    symbol: 'ETH',
-    rpc: NETWORK_URL_MAINNET,
-    etherscan_prefix: '',
+export const NETWORK_CONFIGS: { [key: number]: NetworkConfig } = {
+  [chain.mainnet.id]: {
+    etherscanUrl: etherscanBlockExplorers.mainnet.url,
   },
-  4: {
-    name: 'Rinkeby',
-    symbol: 'ETH',
-    rpc: NETWORK_URL_RINKEBY,
-    etherscan_prefix: 'rinkeby.',
+  [chain.rinkeby.id]: {
+    etherscanUrl: etherscanBlockExplorers.rinkeby.url,
+  },
+  [chain.hardhat.id]: {
+    etherscanUrl: 'https://app.tryethernal.com',
   },
 }
 
-const getExplorerPrefix = (chainId: ChainId) => {
-  return (
-    NETWORK_CONFIGS[chainId].explorer ||
-    `https://${NETWORK_CONFIGS[chainId].etherscan_prefix || ''}etherscan.io`
-  )
-}
+const getExplorerPrefix = (chainId: ChainId) => NETWORK_CONFIGS[chainId].etherscanUrl
 
 export function getExplorerLink(data: string, type: 'transaction' | 'address'): string {
   const prefix = getExplorerPrefix(requiredChain.id)
@@ -210,6 +200,7 @@ export function isTokenWETH(tokenAddress?: string, chainId?: ChainId): boolean {
   return (
     !!tokenAddress &&
     !!chainId &&
+    !!WETH[chainId] &&
     tokenAddress == WETH[chainId].address &&
     (chainId === 1 || chainId === 4)
   )

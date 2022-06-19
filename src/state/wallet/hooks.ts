@@ -100,6 +100,7 @@ export function useTokenBalancesTreatWETHAsETH(
     let includesWETH = false
     const tokensWithoutWETH = tokens.filter((t) => {
       if (!chainId) return true
+      if (!WETH[chainId as ChainId]) return true
       const isWETH = t?.equals(WETH[chainId as ChainId]) ?? false
       if (isWETH) includesWETH = true
       return !isWETH
