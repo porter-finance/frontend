@@ -32,7 +32,7 @@ export const StepThree = () => {
           min="0"
           placeholder="0"
           type="number"
-          {...register('minBidSize', {
+          {...register('minimumBiddingAmountPerOrder', {
             required: false,
             min: 0,
           })}

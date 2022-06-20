@@ -15,31 +15,28 @@ import { currentTimeInUTC } from '@/utils/tools'
 export const StepOne = () => {
   const { register, watch } = useFormContext()
 
-  const [auctionedSellAmount, minimumBiddingAmountPerOrder, bondToAuction] = watch([
+  const [auctionedSellAmount, minBidSize, bondToAuction] = watch([
     'auctionedSellAmount',
-    'minimumBiddingAmountPerOrder',
+    'minBidSize',
     'bondToAuction',
   ])
   let minBuyAmount = '-'
-  if (auctionedSellAmount && minimumBiddingAmountPerOrder) {
+  if (auctionedSellAmount && minBidSize) {
     // Might need to replace this with BigNumbers
-    minBuyAmount = (auctionedSellAmount * minimumBiddingAmountPerOrder).toLocaleString()
+    minBuyAmount = (auctionedSellAmount * minBidSize).toLocaleString()
   }
   let amountOwed = '-'
   if (auctionedSellAmount) {
     amountOwed = auctionedSellAmount.toLocaleString()
   }
   let maximumInterestOwed = '-'
-  if (auctionedSellAmount && minimumBiddingAmountPerOrder) {
-    maximumInterestOwed = (
-      auctionedSellAmount -
-      auctionedSellAmount * minimumBiddingAmountPerOrder
-    ).toLocaleString()
+  if (auctionedSellAmount && minBidSize) {
+    maximumInterestOwed = (auctionedSellAmount - auctionedSellAmount * minBidSize).toLocaleString()
   }
   let maximumYTM = '-'
-  if (auctionedSellAmount && bondToAuction && minimumBiddingAmountPerOrder) {
+  if (auctionedSellAmount && bondToAuction && minBidSize) {
     maximumYTM = calculateInterestRate({
-      price: minimumBiddingAmountPerOrder,
+      price: minBidSize,
       maturityDate: bondToAuction?.maturityDate,
       startDate: currentTimeInUTC() / 1000,
     }).toLocaleString()
@@ -92,11 +89,11 @@ export const StepOne = () => {
           placeholder="0"
           step="0.001"
           type="number"
-          {...register('minimumBiddingAmountPerOrder', {
+          {...register('minBidSize', {
             required: true,
             valueAsNumber: true,
             validate: {
-              greaterThanZero: (minimumBiddingAmountPerOrder) => minimumBiddingAmountPerOrder > 0,
+              greaterThanZero: (minBidSize) => minBidSize > 0,
             },
           })}
         />
