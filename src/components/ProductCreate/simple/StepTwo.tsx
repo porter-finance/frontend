@@ -54,7 +54,11 @@ export const StepTwo = () => {
       <FieldRowWrapper className="py-1 my-4 space-y-3">
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>{collateralToken?.address ? collateralValue.toLocaleString() : '-'}</p>
+            <p>
+              {collateralToken?.address && !isNaN(collateralValue)
+                ? collateralValue.toLocaleString()
+                : '-'}
+            </p>
           </div>
 
           <TooltipElement
@@ -64,7 +68,11 @@ export const StepTwo = () => {
         </div>
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>{collateralToken?.address ? collateralizationRatio.toLocaleString() + '%' : '-'}</p>
+            <p>
+              {collateralToken?.address && !isNaN(collateralValue)
+                ? collateralizationRatio.toLocaleString() + '%'
+                : '-'}
+            </p>
           </div>
 
           <TooltipElement

@@ -10,8 +10,12 @@ export const Summary = ({ currentStep }) => {
   const { getValues, watch } = useFormContext()
   const formValues = getValues() as Inputs
 
+  const [auctionStartDate, auctionEndDate, accessibility] = watch([
+    'auctionStartDate',
+    'auctionEndDate',
+    'accessibility',
+  ])
   if (currentStep === 1) {
-    const [auctionStartDate, auctionEndDate] = watch(['auctionStartDate', 'auctionEndDate'])
     const diff = dayjs(auctionEndDate).diff(auctionStartDate)
     const display = dayjs(auctionEndDate).fromNow()
 
@@ -58,9 +62,9 @@ export const Summary = ({ currentStep }) => {
             title="Number of bonds to auction"
           />
           <SummaryItem
-            text={`${formValues.minimumBiddingAmountPerOrder.toLocaleString()} USDC`}
+            text={`${formValues.minBidSize.toLocaleString()} USDC`}
             tip="Owed at maturity"
-            title="Minimum sales price"
+            title="Minimum sale price"
           />
           <SummaryItem
             text={`${dayjs(new Date()).format('LL hh:mm z')}`}
@@ -74,11 +78,11 @@ export const Summary = ({ currentStep }) => {
           />
           <SummaryItem
             text={
-              formValues.minBidSize
-                ? `${Number(formValues.minBidSize).toLocaleString()} USDC`
+              formValues.minimumBiddingAmountPerOrder
+                ? `${Number(formValues.minimumBiddingAmountPerOrder).toLocaleString()} USDC`
                 : 'No minimum bid'
             }
-            tip="The smallest number of bonds to bid on"
+            tip="The smallest number of bonds to bid"
             title="Minimum bid size"
           />
           {formValues.orderCancellationEndDate && (
@@ -88,7 +92,7 @@ export const Summary = ({ currentStep }) => {
               title="Last date to cancel bids"
             />
           )}
-          <SummaryItem text="Public" tip="Accessibility" title="Accessibility" />
+          <SummaryItem text={accessibility} tip="Accessibility" title="Accessibility" />
         </div>
       </div>
     </div>

@@ -12,7 +12,7 @@ export const StepThree = () => {
   const [isPrivate, setIsPrivate] = useState(accessibility === 'private')
 
   useEffect(() => {
-    setValue('accessibility', isPrivate ? 'private' : 'public')
+    setValue('accessibility', isPrivate ? 'Private' : 'Public')
     if (!isPrivate) {
       unregister('accessManagerContractData')
     }
@@ -32,7 +32,7 @@ export const StepThree = () => {
           min="0"
           placeholder="0"
           type="number"
-          {...register('minBidSize', {
+          {...register('minimumBiddingAmountPerOrder', {
             required: false,
             min: 0,
           })}

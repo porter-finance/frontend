@@ -5,7 +5,7 @@ import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import dayjs from 'dayjs'
 import { round } from 'lodash'
 import { useFormContext } from 'react-hook-form'
-import { useContract } from 'wagmi'
+import { useContract, useToken } from 'wagmi'
 
 import { AccessManagerContract } from '../../ProductCreate/SelectableTokens'
 import { ActionButton } from '../../auction/Claimer'
@@ -29,7 +29,7 @@ export const InitiateAuctionAction = ({ disabled, setCurrentApproveStep }) => {
     auctionedSellAmount,
     minBidSize,
     minimumBiddingAmountPerOrder,
-    accessManagerContractData,
+    accessManagerAddress,
     bondToAuction,
   ] = getValues([
     'orderCancellationEndDate',
@@ -37,44 +37,102 @@ export const InitiateAuctionAction = ({ disabled, setCurrentApproveStep }) => {
     'auctionedSellAmount',
     'minBidSize',
     'minimumBiddingAmountPerOrder',
-    'accessManagerContractData',
+    'accessManagerAddress',
     'bondToAuction',
   ])
+  const { data: paymentTokenData } = useToken({ address: bondToAuction?.paymentToken?.id })
+  const paymentTokenDecimals = paymentTokenData?.decimals
   const contract = useContract({
     addressOrName: EASY_AUCTION_NETWORKS[requiredChain.id],
     contractInterface: easyAuctionABI,
     signerOrProvider: signer,
   })
 
-  const minBuyAmount = (minBidSize || 1) * auctionedSellAmount
+  // These dates are in the user's local time. Make them UTC before sending
+  // to the contract
+  let parsedOrderCancellationEndDate = orderCancellationEndDate
+  if (!parsedOrderCancellationEndDate) {
+    // If undefined, set the order cancellation date to be the auction end date
+    // This means that bidders can cancel their bids up until the auction ends
+    parsedOrderCancellationEndDate = round(dayjs(auctionEndDate).utc().valueOf() / 1000)
+  } else {
+    parsedOrderCancellationEndDate = round(dayjs(orderCancellationEndDate).utc().valueOf() / 1000)
+  }
+
+  const parsedAuctionEndDate = round(dayjs(auctionEndDate).utc().valueOf() / 1000)
+  const parsedAuctionedSellAmount = parseUnits(
+    auctionedSellAmount.toString(),
+    bondToAuction?.decimals,
+  ).toString()
+  const parsedMinBidSize = parseUnits(
+    minBidSize.toString(),
+    bondToAuction?.paymentToken?.decimals,
+  ).toString()
+
+  let parsedMinimumBiddingAmountPerOrder = minimumBiddingAmountPerOrder
+  if (!parsedMinimumBiddingAmountPerOrder) {
+    // If undefined, set the minimum bidding amount to the smallest value of
+    // 1 wei
+    parsedMinimumBiddingAmountPerOrder = '1'
+  } else {
+    parsedMinimumBiddingAmountPerOrder = parseUnits(
+      minimumBiddingAmountPerOrder.toString(),
+      bondToAuction?.paymentToken?.decimals,
+    ).toString()
+  }
+  let parsedAccessManagerContract = accessManagerAddress
+  if (!parsedAccessManagerContract) {
+    parsedAccessManagerContract = AccessManagerContract[requiredChain.id]
+  } else {
+    parsedAccessManagerContract = '0x0000000000000000000000000000000000000000'
+  }
+
+  const minimumFundingThreshold = 0
+  const isAtomicClosureAllowed = false
+  let parsedAccessManagerContractData = accessManagerAddress
+  if (parsedAccessManagerContractData == null) {
+    parsedAccessManagerContractData =
+      '0x0000000000000000000000000000000000000000000000000000000000000000'
+  } else {
+    if (!parsedAccessManagerContractData.startsWith('0x')) {
+      parsedAccessManagerContractData = '0x' + parsedAccessManagerContractData
+    }
+    // This is an address and needs prepended with 24 zeroes
+    parsedAccessManagerContractData = parsedAccessManagerContractData.replace(
+      '0x',
+      '0x000000000000000000000000',
+    )
+  }
+  const dataError =
+    paymentTokenDecimals == null ||
+    bondToAuction == null ||
+    bondToAuction.id == null ||
+    bondToAuction.collateralToken.id == null ||
+    parsedAuctionEndDate == null ||
+    parsedAuctionedSellAmount == null ||
+    parsedMinimumBiddingAmountPerOrder == null ||
+    parsedAccessManagerContract == null
+
   const args = [
     bondToAuction.id,
     bondToAuction.collateralToken.id,
-    orderCancellationEndDate
-      ? round(dayjs(orderCancellationEndDate).utc().valueOf() / 1000)
-      : round(dayjs(auctionEndDate).utc().valueOf() / 1000),
-    round(dayjs(auctionEndDate).utc().valueOf() / 1000),
-    parseUnits(auctionedSellAmount.toString(), bondToAuction?.decimals).toString(),
-    parseUnits(minBuyAmount.toString(), bondToAuction?.paymentToken?.decimals).toString(),
-    parseUnits(
-      minimumBiddingAmountPerOrder.toString(),
-      bondToAuction?.paymentToken?.decimals,
-    ).toString(),
-    0,
-    false,
-    accessManagerContractData
-      ? AccessManagerContract[requiredChain.id]
-      : '0x0000000000000000000000000000000000000000',
-    accessManagerContractData ?? '0x0000000000000000000000000000000000000000', // accessManagerContractData (bytes)
+    parsedOrderCancellationEndDate,
+    parsedAuctionEndDate,
+    parsedAuctionedSellAmount,
+    parsedMinBidSize,
+    parsedMinimumBiddingAmountPerOrder,
+    minimumFundingThreshold,
+    isAtomicClosureAllowed,
+    parsedAccessManagerContract,
+    parsedAccessManagerContractData,
   ]
-
   return (
     <>
       {waitingWalletApprove !== 3 && (
         <ActionButton
           className={waitingWalletApprove ? 'loading' : ''}
           color="blue"
-          disabled={disabled}
+          disabled={disabled || dataError}
           onClick={() => {
             setWaitingWalletApprove(1)
             contract
