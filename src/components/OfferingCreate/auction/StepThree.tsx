@@ -12,7 +12,7 @@ export const StepThree = () => {
   const [isPrivate, setIsPrivate] = useState(accessibility === 'private')
 
   useEffect(() => {
-    setValue('accessibility', isPrivate ? 'private' : 'public')
+    setValue('accessibility', isPrivate ? 'Private' : 'Public')
     if (!isPrivate) {
       unregister('accessManagerContractData')
     }

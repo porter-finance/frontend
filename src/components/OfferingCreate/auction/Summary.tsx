@@ -10,8 +10,12 @@ export const Summary = ({ currentStep }) => {
   const { getValues, watch } = useFormContext()
   const formValues = getValues() as Inputs
 
+  const [auctionStartDate, auctionEndDate, accessibility] = watch([
+    'auctionStartDate',
+    'auctionEndDate',
+    'accessibility',
+  ])
   if (currentStep === 1) {
-    const [auctionStartDate, auctionEndDate] = watch(['auctionStartDate', 'auctionEndDate'])
     const diff = dayjs(auctionEndDate).diff(auctionStartDate)
     const display = dayjs(auctionEndDate).fromNow()
 
@@ -88,7 +92,7 @@ export const Summary = ({ currentStep }) => {
               title="Last date to cancel bids"
             />
           )}
-          <SummaryItem text="Public" tip="Accessibility" title="Accessibility" />
+          <SummaryItem text={accessibility} tip="Accessibility" title="Accessibility" />
         </div>
       </div>
     </div>
