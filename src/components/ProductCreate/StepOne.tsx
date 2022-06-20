@@ -72,6 +72,8 @@ export const StepOne = () => {
             validate: {
               validDate: (maturityDate) => dayjs(maturityDate).isValid(),
               afterNow: (maturityDate) => dayjs(maturityDate).diff(new Date()) > 0,
+              before10Years: (maturityDate) =>
+                dayjs(new Date()).add(10, 'years').isAfter(maturityDate),
             },
           })}
         />

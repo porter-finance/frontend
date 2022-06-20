@@ -16,7 +16,7 @@ export const BorrowTokens = {
     {
       name: 'USDC',
       icon: USDCIcon,
-      address: '0x3384bFBfaebB59e281493EDF8D6325A4Bc1E6Ba9',
+      address: '0xed1980F313A6276d62DEA9c0c1084F28C6e0a67c',
     },
   ],
 }
