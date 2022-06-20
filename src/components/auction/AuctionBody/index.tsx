@@ -187,4 +187,5 @@ const AuctionBody = (props: AuctionBodyProps) => {
     </>
   )
 }
+
 export default AuctionBody
