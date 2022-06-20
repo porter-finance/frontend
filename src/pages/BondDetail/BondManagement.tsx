@@ -5,12 +5,16 @@ import { Burn } from './Burn'
 import { Pay } from './Pay'
 import { Withdraw } from './Withdraw'
 
+import { useActiveWeb3React } from '@/hooks'
 import { useBond } from '@/hooks/useBond'
 
 const BondManagement = () => {
   const [bondPanel, setBondPanel] = useState('pay')
+  const { account } = useActiveWeb3React()
   const { bondId } = useParams()
   const { data: bond, loading: isLoading } = useBond(bondId)
+
+  if (bond?.owner.toLowerCase() !== account.toLowerCase()) return null
 
   return (
     <div className="card card-bordered">

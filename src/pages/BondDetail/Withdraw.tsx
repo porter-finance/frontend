@@ -1,10 +1,13 @@
 import React, { useState } from 'react'
 
-import { formatUnits } from '@ethersproject/units'
+import { formatUnits, parseUnits } from '@ethersproject/units'
+import { useContractWrite } from 'wagmi'
 
 import { SummaryItem } from '@/components/ProductCreate/SummaryItem'
 import { ActionButton } from '@/components/auction/Claimer'
 import AmountInputPanel from '@/components/form/AmountInputPanel'
+import WarningModal from '@/components/modals/WarningModal'
+import BOND_ABI from '@/constants/abis/bond.json'
 import { Bond } from '@/generated/graphql'
 
 export const Withdraw = ({
@@ -12,11 +15,23 @@ export const Withdraw = ({
 }: {
   bond: Pick<
     Bond,
-    'collateralTokenAmount' | 'collateralToken' | 'convertibleTokenAmount' | 'collateralRatio'
+    | 'id'
+    | 'owner'
+    | 'collateralTokenAmount'
+    | 'paymentToken'
+    | 'collateralToken'
+    | 'convertibleTokenAmount'
+    | 'collateralRatio'
   >
 }) => {
   const [bondAmount, setBondAmount] = useState('0')
-
+  const { error, isError, isLoading, reset, write } = useContractWrite(
+    {
+      addressOrName: bond?.id,
+      contractInterface: BOND_ABI,
+    },
+    'withdrawExcessCollateral',
+  )
   const onMax = () => {
     setBondAmount(formatUnits(bond?.convertibleTokenAmount, bond?.collateralToken?.decimals))
   }
@@ -49,7 +64,17 @@ export const Withdraw = ({
         value={bondAmount}
       />
 
-      <ActionButton>Withdraw</ActionButton>
+      <ActionButton
+        className={`${isLoading ? 'loading' : ''}`}
+        onClick={() =>
+          write({
+            args: [parseUnits(bondAmount, bond?.collateralToken.decimals), bond?.owner],
+          })
+        }
+      >
+        Withdraw
+      </ActionButton>
+      <WarningModal content={error?.message} isOpen={isError} onDismiss={reset} />
     </div>
   )
 }

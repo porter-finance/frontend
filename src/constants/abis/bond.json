@@ -1,12 +1,10 @@
 [
-  { "inputs": [], "name": "BondNotYetMatured", "type": "error" },
+  { "inputs": [], "name": "BondNotYetMaturedOrPaid", "type": "error" },
   { "inputs": [], "name": "BondPastMaturity", "type": "error" },
-  { "inputs": [], "name": "BondSupplyExceeded", "type": "error" },
-  { "inputs": [], "name": "CollateralRatioLessThanConvertibleRatio", "type": "error" },
-  { "inputs": [], "name": "InvalidMaturityDate", "type": "error" },
-  { "inputs": [], "name": "PaymentMet", "type": "error" },
+  { "inputs": [], "name": "NoPaymentToWithdraw", "type": "error" },
+  { "inputs": [], "name": "NotEnoughCollateral", "type": "error" },
+  { "inputs": [], "name": "PaymentAlreadyMet", "type": "error" },
   { "inputs": [], "name": "SweepDisallowedForToken", "type": "error" },
-  { "inputs": [], "name": "TokenOverflow", "type": "error" },
   { "inputs": [], "name": "ZeroAmount", "type": "error" },
   {
     "anonymous": false,
@@ -22,16 +20,7 @@
     "anonymous": false,
     "inputs": [
       { "indexed": true, "internalType": "address", "name": "from", "type": "address" },
-      { "indexed": true, "internalType": "address", "name": "token", "type": "address" },
-      { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }
-    ],
-    "name": "CollateralDeposit",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      { "indexed": true, "internalType": "address", "name": "from", "type": "address" },
+      { "indexed": true, "internalType": "address", "name": "receiver", "type": "address" },
       { "indexed": true, "internalType": "address", "name": "token", "type": "address" },
       { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }
     ],
@@ -63,9 +52,20 @@
     "anonymous": false,
     "inputs": [
       { "indexed": true, "internalType": "address", "name": "from", "type": "address" },
+      { "indexed": true, "internalType": "address", "name": "receiver", "type": "address" },
+      { "indexed": true, "internalType": "address", "name": "token", "type": "address" },
       { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }
     ],
-    "name": "Mint",
+    "name": "ExcessPaymentWithdraw",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true, "internalType": "address", "name": "previousOwner", "type": "address" },
+      { "indexed": true, "internalType": "address", "name": "newOwner", "type": "address" }
+    ],
+    "name": "OwnershipTransferred",
     "type": "event"
   },
   {
@@ -75,15 +75,6 @@
       { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }
     ],
     "name": "Payment",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      { "indexed": true, "internalType": "address", "name": "from", "type": "address" },
-      { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }
-    ],
-    "name": "PaymentInFull",
     "type": "event"
   },
   {
@@ -117,36 +108,17 @@
   {
     "anonymous": false,
     "inputs": [
-      { "indexed": true, "internalType": "bytes32", "name": "role", "type": "bytes32" },
+      { "indexed": false, "internalType": "address", "name": "from", "type": "address" },
+      { "indexed": true, "internalType": "address", "name": "receiver", "type": "address" },
       {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "previousAdminRole",
-        "type": "bytes32"
+        "indexed": false,
+        "internalType": "contract IERC20Metadata",
+        "name": "token",
+        "type": "address"
       },
-      { "indexed": true, "internalType": "bytes32", "name": "newAdminRole", "type": "bytes32" }
+      { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }
     ],
-    "name": "RoleAdminChanged",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      { "indexed": true, "internalType": "bytes32", "name": "role", "type": "bytes32" },
-      { "indexed": true, "internalType": "address", "name": "account", "type": "address" },
-      { "indexed": true, "internalType": "address", "name": "sender", "type": "address" }
-    ],
-    "name": "RoleGranted",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      { "indexed": true, "internalType": "bytes32", "name": "role", "type": "bytes32" },
-      { "indexed": true, "internalType": "address", "name": "account", "type": "address" },
-      { "indexed": true, "internalType": "address", "name": "sender", "type": "address" }
-    ],
-    "name": "RoleRevoked",
+    "name": "TokenSweep",
     "type": "event"
   },
   {
@@ -160,33 +132,19 @@
     "type": "event"
   },
   {
-    "inputs": [],
-    "name": "DEFAULT_ADMIN_ROLE",
-    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "MINT_ROLE",
-    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "WITHDRAW_ROLE",
-    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       { "internalType": "address", "name": "owner", "type": "address" },
       { "internalType": "address", "name": "spender", "type": "address" }
     ],
     "name": "allowance",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "amountUnpaid",
+    "outputs": [{ "internalType": "uint256", "name": "paymentTokens", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -222,6 +180,13 @@
     "name": "burnFrom",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "collateralBalance",
+    "outputs": [{ "internalType": "uint256", "name": "collateralTokens", "type": "uint256" }],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -270,33 +235,6 @@
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "bytes32", "name": "role", "type": "bytes32" }],
-    "name": "getRoleAdmin",
-    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "bytes32", "name": "role", "type": "bytes32" },
-      { "internalType": "address", "name": "account", "type": "address" }
-    ],
-    "name": "grantRole",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "bytes32", "name": "role", "type": "bytes32" },
-      { "internalType": "address", "name": "account", "type": "address" }
-    ],
-    "name": "hasRole",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       { "internalType": "address", "name": "spender", "type": "address" },
       { "internalType": "uint256", "name": "addedValue", "type": "uint256" }
@@ -310,13 +248,13 @@
     "inputs": [
       { "internalType": "string", "name": "bondName", "type": "string" },
       { "internalType": "string", "name": "bondSymbol", "type": "string" },
-      { "internalType": "address", "name": "owner", "type": "address" },
-      { "internalType": "uint256", "name": "_maturityDate", "type": "uint256" },
+      { "internalType": "address", "name": "bondOwner", "type": "address" },
+      { "internalType": "uint256", "name": "_maturity", "type": "uint256" },
       { "internalType": "address", "name": "_paymentToken", "type": "address" },
       { "internalType": "address", "name": "_collateralToken", "type": "address" },
       { "internalType": "uint256", "name": "_collateralRatio", "type": "uint256" },
       { "internalType": "uint256", "name": "_convertibleRatio", "type": "uint256" },
-      { "internalType": "uint256", "name": "_maxSupply", "type": "uint256" }
+      { "internalType": "uint256", "name": "maxSupply", "type": "uint256" }
     ],
     "name": "initialize",
     "outputs": [],
@@ -325,43 +263,29 @@
   },
   {
     "inputs": [],
-    "name": "isFullyPaid",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "isMature",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "outputs": [{ "internalType": "bool", "name": "isBondMature", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
-    "name": "maturityDate",
+    "name": "maturity",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "maxSupply",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "uint256", "name": "bonds", "type": "uint256" }],
-    "name": "mint",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "name",
     "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -374,6 +298,13 @@
   },
   {
     "inputs": [],
+    "name": "paymentBalance",
+    "outputs": [{ "internalType": "uint256", "name": "paymentTokens", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "paymentToken",
     "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
@@ -382,14 +313,7 @@
   {
     "inputs": [{ "internalType": "uint256", "name": "bonds", "type": "uint256" }],
     "name": "previewConvertBeforeMaturity",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "uint256", "name": "bonds", "type": "uint256" }],
-    "name": "previewMintBeforeMaturity",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [{ "internalType": "uint256", "name": "collateralTokens", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -397,16 +321,30 @@
     "inputs": [{ "internalType": "uint256", "name": "bonds", "type": "uint256" }],
     "name": "previewRedeemAtMaturity",
     "outputs": [
-      { "internalType": "uint256", "name": "", "type": "uint256" },
-      { "internalType": "uint256", "name": "", "type": "uint256" }
+      { "internalType": "uint256", "name": "paymentTokensToSend", "type": "uint256" },
+      { "internalType": "uint256", "name": "collateralTokensToSend", "type": "uint256" }
     ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
-    "name": "previewWithdraw",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "name": "previewWithdrawExcessCollateral",
+    "outputs": [{ "internalType": "uint256", "name": "collateralTokens", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "uint256", "name": "payment", "type": "uint256" }],
+    "name": "previewWithdrawExcessCollateralAfterPayment",
+    "outputs": [{ "internalType": "uint256", "name": "collateralTokens", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "previewWithdrawExcessPayment",
+    "outputs": [{ "internalType": "uint256", "name": "paymentTokens", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -418,34 +356,17 @@
     "type": "function"
   },
   {
-    "inputs": [
-      { "internalType": "bytes32", "name": "role", "type": "bytes32" },
-      { "internalType": "address", "name": "account", "type": "address" }
-    ],
-    "name": "renounceRole",
+    "inputs": [],
+    "name": "renounceOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "bytes32", "name": "role", "type": "bytes32" },
-      { "internalType": "address", "name": "account", "type": "address" }
+      { "internalType": "contract IERC20Metadata", "name": "sweepingToken", "type": "address" },
+      { "internalType": "address", "name": "receiver", "type": "address" }
     ],
-    "name": "revokeRole",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "bytes4", "name": "interfaceId", "type": "bytes4" }],
-    "name": "supportsInterface",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "contract IERC20Metadata", "name": "token", "type": "address" }],
     "name": "sweep",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -455,20 +376,6 @@
     "inputs": [],
     "name": "symbol",
     "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "totalCollateral",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "totalPaid",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -501,8 +408,25 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "withdrawCollateral",
+    "inputs": [{ "internalType": "address", "name": "newOwner", "type": "address" }],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "amount", "type": "uint256" },
+      { "internalType": "address", "name": "receiver", "type": "address" }
+    ],
+    "name": "withdrawExcessCollateral",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "address", "name": "receiver", "type": "address" }],
+    "name": "withdrawExcessPayment",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

@@ -1,11 +1,14 @@
 import React, { useState } from 'react'
 
-import { formatUnits } from '@ethersproject/units'
+import { formatUnits, parseUnits } from '@ethersproject/units'
 import dayjs from 'dayjs'
+import { useContractWrite } from 'wagmi'
 
 import { SummaryItem } from '@/components/ProductCreate/SummaryItem'
 import { ActionButton } from '@/components/auction/Claimer'
 import AmountInputPanel from '@/components/form/AmountInputPanel'
+import WarningModal from '@/components/modals/WarningModal'
+import BOND_ABI from '@/constants/abis/bond.json'
 import { Bond } from '@/generated/graphql'
 import { getValuePerBond } from '@/hooks/useBondExtraDetails'
 
@@ -14,6 +17,7 @@ export const Pay = ({
 }: {
   bond: Pick<
     Bond,
+    | 'id'
     | 'paymentToken'
     | 'state'
     | 'maturityDate'
@@ -25,6 +29,13 @@ export const Pay = ({
 }) => {
   const [bondAmount, setBondAmount] = useState('0')
   const collateralPerBond = bond ? getValuePerBond(bond, bond?.collateralRatio) : 0
+  const { error, isError, isLoading, reset, write } = useContractWrite(
+    {
+      addressOrName: bond?.id,
+      contractInterface: BOND_ABI,
+    },
+    'pay',
+  )
 
   const onMax = () => {
     setBondAmount(formatUnits(bond?.amountUnpaid, bond?.paymentToken?.decimals))
@@ -67,7 +78,17 @@ export const Pay = ({
         title="Amount of collateral unlocked"
       />
 
-      <ActionButton>Pay</ActionButton>
+      <ActionButton
+        className={`${isLoading ? 'loading' : ''}`}
+        onClick={() =>
+          write({
+            args: [parseUnits(bondAmount, bond?.paymentToken.decimals)],
+          })
+        }
+      >
+        Pay
+      </ActionButton>
+      <WarningModal content={error?.message} isOpen={isError} onDismiss={reset} />
     </div>
   )
 }
