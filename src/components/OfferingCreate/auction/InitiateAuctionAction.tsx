@@ -29,7 +29,7 @@ export const InitiateAuctionAction = ({ disabled, setCurrentApproveStep }) => {
     auctionedSellAmount,
     minBidSize,
     minimumBiddingAmountPerOrder,
-    accessManagerContractData,
+    accessManagerAddress,
     bondToAuction,
   ] = getValues([
     'orderCancellationEndDate',
@@ -37,7 +37,7 @@ export const InitiateAuctionAction = ({ disabled, setCurrentApproveStep }) => {
     'auctionedSellAmount',
     'minBidSize',
     'minimumBiddingAmountPerOrder',
-    'accessManagerContractData',
+    'accessManagerAddress',
     'bondToAuction',
   ])
   const { data: paymentTokenData } = useToken({ address: bondToAuction?.paymentToken?.id })
@@ -80,7 +80,7 @@ export const InitiateAuctionAction = ({ disabled, setCurrentApproveStep }) => {
       bondToAuction?.paymentToken?.decimals,
     ).toString()
   }
-  let parsedAccessManagerContract = accessManagerContractData
+  let parsedAccessManagerContract = accessManagerAddress
   if (!parsedAccessManagerContract) {
     parsedAccessManagerContract = AccessManagerContract[requiredChain.id]
   } else {
@@ -90,7 +90,20 @@ export const InitiateAuctionAction = ({ disabled, setCurrentApproveStep }) => {
 
   const minimumFundingThreshold = 0
   const isAtomicClosureAllowed = false
-
+  let parsedAccessManagerContractData = accessManagerAddress
+  if (parsedAccessManagerContractData == null) {
+    parsedAccessManagerContractData =
+      '0x0000000000000000000000000000000000000000000000000000000000000000'
+  } else {
+    if (!parsedAccessManagerContractData.startsWith('0x')) {
+      parsedAccessManagerContractData = '0x' + parsedAccessManagerContractData
+    }
+    // This is an address and needs prepended with 24 zeroes
+    parsedAccessManagerContractData = parsedAccessManagerContractData.replace(
+      '0x',
+      '0x000000000000000000000000',
+    )
+  }
   const dataError =
     paymentTokenDecimals == null ||
     bondToAuction == null ||
@@ -112,7 +125,7 @@ export const InitiateAuctionAction = ({ disabled, setCurrentApproveStep }) => {
     minimumFundingThreshold,
     isAtomicClosureAllowed,
     parsedAccessManagerContract,
-    accessManagerContractData ?? '0x0000000000000000000000000000000000000000',
+    parsedAccessManagerContractData,
   ]
   return (
     <>
