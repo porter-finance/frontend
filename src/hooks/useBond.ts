@@ -93,8 +93,7 @@ export const useBond = (bondId: string) => {
     logger.error('Error getting useBond info', error)
   }
 
-  const info = data?.bond
-  return { data: info, loading }
+  return { data: data?.bond, loading }
 }
 
 export const useBonds = () => {
