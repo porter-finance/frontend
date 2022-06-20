@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
 import { formatUnits } from '@ethersproject/units'
-import dayjs from 'dayjs'
+import { useBalance } from 'wagmi'
 
 import { SummaryItem } from '@/components/ProductCreate/SummaryItem'
 import { ActionButton } from '@/components/auction/Claimer'
@@ -9,25 +9,31 @@ import AmountInputPanel from '@/components/form/AmountInputPanel'
 import { Bond } from '@/generated/graphql'
 import { getValuePerBond } from '@/hooks/useBondExtraDetails'
 
-export const Pay = ({
+export const Burn = ({
   bond,
 }: {
   bond: Pick<
     Bond,
-    | 'paymentToken'
-    | 'state'
-    | 'maturityDate'
-    | 'maxSupply'
-    | 'amountUnpaid'
+    | 'collateralTokenAmount'
     | 'collateralToken'
+    | 'convertibleTokenAmount'
     | 'collateralRatio'
+    | 'paymentToken'
+    | 'maxSupply'
+    | 'id'
+    | 'owner'
   >
 }) => {
   const [bondAmount, setBondAmount] = useState('0')
   const collateralPerBond = bond ? getValuePerBond(bond, bond?.collateralRatio) : 0
 
+  const { data: tokenBalance } = useBalance({
+    addressOrName: bond?.owner,
+    token: bond?.id,
+  })
+
   const onMax = () => {
-    setBondAmount(formatUnits(bond?.amountUnpaid, bond?.paymentToken?.decimals))
+    setBondAmount(Number(tokenBalance?.formatted).toString())
   }
 
   return (
@@ -35,39 +41,37 @@ export const Pay = ({
       <SummaryItem
         border={false}
         text={`${Number(
-          formatUnits(bond?.amountUnpaid, bond?.paymentToken?.decimals),
-        ).toLocaleString()} USDC`}
-        tip="Amount owed"
-        title="Amount owed"
+          formatUnits(bond?.maxSupply, bond?.collateralToken?.decimals),
+        ).toLocaleString()} ${bond?.collateralToken?.symbol}`}
+        tip="Bonds outstanding"
+        title="Bonds outstanding"
       />
       <SummaryItem
         border={false}
-        text={dayjs(bond?.maturityDate * 1000)
-          .utc()
-          .tz()
-          .format('LL HH:mm z')}
-        tip="Maturity date"
-        title="Maturity date"
+        text={`${Number(tokenBalance?.formatted).toLocaleString()} ${
+          bond?.collateralToken?.symbol
+        }`}
+        tip="Your balance"
+        title="Your balance"
       />
       <AmountInputPanel
-        amountText="Amount of debt to pay"
-        amountTooltip="This is your bond amount. You will pay this much."
-        maxTitle="Pay all"
+        amountText="Amount of bonds to burn"
+        amountTooltip="Amount of bonds to burn"
+        maxTitle="Burn all"
         onMax={onMax}
         onUserSellAmountInput={setBondAmount}
-        token={bond?.paymentToken}
+        token={bond?.collateralToken}
         value={bondAmount}
       />
       <SummaryItem
         border={false}
         text={`${(collateralPerBond * Number(bondAmount)).toLocaleString()} ${
-          bond.collateralToken.symbol
+          bond?.collateralToken?.symbol
         }`}
         tip="Amount of collateral unlocked"
         title="Amount of collateral unlocked"
       />
-
-      <ActionButton>Pay</ActionButton>
+      <ActionButton>Burn</ActionButton>
     </div>
   )
 }

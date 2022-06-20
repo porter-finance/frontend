@@ -40,6 +40,7 @@ export const Withdraw = ({
         title="Collateral available to withdraw"
       />
       <AmountInputPanel
+        amountText="Amount of collateral to withdraw"
         amountTooltip="This is your withdraw amount"
         maxTitle="Withdraw all"
         onMax={onMax}

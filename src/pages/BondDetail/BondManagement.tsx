@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
 
+import { Burn } from './Burn'
 import { Pay } from './Pay'
 import { Withdraw } from './Withdraw'
 
@@ -46,6 +47,7 @@ const BondManagement = () => {
 
         {bondPanel === 'pay' && <Pay bond={bond} />}
         {bondPanel === 'withdraw' && <Withdraw bond={bond} />}
+        {bondPanel === 'burn' && <Burn bond={bond} />}
       </div>
     </div>
   )
