@@ -5,7 +5,7 @@
 ### Install Dependencies and Run
 
 ```bash
-yarn && yarn start
+pnpm && pnpm start
 ```
 
 If the graphql schema changes, run typechain:all
