@@ -91,7 +91,7 @@ export const MintAction = ({ convertible = true, disabled, setCurrentApproveStep
       : parseUnits(`${amountOfConvertible || 0}`, collateralTokenData?.decimals).toString(),
     parseUnits(`${amountOfBonds || 0}`, borrowTokenData?.decimals).toString(),
   ]
-  console.log(args)
+
   const validateSchema = () =>
     createBondSchema.validateSync({
       name: args[0],
