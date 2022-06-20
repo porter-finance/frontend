@@ -62,7 +62,6 @@ export const InitiateAuctionAction = ({ disabled, setCurrentApproveStep }) => {
   // state 0 for none, 1 for metamask confirmation, 2 for block confirmation
   const [waitingWalletApprove, setWaitingWalletApprove] = useState(0)
   const { signer } = useActiveWeb3React()
-  const [schemaError, setSchemaError] = useState('')
   const addRecentTransaction = useAddRecentTransaction()
   const { getValues } = useFormContext()
   const [transactionError, setTransactionError] = useState('')
