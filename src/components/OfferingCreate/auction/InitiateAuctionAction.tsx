@@ -86,7 +86,6 @@ export const InitiateAuctionAction = ({ disabled, setCurrentApproveStep }) => {
   } else {
     parsedAccessManagerContract = '0x0000000000000000000000000000000000000000'
   }
-  // eslint-disable-next-line
 
   const minimumFundingThreshold = 0
   const isAtomicClosureAllowed = false

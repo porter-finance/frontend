@@ -51,7 +51,11 @@ export const StepThree = () => {
       <FieldRowWrapper className="py-1 my-4 space-y-3">
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>{`${convertibleTokenValue.toLocaleString()} USDC`}</p>
+            <p>
+              {!isNaN(convertibleTokenValue)
+                ? `${convertibleTokenValue.toLocaleString()} USDC`
+                : '-'}
+            </p>
           </div>
 
           <TooltipElement
