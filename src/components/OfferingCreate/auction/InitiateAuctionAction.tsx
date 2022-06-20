@@ -6,6 +6,7 @@ import dayjs from 'dayjs'
 import { round } from 'lodash'
 import { useFormContext } from 'react-hook-form'
 import { useContract, useToken } from 'wagmi'
+import * as yup from 'yup'
 
 import { AccessManagerContract } from '../../ProductCreate/SelectableTokens'
 import { ActionButton } from '../../auction/Claimer'
@@ -16,10 +17,52 @@ import easyAuctionABI from '@/constants/abis/easyAuction/easyAuction.json'
 import { useActiveWeb3React } from '@/hooks'
 import { EASY_AUCTION_NETWORKS } from '@/utils'
 
+/* 
+InitiateAuction ABI & Contract restrictions
+  _auctioningToken: string
+    - Auction must be approved for _auctionedSellAmount from msg.sender
+  _biddingToken: string
+  orderCancellationEndDate: number
+    - must be <= auctionEndDate
+  auctionEndDate: number
+    - must be > new Date().now
+  _auctionedSellAmount: number
+    - must be > 0
+  _minBuyAmount: number
+    - must be > 0
+  minimumBiddingAmountPerOrder: number
+    - must be > 0
+  minFundingThreshold: number
+  isAtomicClosureAllowed: boolean
+  accessManagerContract: string
+  accessManagerContractData: string
+*/
+const initiateAuctionSchema = yup.object().shape({
+  _auctioningToken: yup.string().length(42).required(),
+  _biddingToken: yup.string().length(42).required(),
+  orderCancellationEndDate: yup.number().max(yup.ref('auctionEndDate')).required(),
+  auctionEndDate: yup
+    .number()
+    .test(
+      'afterToday',
+      'Auction end date not in the future.',
+      (auctionEndDate) => auctionEndDate >= new Date().getTime() / 1000,
+    )
+    .required(),
+  _auctionedSellAmount: yup.number().moreThan(0).required(),
+  _minBuyAmount: yup.number().moreThan(0).required(),
+  minimumBiddingAmountPerOrder: yup.number().moreThan(0).required(),
+  minFundingThreshold: yup.number().min(0).required(),
+  isAtomicClosureAllowed: yup.boolean().required(),
+  accessManagerContract: yup.string().length(42).required(),
+  accessManagerContractData: yup.string().length(66).required(),
+})
+
 export const InitiateAuctionAction = ({ disabled, setCurrentApproveStep }) => {
   // state 0 for none, 1 for metamask confirmation, 2 for block confirmation
   const [waitingWalletApprove, setWaitingWalletApprove] = useState(0)
   const { signer } = useActiveWeb3React()
+  const [schemaError, setSchemaError] = useState('')
   const addRecentTransaction = useAddRecentTransaction()
   const { getValues } = useFormContext()
   const [transactionError, setTransactionError] = useState('')
@@ -64,10 +107,7 @@ export const InitiateAuctionAction = ({ disabled, setCurrentApproveStep }) => {
     auctionedSellAmount.toString(),
     bondToAuction?.decimals,
   ).toString()
-  const parsedMinBidSize = parseUnits(
-    minBidSize.toString(),
-    bondToAuction?.paymentToken?.decimals,
-  ).toString()
+  const parsedMinBidSize = parseUnits(minBidSize.toString(), paymentTokenDecimals).toString()
 
   let parsedMinimumBiddingAmountPerOrder = minimumBiddingAmountPerOrder
   if (!parsedMinimumBiddingAmountPerOrder) {
@@ -77,7 +117,7 @@ export const InitiateAuctionAction = ({ disabled, setCurrentApproveStep }) => {
   } else {
     parsedMinimumBiddingAmountPerOrder = parseUnits(
       minimumBiddingAmountPerOrder.toString(),
-      bondToAuction?.paymentToken?.decimals,
+      paymentTokenDecimals,
     ).toString()
   }
   let parsedAccessManagerContract = accessManagerAddress
@@ -103,15 +143,6 @@ export const InitiateAuctionAction = ({ disabled, setCurrentApproveStep }) => {
       '0x000000000000000000000000',
     )
   }
-  const dataError =
-    paymentTokenDecimals == null ||
-    bondToAuction == null ||
-    bondToAuction.id == null ||
-    bondToAuction.collateralToken.id == null ||
-    parsedAuctionEndDate == null ||
-    parsedAuctionedSellAmount == null ||
-    parsedMinimumBiddingAmountPerOrder == null ||
-    parsedAccessManagerContract == null
 
   const args = [
     bondToAuction.id,
@@ -126,14 +157,36 @@ export const InitiateAuctionAction = ({ disabled, setCurrentApproveStep }) => {
     parsedAccessManagerContract,
     parsedAccessManagerContractData,
   ]
+
+  const validateSchema = () =>
+    initiateAuctionSchema.validateSync({
+      _auctioningToken: args[0],
+      _biddingToken: args[1],
+      orderCancellationEndDate: args[2],
+      auctionEndDate: args[3],
+      _auctionedSellAmount: args[4],
+      _minBuyAmount: args[5],
+      minimumBiddingAmountPerOrder: args[6],
+      minFundingThreshold: args[7],
+      isAtomicClosureAllowed: args[8],
+      accessManagerContract: args[9],
+      accessManagerContractData: args[10],
+    })
+
   return (
     <>
       {waitingWalletApprove !== 3 && (
         <ActionButton
           className={waitingWalletApprove ? 'loading' : ''}
           color="blue"
-          disabled={disabled || dataError}
+          disabled={disabled}
           onClick={() => {
+            try {
+              validateSchema()
+            } catch (error: any) {
+              return setTransactionError((error as yup.ValidationError).message)
+            }
+
             setWaitingWalletApprove(1)
             contract
               .initiateAuction(...args)
