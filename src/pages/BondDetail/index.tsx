@@ -309,7 +309,7 @@ const BondDetail: React.FC = () => {
                 <BondAction componentType={BondActions.Redeem} />
               )}
               {!isMatured && !isPaid && !isDefaulted && <RedeemError />}
-              {<BondManagement />}
+              <BondManagement />
             </>
           }
         />
