@@ -5,21 +5,33 @@ import { formatUnits } from '@ethersproject/units'
 import dayjs from 'dayjs'
 
 import { SummaryItem } from '@/components/ProductCreate/SummaryItem'
+import { ActionButton } from '@/components/auction/Claimer'
 import AmountInputPanel from '@/components/form/AmountInputPanel'
 import { Bond } from '@/generated/graphql'
 import { useBond } from '@/hooks/useBond'
+import { getValuePerBond } from '@/hooks/useBondExtraDetails'
 
 const Pay = ({
   bond,
 }: {
-  bond: Pick<Bond, 'paymentToken' | 'state' | 'maturityDate' | 'maxSupply' | 'amountUnpaid'>
+  bond: Pick<
+    Bond,
+    | 'paymentToken'
+    | 'state'
+    | 'maturityDate'
+    | 'maxSupply'
+    | 'amountUnpaid'
+    | 'collateralToken'
+    | 'collateralRatio'
+  >
 }) => {
-  const onUserSellAmountInput = (e) => {
-    console.log(e)
-  }
+  const [bondAmount, setBondAmount] = useState('0')
+  const collateralPerBond = bond ? getValuePerBond(bond, bond?.collateralRatio) : 0
+
   const onMax = () => {
-    console.log('on max')
+    setBondAmount(formatUnits(bond?.amountUnpaid, bond?.paymentToken?.decimals))
   }
+
   return (
     <div className="space-y-2">
       <SummaryItem
@@ -43,16 +55,20 @@ const Pay = ({
         amountTooltip="This is your bond amount. You will pay this much."
         maxTitle="Pay all"
         onMax={onMax}
-        onUserSellAmountInput={onUserSellAmountInput}
+        onUserSellAmountInput={setBondAmount}
         token={bond?.paymentToken}
-        value={'0'}
+        value={bondAmount}
       />
       <SummaryItem
         border={false}
-        text="50,000 UNI"
+        text={`${(collateralPerBond * Number(bondAmount)).toLocaleString()} ${
+          bond.collateralToken.symbol
+        }`}
         tip="Amount of collateral unlocked"
         title="Amount of collateral unlocked"
       />
+
+      <ActionButton>Pay</ActionButton>
     </div>
   )
 }
