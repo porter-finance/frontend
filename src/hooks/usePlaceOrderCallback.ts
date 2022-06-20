@@ -74,7 +74,9 @@ export function usePlaceOrderCallback(
   const userId: Result | undefined = useSingleCallResult(easyAuctionInstance, 'getUserId', [
     account == null ? undefined : account,
   ]).result
-
+  console.log(userId) // why is this null?
+  console.log(easyAuctionInstance) // this isn't
+  console.log(account) // neither is this
   return useMemo(() => {
     let previousOrder: string
 

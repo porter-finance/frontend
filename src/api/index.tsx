@@ -1,3 +1,5 @@
+import { chain } from 'wagmi'
+
 import {
   API_URL_DEVELOP_MAINNET,
   API_URL_DEVELOP_RINKEBY,
@@ -14,17 +16,23 @@ import { TokenLogosServiceApi, TokenLogosServiceApiInterface } from './TokenLogo
 function createAdditionalServiceApi(): AdditionalServicesApi {
   const config: AdditionalServicesEndpoint[] = [
     {
-      networkId: 1,
+      networkId: chain.mainnet.id,
       url_production: API_URL_PRODUCTION_MAINNET,
       url_develop: API_URL_DEVELOP_MAINNET,
     },
   ]
-  if (API_URL_DEVELOP_RINKEBY)
+  if (API_URL_DEVELOP_RINKEBY) {
     config.push({
-      networkId: 4,
+      networkId: chain.rinkeby.id,
       url_production: API_URL_PRODUCTION_RINKEBY,
       url_develop: API_URL_DEVELOP_RINKEBY,
     })
+    config.push({
+      networkId: chain.hardhat.id,
+      url_production: API_URL_PRODUCTION_RINKEBY,
+      url_develop: API_URL_DEVELOP_RINKEBY,
+    })
+  }
   const dexPriceEstimatorApi = new AdditionalServicesApiImpl(config)
 
   window['dexPriceEstimatorApi'] = dexPriceEstimatorApi
