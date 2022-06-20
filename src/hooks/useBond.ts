@@ -25,6 +25,8 @@ const singleBondQuery = gql`
       maturityDate
       createdAt
       collateralRatio
+      collateralTokenAmount
+      convertibleTokenAmount
       decimals
       paymentToken {
         id
@@ -44,7 +46,6 @@ const singleBondQuery = gql`
       auctions {
         end
       }
-      collateralRatio
       convertibleRatio
       clearingPrice
     }
