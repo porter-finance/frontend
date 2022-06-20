@@ -3,6 +3,7 @@ import styled from 'styled-components'
 
 import dayjs from 'dayjs'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
+import isBetween from 'dayjs/plugin/isBetween'
 import localeData from 'dayjs/plugin/localeData'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -22,6 +23,7 @@ dayjs.extend(relativeTime)
 // Used to convert into user's timezone
 dayjs.extend(timezone)
 dayjs.extend(utc)
+dayjs.extend(isBetween)
 // Set default timezone based off of Intl.DateTimeFormat()
 dayjs.tz.guess()
 

@@ -1,14 +1,45 @@
-import React, { useState } from 'react'
+import { utils } from 'ethers'
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
+import { parseUnits } from '@ethersproject/units'
 import { DoubleArrowRightIcon } from '@radix-ui/react-icons'
+import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
+import dayjs from 'dayjs'
 import { FormProvider, SubmitHandler, useForm, useFormContext } from 'react-hook-form'
+import { useContract, useContractRead } from 'wagmi'
 
 import { BondSelector } from '../ProductCreate/CollateralTokenSelector'
 import { ActionButton } from '../auction/Claimer'
 import TooltipElement from '../common/Tooltip'
-import { FieldRowLabelStyledText, FieldRowWrapper } from '../form/InterestRateInputPanel'
+import {
+  FieldRowLabelStyledText,
+  FieldRowWrapper,
+  calculateInterestRate,
+} from '../form/InterestRateInputPanel'
+import WarningModal from '../modals/WarningModal'
 
 import { ReactComponent as UnicornSvg } from '@/assets/svg/simple-bond.svg'
+import { requiredChain } from '@/connectors'
+import BOND_ABI from '@/constants/abis/bond.json'
+import easyAuctionABI from '@/constants/abis/easyAuction/easyAuction.json'
+import { Token } from '@/generated/graphql'
+import { useActiveWeb3React } from '@/hooks'
+import { EASY_AUCTION_NETWORKS } from '@/utils'
+
+type Inputs = {
+  issuerName: string
+  exampleRequired: string
+  auctionedSellAmount: number
+  minimumBiddingAmountPerOrder: number
+  auctionStartDate: Date
+  auctionEndDate: Date
+  accessManagerContractData: string
+  minBidSize: string
+  orderCancellationEndDate: string
+  // TODO: its actually type Bond but we only need a few values off there
+  bondToAuction: Token
+}
 
 export const TokenDetails = ({ option }) => (
   <div className="p-4 space-y-4 w-full text-xs text-white rounded-md form-control">
@@ -33,8 +64,37 @@ export const TokenDetails = ({ option }) => (
 )
 
 const StepOne = () => {
-  const { register } = useFormContext()
+  const { register, watch } = useFormContext()
 
+  const [auctionedSellAmount, minimumBiddingAmountPerOrder, bondToAuction] = watch([
+    'auctionedSellAmount',
+    'minimumBiddingAmountPerOrder',
+    'bondToAuction',
+  ])
+  let minBuyAmount = '-'
+  if (auctionedSellAmount && minimumBiddingAmountPerOrder) {
+    // Might need to replace this with BigNumbers
+    minBuyAmount = (auctionedSellAmount * minimumBiddingAmountPerOrder).toLocaleString()
+  }
+  let amountOwed = '-'
+  if (auctionedSellAmount) {
+    amountOwed = auctionedSellAmount.toLocaleString()
+  }
+  let maximumInterestOwed = '-'
+  if (auctionedSellAmount && minimumBiddingAmountPerOrder) {
+    maximumInterestOwed = (
+      auctionedSellAmount -
+      auctionedSellAmount * minimumBiddingAmountPerOrder
+    ).toLocaleString()
+  }
+  let maximumYTM = '-'
+  if (auctionedSellAmount && bondToAuction && minimumBiddingAmountPerOrder) {
+    maximumYTM = calculateInterestRate({
+      price: minimumBiddingAmountPerOrder,
+      maturityDate: bondToAuction?.maturityDate,
+      startDate: new Date().getTime(),
+    }).toLocaleString()
+  }
   return (
     <>
       <div className="w-full form-control">
@@ -57,9 +117,16 @@ const StepOne = () => {
         </label>
         <input
           className="w-full input input-bordered"
+          min={1}
           placeholder="0"
           type="number"
-          {...register('amountOfBonds', { required: true })}
+          {...register('auctionedSellAmount', {
+            required: true,
+            valueAsNumber: true,
+            validate: {
+              greaterThanZero: (auctionedSellAmount) => auctionedSellAmount > 0,
+            },
+          })}
         />
       </div>
 
@@ -72,16 +139,24 @@ const StepOne = () => {
         </label>
         <input
           className="w-full input input-bordered"
+          min="0"
           placeholder="0"
+          step="0.001"
           type="number"
-          {...register('minSalePrice', { required: true })}
+          {...register('minimumBiddingAmountPerOrder', {
+            required: true,
+            valueAsNumber: true,
+            validate: {
+              greaterThanZero: (minimumBiddingAmountPerOrder) => minimumBiddingAmountPerOrder > 0,
+            },
+          })}
         />
       </div>
 
       <FieldRowWrapper className="py-1 my-4 space-y-3">
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>-</p>
+            <p>{!minBuyAmount ? '-' : minBuyAmount.toLocaleString()}</p>
           </div>
 
           <TooltipElement
@@ -91,7 +166,7 @@ const StepOne = () => {
         </div>
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>-</p>
+            <p>{amountOwed}</p>
           </div>
 
           <TooltipElement
@@ -101,7 +176,7 @@ const StepOne = () => {
         </div>
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>-</p>
+            <p>{maximumInterestOwed}</p>
           </div>
 
           <TooltipElement
@@ -111,12 +186,12 @@ const StepOne = () => {
         </div>
         <div className="flex flex-row justify-between">
           <div className="text-sm text-[#E0E0E0]">
-            <p>-</p>
+            <p>{maximumYTM}</p>
           </div>
 
           <TooltipElement
-            left={<FieldRowLabelStyledText>Maximum APR</FieldRowLabelStyledText>}
-            tip="Maximum APR you will be required to pay. The settlement APR might be lower than your maximum set."
+            left={<FieldRowLabelStyledText>Maximum YTM</FieldRowLabelStyledText>}
+            tip="Maximum YTM you will be required to pay. The settlement YTM might be lower than your maximum set."
           />
         </div>
       </FieldRowWrapper>
@@ -125,7 +200,7 @@ const StepOne = () => {
 }
 
 const StepTwo = () => {
-  const { register } = useFormContext()
+  const { getValues, register } = useFormContext()
 
   return (
     <>
@@ -138,9 +213,20 @@ const StepTwo = () => {
         </label>
         <input
           className="w-full input input-bordered"
-          placeholder="DD/MM/YYYY"
+          placeholder="MM/DD/YYYY"
+          readOnly
           type="date"
-          {...register('startDate', { required: true })}
+          value={new Date().toISOString().substring(0, 10)}
+          {...register('auctionStartDate', {
+            required: true,
+            validate: {
+              dateValid: (auctionStartDate) => dayjs(auctionStartDate).isValid(),
+              dateBefore: (auctionStartDate) => {
+                const auctionEndDate = getValues('auctionEndDate')
+                return dayjs(auctionEndDate).diff(auctionStartDate) > 0
+              },
+            },
+          })}
         />
       </div>
       <div className="w-full form-control">
@@ -152,9 +238,14 @@ const StepTwo = () => {
         </label>
         <input
           className="w-full input input-bordered"
-          placeholder="DD/MM/YYYY"
-          type="date"
-          {...register('endDate', { required: true })}
+          type="datetime-local"
+          {...register('auctionEndDate', {
+            required: true,
+            validate: {
+              dateValid: (auctionEndDate) => dayjs(auctionEndDate).isValid(),
+              afterToday: (auctionEndDate) => dayjs(auctionEndDate).isAfter(new Date()),
+            },
+          })}
         />
       </div>
     </>
@@ -162,8 +253,16 @@ const StepTwo = () => {
 }
 
 const StepThree = () => {
-  const { register } = useFormContext()
-  const [isPrivate, setIsPrivate] = useState(false)
+  const { getValues, register, setValue, unregister } = useFormContext()
+  const accessibility = getValues('accessibility')
+  const [isPrivate, setIsPrivate] = useState(accessibility === 'private')
+
+  useEffect(() => {
+    setValue('accessibility', isPrivate ? 'private' : 'public')
+    if (!isPrivate) {
+      unregister('accessManagerContractData')
+    }
+  }, [setValue, unregister, isPrivate])
 
   return (
     <>
@@ -178,21 +277,43 @@ const StepThree = () => {
           className="w-full input input-bordered"
           placeholder="0"
           type="number"
-          {...register('minBidSize', { required: true })}
+          {...register('minBidSize', {
+            required: false,
+            validate: {
+              nonNegative: (minBidSize) => minBidSize >= 0,
+            },
+          })}
         />
       </div>
       <div className="w-full form-control">
         <label className="label">
           <TooltipElement
-            left={<span className="label-text">Last date to cancel bids (optional)</span>}
-            tip="Last date bids can be cancelled.."
+            left={<span className="label-text">Last time to cancel bids (optional)</span>}
+            tip="Last time bids can be cancelled.."
           />
         </label>
         <input
           className="w-full input input-bordered"
-          placeholder="DD/MM/YYYY"
-          type="date"
-          {...register('cancellationDate', { required: true })}
+          placeholder="MM/DD/YYYY"
+          type="datetime-local"
+          {...register('orderCancellationEndDate', {
+            required: false,
+            validate: {
+              dateValid: (orderCancellationEndDate) => {
+                if (!orderCancellationEndDate) return true
+                return dayjs(orderCancellationEndDate).isValid()
+              },
+              dateBefore: (orderCancellationEndDate) => {
+                if (!orderCancellationEndDate) return true
+                const auctionEndDate = getValues('auctionEndDate')
+
+                return (
+                  dayjs(orderCancellationEndDate).isAfter(new Date()) &&
+                  dayjs(orderCancellationEndDate).isBefore(auctionEndDate)
+                )
+              },
+            },
+          })}
         />
       </div>
       <div className="w-full form-control">
@@ -202,7 +323,6 @@ const StepThree = () => {
             tip='If "public", anyone will be able to bid on the auction. If "private", only approved wallets will be able to bid.'
           />
         </label>
-
         <div className="flex items-center">
           <div className="btn-group">
             <button
@@ -234,7 +354,12 @@ const StepThree = () => {
             defaultValue=""
             placeholder="0x0"
             type="text"
-            {...register('signerAddress')}
+            {...register('accessManagerAddress', {
+              required: true,
+              validate: {
+                isAddress: (accessManagerAddress) => utils.isAddress(accessManagerAddress),
+              },
+            })}
           />
         </div>
       )}
@@ -248,8 +373,8 @@ const confirmSteps = [
     tip: 'The bonds need to be approved so they can be offered for sale.',
   },
   {
-    text: 'Schedule auction',
-    tip: 'Transfer your bonds into the auction contract and schedule the auction.',
+    text: 'Initiate auction',
+    tip: 'Transfer your bonds into the auction contract and initiate the auction.',
   },
 ]
 const steps = ['Setup auction', 'Schedule auction', 'Bidding config', 'Confirm creation']
@@ -264,7 +389,14 @@ const SummaryItem = ({ text, tip = null, title }) => (
 )
 
 const Summary = ({ currentStep }) => {
+  const { getValues, watch } = useFormContext()
+  const formValues = getValues() as Inputs
+
   if (currentStep === 1) {
+    const [auctionStartDate, auctionEndDate] = watch(['auctionStartDate', 'auctionEndDate'])
+    const diff = dayjs(auctionEndDate).diff(auctionStartDate)
+    const display = dayjs(auctionEndDate).fromNow()
+
     return (
       <div className="overflow-visible w-[425px] card">
         <div className="card-body">
@@ -272,7 +404,16 @@ const Summary = ({ currentStep }) => {
             Length of offering
           </h1>
           <div className="space-y-4">
-            <SummaryItem text="3 days" title="21/04/2022 - 24/04/2022" />
+            {dayjs(auctionStartDate).isValid() && dayjs(auctionEndDate).isValid() ? (
+              <SummaryItem
+                text={diff <= 0 ? 'Dates Misconfigured' : `Ending ${display}`}
+                title={`${dayjs(new Date()).format('LL hh:mm')} - ${dayjs(auctionEndDate).format(
+                  'LL hh:mm',
+                )}`}
+              />
+            ) : (
+              <SummaryItem text="0 days" title="Enter a start and end date." />
+            )}
           </div>
         </div>
       </div>
@@ -286,21 +427,35 @@ const Summary = ({ currentStep }) => {
       <div className="card-body">
         <h1 className="pb-4 !text-xs uppercase border-b border-[#2C2C2C] card-title">Summary</h1>
         <div className="space-y-4">
-          <SummaryItem text="Uniswap Convertible Bond" tip="Bond for sale" title="Bond for sale" />
           <SummaryItem
-            text="1,000,000 UNI CONVERT"
+            text={formValues?.bondToAuction?.name}
+            tip="Bond for sale"
+            title="Bond for sale"
+          />
+          <SummaryItem
+            text={`${formValues.auctionedSellAmount} ${formValues?.bondToAuction?.name}`}
             tip="Number of bonds to auction"
             title="Number of bonds to auction"
           />
-          <SummaryItem text="0.975 USDC" tip="Owed at maturity" title="Minimum sales price" />
-          <SummaryItem text="07/01/2022" tip="Start date" title="Start date" />
-          <SummaryItem text="07/01/2022" tip="End date" title="End date" />
-          <SummaryItem text="1,000 USDC" tip="Minimum bid size" title="Minimum bid size" />
           <SummaryItem
-            text="07/01/2022"
-            tip="Last date to cancel bids"
-            title="Last date to cancel bids"
+            text={`${formValues.minimumBiddingAmountPerOrder} USDC`}
+            tip="Owed at maturity"
+            title="Minimum sales price"
           />
+          <SummaryItem text={formValues.auctionStartDate} tip="Start date" title="Start date" />
+          <SummaryItem text={formValues.auctionStartDate} tip="End date" title="End date" />
+          <SummaryItem
+            text={formValues.minBidSize ? `${formValues.minBidSize} USDC` : 'No mininimum bid'}
+            tip="Minimum bid size"
+            title="Minimum bid size"
+          />
+          {formValues.orderCancellationEndDate && (
+            <SummaryItem
+              text={formValues.orderCancellationEndDate}
+              tip="Last date to cancel bids"
+              title="Last date to cancel bids"
+            />
+          )}
           <SummaryItem text="Public" tip="Accessibility" title="Accessibility" />
         </div>
       </div>
@@ -308,23 +463,210 @@ const Summary = ({ currentStep }) => {
   )
 }
 
-type Inputs = {
-  issuerName: string
-  exampleRequired: string
+const InitiateAuctionAction = () => {
+  // state 0 for none, 1 for metamask confirmation, 2 for block confirmation
+  const [waitingWalletApprove, setWaitingWalletApprove] = useState(0)
+  const { signer } = useActiveWeb3React()
+  const addRecentTransaction = useAddRecentTransaction()
+  const { getValues } = useFormContext()
+  const [transactionError, setTransactionError] = useState('')
+  const [
+    orderCancellationEndDate,
+    auctionEndDate,
+    auctionedSellAmount,
+    minBidSize,
+    minimumBiddingAmountPerOrder,
+    accessManagerContractData,
+    bondToAuction,
+  ] = getValues([
+    'orderCancellationEndDate',
+    'auctionEndDate',
+    'auctionedSellAmount',
+    'minBidSize',
+    'minimumBiddingAmountPerOrder',
+    'accessManagerContractData',
+    'bondToAuction',
+  ])
+  const navigate = useNavigate()
+
+  const contract = useContract({
+    addressOrName: EASY_AUCTION_NETWORKS[requiredChain.id],
+    contractInterface: easyAuctionABI,
+    signerOrProvider: signer,
+  })
+
+  const minBuyAmount = minBidSize * minimumBiddingAmountPerOrder
+  const args = [
+    bondToAuction.id, // auctioningToken (address)
+    bondToAuction.collateralToken.id, // biddingToken (address)
+    orderCancellationEndDate, // orderCancellationEndDate (uint256)
+    auctionEndDate, // auctionEndDate (uint256)
+    auctionedSellAmount, // auctionedSellAmount (uint96)
+    minBuyAmount, // minBuyAmount (uint96)
+    minimumBiddingAmountPerOrder, // minimumBiddingAmountPerOrder (uint256)
+    0, // minFundingThreshold (uint256)
+    false, // isAtomicClosureAllowed (bool)
+    '0x0', // accessManagerContract (address)
+    '0x0', // accessManagerContractData (bytes)
+  ]
+
+  return (
+    <>
+      <ActionButton
+        className={waitingWalletApprove ? 'loading' : ''}
+        color="blue"
+        onClick={() => {
+          setWaitingWalletApprove(1)
+          contract
+            .initiateAuction(...args)
+            .then((result) => {
+              console.log(result)
+
+              setWaitingWalletApprove(2)
+              addRecentTransaction({
+                hash: result?.hash,
+                description: `Created auction`,
+              })
+              return result.wait()
+            })
+            .then((result) => {
+              console.log(result)
+            })
+            .catch((e) => {
+              console.log(e)
+
+              setTransactionError(e?.message || e)
+            })
+            .finally(() => {
+              setWaitingWalletApprove(0)
+            })
+        }}
+      >
+        {!waitingWalletApprove && `Initiate auction`}
+        {waitingWalletApprove === 1 && 'Confirm initiation in wallet'}
+        {waitingWalletApprove === 2 && `Initiating auction...`}
+      </ActionButton>
+      {waitingWalletApprove === 3 && (
+        <ActionButton
+          onClick={() => {
+            navigate('/offerings')
+          }}
+        >
+          View auction page
+        </ActionButton>
+      )}
+      <WarningModal
+        content={transactionError}
+        isOpen={!!transactionError}
+        onDismiss={() => {
+          setTransactionError('')
+        }}
+      />
+    </>
+  )
+}
+
+const ActionSteps = () => {
+  const { account, signer } = useActiveWeb3React()
+  const { getValues } = useFormContext()
+  const [transactionError, setTransactionError] = useState('')
+
+  const [auctionedSellAmount, bondToAuction] = getValues(['auctionedSellAmount', 'bondToAuction'])
+
+  const { data } = useContractRead(
+    {
+      addressOrName: bondToAuction?.id,
+      contractInterface: BOND_ABI,
+    },
+    'allowance',
+    {
+      args: [account, EASY_AUCTION_NETWORKS[requiredChain.id]],
+    },
+  )
+
+  // state 0 for none, 1 for metamask confirmation, 2 for block confirmation
+  const [waitingWalletApprove, setWaitingWalletApprove] = useState(0)
+  const [currentApproveStep, setCurrentApproveStep] = useState(0)
+  const addRecentTransaction = useAddRecentTransaction()
+  const contract = useContract({
+    addressOrName: bondToAuction?.id,
+    contractInterface: BOND_ABI,
+    signerOrProvider: signer,
+  })
+
+  useEffect(() => {
+    // Already approved the token
+    if (data && data.gte(parseUnits(`${auctionedSellAmount}`, bondToAuction.decimals))) {
+      setCurrentApproveStep(1)
+    }
+  }, [data, auctionedSellAmount, bondToAuction.decimals])
+
+  return (
+    <>
+      <ul className="steps steps-vertical">
+        {confirmSteps.map((step, i) => (
+          <li className={`step ${i <= currentApproveStep ? 'step-secondary' : ''}`} key={i}>
+            <TooltipElement left={step.text} tip={step.tip} />
+          </li>
+        ))}
+      </ul>
+      {!currentApproveStep && (
+        <ActionButton
+          className={waitingWalletApprove ? 'loading' : ''}
+          color="blue"
+          onClick={() => {
+            setWaitingWalletApprove(1)
+            contract
+              .approve(
+                EASY_AUCTION_NETWORKS[requiredChain.id],
+                parseUnits(`${auctionedSellAmount}` || `0`, bondToAuction.decimals),
+              )
+              .then((result) => {
+                setWaitingWalletApprove(2)
+                addRecentTransaction({
+                  hash: result?.hash,
+                  description: `Approve ${bondToAuction.name} for ${auctionedSellAmount}`,
+                })
+                return result.wait()
+              })
+              .then((result) => {
+                setCurrentApproveStep(1)
+              })
+              .catch((e) => {
+                setTransactionError(e?.message || e)
+              })
+              .finally(() => {
+                setWaitingWalletApprove(0)
+              })
+          }}
+        >
+          {!waitingWalletApprove && `Approve ${bondToAuction?.name} for sale`}
+          {waitingWalletApprove === 1 && 'Confirm approval in wallet'}
+          {waitingWalletApprove === 2 && `Approving ${bondToAuction?.name}...`}
+        </ActionButton>
+      )}
+      {(currentApproveStep === 1 || currentApproveStep === 3) && <InitiateAuctionAction />}
+      <WarningModal
+        content={transactionError}
+        isOpen={!!transactionError}
+        onDismiss={() => {
+          setTransactionError('')
+        }}
+      />
+    </>
+  )
 }
 
 const SetupOffering = () => {
   const [currentStep, setCurrentStep] = useState(0)
-  const [currentConfirmStep, setCurrentConfirmStep] = useState(0)
-
   const methods = useForm<Inputs>({ mode: 'onChange' })
+
   const {
-    formState: { isDirty, isValid },
+    formState: { errors, isDirty, isValid },
     handleSubmit,
   } = methods
-
+  console.log(errors)
   const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data)
-
   const midComponents = [<StepOne key={0} />, <StepTwo key={1} />, <StepThree key={2} />]
 
   return (
@@ -371,29 +713,7 @@ const SetupOffering = () => {
                     Continue
                   </ActionButton>
                 )}
-                {currentStep === 3 && (
-                  <>
-                    <ul className="steps steps-vertical">
-                      {confirmSteps.map((step, i) => (
-                        <li
-                          className={`step ${i <= currentConfirmStep ? 'step-secondary' : ''}`}
-                          key={i}
-                        >
-                          <TooltipElement left={step.text} tip={step.tip} />
-                        </li>
-                      ))}
-                    </ul>
-
-                    <ActionButton
-                      color="blue"
-                      onClick={() => {
-                        console.log('click')
-                      }}
-                    >
-                      Approve UNI CONVERT for sale
-                    </ActionButton>
-                  </>
-                )}
+                {currentStep === 3 && <ActionSteps />}
               </div>
             </div>
           </div>
