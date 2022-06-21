@@ -63,8 +63,8 @@ export const Burn = ({
         title="Your balance"
       />
       <AmountInputPanel
-        amountText="Amount of bonds to burn"
-        amountTooltip="Amount of bonds to burn"
+        amountText="Number of bonds to burn"
+        amountTooltip="Number of bonds to burn"
         maxTitle="Burn all"
         onMax={onMax}
         onUserSellAmountInput={setBondAmount}
