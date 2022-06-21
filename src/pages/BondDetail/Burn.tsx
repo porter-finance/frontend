@@ -76,7 +76,7 @@ export const Burn = ({
         text={`${(collateralPerBond * Number(bondAmount)).toLocaleString()} ${
           bond?.collateralToken?.symbol
         }`}
-        tip="Amount of collateral unlocked"
+        tip="After burning a bond share, the collateral in the contract backing that share can be retrieved as it is no longer necessary."
         title="Amount of collateral unlocked"
       />
       <ActionButton
