@@ -7,6 +7,7 @@ import { SummaryItem } from '@/components/ProductCreate/SummaryItem'
 import { ActionButton } from '@/components/auction/Claimer'
 import AmountInputPanel from '@/components/form/AmountInputPanel'
 import WarningModal from '@/components/modals/WarningModal'
+import { InfoType } from '@/components/pureStyledComponents/FieldRow'
 import BOND_ABI from '@/constants/abis/bond.json'
 import { Bond } from '@/generated/graphql'
 import { getValuePerBond } from '@/hooks/useBondExtraDetails'
@@ -48,6 +49,9 @@ export const Burn = ({
   const onMax = () => {
     setBondAmount(tokenBalance?.formatted)
   }
+
+  const hasError = parseUnits(bondAmount, bond?.decimals).gt(tokenBalance?.value)
+
   return (
     <div className="space-y-2">
       <SummaryItem
@@ -65,6 +69,12 @@ export const Burn = ({
       <AmountInputPanel
         amountText="Number of bond shares to burn"
         amountTooltip="This number of bond shares will be burned from your address and become unretrievable."
+        info={
+          hasError && {
+            text: `You cannot exceed your balance.`,
+            type: InfoType.error,
+          }
+        }
         maxTitle="Burn all"
         onMax={onMax}
         onUserSellAmountInput={setBondAmount}
@@ -81,6 +91,7 @@ export const Burn = ({
       />
       <ActionButton
         className={`${isLoading ? 'loading' : ''}`}
+        disabled={hasError}
         onClick={() =>
           write({
             args: [parseUnits(bondAmount, bond.decimals)],
