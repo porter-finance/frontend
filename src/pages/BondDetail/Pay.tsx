@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 
 import { formatUnits, parseUnits } from '@ethersproject/units'
+import { Token, TokenAmount } from '@josojo/honeyswap-sdk'
 import dayjs from 'dayjs'
 import { useContractRead, useContractWrite } from 'wagmi'
 
@@ -9,8 +10,10 @@ import { ActionButton } from '@/components/auction/Claimer'
 import AmountInputPanel from '@/components/form/AmountInputPanel'
 import WarningModal from '@/components/modals/WarningModal'
 import { InfoType } from '@/components/pureStyledComponents/FieldRow'
+import { requiredChain } from '@/connectors'
 import BOND_ABI from '@/constants/abis/bond.json'
 import { Bond } from '@/generated/graphql'
+import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback'
 
 export const Pay = ({
   bond,
@@ -68,6 +71,23 @@ export const Pay = ({
     bond?.amountUnpaid,
   )
 
+  const approvalTokenAmount = new TokenAmount(
+    new Token(
+      requiredChain.id,
+      bond?.paymentToken?.id,
+      bond?.paymentToken?.decimals,
+      bond?.paymentToken?.symbol,
+      bond?.paymentToken?.name,
+    ),
+    bondAmount,
+  )
+  const [approval, approveCallback] = useApproveCallback(
+    approvalTokenAmount,
+    bond?.id,
+    requiredChain.id,
+  )
+  const notApproved = approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING
+
   return (
     <div className="space-y-2">
       <SummaryItem
@@ -98,6 +118,12 @@ export const Pay = ({
         onMax={onMax}
         onUserSellAmountInput={setBondAmount}
         token={bond?.paymentToken}
+        unlock={{
+          isLocked: notApproved,
+          onUnlock: approveCallback,
+          unlockState: approval,
+          token: bond?.paymentToken.id,
+        }}
         value={bondAmount || ''}
       />
       <SummaryItem
@@ -109,7 +135,7 @@ export const Pay = ({
 
       <ActionButton
         className={`${isLoading ? 'loading' : ''}`}
-        disabled={!Number(bondAmount) || hasError}
+        disabled={!Number(bondAmount) || hasError || notApproved}
         onClick={() =>
           write({
             args: [parseUnits(bondAmount || '0', bond?.paymentToken.decimals)],
