@@ -59,7 +59,7 @@ export const Burn = ({
       <SummaryItem
         border={false}
         text={`${Number(tokenBalance?.formatted).toLocaleString()} ${bond?.symbol}`}
-        tip="Your balance"
+        tip="The number of Bonds owned by your account"
         title="Your balance"
       />
       <AmountInputPanel
