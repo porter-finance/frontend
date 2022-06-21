@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
-import { formatUnits, parseUnits } from '@ethersproject/units'
-import { useBalance, useContractWrite } from 'wagmi'
+import { parseUnits } from '@ethersproject/units'
+import { useBalance, useContractWrite, useToken } from 'wagmi'
 
 import { SummaryItem } from '@/components/ProductCreate/SummaryItem'
 import { ActionButton } from '@/components/auction/Claimer'
@@ -40,31 +40,31 @@ export const Burn = ({
   const { data: tokenBalance } = useBalance({
     addressOrName: bond?.owner,
     token: bond?.id,
+    formatUnits: bond?.decimals,
   })
 
-  const onMax = () => {
-    setBondAmount(Number(tokenBalance?.formatted).toString())
-  }
+  const { data: bondInfo } = useToken({ address: bond?.id, formatUnits: bond?.decimals })
 
+  const onMax = () => {
+    setBondAmount(tokenBalance?.formatted)
+  }
   return (
     <div className="space-y-2">
       <SummaryItem
         border={false}
-        text={`${Number(formatUnits(bond?.maxSupply, bond?.decimals)).toLocaleString()} ${
-          bond?.symbol
-        }`}
-        tip="Bonds outstanding"
+        text={`${Number(bondInfo?.totalSupply.formatted).toLocaleString()}`}
+        tip="Total supply of bond shares"
         title="Bonds outstanding"
       />
       <SummaryItem
         border={false}
-        text={`${Number(tokenBalance?.formatted).toLocaleString()} ${bond?.symbol}`}
-        tip="The number of Bonds owned by your account"
+        text={`${Number(tokenBalance?.formatted).toLocaleString()}`}
+        tip="The number of bond shares owned by your account"
         title="Your balance"
       />
       <AmountInputPanel
-        amountText="Number of bonds to burn"
-        amountTooltip="This number of bonds will be burned from your address and become unretrievable."
+        amountText="Number of bond shares to burn"
+        amountTooltip="This number of bond shares will be burned from your address and become unretrievable."
         maxTitle="Burn all"
         onMax={onMax}
         onUserSellAmountInput={setBondAmount}
