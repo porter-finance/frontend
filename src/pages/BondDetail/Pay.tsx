@@ -8,6 +8,7 @@ import { SummaryItem } from '@/components/ProductCreate/SummaryItem'
 import { ActionButton } from '@/components/auction/Claimer'
 import AmountInputPanel from '@/components/form/AmountInputPanel'
 import WarningModal from '@/components/modals/WarningModal'
+import { InfoType } from '@/components/pureStyledComponents/FieldRow'
 import BOND_ABI from '@/constants/abis/bond.json'
 import { Bond } from '@/generated/graphql'
 
@@ -43,15 +44,30 @@ export const Pay = ({
     setBondAmount(amountOwed)
   }
 
+  const { data: previewWithdrawExcessCollateral } = useContractRead(
+    { addressOrName: bond?.id, contractInterface: BOND_ABI },
+    'previewWithdrawExcessCollateral',
+  )
+
   const { data: previewWithdrawExcessCollateralAfterPayment } = useContractRead(
     { addressOrName: bond?.id, contractInterface: BOND_ABI },
     'previewWithdrawExcessCollateralAfterPayment',
-    { args: parseUnits(bondAmount, bond?.paymentToken?.decimals) },
+    { args: parseUnits(bondAmount || '0', bond?.paymentToken?.decimals) },
   )
-  const result = (previewWithdrawExcessCollateralAfterPayment || '0').toString()
+  let result = '0'
+  if (previewWithdrawExcessCollateralAfterPayment && previewWithdrawExcessCollateral) {
+    result = previewWithdrawExcessCollateralAfterPayment
+      .sub(previewWithdrawExcessCollateral)
+      .toString()
+  }
   const excessCollateralDisplay = Number(
     formatUnits(result, bond?.collateralToken?.decimals),
   ).toLocaleString()
+
+  const hasError = parseUnits(bondAmount || '0', bond?.paymentToken?.decimals).gt(
+    bond?.amountUnpaid,
+  )
+
   return (
     <div className="space-y-2">
       <SummaryItem
@@ -72,6 +88,12 @@ export const Pay = ({
       <AmountInputPanel
         amountText="Amount of debt to pay"
         amountTooltip="The number of payment tokens to pay into the Bond."
+        info={
+          hasError && {
+            text: `You cannot exceed the amount owed.`,
+            type: InfoType.error,
+          }
+        }
         maxTitle="Pay all"
         onMax={onMax}
         onUserSellAmountInput={setBondAmount}
@@ -87,9 +109,10 @@ export const Pay = ({
 
       <ActionButton
         className={`${isLoading ? 'loading' : ''}`}
+        disabled={!Number(bondAmount) || hasError}
         onClick={() =>
           write({
-            args: [parseUnits(bondAmount, bond?.paymentToken.decimals)],
+            args: [parseUnits(bondAmount || '0', bond?.paymentToken.decimals)],
           })
         }
       >

@@ -50,7 +50,7 @@ export const Burn = ({
     setBondAmount(tokenBalance?.formatted)
   }
 
-  const hasError = parseUnits(bondAmount, bond?.decimals).gt(tokenBalance?.value)
+  const hasError = parseUnits(bondAmount || '0', bond?.decimals).gt(tokenBalance?.value)
 
   return (
     <div className="space-y-2">
@@ -91,10 +91,10 @@ export const Burn = ({
       />
       <ActionButton
         className={`${isLoading ? 'loading' : ''}`}
-        disabled={hasError}
+        disabled={!Number(bondAmount) || hasError}
         onClick={() =>
           write({
-            args: [parseUnits(bondAmount, bond.decimals)],
+            args: [parseUnits(bondAmount || '0', bond.decimals)],
           })
         }
       >

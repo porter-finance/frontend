@@ -22,7 +22,7 @@ const BondManagement = () => {
         <div className="flex justify-between">
           <h2 className="card-title">Bond management</h2>
         </div>
-        <div className="mb-2 space-y-6">
+        <div className="mb-6 space-y-6">
           <div className="text-base">
             <div className="flex justify-center items-center w-full">
               <div className="btn-group">

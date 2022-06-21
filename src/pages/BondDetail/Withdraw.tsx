@@ -7,6 +7,7 @@ import { SummaryItem } from '@/components/ProductCreate/SummaryItem'
 import { ActionButton } from '@/components/auction/Claimer'
 import AmountInputPanel from '@/components/form/AmountInputPanel'
 import WarningModal from '@/components/modals/WarningModal'
+import { InfoType } from '@/components/pureStyledComponents/FieldRow'
 import BOND_ABI from '@/constants/abis/bond.json'
 import { Bond } from '@/generated/graphql'
 
@@ -66,9 +67,22 @@ export const Withdraw = ({
     formatUnits((previewWithdrawExcessPayment || '0').toString(), bond?.paymentToken?.decimals),
   ).toLocaleString()
 
+  const hasErrorCollateral =
+    (!Number(excessCollateralDisplay) && Number(collateralAmount || '0')) ||
+    parseUnits(excessCollateralDisplay || '0', bond?.collateralToken?.decimals).gt(
+      parseUnits(collateralAmount || '0', bond?.collateralToken.decimals),
+    )
+
+  const hasErrorPayment =
+    (!Number(excessPaymentDisplay) && Number(paymentAmount || '0')) ||
+    parseUnits(excessPaymentDisplay || '0', bond?.paymentToken?.decimals).gt(
+      parseUnits(paymentAmount || '0', bond?.paymentToken.decimals),
+    )
   return (
-    <>
+    <div className="space-y-12">
       <div className="space-y-2">
+        <h2 className="!text-[#696969] card-title">Excess collateral</h2>
+
         <SummaryItem
           border={false}
           text={`${Number(
@@ -86,6 +100,12 @@ export const Withdraw = ({
         <AmountInputPanel
           amountText="Amount of collateral to withdraw"
           amountTooltip="This is your withdraw amount"
+          info={
+            hasErrorCollateral && {
+              text: `You cannot exceed the available collateral to withdraw.`,
+              type: InfoType.error,
+            }
+          }
           maxTitle="Withdraw all"
           onMax={onMaxCollateral}
           onUserSellAmountInput={setCollateralAmount}
@@ -95,6 +115,7 @@ export const Withdraw = ({
 
         <ActionButton
           className={`${isLoading ? 'loading' : ''}`}
+          disabled={!Number(collateralAmount) || hasErrorCollateral}
           onClick={() =>
             write({
               args: [parseUnits(collateralAmount, bond?.collateralToken.decimals), bond?.owner],
@@ -105,6 +126,8 @@ export const Withdraw = ({
         </ActionButton>
       </div>
       <div className="space-y-2">
+        <h2 className="!text-[#696969] card-title">Excess payment</h2>
+
         <SummaryItem
           border={false}
           text={`${Number(
@@ -125,6 +148,12 @@ export const Withdraw = ({
         <AmountInputPanel
           amountText="Amount of payment to withdraw"
           amountTooltip="This is your withdraw amount"
+          info={
+            hasErrorPayment && {
+              text: `You cannot exceed the available payment to withdraw.`,
+              type: InfoType.error,
+            }
+          }
           maxTitle="Withdraw all"
           onMax={onMaxPayment}
           onUserSellAmountInput={setPaymentAmount}
@@ -134,6 +163,7 @@ export const Withdraw = ({
 
         <ActionButton
           className={`${isLoading ? 'loading' : ''}`}
+          disabled={!Number(paymentAmount) || hasErrorPayment}
           onClick={() =>
             write({
               args: [parseUnits(paymentAmount, bond?.paymentToken.decimals), bond?.owner],
@@ -144,6 +174,6 @@ export const Withdraw = ({
         </ActionButton>
         <WarningModal content={error?.message} isOpen={isError} onDismiss={reset} />
       </div>
-    </>
+    </div>
   )
 }
