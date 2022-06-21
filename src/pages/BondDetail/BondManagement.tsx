@@ -14,7 +14,7 @@ const BondManagement = () => {
   const { bondId } = useParams()
   const { data: bond, loading: isLoading } = useBond(bondId)
 
-  if (bond?.owner.toLowerCase() !== account.toLowerCase()) return null
+  if (bond?.owner?.toLowerCase() !== account?.toLowerCase()) return null
 
   return (
     <div className="card card-bordered">
