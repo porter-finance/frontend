@@ -19,10 +19,10 @@ export const Burn = ({
     | 'owner'
     | 'id'
     | 'paymentToken'
-    | 'state'
     | 'maturityDate'
     | 'maxSupply'
-    | 'amountUnpaid'
+    | 'symbol'
+    | 'decimals'
     | 'collateralToken'
     | 'collateralRatio'
   >
@@ -50,17 +50,15 @@ export const Burn = ({
     <div className="space-y-2">
       <SummaryItem
         border={false}
-        text={`${Number(
-          formatUnits(bond?.maxSupply, bond?.collateralToken?.decimals),
-        ).toLocaleString()} ${bond?.collateralToken?.symbol}`}
+        text={`${Number(formatUnits(bond?.maxSupply, bond?.decimals)).toLocaleString()} ${
+          bond?.symbol
+        }`}
         tip="Bonds outstanding"
         title="Bonds outstanding"
       />
       <SummaryItem
         border={false}
-        text={`${Number(tokenBalance?.formatted).toLocaleString()} ${
-          bond?.collateralToken?.symbol
-        }`}
+        text={`${Number(tokenBalance?.formatted).toLocaleString()} ${bond?.symbol}`}
         tip="Your balance"
         title="Your balance"
       />
@@ -70,7 +68,7 @@ export const Burn = ({
         maxTitle="Burn all"
         onMax={onMax}
         onUserSellAmountInput={setBondAmount}
-        token={bond?.collateralToken}
+        token={bond}
         value={bondAmount}
       />
       <SummaryItem
@@ -85,7 +83,7 @@ export const Burn = ({
         className={`${isLoading ? 'loading' : ''}`}
         onClick={() =>
           write({
-            args: [parseUnits(bondAmount, bond?.collateralToken.decimals)],
+            args: [parseUnits(bondAmount, bond.decimals)],
           })
         }
       >
