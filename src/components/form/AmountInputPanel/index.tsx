@@ -143,7 +143,7 @@ const AmountInputPanel = (props: {
             onUserSellAmountInput={onUserSellAmountInput}
             placeholder="-"
             readOnly={!account}
-            value={!account ? '-' : value}
+            value={!account ? '-' : value || ''}
           />
           <Wrap>
             {token && <TokenPill token={token} />}

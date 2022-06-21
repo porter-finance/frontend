@@ -61,7 +61,7 @@ export const Withdraw = ({
         onMax={onMax}
         onUserSellAmountInput={setBondAmount}
         token={bond?.collateralToken}
-        value={bondAmount}
+        value={bondAmount || ''}
       />
 
       <ActionButton

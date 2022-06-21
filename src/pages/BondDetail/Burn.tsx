@@ -69,7 +69,7 @@ export const Burn = ({
         onMax={onMax}
         onUserSellAmountInput={setBondAmount}
         token={bond}
-        value={bondAmount}
+        value={bondAmount || ''}
       />
       <SummaryItem
         border={false}
