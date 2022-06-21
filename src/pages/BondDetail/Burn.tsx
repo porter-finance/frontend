@@ -16,14 +16,15 @@ export const Burn = ({
 }: {
   bond: Pick<
     Bond,
-    | 'collateralTokenAmount'
-    | 'collateralToken'
-    | 'convertibleTokenAmount'
-    | 'collateralRatio'
-    | 'paymentToken'
-    | 'maxSupply'
-    | 'id'
     | 'owner'
+    | 'id'
+    | 'paymentToken'
+    | 'state'
+    | 'maturityDate'
+    | 'maxSupply'
+    | 'amountUnpaid'
+    | 'collateralToken'
+    | 'collateralRatio'
   >
 }) => {
   const [bondAmount, setBondAmount] = useState('0')
