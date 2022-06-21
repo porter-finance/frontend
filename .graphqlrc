@@ -15,5 +15,5 @@ generates:
       - 'introspection'
 hooks:
   afterAllFileWrite:
-    - yarn prettier --write
-    - yarn eslint --fix
+    - pnpm prettier --write
+    - pnpm eslint --fix

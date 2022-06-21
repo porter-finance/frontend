@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const defaultTheme = require('tailwindcss/defaultTheme')
 
 module.exports = {
@@ -60,6 +61,12 @@ module.exports = {
           },
         ],
         '3xl': [
+          '26px',
+          {
+            letterSpacing: '0.05em',
+          },
+        ],
+        '4xl': [
           '32px',
           {
             letterSpacing: '0.05em',

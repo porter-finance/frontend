@@ -23,10 +23,12 @@ gql`
           maturityDate
           paymentToken {
             id
+            decimals
             symbol
           }
           collateralToken {
             id
+            decimals
             symbol
           }
           collateralRatio

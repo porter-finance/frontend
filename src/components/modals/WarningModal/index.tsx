@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { OopsWarning } from '../ConfirmationDialog'
+import { OopsWarning } from '../OopsWarning'
 import Modal from '../common/Modal'
 
 interface Props {
@@ -11,7 +11,7 @@ interface Props {
 }
 
 const WarningModal: React.FC<Props> = (props) => {
-  const { content, isOpen, onDismiss, title = '' } = props
+  const { content, isOpen, onDismiss, title } = props
 
   return (
     <Modal isOpen={isOpen} onDismiss={onDismiss}>
