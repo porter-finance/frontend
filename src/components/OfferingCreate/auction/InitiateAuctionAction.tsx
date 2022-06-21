@@ -106,7 +106,10 @@ export const InitiateAuctionAction = ({ disabled, setCurrentApproveStep }) => {
     auctionedSellAmount.toString(),
     bondToAuction?.decimals,
   ).toString()
-  const parsedMinBidSize = parseUnits(minBidSize.toString(), paymentTokenDecimals).toString()
+  const parsedMinBidSize = parseUnits(
+    (minBidSize * auctionedSellAmount).toString(),
+    paymentTokenDecimals,
+  ).toString()
 
   let parsedMinimumBiddingAmountPerOrder = minimumBiddingAmountPerOrder
   if (!parsedMinimumBiddingAmountPerOrder) {
@@ -119,8 +122,8 @@ export const InitiateAuctionAction = ({ disabled, setCurrentApproveStep }) => {
       paymentTokenDecimals,
     ).toString()
   }
-  let parsedAccessManagerContract = accessManagerAddress
-  if (!parsedAccessManagerContract) {
+  let parsedAccessManagerContract = null
+  if (accessManagerAddress) {
     parsedAccessManagerContract = AccessManagerContract[requiredChain.id]
   } else {
     parsedAccessManagerContract = '0x0000000000000000000000000000000000000000'
@@ -145,7 +148,7 @@ export const InitiateAuctionAction = ({ disabled, setCurrentApproveStep }) => {
 
   const args = [
     bondToAuction.id,
-    bondToAuction.collateralToken.id,
+    bondToAuction.paymentToken.id,
     parsedOrderCancellationEndDate,
     parsedAuctionEndDate,
     parsedAuctionedSellAmount,
