@@ -42,6 +42,7 @@ export const Pay = ({
   const onMax = () => {
     setBondAmount(amountOwed)
   }
+
   const { data: previewWithdrawExcessCollateralAfterPayment } = useContractRead(
     { addressOrName: bond?.id, contractInterface: BOND_ABI },
     'previewWithdrawExcessCollateralAfterPayment',
@@ -56,7 +57,7 @@ export const Pay = ({
       <SummaryItem
         border={false}
         text={`${Number(amountOwed).toLocaleString()} USDC`}
-        tip="Amount owed"
+        tip="Outstanding number of payment tokens required to fully pay the Bond."
         title="Amount owed"
       />
       <SummaryItem
@@ -70,7 +71,7 @@ export const Pay = ({
       />
       <AmountInputPanel
         amountText="Amount of debt to pay"
-        amountTooltip="This is your bond amount. You will pay this much."
+        amountTooltip="The number of payment tokens to pay into the Bond."
         maxTitle="Pay all"
         onMax={onMax}
         onUserSellAmountInput={setBondAmount}
@@ -80,7 +81,7 @@ export const Pay = ({
       <SummaryItem
         border={false}
         text={`${excessCollateralDisplay} ${bond.collateralToken.symbol}`}
-        tip="Amount of collateral unlocked"
+        tip="After burning a bond share, the collateral backing that share can be retrieved as it is no longer needed by the contract."
         title="Amount of collateral unlocked"
       />
 
