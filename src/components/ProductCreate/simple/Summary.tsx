@@ -17,7 +17,6 @@ export const Summary = ({ currentStep }) => {
     'amountOfCollateral',
   ])
   const { data: bondData } = useBondName(false, maturityDate)
-  console.log(bondData?.bondSymbol)
 
   const { data: borrowTokenData } = useToken({ address: borrowToken?.address })
   const { data: collateralTokenData } = useToken({ address: collateralToken?.address })
