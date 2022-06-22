@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
 import { parseUnits } from '@ethersproject/units'
-import { useBalance, useContractWrite, useToken } from 'wagmi'
+import { useBalance, useContractWrite, useToken, useWaitForTransaction } from 'wagmi'
 
 import { SummaryItem } from '@/components/ProductCreate/SummaryItem'
 import { ActionButton } from '@/components/auction/Claimer'
@@ -47,6 +47,10 @@ export const Burn = ({
       },
     },
   )
+
+  const { isLoading: isConfirmLoading } = useWaitForTransaction({
+    hash: data?.hash,
+  })
 
   const { data: tokenBalance } = useBalance({
     addressOrName: bond?.owner,
@@ -99,7 +103,7 @@ export const Burn = ({
         title="Amount of collateral unlocked"
       />
       <ActionButton
-        className={`${isLoading ? 'loading' : ''}`}
+        className={`${isLoading || isConfirmLoading ? 'loading' : ''}`}
         disabled={!Number(bondAmount) || hasError}
         onClick={() => {
           write({
