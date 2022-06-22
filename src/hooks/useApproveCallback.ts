@@ -1,8 +1,9 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import { MaxUint256 } from '@ethersproject/constants'
 import { TransactionResponse } from '@ethersproject/providers'
 import { TokenAmount } from '@josojo/honeyswap-sdk'
+import { useWaitForTransaction } from 'wagmi'
 
 import { useTokenAllowance } from '../data/Allowances'
 import { useHasPendingApproval, useTransactionAdder } from '../state/transactions/hooks'
@@ -29,6 +30,7 @@ export function useApproveCallback(
 ): [ApprovalState, () => Promise<void>] {
   const { account } = useActiveWeb3React()
   const gasPrice = useGasPrice(chainId)
+  const [hash, setHash] = useState('')
 
   const currentAllowance = useTokenAllowance(
     amountToApprove?.token,
@@ -36,10 +38,15 @@ export function useApproveCallback(
     addressToApprove,
   )
 
+  const { isLoading, isSuccess } = useWaitForTransaction({ hash })
+
   const pendingApproval = useHasPendingApproval(amountToApprove?.token?.address, addressToApprove)
 
   // check the current approval status
   const approval = useMemo(() => {
+    if (isSuccess) return ApprovalState.APPROVED
+    if (isLoading) return ApprovalState.PENDING
+
     if (!amountToApprove) return ApprovalState.UNKNOWN
     // we might not have enough data to know whether or not we need to approve
     if (!currentAllowance) return ApprovalState.UNKNOWN
@@ -53,7 +60,7 @@ export function useApproveCallback(
         ? ApprovalState.PENDING
         : ApprovalState.NOT_APPROVED
       : ApprovalState.APPROVED
-  }, [amountToApprove, currentAllowance, pendingApproval, chainId])
+  }, [isSuccess, isLoading, amountToApprove, currentAllowance, pendingApproval, chainId])
 
   const tokenContract = useTokenContract(amountToApprove?.token?.address)
   const addTransaction = useTransactionAdder()
@@ -94,6 +101,7 @@ export function useApproveCallback(
           approval: { tokenAddress: amountToApprove.token.address, spender: addressToApprove },
         })
 
+        setHash(response.hash)
         return response
       })
       .catch((error: Error) => {
