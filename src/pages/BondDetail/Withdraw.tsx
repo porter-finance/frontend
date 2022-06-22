@@ -2,7 +2,7 @@ import { BigNumber } from 'ethers'
 import React, { useState } from 'react'
 
 import { formatUnits, parseUnits } from '@ethersproject/units'
-import { useContractRead, useContractWrite } from 'wagmi'
+import { useContractRead, useContractWrite, useWaitForTransaction } from 'wagmi'
 
 import { SummaryItem } from '@/components/ProductCreate/SummaryItem'
 import { ActionButton } from '@/components/auction/Claimer'
@@ -11,6 +11,7 @@ import WarningModal from '@/components/modals/WarningModal'
 import { InfoType } from '@/components/pureStyledComponents/FieldRow'
 import BOND_ABI from '@/constants/abis/bond.json'
 import { Bond } from '@/generated/graphql'
+import { useTransactionAdder } from '@/state/transactions/hooks'
 
 export const Withdraw = ({
   bond,
@@ -18,6 +19,7 @@ export const Withdraw = ({
   bond: Pick<
     Bond,
     | 'id'
+    | 'symbol'
     | 'owner'
     | 'collateralTokenAmount'
     | 'paymentToken'
@@ -30,13 +32,50 @@ export const Withdraw = ({
 }) => {
   const [collateralAmount, setCollateralAmount] = useState('0')
   const [paymentAmount, setPaymentAmount] = useState('0')
-  const { error, isError, isLoading, reset, write } = useContractWrite(
+  const addTransaction = useTransactionAdder()
+
+  const { data, error, isError, isLoading, reset, write } = useContractWrite(
     {
       addressOrName: bond?.id,
       contractInterface: BOND_ABI,
     },
     'withdrawExcessCollateral',
+    {
+      onSuccess(data, error) {
+        addTransaction(data, {
+          summary: `Withdraw ${collateralAmount} ${bond?.collateralToken?.symbol} from ${bond?.symbol}`,
+        })
+      },
+    },
   )
+
+  const {
+    data: dataPayment,
+    error: errorPayment,
+    isError: isErrorPayment,
+    isLoading: isLoadingPayment,
+    write: writePayment,
+  } = useContractWrite(
+    {
+      addressOrName: bond?.id,
+      contractInterface: BOND_ABI,
+    },
+    'withdrawExcessPayment',
+    {
+      onSuccess(data, error) {
+        addTransaction(data, {
+          summary: `Withdraw ${paymentAmount} ${bond?.paymentToken?.symbol} from ${bond?.symbol}`,
+        })
+      },
+    },
+  )
+
+  const { isLoading: isConfirmLoading } = useWaitForTransaction({
+    hash: data?.hash,
+  })
+  const { isLoading: isConfirmLoadingPayment } = useWaitForTransaction({
+    hash: dataPayment?.hash,
+  })
 
   const { data: paymentBalance } = useContractRead(
     { addressOrName: bond?.id, contractInterface: BOND_ABI },
@@ -123,7 +162,7 @@ export const Withdraw = ({
         />
 
         <ActionButton
-          className={`${isLoading ? 'loading' : ''}`}
+          className={`${isLoading || isConfirmLoading ? 'loading' : ''}`}
           disabled={!Number(collateralAmount) || hasErrorCollateral}
           onClick={() =>
             write({
@@ -171,17 +210,21 @@ export const Withdraw = ({
         />
 
         <ActionButton
-          className={`${isLoading ? 'loading' : ''}`}
+          className={`${isLoadingPayment || isConfirmLoadingPayment ? 'loading' : ''}`}
           disabled={!Number(paymentAmount) || hasErrorPayment}
           onClick={() =>
-            write({
+            writePayment({
               args: [parseUnits(paymentAmount, bond?.paymentToken.decimals), bond?.owner],
             })
           }
         >
           Withdraw Payment
         </ActionButton>
-        <WarningModal content={error?.message} isOpen={isError} onDismiss={reset} />
+        <WarningModal
+          content={error?.message || errorPayment?.message}
+          isOpen={isError || isErrorPayment}
+          onDismiss={reset}
+        />
       </div>
     </div>
   )
