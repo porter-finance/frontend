@@ -31,7 +31,6 @@ export const Withdraw = ({
   >
 }) => {
   const [collateralAmount, setCollateralAmount] = useState('0')
-  const [paymentAmount, setPaymentAmount] = useState('0')
   const addTransaction = useTransactionAdder()
 
   const { data, error, isError, isLoading, reset, write } = useContractWrite(
@@ -65,7 +64,10 @@ export const Withdraw = ({
     {
       onSuccess(data, error) {
         addTransaction(data, {
-          summary: `Withdraw ${paymentAmount} ${bond?.paymentToken?.symbol} from ${bond?.symbol}`,
+          summary: `Withdraw ${parseUnits(
+            previewWithdrawExcessPayment?.toString(),
+            bond?.paymentToken.decimals,
+          )} ${bond?.paymentToken?.symbol} from ${bond?.symbol}`,
         })
       },
     },
@@ -109,21 +111,9 @@ export const Withdraw = ({
       BigNumber.from(previewWithdrawExcessCollateral),
     )
 
-  const hasErrorPayment =
-    Number(paymentAmount || '0') &&
-    parseUnits(paymentAmount || '0', bond?.paymentToken?.decimals).gt(
-      BigNumber.from(previewWithdrawExcessPayment),
-    )
-
   const onMaxCollateral = () => {
     setCollateralAmount(
       formatUnits(previewWithdrawExcessCollateral.toString(), bond?.collateralToken?.decimals),
-    )
-  }
-
-  const onMaxPayment = () => {
-    setPaymentAmount(
-      formatUnits(previewWithdrawExcessPayment.toString(), bond?.paymentToken?.decimals),
     )
   }
 
@@ -191,31 +181,15 @@ export const Withdraw = ({
         <SummaryItem
           border={false}
           text={`${excessPaymentDisplay} ${bond?.paymentToken?.symbol}`}
-          tip="At the moment, the amount of payment available to withdraw from the contract."
-          title="Payment available to withdraw"
+          tip="The excess amount of collateral will be withdrawn to the current account."
+          title="Payment to withdraw"
         />
-        <AmountInputPanel
-          amountText="Amount of payment to withdraw"
-          amountTooltip="This is your withdraw amount"
-          info={
-            hasErrorPayment && {
-              text: `You cannot exceed the available payment to withdraw.`,
-              type: InfoType.error,
-            }
-          }
-          maxTitle="Withdraw all"
-          onMax={onMaxPayment}
-          onUserSellAmountInput={setPaymentAmount}
-          token={bond?.paymentToken}
-          value={paymentAmount || ''}
-        />
-
         <ActionButton
           className={`${isLoadingPayment || isConfirmLoadingPayment ? 'loading' : ''}`}
-          disabled={!Number(paymentAmount) || hasErrorPayment}
+          disabled={!Number(previewWithdrawExcessPayment)}
           onClick={() =>
             writePayment({
-              args: [parseUnits(paymentAmount, bond?.paymentToken.decimals), bond?.owner],
+              args: [bond?.owner],
             })
           }
         >
