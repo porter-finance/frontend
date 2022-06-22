@@ -36,6 +36,39 @@ export const Withdraw = ({
     },
     'withdrawExcessCollateral',
   )
+
+  const { data: previewWithdrawExcessCollateral } = useContractRead(
+    { addressOrName: bond?.id, contractInterface: BOND_ABI },
+    'previewWithdrawExcessCollateral',
+  )
+
+  const { data: previewWithdrawExcessPayment } = useContractRead(
+    { addressOrName: bond?.id, contractInterface: BOND_ABI },
+    'previewWithdrawExcessPayment',
+  )
+  const excessCollateralDisplay = Number(
+    formatUnits(
+      (previewWithdrawExcessCollateral || '0').toString(),
+      bond?.collateralToken?.decimals,
+    ),
+  ).toLocaleString()
+
+  const excessPaymentDisplay = Number(
+    formatUnits((previewWithdrawExcessPayment || '0').toString(), bond?.paymentToken?.decimals),
+  ).toLocaleString()
+
+  const hasErrorCollateral =
+    Number(collateralAmount || '0') &&
+    parseUnits(collateralAmount || '0', bond?.collateralToken?.decimals).gt(
+      parseUnits(excessCollateralDisplay || '0', bond?.collateralToken.decimals),
+    )
+
+  const hasErrorPayment =
+    Number(paymentAmount || '0') &&
+    parseUnits(paymentAmount || '0', bond?.paymentToken?.decimals).gt(
+      parseUnits(excessPaymentDisplay || '0', bond?.paymentToken.decimals),
+    )
+
   const onMaxCollateral = () => {
     setCollateralAmount(
       formatUnits(previewWithdrawExcessCollateral.toString(), bond?.collateralToken?.decimals),
@@ -48,36 +81,6 @@ export const Withdraw = ({
     )
   }
 
-  const { data: previewWithdrawExcessCollateral } = useContractRead(
-    { addressOrName: bond?.id, contractInterface: BOND_ABI },
-    'previewWithdrawExcessCollateral',
-  )
-  const excessCollateralDisplay = Number(
-    formatUnits(
-      (previewWithdrawExcessCollateral || '0').toString(),
-      bond?.collateralToken?.decimals,
-    ),
-  ).toLocaleString()
-
-  const { data: previewWithdrawExcessPayment } = useContractRead(
-    { addressOrName: bond?.id, contractInterface: BOND_ABI },
-    'previewWithdrawExcessPayment',
-  )
-  const excessPaymentDisplay = Number(
-    formatUnits((previewWithdrawExcessPayment || '0').toString(), bond?.paymentToken?.decimals),
-  ).toLocaleString()
-
-  const hasErrorCollateral =
-    (!Number(excessCollateralDisplay) && Number(collateralAmount || '0')) ||
-    parseUnits(excessCollateralDisplay || '0', bond?.collateralToken?.decimals).gt(
-      parseUnits(collateralAmount || '0', bond?.collateralToken.decimals),
-    )
-
-  const hasErrorPayment =
-    (!Number(excessPaymentDisplay) && Number(paymentAmount || '0')) ||
-    parseUnits(excessPaymentDisplay || '0', bond?.paymentToken?.decimals).gt(
-      parseUnits(paymentAmount || '0', bond?.paymentToken.decimals),
-    )
   return (
     <div className="space-y-12">
       <div className="space-y-2">
