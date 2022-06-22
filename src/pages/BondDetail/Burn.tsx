@@ -40,7 +40,7 @@ export const Burn = ({
     },
     'burn',
     {
-      onSettled(data, error) {
+      onSuccess(data, error) {
         addTransaction(data, {
           summary: `Burn ${bondAmount} ${bond?.symbol}`,
         })
