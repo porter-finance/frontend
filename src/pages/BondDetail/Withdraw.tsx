@@ -1,3 +1,4 @@
+import { BigNumber } from 'ethers'
 import React, { useState } from 'react'
 
 import { formatUnits, parseUnits } from '@ethersproject/units'
@@ -60,13 +61,13 @@ export const Withdraw = ({
   const hasErrorCollateral =
     Number(collateralAmount || '0') &&
     parseUnits(collateralAmount || '0', bond?.collateralToken?.decimals).gt(
-      parseUnits(excessCollateralDisplay || '0', bond?.collateralToken.decimals),
+      BigNumber.from(previewWithdrawExcessCollateral),
     )
 
   const hasErrorPayment =
     Number(paymentAmount || '0') &&
     parseUnits(paymentAmount || '0', bond?.paymentToken?.decimals).gt(
-      parseUnits(excessPaymentDisplay || '0', bond?.paymentToken.decimals),
+      BigNumber.from(previewWithdrawExcessPayment),
     )
 
   const onMaxCollateral = () => {

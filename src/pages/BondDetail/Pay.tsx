@@ -80,7 +80,7 @@ export const Pay = ({
       bond?.paymentToken?.symbol,
       bond?.paymentToken?.name,
     ),
-    parseFixed(bondAmount || '0', bond?.paymentToken?.decimals).toBigInt(),
+    parseFixed(bondAmount || '0', bond?.paymentToken?.decimals).toString(),
   )
   const [approval, approveCallback] = useApproveCallback(
     approvalTokenAmount,
@@ -88,7 +88,7 @@ export const Pay = ({
     requiredChain.id,
   )
   const notApproved = approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING
-
+  console.log({ approval, approveCallback, bond, requiredChain, approvalTokenAmount })
   return (
     <div className="space-y-2">
       <SummaryItem
