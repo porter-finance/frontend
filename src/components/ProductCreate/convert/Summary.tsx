@@ -7,6 +7,7 @@ import { useToken } from 'wagmi'
 import { useBondName } from '../../../hooks/useBondName'
 import { SummaryItem } from '../SummaryItem'
 
+import { useCollateralRatio } from '@/hooks/useCollateralRatio'
 import { useStrikePrice } from '@/hooks/useStrikePrice'
 
 export const Summary = ({ currentStep }) => {
@@ -31,7 +32,13 @@ export const Summary = ({ currentStep }) => {
   const { data: collateralTokenData } = useToken({ address: collateralToken?.address })
   const borrowTokenSymbol = borrowTokenData?.symbol || '-'
   const collateralTokenSymbol = collateralTokenData?.symbol || '-'
-  const collateralizationRatio = (amountOfCollateral / amountOfBonds) * 100
+
+  const collateralizationRatio = useCollateralRatio({
+    collateralToken,
+    amountOfBonds,
+    amountOfCollateral,
+  })
+
   const { data: strikePrice } = useStrikePrice()
   return (
     <div className="overflow-visible w-[425px] card">
@@ -61,7 +68,7 @@ export const Summary = ({ currentStep }) => {
                 title="Collateral tokens"
               />
               <SummaryItem
-                text={collateralizationRatio.toLocaleString() + '%'}
+                text={collateralizationRatio + '%'}
                 tip="Collateral tokens"
                 title="Collateralization ratio"
               />

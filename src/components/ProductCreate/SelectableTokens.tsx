@@ -10,6 +10,7 @@ export const BorrowTokens = {
       name: 'USDC',
       icon: USDCIcon,
       address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+      decimals: 6,
     },
   ],
   [chain.rinkeby.id]: [
@@ -17,6 +18,7 @@ export const BorrowTokens = {
       name: 'USDC',
       icon: USDCIcon,
       address: '0xed1980F313A6276d62DEA9c0c1084F28C6e0a67c',
+      decimals: 6,
     },
   ],
 }
@@ -32,6 +34,7 @@ export const CollateralTokens = {
       name: 'RBN',
       icon: RBNIcon,
       address: '0x6123b0049f904d730db3c36a31167d9d4121fa6b',
+      decimals: 18,
     },
   ],
   [chain.rinkeby.id]: [
@@ -39,11 +42,13 @@ export const CollateralTokens = {
       name: 'RBN',
       icon: RBNIcon,
       address: '0xaC554B8Fb63aC7a46819701953a7413290c81448',
+      decimals: 18,
     },
     {
       name: 'PRTR',
       icon: PRTRIcon,
       address: '0xd7E36C7a3d046d02AcFc57FF6B1cc5b750921710',
+      decimals: 18,
     },
   ],
 }

@@ -6,6 +6,7 @@ import { FieldRowLabelStyledText, FieldRowWrapper } from '../../form/InterestRat
 import CollateralTokenSelector from '../selectors/CollateralTokenSelector'
 
 import TooltipElement from '@/components/common/Tooltip'
+import { useCollateralRatio } from '@/hooks/useCollateralRatio'
 import { useTokenPrice } from '@/hooks/useTokenPrice'
 
 export const StepTwo = () => {
@@ -17,7 +18,13 @@ export const StepTwo = () => {
   ])
   const { data: tokenPrice } = useTokenPrice(collateralToken?.address)
   const collateralValue = amountOfCollateral * tokenPrice
-  const collateralizationRatio = (amountOfCollateral / amountOfBonds) * 100
+
+  const collateralizationRatio = useCollateralRatio({
+    collateralToken,
+    amountOfBonds,
+    amountOfCollateral,
+  })
+
   return (
     <>
       <div className="w-full form-control">
@@ -69,7 +76,7 @@ export const StepTwo = () => {
           <div className="text-sm text-[#E0E0E0]">
             <p>
               {collateralToken?.address && !isNaN(collateralValue)
-                ? collateralizationRatio.toLocaleString() + '%'
+                ? collateralizationRatio + '%'
                 : '-'}
             </p>
           </div>

@@ -5,6 +5,7 @@ import { useFormContext } from 'react-hook-form'
 import { useToken } from 'wagmi'
 
 import { useBondName } from '../../../hooks/useBondName'
+import { useCollateralRatio } from '../../../hooks/useCollateralRatio'
 import { SummaryItem } from '../SummaryItem'
 
 export const Summary = ({ currentStep }) => {
@@ -20,10 +21,15 @@ export const Summary = ({ currentStep }) => {
 
   const { data: borrowTokenData } = useToken({ address: borrowToken?.address })
   const { data: collateralTokenData } = useToken({ address: collateralToken?.address })
+  const collateralizationRatio = useCollateralRatio({
+    collateralToken,
+    amountOfBonds,
+    amountOfCollateral,
+  })
 
   const borrowTokenSymbol = borrowTokenData?.symbol || '-'
   const collateralTokenSymbol = collateralTokenData?.symbol || '-'
-  const collateralizationRatio = (amountOfCollateral / amountOfBonds) * 100
+
   return (
     <div className="overflow-visible w-[425px] card ">
       <div className="card-body">

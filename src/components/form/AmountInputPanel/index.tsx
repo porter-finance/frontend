@@ -92,7 +92,7 @@ export interface unlockProps {
   token?: string
 }
 
-interface Props {
+const AmountInputPanel = (props: {
   info?: FieldRowInfoProps
   onMax?: () => void
   onUserSellAmountInput: (val: string) => void
@@ -104,9 +104,7 @@ interface Props {
   amountDescription?: string
   value: string
   disabled?: boolean
-}
-
-const AmountInputPanel: React.FC<Props> = (props) => {
+}) => {
   const {
     amountDescription,
     amountText = 'Amount',
@@ -145,7 +143,7 @@ const AmountInputPanel: React.FC<Props> = (props) => {
             onUserSellAmountInput={onUserSellAmountInput}
             placeholder="-"
             readOnly={!account}
-            value={!account ? '-' : value}
+            value={!account ? '-' : value || ''}
           />
           <Wrap>
             {token && <TokenPill token={token} />}

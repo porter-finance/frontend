@@ -11,6 +11,7 @@ export const TokenDetails = ({ option }) => {
   const { data: tokenBalance } = useBalance({
     addressOrName: account?.address,
     token: option?.address,
+    formatUnits: option?.decimals,
   })
   const balanceString = tokenBalance?.formatted
   if (!option) {

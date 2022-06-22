@@ -5,7 +5,7 @@
 ### Install Dependencies and Run
 
 ```bash
-pnpm && pnpm start
+pnpm i && pnpm start
 ```
 
 If the graphql schema changes, run typechain:all

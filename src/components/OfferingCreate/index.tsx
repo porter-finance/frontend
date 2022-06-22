@@ -20,7 +20,7 @@ export const SelectOffering = () => {
           icon: <OTCCreateIcon />,
           url: '/offerings/create/otc',
           title: 'OTC',
-          description: 'An OTC built for DeFi.',
+          description: 'Coming soon!',
           disabled: true,
         },
       ]}
