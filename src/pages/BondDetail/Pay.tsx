@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 
+import { parseFixed } from '@ethersproject/bignumber'
 import { formatUnits, parseUnits } from '@ethersproject/units'
 import { Token, TokenAmount } from '@josojo/honeyswap-sdk'
 import dayjs from 'dayjs'
@@ -79,7 +80,7 @@ export const Pay = ({
       bond?.paymentToken?.symbol,
       bond?.paymentToken?.name,
     ),
-    bondAmount,
+    parseFixed(bondAmount || '0', bond?.paymentToken?.decimals).toBigInt(),
   )
   const [approval, approveCallback] = useApproveCallback(
     approvalTokenAmount,
@@ -135,7 +136,7 @@ export const Pay = ({
 
       <ActionButton
         className={`${isLoading ? 'loading' : ''}`}
-        disabled={!Number(bondAmount) || hasError || notApproved}
+        disabled={!Number(bondAmount || '0') || hasError || notApproved}
         onClick={() =>
           write({
             args: [parseUnits(bondAmount || '0', bond?.paymentToken.decimals)],

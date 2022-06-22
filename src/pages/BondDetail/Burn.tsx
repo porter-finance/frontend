@@ -49,20 +49,19 @@ export const Burn = ({
   const onMax = () => {
     setBondAmount(tokenBalance?.formatted)
   }
-
-  const hasError = parseUnits(bondAmount || '0', bond?.decimals).gt(tokenBalance?.value)
-
+  const hasError =
+    tokenBalance?.value && parseUnits(bondAmount || '0', bond?.decimals).gt(tokenBalance?.value)
   return (
     <div className="space-y-2">
       <SummaryItem
         border={false}
-        text={`${Number(bondInfo?.totalSupply.formatted).toLocaleString()}`}
+        text={`${Number(bondInfo?.totalSupply.formatted).toLocaleString() || '-'}`}
         tip="Total supply of bond shares"
         title="Bonds outstanding"
       />
       <SummaryItem
         border={false}
-        text={`${Number(tokenBalance?.formatted).toLocaleString()}`}
+        text={`${Number(tokenBalance?.formatted).toLocaleString() || '-'}`}
         tip="The number of bond shares owned by your account"
         title="Your balance"
       />
