@@ -55,13 +55,13 @@ export const Burn = ({
     <div className="space-y-2">
       <SummaryItem
         border={false}
-        text={`${Number(bondInfo?.totalSupply.formatted).toLocaleString() || '-'}`}
+        text={`${(Number(bondInfo?.totalSupply.formatted) || '-').toLocaleString()}`}
         tip="Total supply of bond shares"
         title="Bonds outstanding"
       />
       <SummaryItem
         border={false}
-        text={`${Number(tokenBalance?.formatted).toLocaleString() || '-'}`}
+        text={`${(Number(tokenBalance?.formatted) || '-').toLocaleString()}`}
         tip="The number of bond shares owned by your account"
         title="Your balance"
       />
