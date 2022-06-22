@@ -11,6 +11,7 @@ import { InfoType } from '@/components/pureStyledComponents/FieldRow'
 import BOND_ABI from '@/constants/abis/bond.json'
 import { Bond } from '@/generated/graphql'
 import { getValuePerBond } from '@/hooks/useBondExtraDetails'
+import { useTransactionAdder } from '@/state/transactions/hooks'
 
 export const Burn = ({
   bond,
@@ -30,12 +31,21 @@ export const Burn = ({
 }) => {
   const [bondAmount, setBondAmount] = useState('0')
   const collateralPerBond = bond ? getValuePerBond(bond, bond?.collateralRatio) : 0
-  const { error, isError, isLoading, reset, write } = useContractWrite(
+  const addTransaction = useTransactionAdder()
+
+  const { data, error, isError, isLoading, reset, write } = useContractWrite(
     {
       addressOrName: bond?.id,
       contractInterface: BOND_ABI,
     },
     'burn',
+    {
+      onSuccess(data, error) {
+        addTransaction(data, {
+          summary: `Burn ${bondAmount} ${bond?.symbol}`,
+        })
+      },
+    },
   )
 
   const { data: tokenBalance } = useBalance({
@@ -44,7 +54,7 @@ export const Burn = ({
     formatUnits: bond?.decimals,
   })
 
-  const { data: bondInfo } = useToken({ address: bond?.id, formatUnits: bond?.decimals })
+  const { data: bondInfo, refetch } = useToken({ address: bond?.id, formatUnits: bond?.decimals })
 
   const onMax = () => {
     setBondAmount(tokenBalance?.formatted)
@@ -91,11 +101,12 @@ export const Burn = ({
       <ActionButton
         className={`${isLoading ? 'loading' : ''}`}
         disabled={!Number(bondAmount) || hasError}
-        onClick={() =>
+        onClick={() => {
           write({
             args: [parseUnits(bondAmount || '0', bond.decimals)],
           })
-        }
+          refetch()
+        }}
       >
         Burn
       </ActionButton>
