@@ -52,10 +52,15 @@ export const Pay = ({
       },
     },
   )
+  const { data: amountUnpaid } = useContractRead(
+    { addressOrName: bond?.id, contractInterface: BOND_ABI },
+    'amountUnpaid',
+  )
+
+  const amountOwed = formatUnits(amountUnpaid || '0', bond?.paymentToken?.decimals)
   const { isLoading: isConfirmLoading } = useWaitForTransaction({
     hash: data?.hash,
   })
-  const amountOwed = formatUnits(bond?.amountUnpaid, bond?.paymentToken?.decimals)
 
   const onMax = () => {
     setBondAmount(amountOwed)
