@@ -224,7 +224,10 @@ export const Withdraw = ({
         <WarningModal
           content={error?.message || errorPayment?.message}
           isOpen={isError || isErrorPayment}
-          onDismiss={() => reset() && resetPayment()}
+          onDismiss={() => {
+            reset()
+            resetPayment()
+          }}
         />
       </div>
     </div>
