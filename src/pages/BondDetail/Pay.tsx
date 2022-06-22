@@ -4,7 +4,7 @@ import { parseFixed } from '@ethersproject/bignumber'
 import { formatUnits, parseUnits } from '@ethersproject/units'
 import { Token, TokenAmount } from '@josojo/honeyswap-sdk'
 import dayjs from 'dayjs'
-import { useContractRead, useContractWrite } from 'wagmi'
+import { useContractRead, useContractWrite, useWaitForTransaction } from 'wagmi'
 
 import { SummaryItem } from '@/components/ProductCreate/SummaryItem'
 import { ActionButton } from '@/components/auction/Claimer'
@@ -15,6 +15,7 @@ import { requiredChain } from '@/connectors'
 import BOND_ABI from '@/constants/abis/bond.json'
 import { Bond } from '@/generated/graphql'
 import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback'
+import { useTransactionAdder } from '@/state/transactions/hooks'
 
 export const Pay = ({
   bond,
@@ -23,6 +24,7 @@ export const Pay = ({
     Bond,
     | 'id'
     | 'paymentToken'
+    | 'symbol'
     | 'state'
     | 'maturityDate'
     | 'maxSupply'
@@ -34,14 +36,25 @@ export const Pay = ({
   >
 }) => {
   const [bondAmount, setBondAmount] = useState('0')
-  const { error, isError, isLoading, reset, write } = useContractWrite(
+  const addTransaction = useTransactionAdder()
+
+  const { data, error, isError, isLoading, reset, write } = useContractWrite(
     {
       addressOrName: bond?.id,
       contractInterface: BOND_ABI,
     },
     'pay',
+    {
+      onSuccess(data, error) {
+        addTransaction(data, {
+          summary: `Pay ${bondAmount} ${bond?.paymentToken?.symbol} to ${bond?.symbol}`,
+        })
+      },
+    },
   )
-
+  const { isLoading: isConfirmLoading } = useWaitForTransaction({
+    hash: data?.hash,
+  })
   const amountOwed = formatUnits(bond?.amountUnpaid, bond?.paymentToken?.decimals)
 
   const onMax = () => {
@@ -135,7 +148,7 @@ export const Pay = ({
       />
 
       <ActionButton
-        className={`${isLoading ? 'loading' : ''}`}
+        className={`${isLoading || isConfirmLoading ? 'loading' : ''}`}
         disabled={!Number(bondAmount || '0') || hasError || notApproved}
         onClick={() =>
           write({
