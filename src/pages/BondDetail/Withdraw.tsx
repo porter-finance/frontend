@@ -54,6 +54,7 @@ export const Withdraw = ({
     error: errorPayment,
     isError: isErrorPayment,
     isLoading: isLoadingPayment,
+    reset: resetPayment,
     write: writePayment,
   } = useContractWrite(
     {
@@ -223,7 +224,7 @@ export const Withdraw = ({
         <WarningModal
           content={error?.message || errorPayment?.message}
           isOpen={isError || isErrorPayment}
-          onDismiss={reset}
+          onDismiss={() => reset() && resetPayment()}
         />
       </div>
     </div>
