@@ -38,6 +38,11 @@ export const Withdraw = ({
     'withdrawExcessCollateral',
   )
 
+  const { data: paymentBalance } = useContractRead(
+    { addressOrName: bond?.id, contractInterface: BOND_ABI },
+    'paymentBalance',
+  )
+
   const { data: previewWithdrawExcessCollateral } = useContractRead(
     { addressOrName: bond?.id, contractInterface: BOND_ABI },
     'previewWithdrawExcessCollateral',
@@ -134,12 +139,12 @@ export const Withdraw = ({
 
         <SummaryItem
           border={false}
-          text={`${Number(
+          text={`${
             formatUnits(
-              Math.abs(bond?.maxSupply - bond?.amountUnpaid).toString(),
-              bond?.paymentToken?.decimals,
-            ),
-          ).toLocaleString()} ${bond?.paymentToken?.symbol}`}
+              (paymentBalance || '0').toString(),
+              bond?.paymentToken.decimals,
+            ).toLocaleString() || '-'
+          } ${bond?.paymentToken?.symbol}`}
           tip="The amount of total payment in the Bond contract."
           title="Payment locked"
         />
