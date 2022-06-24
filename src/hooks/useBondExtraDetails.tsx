@@ -11,8 +11,8 @@ import { useTokenPrice } from './useTokenPrice'
 
 import { Bond } from '@/generated/graphql'
 
-const WADDecimals = 18
-const paymentTokenPrice = 1
+export const WADDecimals = 18
+export const paymentTokenPrice = 1
 
 export const getValuePerBond = (
   bond: Pick<Bond, 'collateralToken' | 'paymentToken'>,

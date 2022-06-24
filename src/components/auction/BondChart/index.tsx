@@ -4,10 +4,10 @@ import useBondChart from '../../../hooks/useBondChart'
 import { getDisplay } from '../../../utils'
 import { InlineLoading } from '../../common/InlineLoading'
 import { SpinnerSize } from '../../common/Spinner'
-import Tooltip from '../../common/Tooltip'
 import { XYConvertBondChart, XYSimpleBondChart } from '../Charts/BondChart'
 import { ChartWrapper, VolumeLabel } from '../OrderbookChart'
 
+import Tooltip from '@/components/common/Tooltip'
 import { Token } from '@/generated/graphql'
 
 interface Props {

@@ -5,10 +5,11 @@ import styled from 'styled-components'
 import { useGlobalFilter, useTable } from 'react-table'
 
 import { ActionButton } from '../../auction/Claimer'
-import Tooltip from '../../common/Tooltip'
 import { Delete } from '../../icons/Delete'
 import { Magnifier } from '../../icons/Magnifier'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
+
+import Tooltip from '@/components/common/Tooltip'
 
 const Wrapper = styled.div`
   margin-top: -30px;

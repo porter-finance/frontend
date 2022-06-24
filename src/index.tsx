@@ -26,7 +26,7 @@ import '@rainbow-me/rainbowkit/styles.css'
 import { GnosisConnector } from './utils/gnosisConnector'
 
 const { chains, provider } = configureChains(
-  [!isRinkeby ? chain.mainnet : chain.rinkeby],
+  [!isRinkeby ? chain.mainnet : chain.rinkeby, chain.hardhat],
   [alchemyProvider({ alchemyId: 'rD-tnwLLzbfOaFOBAv2ckazyJTmCRLhu' }), publicProvider()],
 )
 

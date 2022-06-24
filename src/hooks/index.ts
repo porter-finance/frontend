@@ -1,14 +1,14 @@
 import { useAccount, useBlockNumber, useNetwork, useProvider, useSigner } from 'wagmi'
 
 export function useActiveWeb3React() {
-  const { data } = useAccount()
+  const { data: account } = useAccount()
   const { activeChain, error, switchNetwork } = useNetwork()
   const provider = useProvider()
   const { data: blockNumber } = useBlockNumber()
   const { data: signer } = useSigner()
 
   return {
-    account: data?.address,
+    account: account?.address,
     active: !!activeChain,
     chainId: activeChain?.id,
     switchNetwork,

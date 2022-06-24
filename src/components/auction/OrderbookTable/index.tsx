@@ -13,10 +13,10 @@ import { useBondMaturityForAuction } from '../../../hooks/useBondMaturityForAuct
 import { AuctionState, DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { OrderStatus } from '../../../state/orders/reducer'
 import { getExplorerLink, getTokenDisplay } from '../../../utils'
-import Tooltip from '../../common/Tooltip'
 import { calculateInterestRate } from '../../form/InterestRateInputPanel'
 import { orderStatusText } from '../OrdersTable'
 
+import Tooltip from '@/components/common/Tooltip'
 import { Auction } from '@/generated/graphql'
 import { useGetAuctionProceeds } from '@/hooks/useClaimOrderCallback'
 import { getAuctionStates } from '@/pages/Offerings'

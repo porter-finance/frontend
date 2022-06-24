@@ -5,7 +5,6 @@ import styled, { keyframes } from 'styled-components'
 import { useActiveWeb3React } from '../../../hooks'
 import { ApprovalState } from '../../../hooks/useApproveCallback'
 import { TokenPill } from '../../bond/BondAction'
-import Tooltip from '../../common/Tooltip'
 import { MiniLock } from '../../icons/MiniLock'
 import { MiniSpinner } from '../../icons/MiniSpinner'
 import {
@@ -20,6 +19,8 @@ import {
   InfoType,
 } from '../../pureStyledComponents/FieldRow'
 import { FieldRowLabelStyled } from '../PriceInputPanel'
+
+import Tooltip from '@/components/common/Tooltip'
 
 const rotate = keyframes`
   from {
@@ -91,7 +92,7 @@ export interface unlockProps {
   token?: string
 }
 
-interface Props {
+const AmountInputPanel = (props: {
   info?: FieldRowInfoProps
   onMax?: () => void
   onUserSellAmountInput: (val: string) => void
@@ -103,9 +104,7 @@ interface Props {
   amountDescription?: string
   value: string
   disabled?: boolean
-}
-
-const AmountInputPanel: React.FC<Props> = (props) => {
+}) => {
   const {
     amountDescription,
     amountText = 'Amount',
@@ -144,7 +143,7 @@ const AmountInputPanel: React.FC<Props> = (props) => {
             onUserSellAmountInput={onUserSellAmountInput}
             placeholder="-"
             readOnly={!account}
-            value={!account ? '-' : value}
+            value={!account ? '-' : value || ''}
           />
           <Wrap>
             {token && <TokenPill token={token} />}

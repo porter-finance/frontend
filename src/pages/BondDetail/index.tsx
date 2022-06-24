@@ -21,6 +21,7 @@ import TokenLogo from '../../components/token/TokenLogo'
 import { useBond } from '../../hooks/useBond'
 import { useBondExtraDetails } from '../../hooks/useBondExtraDetails'
 import { ConvertButtonOutline, LoadingTwoGrid, SimpleButtonOutline, TwoGridPage } from '../Auction'
+import BondManagement from './BondManagement'
 
 import { Bond } from '@/generated/graphql'
 import { useActiveWeb3React } from '@/hooks'
@@ -213,7 +214,7 @@ const BondDetail: React.FC = () => {
               />
             </div>
             <div>
-              <h1 className="text-3xl text-white capitalize">{bond?.name.toLowerCase()}</h1>
+              <h1 className="text-4xl text-white capitalize">{bond?.name.toLowerCase()}</h1>
               <p className="text-sm text-blue-100">
                 <TokenLink token={bond} withLink />
               </p>
@@ -308,6 +309,7 @@ const BondDetail: React.FC = () => {
                 <BondAction componentType={BondActions.Redeem} />
               )}
               {!isMatured && !isPaid && !isDefaulted && <RedeemError />}
+              <BondManagement />
             </>
           }
         />
