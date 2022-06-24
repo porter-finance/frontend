@@ -61,9 +61,8 @@ export const WithdrawPayment = ({ bond }) => {
       <SummaryItem
         border={false}
         text={`${
-          formatUnits(
-            (paymentBalance || '0').toString(),
-            bond?.paymentToken.decimals,
+          Number(
+            formatUnits((paymentBalance || '0').toString(), bond?.paymentToken.decimals),
           ).toLocaleString() || '-'
         } ${bond?.paymentToken?.symbol}`}
         tip="The amount of total payment in the Bond contract."
