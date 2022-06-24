@@ -1,7 +1,13 @@
 import React, { useState } from 'react'
 
-import { parseUnits } from '@ethersproject/units'
-import { useBalance, useContractWrite, useToken, useWaitForTransaction } from 'wagmi'
+import { formatUnits, parseUnits } from '@ethersproject/units'
+import {
+  useBalance,
+  useContractRead,
+  useContractWrite,
+  useToken,
+  useWaitForTransaction,
+} from 'wagmi'
 
 import { SummaryItem } from '@/components/ProductCreate/SummaryItem'
 import { ActionButton } from '@/components/auction/Claimer'
@@ -32,7 +38,10 @@ export const Burn = ({
   const [bondAmount, setBondAmount] = useState('0')
   const collateralPerBond = bond ? getValuePerBond(bond, bond?.collateralRatio) : 0
   const addTransaction = useTransactionAdder()
-
+  const { data: totalSupply } = useContractRead(
+    { addressOrName: bond?.id, contractInterface: BOND_ABI },
+    'totalSupply',
+  )
   const { data, error, isError, isLoading, reset, write } = useContractWrite(
     {
       addressOrName: bond?.id,
@@ -69,7 +78,9 @@ export const Burn = ({
     <div className="space-y-2">
       <SummaryItem
         border={false}
-        text={`${(Number(bondInfo?.totalSupply.formatted) || '0').toLocaleString()}`}
+        text={`${Number(
+          formatUnits((totalSupply || '0').toString(), bond?.decimals),
+        ).toLocaleString()}`}
         tip="Total supply of bond shares"
         title="Bonds outstanding"
       />
