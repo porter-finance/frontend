@@ -55,6 +55,10 @@ export const Withdraw = ({
     { addressOrName: bond?.id, contractInterface: BOND_ABI },
     'previewWithdrawExcessCollateral',
   )
+  const { data: collateralBalance } = useContractRead(
+    { addressOrName: bond?.id, contractInterface: BOND_ABI },
+    'collateralBalance',
+  )
 
   const excessCollateralDisplay = Number(
     formatUnits(
@@ -87,7 +91,7 @@ export const Withdraw = ({
         <SummaryItem
           border={false}
           text={`${Number(
-            formatUnits(bond?.collateralTokenAmount, bond?.collateralToken?.decimals),
+            formatUnits(collateralBalance, bond?.collateralToken?.decimals),
           ).toLocaleString()} ${bond?.collateralToken?.symbol}`}
           tip="The amount of total collateral in the Bond contract."
           title="Collateral locked"
