@@ -91,7 +91,7 @@ export const Withdraw = ({
         <SummaryItem
           border={false}
           text={`${Number(
-            formatUnits(collateralBalance, bond?.collateralToken?.decimals),
+            formatUnits((collateralBalance || '0').toString(), bond?.collateralToken?.decimals),
           ).toLocaleString()} ${bond?.collateralToken?.symbol}`}
           tip="The amount of total collateral in the Bond contract."
           title="Collateral locked"
