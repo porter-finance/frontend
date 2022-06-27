@@ -26,7 +26,11 @@ export const FormSteps = ({
 }) => {
   const [currentStep, setCurrentStep] = useState(0)
 
-  const methods = useForm<Inputs>({ mode: 'onChange' })
+  const methods = useForm<Inputs>({
+    mode: 'onTouched',
+    shouldFocusError: false,
+    shouldUseNativeValidation: true,
+  })
   const {
     formState: { isDirty, isValid },
     handleSubmit,

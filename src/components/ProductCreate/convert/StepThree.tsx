@@ -11,10 +11,16 @@ import { useTokenPrice } from '@/hooks/useTokenPrice'
 
 export const StepThree = () => {
   const { register, watch } = useFormContext()
-  const [collateralToken, amountOfConvertible] = watch(['collateralToken', 'amountOfConvertible'])
+
+  const [amountOfCollateral, collateralToken, amountOfConvertible] = watch([
+    'amountOfCollateral',
+    'collateralToken',
+    'amountOfConvertible',
+  ])
   const { data: collateralTokenPrice } = useTokenPrice(collateralToken?.address)
   const convertibleTokenValue = amountOfConvertible * collateralTokenPrice
   const { data: strikePrice } = useStrikePrice()
+
   return (
     <>
       <div className="w-full form-control">
@@ -43,7 +49,8 @@ export const StepThree = () => {
           {...register('amountOfConvertible', {
             required: true,
             valueAsNumber: true,
-            min: 0,
+            validate: { overZero: (value) => value > 0 || 'Value cannot be 0' },
+            max: amountOfCollateral,
           })}
         />
       </div>

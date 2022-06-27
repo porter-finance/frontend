@@ -1,16 +1,19 @@
 import React from 'react'
 
 import { useFormContext } from 'react-hook-form'
+import { useBalance, useToken } from 'wagmi'
 
 import { FieldRowLabelStyledText, FieldRowWrapper } from '../../form/InterestRateInputPanel'
 import CollateralTokenSelector from '../selectors/CollateralTokenSelector'
 
 import TooltipElement from '@/components/common/Tooltip'
+import { useActiveWeb3React } from '@/hooks'
 import { useCollateralRatio } from '@/hooks/useCollateralRatio'
 import { useTokenPrice } from '@/hooks/useTokenPrice'
 
 export const StepTwo = () => {
   const { register, watch } = useFormContext()
+  const { account } = useActiveWeb3React()
   const [amountOfCollateral, collateralToken, amountOfBonds] = watch([
     'amountOfCollateral',
     'collateralToken',
@@ -18,6 +21,12 @@ export const StepTwo = () => {
   ])
   const { data: tokenPrice } = useTokenPrice(collateralToken?.address)
   const collateralValue = amountOfCollateral * tokenPrice
+  const { data: token } = useToken(collateralToken?.address)
+  const { data: tokenBalance } = useBalance({
+    addressOrName: account,
+    token: collateralToken?.address,
+    formatUnits: token?.decimals,
+  })
 
   const collateralizationRatio = useCollateralRatio({
     collateralToken,
@@ -46,13 +55,14 @@ export const StepTwo = () => {
         </label>
         <input
           className="w-full input input-bordered"
-          min="0"
+          min={0}
           placeholder="0"
           type="number"
           {...register('amountOfCollateral', {
             required: true,
             valueAsNumber: true,
-            min: 0,
+            validate: { overZero: (value) => value > 0 || 'Value cannot be 0' },
+            max: Number(tokenBalance?.formatted),
           })}
         />
       </div>
@@ -76,7 +86,7 @@ export const StepTwo = () => {
           <div className="text-sm text-[#E0E0E0]">
             <p>
               {collateralToken?.address && !isNaN(collateralValue)
-                ? collateralizationRatio + '%'
+                ? collateralizationRatio.toLocaleString() + '%'
                 : '-'}
             </p>
           </div>
