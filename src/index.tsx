@@ -3,7 +3,6 @@ import { BrowserRouter } from 'react-router-dom'
 
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { RainbowKitProvider, Theme, darkTheme, getDefaultWallets } from '@rainbow-me/rainbowkit'
-import { ConnectorArgs } from '@rainbow-me/rainbowkit/dist/wallets/Wallet'
 import { merge } from 'lodash'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
@@ -40,10 +39,7 @@ const { connectors } = getDefaultWallets({
 // as a connector in the list, but that's OK as you must be on the site to work
 const wagmiClient = createClient({
   autoConnect: true,
-  connectors: (connectorArgs: ConnectorArgs) => [
-    new GnosisConnector({ chains }),
-    ...connectors(connectorArgs),
-  ],
+  connectors: () => [new GnosisConnector({ chains }), ...connectors()],
   provider,
 })
 
