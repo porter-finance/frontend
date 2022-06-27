@@ -69,7 +69,7 @@ export const Summary = ({ currentStep }) => {
               />
               <SummaryItem
                 text={collateralizationRatio + '%'}
-                tip="Collateral tokens"
+                tip="Collateralization ratio"
                 title="Collateralization ratio"
               />
             </>
@@ -79,7 +79,7 @@ export const Summary = ({ currentStep }) => {
               <SummaryItem
                 text={`${amountOfConvertible || '-'} ${collateralTokenSymbol || ''}`}
                 tip="Convertible tokens"
-                title="Collateral tokens"
+                title="Convertible tokens"
               />
               <SummaryItem text={strikePrice?.display} tip="Strike price" title="Strike price" />
             </>
