@@ -41,6 +41,7 @@ export const StepOne = () => {
       startDate: currentTimeInUTC() / 1000,
     }).toLocaleString()
   }
+
   return (
     <>
       <div className="w-full form-control">
@@ -69,8 +70,10 @@ export const StepOne = () => {
           {...register('auctionedSellAmount', {
             required: true,
             valueAsNumber: true,
+            min: 0,
+            max: Number(bondToAuction?.tokenBalances[0]?.amount),
             validate: {
-              greaterThanZero: (auctionedSellAmount) => auctionedSellAmount > 0,
+              greaterThanZero: (value) => value > 0,
             },
           })}
         />
