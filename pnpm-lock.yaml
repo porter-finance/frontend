@@ -13,6 +13,8 @@ specifiers:
   '@ethersproject/solidity': ^5.6.1
   '@ethersproject/strings': ^5.6.1
   '@ethersproject/units': ^5.6.1
+  '@gnosis.pm/safe-apps-provider': ^0.11.0
+  '@gnosis.pm/safe-apps-sdk': ^7.3.0
   '@graphql-codegen/cli': 2.6.2
   '@graphql-codegen/fragment-matcher': 3.2.1
   '@graphql-codegen/introspection': ^2.1.1
@@ -168,6 +170,8 @@ dependencies:
   yup: 0.32.11
 
 devDependencies:
+  '@gnosis.pm/safe-apps-provider': 0.11.1
+  '@gnosis.pm/safe-apps-sdk': 7.4.0
   '@graphql-codegen/cli': 2.6.2_bd2houww3rfjk53zactamwptje
   '@graphql-codegen/fragment-matcher': 3.2.1_graphql@16.5.0
   '@graphql-codegen/introspection': 2.1.1_graphql@16.5.0
@@ -2767,6 +2771,45 @@ packages:
         integrity: sha512-59SgoZ3EXbkfSX7b63tsou/SDGzwUEK6MuB5sKqgVK1/XE0fxmpsOb9DQI8LXW3KfGnAjImCGhhEb7uPPAUVNA==,
       }
     dev: false
+
+  /@gnosis.pm/safe-apps-provider/0.11.1:
+    resolution:
+      {
+        integrity: sha512-gVhNtiF09GIUjQgjKdtnSXc1hDFF3DPCiDN2+6u/wI/nnLg8+3tjQZWqOLnJ3qnee/GbIb3AV1fWVN7DDJH4QA==,
+      }
+    dependencies:
+      '@gnosis.pm/safe-apps-sdk': 7.4.0
+      events: 3.3.0
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - utf-8-validate
+    dev: true
+
+  /@gnosis.pm/safe-apps-sdk/7.4.0:
+    resolution:
+      {
+        integrity: sha512-7YYtEnOioRWo7Lre2XBRxNlCFBseqizWBmkYcjPFBMP8K9blBrntyRo/jr+FdK+wss+85n80RatAP0v8KjmDSg==,
+      }
+    dependencies:
+      '@gnosis.pm/safe-react-gateway-sdk': 3.1.2
+      ethers: 5.6.9
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - utf-8-validate
+    dev: true
+
+  /@gnosis.pm/safe-react-gateway-sdk/3.1.2:
+    resolution:
+      {
+        integrity: sha512-/7TPxXqFyoK8PjbBm6YygTwx+VUUTNxFp8F3ceY3jmJhWdtek+Wrr4o20HzPN1nidO9qiKjgoyQLg1fgjSVopw==,
+      }
+    dependencies:
+      cross-fetch: 3.1.5
+    transitivePeerDependencies:
+      - encoding
+    dev: true
 
   /@graphql-codegen/cli/2.6.2_bd2houww3rfjk53zactamwptje:
     resolution:
