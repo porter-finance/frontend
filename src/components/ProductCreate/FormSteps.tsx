@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
 import { ErrorMessage } from '@hookform/error-message'
-import { DoubleArrowRightIcon } from '@radix-ui/react-icons'
+import { CrossCircledIcon, DoubleArrowRightIcon } from '@radix-ui/react-icons'
 import { FormProvider, useForm } from 'react-hook-form'
 
 import { ActionButton } from '../auction/Claimer'
@@ -33,6 +33,7 @@ export const FormSteps = ({
   const { account } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
   const onSubmit = (data) => console.log('onSubmit', data)
+  const totalErrors = Object.keys(errors).length
 
   return (
     <FormProvider {...methods}>
@@ -127,15 +128,6 @@ export const FormSteps = ({
 
                 {account && (
                   <>
-                    {Object.keys(errors).map((name) => (
-                      <ErrorMessage
-                        errors={errors}
-                        key={name}
-                        name={name}
-                        render={({ message }) => <p>{message}</p>}
-                      />
-                    ))}
-
                     {midComponents[currentStep]}
 
                     {currentStep < steps.length - 1 && (
@@ -154,6 +146,34 @@ export const FormSteps = ({
                         disabled={!isRinkeby && !IssuerAllowList.includes(account.toLowerCase())}
                       />
                     )}
+
+                    {totalErrors ? (
+                      <div className="p-4 bg-red-100 rounded-md">
+                        <div className="flex">
+                          <div className="shrink-0">
+                            <CrossCircledIcon className="w-5 h-5 text-red-400" />
+                          </div>
+                          <div className="ml-3">
+                            <h3 className="text-sm font-medium text-red-800">
+                              There {totalErrors > 1 ? `were ${totalErrors} errors` : `is an error`}{' '}
+                              with your submission
+                            </h3>
+                            <div className="mt-2 text-sm text-red-700">
+                              <ul className="pl-5 space-y-1 list-disc" role="list">
+                                {Object.keys(errors).map((name) => (
+                                  <ErrorMessage
+                                    errors={errors}
+                                    key={name}
+                                    name={name}
+                                    render={({ message }) => <li>{message}</li>}
+                                  />
+                                ))}
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ) : null}
                   </>
                 )}
               </div>
