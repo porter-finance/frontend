@@ -36,7 +36,7 @@ export const Selector = ({ OptionEl, disabled = false, name, options }) => {
       <input
         className="hidden"
         readOnly
-        {...register(name, { required: true })}
+        {...register(name, { required: 'A borrow token must be selected' })}
         defaultValue={selected?.address || selected?.id}
       />
       <div className="relative mt-1">

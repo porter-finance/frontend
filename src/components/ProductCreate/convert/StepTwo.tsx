@@ -59,10 +59,14 @@ export const StepTwo = () => {
           placeholder="0"
           type="number"
           {...register('amountOfCollateral', {
-            required: true,
+            required: 'The amount of collateral must be entered',
             valueAsNumber: true,
-            validate: { overZero: (value) => value > 0 || 'Value cannot be 0' },
-            max: Number(tokenBalance?.formatted),
+            validate: {
+              overZero: (value) => value > 0 || 'A Bond should have some collateral tokens',
+              lessThanBalance: (value) =>
+                value <= Number(tokenBalance?.formatted) ||
+                "The amount of collateral tokens cannot exceed the current wallet's balance",
+            },
           })}
         />
       </div>

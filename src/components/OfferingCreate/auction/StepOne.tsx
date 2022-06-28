@@ -68,12 +68,13 @@ export const StepOne = () => {
           placeholder="0"
           type="number"
           {...register('auctionedSellAmount', {
-            required: true,
+            required: 'Some bonds must be auctioned',
             valueAsNumber: true,
-            min: 0,
-            max: Number(bondToAuction?.tokenBalances),
             validate: {
-              greaterThanZero: (value) => value > 0,
+              greaterThanZero: (value) => value > 0 || 'Some bonds must be auctioned',
+              exceedBalance: (value) =>
+                value <= Number(bondToAuction?.tokenBalances?.[0]?.amount) ||
+                'Not enough bonds to sell',
             },
           })}
         />
@@ -93,10 +94,10 @@ export const StepOne = () => {
           step="0.001"
           type="number"
           {...register('minBidSize', {
-            required: true,
+            required: 'Bonds cannot be given away for free',
             valueAsNumber: true,
             validate: {
-              greaterThanZero: (minBidSize) => minBidSize > 0,
+              greaterThanZero: (value) => value > 0 || 'Bonds cannot be given away for free',
             },
           })}
         />

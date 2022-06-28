@@ -22,7 +22,7 @@ export const StepOne = () => {
         <input
           className="w-full input input-bordered"
           defaultValue=""
-          {...register('issuerName', { required: true })}
+          {...register('issuerName', { required: 'Please enter a Bond issuer name' })}
           placeholder="Insert issuer name"
           type="text"
         />
@@ -41,8 +41,10 @@ export const StepOne = () => {
           type="number"
           {...register('amountOfBonds', {
             valueAsNumber: true,
-            required: true,
-            min: 1,
+            required: 'Some amount bond shares must be minted',
+            validate: {
+              greaterThanZero: (value) => value > 0 || 'At least one share must be minted',
+            },
           })}
         />
       </div>
@@ -68,13 +70,16 @@ export const StepOne = () => {
           placeholder="DD/MM/YYYY"
           type="date"
           {...register('maturityDate', {
-            required: true,
+            required: 'A maturity date for the Bond must be entered',
             validate: {
-              validDate: (maturityDate) => dayjs(maturityDate).isValid(),
-              afterNow: (maturityDate) => dayjs(maturityDate).diff(new Date()) > 0,
+              validDate: (maturityDate) =>
+                dayjs(maturityDate).isValid() || 'The maturity date must be in the future',
+              afterNow: (maturityDate) =>
+                dayjs(maturityDate).diff(new Date()) > 0 ||
+                'The maturity date must be in the future',
               before10Years: (maturityDate) =>
                 dayjs(new Date()).add(10, 'years').isAfter(maturityDate) ||
-                'Must be before 10 years',
+                'The maturity date must be within 10 years',
             },
           })}
         />
