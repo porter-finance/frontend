@@ -35,7 +35,7 @@ export const StepThree = () => {
           {...register('minimumBiddingAmountPerOrder', {
             required: false,
             validate: {
-              greaterThanZero: (value) => value >= 0 || 'The minimum bid size is 1',
+              greaterThanZero: (value) => value > 0 || 'The minimum bid size is 1',
             },
           })}
         />
