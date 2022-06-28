@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 
+import { ErrorMessage } from '@hookform/error-message'
 import { DoubleArrowRightIcon } from '@radix-ui/react-icons'
-import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 
 import { ActionButton } from '../auction/Claimer'
 import { IssuerAllowList } from './SelectableTokens'
@@ -9,11 +10,6 @@ import { IssuerAllowList } from './SelectableTokens'
 import { isRinkeby } from '@/connectors'
 import { useActiveWeb3React } from '@/hooks'
 import { useWalletModalToggle } from '@/state/application/hooks'
-
-export type Inputs = {
-  amountOfCollateral: number
-  // todo there's more but seems like its not important to have them all listed?
-}
 
 export const FormSteps = ({
   ActionSteps,
@@ -26,18 +22,17 @@ export const FormSteps = ({
 }) => {
   const [currentStep, setCurrentStep] = useState(0)
 
-  const methods = useForm<Inputs>({
-    mode: 'onTouched',
-    shouldFocusError: false,
-    shouldUseNativeValidation: true,
+  const methods = useForm({
+    mode: 'onChange',
   })
   const {
-    formState: { isDirty, isValid },
+    formState: { errors, isDirty, isValid },
     handleSubmit,
   } = methods
+
   const { account } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log('onSubmit', data)
+  const onSubmit = (data) => console.log('onSubmit', data)
 
   return (
     <FormProvider {...methods}>
@@ -132,6 +127,15 @@ export const FormSteps = ({
 
                 {account && (
                   <>
+                    {Object.keys(errors).map((name) => (
+                      <ErrorMessage
+                        errors={errors}
+                        key={name}
+                        name={name}
+                        render={({ message }) => <p>{message}</p>}
+                      />
+                    ))}
+
                     {midComponents[currentStep]}
 
                     {currentStep < steps.length - 1 && (

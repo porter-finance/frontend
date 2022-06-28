@@ -73,7 +73,8 @@ export const StepOne = () => {
               validDate: (maturityDate) => dayjs(maturityDate).isValid(),
               afterNow: (maturityDate) => dayjs(maturityDate).diff(new Date()) > 0,
               before10Years: (maturityDate) =>
-                dayjs(new Date()).add(10, 'years').isAfter(maturityDate),
+                dayjs(new Date()).add(10, 'years').isAfter(maturityDate) ||
+                'Must be before 10 years',
             },
           })}
         />

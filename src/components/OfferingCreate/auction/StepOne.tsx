@@ -71,7 +71,7 @@ export const StepOne = () => {
             required: true,
             valueAsNumber: true,
             min: 0,
-            max: Number(bondToAuction?.tokenBalances[0]?.amount),
+            max: Number(bondToAuction?.tokenBalances),
             validate: {
               greaterThanZero: (value) => value > 0,
             },
