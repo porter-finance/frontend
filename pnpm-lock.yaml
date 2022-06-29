@@ -47,6 +47,7 @@ specifiers:
   '@typescript-eslint/parser': ^5.28.0
   '@uniswap/token-lists': ^1.0.0-beta.30
   '@uniswap/v2-core': 1.0.1
+  '@wagmi/core': ^0.4.4
   ajv: ^8.11.0
   ajv-formats: ^2.1.1
   assert: ^2.0.0
@@ -125,7 +126,7 @@ dependencies:
   '@ethersproject/solidity': 5.6.1
   '@ethersproject/strings': 5.6.1
   '@ethersproject/units': 5.6.1
-  '@gnosis.pm/safe-apps-wagmi': 1.0.0_@wagmi+core@0.3.8
+  '@gnosis.pm/safe-apps-wagmi': 1.0.0_@wagmi+core@0.4.4
   '@headlessui/react': 1.6.4_biqbaboplfbrettd7655fr4n2y
   '@hookform/error-message': 2.0.0_nzq6ff3b5vy25jvjnhvzqbkctm
   '@josojo/honeyswap-sdk': 1.0.0_dd4qxzuycslosksiigobubvdbm
@@ -137,6 +138,7 @@ dependencies:
   '@stitches/react': 1.2.8_react@18.2.0
   '@uniswap/token-lists': 1.0.0-beta.30
   '@uniswap/v2-core': 1.0.1
+  '@wagmi/core': 0.4.4_ethers@5.6.9+react@18.2.0
   ajv: 8.11.0
   ajv-formats: 2.1.1
   csstype: 3.1.0
@@ -3140,7 +3142,7 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@gnosis.pm/safe-apps-wagmi/1.0.0_@wagmi+core@0.3.8:
+  /@gnosis.pm/safe-apps-wagmi/1.0.0_@wagmi+core@0.4.4:
     resolution:
       {
         integrity: sha512-fKXn3CuR3BAIwO1+SB487DXubB0gWC00v4DD5ggWHeH5KlYTDFFcnZNujzxhC6M9QSTR+fQsZZK2tjkUgE5w2Q==,
@@ -3150,7 +3152,7 @@ packages:
     dependencies:
       '@gnosis.pm/safe-apps-provider': 0.11.1
       '@gnosis.pm/safe-apps-sdk': 7.4.0
-      '@wagmi/core': 0.3.8_ethers@5.6.9+react@18.2.0
+      '@wagmi/core': 0.4.4_ethers@5.6.9+react@18.2.0
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -5745,13 +5747,13 @@ packages:
       - react
     dev: false
 
-  /@wagmi/core/0.3.8_ethers@5.6.9+react@18.2.0:
+  /@wagmi/core/0.4.4_ethers@5.6.9+react@18.2.0:
     resolution:
       {
-        integrity: sha512-9wsd8YGW2ivjFwpkgAETn7cRbKOAddZz91vuh2VmIP2bWGiDuFA6RXy5/KLV/tGpvIIiCyGFO0JXpx+n4hFhgQ==,
+        integrity: sha512-F5GDev6ylp3ZhvLnZriQYPrT0aHGlgcxahMozraO4snQizyMp6CTJ7gJHyL/7at+rDXDqI6Kb5Yy09GGfoaQFA==,
       }
     peerDependencies:
-      '@coinbase/wallet-sdk': '>=3.2.0'
+      '@coinbase/wallet-sdk': '>=3.3.0'
       '@walletconnect/ethereum-provider': '>=1.7.5'
       ethers: '>=5.5.1'
     peerDependenciesMeta:
