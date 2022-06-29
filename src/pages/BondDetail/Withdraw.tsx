@@ -36,29 +36,27 @@ export const Withdraw = ({
 
   const [collateralAmount, setCollateralAmount] = useState('0')
 
-  const { data, error, isError, isLoading, reset, write } = useContractWrite(
-    {
-      addressOrName: bond?.id,
-      contractInterface: BOND_ABI,
+  const { data, error, isError, isLoading, reset, write } = useContractWrite({
+    addressOrName: bond?.id,
+    contractInterface: BOND_ABI,
+    functionName: 'withdrawExcessCollateral',
+    onSuccess(data, error) {
+      addTransaction(data, {
+        summary: `Withdraw ${collateralAmount} ${bond?.collateralToken?.symbol} from ${bond?.symbol}`,
+      })
     },
-    'withdrawExcessCollateral',
-    {
-      onSuccess(data, error) {
-        addTransaction(data, {
-          summary: `Withdraw ${collateralAmount} ${bond?.collateralToken?.symbol} from ${bond?.symbol}`,
-        })
-      },
-    },
-  )
+  })
 
-  const { data: previewWithdrawExcessCollateral } = useContractRead(
-    { addressOrName: bond?.id, contractInterface: BOND_ABI },
-    'previewWithdrawExcessCollateral',
-  )
-  const { data: collateralBalance } = useContractRead(
-    { addressOrName: bond?.id, contractInterface: BOND_ABI },
-    'collateralBalance',
-  )
+  const { data: previewWithdrawExcessCollateral } = useContractRead({
+    functionName: 'previewWithdrawExcessCollateral',
+    addressOrName: bond?.id,
+    contractInterface: BOND_ABI,
+  })
+  const { data: collateralBalance } = useContractRead({
+    functionName: 'collateralBalance',
+    addressOrName: bond?.id,
+    contractInterface: BOND_ABI,
+  })
 
   const excessCollateralDisplay = Number(
     formatUnits(
@@ -86,7 +84,7 @@ export const Withdraw = ({
   return (
     <div className="space-y-12">
       <div className="space-y-2">
-        <h2 className="!text-[#696969] card-title">Excess collateral</h2>
+        <h2 className="card-title !text-[#696969]">Excess collateral</h2>
 
         <SummaryItem
           border={false}

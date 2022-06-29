@@ -50,7 +50,7 @@ const { connectors } = getDefaultWallets({
 // as a connector in the list, but that's OK as you must be on the site to work
 const wagmiClient = createClient({
   autoConnect: true,
-  connectors: () => [new SafeConnector({ chains }), ...connectors()],
+  connectors: [new SafeConnector({ chains }), ...connectors()],
   provider,
 })
 

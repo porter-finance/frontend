@@ -38,24 +38,21 @@ export const Burn = ({
   const [bondAmount, setBondAmount] = useState('0')
   const collateralPerBond = bond ? getValuePerBond(bond, bond?.collateralRatio) : 0
   const addTransaction = useTransactionAdder()
-  const { data: totalSupply } = useContractRead(
-    { addressOrName: bond?.id, contractInterface: BOND_ABI },
-    'totalSupply',
-  )
-  const { data, error, isError, isLoading, reset, write } = useContractWrite(
-    {
-      addressOrName: bond?.id,
-      contractInterface: BOND_ABI,
+  const { data: totalSupply } = useContractRead({
+    addressOrName: bond?.id,
+    contractInterface: BOND_ABI,
+    functionName: 'totalSupply',
+  })
+  const { data, error, isError, isLoading, reset, write } = useContractWrite({
+    addressOrName: bond?.id,
+    contractInterface: BOND_ABI,
+    functionName: 'burn',
+    onSuccess(data, error) {
+      addTransaction(data, {
+        summary: `Burn ${bondAmount} ${bond?.symbol}`,
+      })
     },
-    'burn',
-    {
-      onSuccess(data, error) {
-        addTransaction(data, {
-          summary: `Burn ${bondAmount} ${bond?.symbol}`,
-        })
-      },
-    },
-  )
+  })
 
   const { isLoading: isConfirmLoading } = useWaitForTransaction({
     hash: data?.hash,

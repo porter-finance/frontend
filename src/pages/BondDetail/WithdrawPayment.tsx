@@ -19,44 +19,42 @@ export const WithdrawPayment = ({ bond }) => {
     isLoading: isLoadingPayment,
     reset: resetPayment,
     write: writePayment,
-  } = useContractWrite(
-    {
-      addressOrName: bond?.id,
-      contractInterface: BOND_ABI,
+  } = useContractWrite({
+    addressOrName: bond?.id,
+    contractInterface: BOND_ABI,
+    functionName: 'withdrawExcessPayment',
+    onSuccess(data, error) {
+      addTransaction(data, {
+        summary: `Withdraw ${parseUnits(
+          previewWithdrawExcessPayment?.toString(),
+          bond?.paymentToken.decimals,
+        )} ${bond?.paymentToken?.symbol} from ${bond?.symbol}`,
+      })
     },
-    'withdrawExcessPayment',
-    {
-      onSuccess(data, error) {
-        addTransaction(data, {
-          summary: `Withdraw ${parseUnits(
-            previewWithdrawExcessPayment?.toString(),
-            bond?.paymentToken.decimals,
-          )} ${bond?.paymentToken?.symbol} from ${bond?.symbol}`,
-        })
-      },
-    },
-  )
+  })
 
   const { isLoading: isConfirmLoadingPayment } = useWaitForTransaction({
     hash: dataPayment?.hash,
   })
 
-  const { data: paymentBalance } = useContractRead(
-    { addressOrName: bond?.id, contractInterface: BOND_ABI },
-    'paymentBalance',
-  )
+  const { data: paymentBalance } = useContractRead({
+    functionName: 'paymentBalance',
+    addressOrName: bond?.id,
+    contractInterface: BOND_ABI,
+  })
 
-  const { data: previewWithdrawExcessPayment } = useContractRead(
-    { addressOrName: bond?.id, contractInterface: BOND_ABI },
-    'previewWithdrawExcessPayment',
-  )
+  const { data: previewWithdrawExcessPayment } = useContractRead({
+    functionName: 'previewWithdrawExcessPayment',
+    addressOrName: bond?.id,
+    contractInterface: BOND_ABI,
+  })
   const excessPaymentDisplay = Number(
     formatUnits((previewWithdrawExcessPayment || '0').toString(), bond?.paymentToken?.decimals),
   ).toLocaleString()
 
   return (
     <div className="space-y-2">
-      <h2 className="!text-[#696969] card-title">Excess payment</h2>
+      <h2 className="card-title !text-[#696969]">Excess payment</h2>
 
       <SummaryItem
         border={false}
