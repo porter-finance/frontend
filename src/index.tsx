@@ -2,6 +2,7 @@ import React from 'react'
 import { BrowserRouter } from 'react-router-dom'
 
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
+import { SafeConnector } from '@gnosis.pm/safe-apps-wagmi'
 import { RainbowKitProvider, Theme, darkTheme, getDefaultWallets } from '@rainbow-me/rainbowkit'
 import { merge } from 'lodash'
 import { createRoot } from 'react-dom/client'
@@ -22,7 +23,6 @@ import ThemeProvider from './theme'
 import { GlobalStyle } from './theme/globalStyle'
 import './index.css'
 import '@rainbow-me/rainbowkit/styles.css'
-import { GnosisConnector } from './utils/gnosisConnector'
 
 const { chains, provider } = configureChains(
   [!isRinkeby ? chain.mainnet : chain.rinkeby, chain.hardhat],
@@ -39,7 +39,7 @@ const { connectors } = getDefaultWallets({
 // as a connector in the list, but that's OK as you must be on the site to work
 const wagmiClient = createClient({
   autoConnect: true,
-  connectors: () => [new GnosisConnector({ chains }), ...connectors()],
+  connectors: () => [new SafeConnector({ chains }), ...connectors()],
   provider,
 })
 

@@ -13,8 +13,7 @@ specifiers:
   '@ethersproject/solidity': ^5.6.1
   '@ethersproject/strings': ^5.6.1
   '@ethersproject/units': ^5.6.1
-  '@gnosis.pm/safe-apps-provider': ^0.11.0
-  '@gnosis.pm/safe-apps-sdk': ^7.3.0
+  '@gnosis.pm/safe-apps-wagmi': ^1.0.0
   '@graphql-codegen/cli': 2.6.2
   '@graphql-codegen/fragment-matcher': 3.2.1
   '@graphql-codegen/introspection': ^2.1.1
@@ -125,6 +124,7 @@ dependencies:
   '@ethersproject/solidity': 5.6.1
   '@ethersproject/strings': 5.6.1
   '@ethersproject/units': 5.6.1
+  '@gnosis.pm/safe-apps-wagmi': 1.0.0_@wagmi+core@0.3.8
   '@headlessui/react': 1.6.4_biqbaboplfbrettd7655fr4n2y
   '@josojo/honeyswap-sdk': 1.0.0_dd4qxzuycslosksiigobubvdbm
   '@radix-ui/react-icons': 1.1.1_react@18.2.0
@@ -170,8 +170,6 @@ dependencies:
   yup: 0.32.11
 
 devDependencies:
-  '@gnosis.pm/safe-apps-provider': 0.11.1
-  '@gnosis.pm/safe-apps-sdk': 7.4.0
   '@graphql-codegen/cli': 2.6.2_bd2houww3rfjk53zactamwptje
   '@graphql-codegen/fragment-matcher': 3.2.1_graphql@16.5.0
   '@graphql-codegen/introspection': 2.1.1_graphql@16.5.0
@@ -2784,7 +2782,7 @@ packages:
       - bufferutil
       - encoding
       - utf-8-validate
-    dev: true
+    dev: false
 
   /@gnosis.pm/safe-apps-sdk/7.4.0:
     resolution:
@@ -2798,7 +2796,24 @@ packages:
       - bufferutil
       - encoding
       - utf-8-validate
-    dev: true
+    dev: false
+
+  /@gnosis.pm/safe-apps-wagmi/1.0.0_@wagmi+core@0.3.8:
+    resolution:
+      {
+        integrity: sha512-fKXn3CuR3BAIwO1+SB487DXubB0gWC00v4DD5ggWHeH5KlYTDFFcnZNujzxhC6M9QSTR+fQsZZK2tjkUgE5w2Q==,
+      }
+    peerDependencies:
+      '@wagmi/core': ^0.3.8
+    dependencies:
+      '@gnosis.pm/safe-apps-provider': 0.11.1
+      '@gnosis.pm/safe-apps-sdk': 7.4.0
+      '@wagmi/core': 0.3.8_ethers@5.6.9+react@18.2.0
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - utf-8-validate
+    dev: false
 
   /@gnosis.pm/safe-react-gateway-sdk/3.1.2:
     resolution:
@@ -2809,7 +2824,7 @@ packages:
       cross-fetch: 3.1.5
     transitivePeerDependencies:
       - encoding
-    dev: true
+    dev: false
 
   /@graphql-codegen/cli/2.6.2_bd2houww3rfjk53zactamwptje:
     resolution:
@@ -5325,6 +5340,29 @@ packages:
     dependencies:
       '@coinbase/wallet-sdk': 3.3.0_@babel+core@7.18.5
       '@walletconnect/ethereum-provider': 1.7.8
+      ethers: 5.6.9
+      eventemitter3: 4.0.7
+      zustand: 4.0.0-rc.1_react@18.2.0
+    transitivePeerDependencies:
+      - immer
+      - react
+    dev: false
+
+  /@wagmi/core/0.3.8_ethers@5.6.9+react@18.2.0:
+    resolution:
+      {
+        integrity: sha512-9wsd8YGW2ivjFwpkgAETn7cRbKOAddZz91vuh2VmIP2bWGiDuFA6RXy5/KLV/tGpvIIiCyGFO0JXpx+n4hFhgQ==,
+      }
+    peerDependencies:
+      '@coinbase/wallet-sdk': '>=3.2.0'
+      '@walletconnect/ethereum-provider': '>=1.7.5'
+      ethers: '>=5.5.1'
+    peerDependenciesMeta:
+      '@coinbase/wallet-sdk':
+        optional: true
+      '@walletconnect/ethereum-provider':
+        optional: true
+    dependencies:
       ethers: 5.6.9
       eventemitter3: 4.0.7
       zustand: 4.0.0-rc.1_react@18.2.0
@@ -8085,6 +8123,7 @@ packages:
       {
         integrity: sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==,
       }
+    requiresBuild: true
     dependencies:
       file-uri-to-path: 1.0.0
     dev: true
@@ -12462,6 +12501,7 @@ packages:
       {
         integrity: sha512-0Zt+s3L7Vf1biwWZ29aARiVYLx7iMGnEUl9x33fbB/j3jR81u/O2LbqK+Bm1CDSNDKVtJ/YjwY7TUd5SkeLQLw==,
       }
+    requiresBuild: true
     dev: true
     optional: true
 
@@ -16949,6 +16989,7 @@ packages:
       {
         integrity: sha512-UdAqHyFngu7TfQKsCBgAA6pWDkT8MAO7d0jyOecVhN5354xbLqdn8mV9Tat9gepAupm0bt2DbeaSC8vS52MuFA==,
       }
+    requiresBuild: true
     dev: true
     optional: true
 

@@ -35,8 +35,6 @@
     ]
   },
   "devDependencies": {
-    "@gnosis.pm/safe-apps-provider": "^0.11.0",
-    "@gnosis.pm/safe-apps-sdk": "^7.3.0",
     "@graphql-codegen/cli": "2.6.2",
     "@graphql-codegen/fragment-matcher": "3.2.1",
     "@graphql-codegen/introspection": "^2.1.1",
@@ -104,6 +102,7 @@
     "@ethersproject/solidity": "^5.6.1",
     "@ethersproject/strings": "^5.6.1",
     "@ethersproject/units": "^5.6.1",
+    "@gnosis.pm/safe-apps-wagmi": "^1.0.0",
     "@headlessui/react": "^1.6.4",
     "@josojo/honeyswap-sdk": "^1.0.0",
     "@radix-ui/react-icons": "^1.1.1",
