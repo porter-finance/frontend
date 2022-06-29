@@ -45,13 +45,13 @@ const CollateralTokenSelector = () => {
 }
 
 const NoBondFound = () => {
-  const { data: account } = useAccount()
+  const { address } = useAccount()
   return (
-    <div className="p-4 space-y-4 w-full text-xs text-white rounded-md form-control">
-      <div className="flex justify-between w-full">
+    <div className="form-control w-full space-y-4 rounded-md p-4 text-xs text-white">
+      <div className="flex w-full justify-between">
         <PRTRIcon />
         <div className="flex flex-col">
-          <span>No Bonds available to auction.</span> {!account?.address && 'Connect wallet'}
+          <span>No Bonds available to auction.</span> {!address && 'Connect wallet'}
         </div>
       </div>
     </div>
