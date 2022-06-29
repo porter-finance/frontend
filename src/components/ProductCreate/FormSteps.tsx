@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 
-import { DoubleArrowRightIcon } from '@radix-ui/react-icons'
-import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
+import { ErrorMessage } from '@hookform/error-message'
+import { CrossCircledIcon, DoubleArrowRightIcon } from '@radix-ui/react-icons'
+import { FormProvider, useForm } from 'react-hook-form'
 
 import { ActionButton } from '../auction/Claimer'
 import { IssuerAllowList } from './SelectableTokens'
@@ -9,11 +10,6 @@ import { IssuerAllowList } from './SelectableTokens'
 import { isRinkeby } from '@/connectors'
 import { useActiveWeb3React } from '@/hooks'
 import { useWalletModalToggle } from '@/state/application/hooks'
-
-export type Inputs = {
-  amountOfCollateral: number
-  // todo there's more but seems like its not important to have them all listed?
-}
 
 export const FormSteps = ({
   ActionSteps,
@@ -26,14 +22,18 @@ export const FormSteps = ({
 }) => {
   const [currentStep, setCurrentStep] = useState(0)
 
-  const methods = useForm<Inputs>({ mode: 'onChange' })
+  const methods = useForm({
+    mode: 'onChange',
+  })
   const {
-    formState: { isDirty, isValid },
+    formState: { errors, isDirty, isValid },
     handleSubmit,
   } = methods
+
   const { account } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log('onSubmit', data)
+  const onSubmit = (data) => console.log('onSubmit', data)
+  const totalErrors = Object.keys(errors).length
 
   return (
     <FormProvider {...methods}>
@@ -146,6 +146,34 @@ export const FormSteps = ({
                         disabled={!isRinkeby && !IssuerAllowList.includes(account.toLowerCase())}
                       />
                     )}
+
+                    {totalErrors ? (
+                      <div className="p-4 bg-red-100 rounded-md">
+                        <div className="flex">
+                          <div className="shrink-0">
+                            <CrossCircledIcon className="w-5 h-5 text-red-400" />
+                          </div>
+                          <div className="ml-3">
+                            <h3 className="text-sm font-medium text-red-800">
+                              There {totalErrors > 1 ? `were ${totalErrors} errors` : `is an error`}{' '}
+                              with your submission
+                            </h3>
+                            <div className="mt-2 text-sm text-red-700">
+                              <ul className="pl-5 space-y-1 list-disc" role="list">
+                                {Object.keys(errors).map((name) => (
+                                  <ErrorMessage
+                                    errors={errors}
+                                    key={name}
+                                    name={name}
+                                    render={({ message }) => <li>{message}</li>}
+                                  />
+                                ))}
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ) : null}
                   </>
                 )}
               </div>

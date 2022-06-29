@@ -1,17 +1,19 @@
 import React from 'react'
 
 import { round } from 'lodash'
-import { useAccount, useBalance } from 'wagmi'
+import { useAccount, useBalance, useToken } from 'wagmi'
 
 import { useTokenPrice } from '@/hooks/useTokenPrice'
 
 export const TokenDetails = ({ option }) => {
   const { data: price } = useTokenPrice(option?.address)
+  const { data: token } = useToken(option?.address)
   const { data: account } = useAccount()
+
   const { data: tokenBalance } = useBalance({
     addressOrName: account?.address,
     token: option?.address,
-    formatUnits: option?.decimals,
+    formatUnits: token?.decimals,
   })
   const balanceString = tokenBalance?.formatted
   if (!option) {

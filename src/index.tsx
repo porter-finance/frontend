@@ -21,13 +21,24 @@ import TransactionUpdater from './state/transactions/updater'
 import UserUpdater from './state/user/updater'
 import ThemeProvider from './theme'
 import { GlobalStyle } from './theme/globalStyle'
+
 import './index.css'
 import '@rainbow-me/rainbowkit/styles.css'
+import { isProdRinkeby } from '@/connectors'
 
-const { chains, provider } = configureChains(
-  [!isRinkeby ? chain.mainnet : chain.rinkeby, chain.hardhat],
-  [alchemyProvider({ alchemyId: 'rD-tnwLLzbfOaFOBAv2ckazyJTmCRLhu' }), publicProvider()],
-)
+let configuredChains = []
+if (isProdRinkeby) {
+  configuredChains = [chain.rinkeby]
+} else if (isRinkeby) {
+  configuredChains = [chain.rinkeby, chain.hardhat]
+} else {
+  configuredChains = [chain.mainnet]
+}
+
+const { chains, provider } = configureChains(configuredChains, [
+  alchemyProvider({ alchemyId: 'rD-tnwLLzbfOaFOBAv2ckazyJTmCRLhu' }),
+  publicProvider(),
+])
 
 const { connectors } = getDefaultWallets({
   appName: 'Porter Finance',
