@@ -49,7 +49,6 @@ const { connectors } = getDefaultWallets({
 // connectors. This is to support the Gnosis Safe website. It does not show up
 // as a connector in the list, but that's OK as you must be on the site to work
 const wagmiClient = createClient({
-  autoConnect: true,
   connectors: [new SafeConnector({ chains }), ...connectors()],
   provider,
 })
