@@ -3,7 +3,7 @@ import React from 'react'
 import { BondActionSteps } from '../BondActionSteps'
 import { FormSteps } from '../FormSteps'
 import { StepOne } from '../StepOne'
-import { StepTwo } from './StepTwo'
+import { StepTwo } from '../convert/StepTwo'
 import { Summary } from './Summary'
 
 const SetupSimpleProduct = () => {

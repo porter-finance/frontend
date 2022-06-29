@@ -34,7 +34,9 @@ export const StepThree = () => {
           type="number"
           {...register('minimumBiddingAmountPerOrder', {
             required: false,
-            min: 0,
+            validate: {
+              greaterThanZero: (value) => value > 0 || 'The minimum bid size is 1',
+            },
           })}
         />
       </div>
@@ -54,15 +56,19 @@ export const StepThree = () => {
             validate: {
               dateValid: (orderCancellationEndDate) => {
                 if (!orderCancellationEndDate) return true
-                return dayjs(orderCancellationEndDate).isValid()
+                return (
+                  dayjs(orderCancellationEndDate).isValid() ||
+                  'The order cancellation date must be in the future and before the auction end date'
+                )
               },
               dateBefore: (orderCancellationEndDate) => {
                 if (!orderCancellationEndDate) return true
                 const auctionEndDate = getValues('auctionEndDate')
 
                 return (
-                  dayjs(orderCancellationEndDate).isAfter(new Date()) &&
-                  dayjs(orderCancellationEndDate).isBefore(auctionEndDate)
+                  (dayjs(orderCancellationEndDate).isAfter(new Date()) &&
+                    dayjs(orderCancellationEndDate).isBefore(auctionEndDate)) ||
+                  'The order cancellation date must be in the future and before the auction end date'
                 )
               },
             },
@@ -108,9 +114,11 @@ export const StepThree = () => {
             placeholder="0x0"
             type="text"
             {...register('accessManagerAddress', {
-              required: true,
+              required: 'For a private auction, the access manager address must be included',
               validate: {
-                isAddress: (accessManagerAddress) => utils.isAddress(accessManagerAddress),
+                isAddress: (accessManagerAddress) =>
+                  utils.isAddress(accessManagerAddress) ||
+                  'The address must be the checksum version, and need not be prepended with 0s',
               },
             })}
           />

@@ -22,16 +22,7 @@ export const StepTwo = () => {
           readOnly
           type="date"
           value={new Date().toISOString().substring(0, 10)}
-          {...register('auctionStartDate', {
-            required: true,
-            validate: {
-              dateValid: (auctionStartDate) => dayjs(auctionStartDate).isValid(),
-              dateBefore: (auctionStartDate) => {
-                const auctionEndDate = getValues('auctionEndDate')
-                return dayjs(auctionEndDate).diff(auctionStartDate) > 0
-              },
-            },
-          })}
+          {...register('auctionStartDate', {})}
         />
       </div>
       <div className="w-full form-control">
@@ -45,10 +36,14 @@ export const StepTwo = () => {
           className="w-full input input-bordered"
           type="datetime-local"
           {...register('auctionEndDate', {
-            required: true,
+            required: 'The auction end date must be entered',
             validate: {
-              dateValid: (auctionEndDate) => dayjs(auctionEndDate).isValid(),
-              afterToday: (auctionEndDate) => dayjs(auctionEndDate).isAfter(new Date()),
+              dateValid: (auctionEndDate) =>
+                dayjs(auctionEndDate).isValid() ||
+                'The auction end date must be after the start date',
+              afterToday: (auctionEndDate) =>
+                dayjs(auctionEndDate).isAfter(new Date()) ||
+                'The auction end date must be after the start date',
             },
           })}
         />

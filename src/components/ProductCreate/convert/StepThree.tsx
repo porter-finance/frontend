@@ -11,10 +11,16 @@ import { useTokenPrice } from '@/hooks/useTokenPrice'
 
 export const StepThree = () => {
   const { register, watch } = useFormContext()
-  const [collateralToken, amountOfConvertible] = watch(['collateralToken', 'amountOfConvertible'])
+
+  const [amountOfCollateral, collateralToken, amountOfConvertible] = watch([
+    'amountOfCollateral',
+    'collateralToken',
+    'amountOfConvertible',
+  ])
   const { data: collateralTokenPrice } = useTokenPrice(collateralToken?.address)
   const convertibleTokenValue = amountOfConvertible * collateralTokenPrice
   const { data: strikePrice } = useStrikePrice()
+
   return (
     <>
       <div className="w-full form-control">
@@ -41,9 +47,15 @@ export const StepThree = () => {
           placeholder="0"
           type="number"
           {...register('amountOfConvertible', {
-            required: true,
+            required: 'The amount of convertible tokens must be entered',
             valueAsNumber: true,
-            min: 0,
+            validate: {
+              overZero: (value) =>
+                value > 0 || 'A convertible bond must have some convertible tokens',
+              lessThanCollateral: (value) =>
+                value <= amountOfCollateral ||
+                'The amount of convertible tokens must be less than the amount of collateral',
+            },
           })}
         />
       </div>
