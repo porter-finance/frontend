@@ -27,16 +27,12 @@ export const BondActionSteps = ({ convertible = true, disabled }) => {
     address: collateralToken?.address,
   })
 
-  const { data: bondAllowance } = useContractRead(
-    {
-      addressOrName: collateralTokenData?.address,
-      contractInterface: BOND_ABI,
-    },
-    'allowance',
-    {
-      args: [account, EASY_AUCTION_NETWORKS[requiredChain.id]],
-    },
-  )
+  const { data: bondAllowance } = useContractRead({
+    addressOrName: collateralTokenData?.address,
+    contractInterface: BOND_ABI,
+    functionName: 'allowance',
+    args: [account, EASY_AUCTION_NETWORKS[requiredChain.id]],
+  })
 
   // state 0 for none, 1 for metamask confirmation, 2 for block confirmation
   const [waitingWalletApprove, setWaitingWalletApprove] = useState(0)
@@ -74,7 +70,7 @@ export const BondActionSteps = ({ convertible = true, disabled }) => {
     <>
       <ul className="steps steps-vertical">
         {confirmSteps.map((step, i) => (
-          <li className={`step ${i < currentApproveStep ? 'step-primary checked' : ''}`} key={i}>
+          <li className={`step ${i < currentApproveStep ? 'checked step-primary' : ''}`} key={i}>
             <TooltipElement left={step.text} tip={step.tip} />
           </li>
         ))}

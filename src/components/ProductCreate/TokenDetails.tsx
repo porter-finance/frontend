@@ -8,18 +8,18 @@ import { useTokenPrice } from '@/hooks/useTokenPrice'
 export const TokenDetails = ({ option }) => {
   const { data: price } = useTokenPrice(option?.address)
   const { data: token } = useToken(option?.address)
-  const { data: account } = useAccount()
+  const { address } = useAccount()
 
   const { data: tokenBalance } = useBalance({
-    addressOrName: account?.address,
+    addressOrName: address,
     token: option?.address,
     formatUnits: token?.decimals,
   })
   const balanceString = tokenBalance?.formatted
   if (!option) {
     return (
-      <div className="p-4 space-y-4 w-full text-xs text-white rounded-md form-control">
-        <div className="flex justify-between w-full">
+      <div className="form-control w-full space-y-4 rounded-md p-4 text-xs text-white">
+        <div className="flex w-full justify-between">
           <span>Pick a token</span>
         </div>
       </div>
@@ -27,8 +27,8 @@ export const TokenDetails = ({ option }) => {
   }
 
   return (
-    <div className="p-4 space-y-4 w-full text-xs text-white rounded-md form-control">
-      <div className="flex justify-between w-full">
+    <div className="form-control w-full space-y-4 rounded-md p-4 text-xs text-white">
+      <div className="flex w-full justify-between">
         <span className="flex items-center space-x-2">
           <img className="w-6" src={option?.iconUrl} />
           <span>{tokenBalance?.symbol}</span>
@@ -37,7 +37,7 @@ export const TokenDetails = ({ option }) => {
           <span className="text-[#696969]">Price: </span> {round(price, 3).toLocaleString()} USDC
         </span>
       </div>
-      <div className="flex justify-between w-full">
+      <div className="flex w-full justify-between">
         <span>
           <span className="text-[#696969]">Balance:</span> {Number(balanceString).toLocaleString()}
         </span>

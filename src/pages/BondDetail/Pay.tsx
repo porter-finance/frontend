@@ -38,24 +38,21 @@ export const Pay = ({
   const [bondAmount, setBondAmount] = useState('0')
   const addTransaction = useTransactionAdder()
 
-  const { data, error, isError, isLoading, reset, write } = useContractWrite(
-    {
-      addressOrName: bond?.id,
-      contractInterface: BOND_ABI,
+  const { data, error, isError, isLoading, reset, write } = useContractWrite({
+    addressOrName: bond?.id,
+    contractInterface: BOND_ABI,
+    functionName: 'pay',
+    onSuccess(data, error) {
+      addTransaction(data, {
+        summary: `Pay ${bondAmount} ${bond?.paymentToken?.symbol} to ${bond?.symbol}`,
+      })
     },
-    'pay',
-    {
-      onSuccess(data, error) {
-        addTransaction(data, {
-          summary: `Pay ${bondAmount} ${bond?.paymentToken?.symbol} to ${bond?.symbol}`,
-        })
-      },
-    },
-  )
-  const { data: amountUnpaid } = useContractRead(
-    { addressOrName: bond?.id, contractInterface: BOND_ABI },
-    'amountUnpaid',
-  )
+  })
+  const { data: amountUnpaid } = useContractRead({
+    addressOrName: bond?.id,
+    contractInterface: BOND_ABI,
+    functionName: 'amountUnpaid',
+  })
 
   const amountOwed = formatUnits(amountUnpaid || '0', bond?.paymentToken?.decimals)
   const { isLoading: isConfirmLoading } = useWaitForTransaction({
@@ -66,16 +63,18 @@ export const Pay = ({
     setBondAmount(amountOwed)
   }
 
-  const { data: previewWithdrawExcessCollateral } = useContractRead(
-    { addressOrName: bond?.id, contractInterface: BOND_ABI },
-    'previewWithdrawExcessCollateral',
-  )
+  const { data: previewWithdrawExcessCollateral } = useContractRead({
+    functionName: 'previewWithdrawExcessCollateral',
+    addressOrName: bond?.id,
+    contractInterface: BOND_ABI,
+  })
 
-  const { data: previewWithdrawExcessCollateralAfterPayment } = useContractRead(
-    { addressOrName: bond?.id, contractInterface: BOND_ABI },
-    'previewWithdrawExcessCollateralAfterPayment',
-    { args: parseUnits(bondAmount || '0', bond?.paymentToken?.decimals) },
-  )
+  const { data: previewWithdrawExcessCollateralAfterPayment } = useContractRead({
+    functionName: 'previewWithdrawExcessCollateralAfterPayment',
+    addressOrName: bond?.id,
+    contractInterface: BOND_ABI,
+    args: parseUnits(bondAmount || '0', bond?.paymentToken?.decimals),
+  })
   let result = '0'
   if (previewWithdrawExcessCollateralAfterPayment && previewWithdrawExcessCollateral) {
     result = previewWithdrawExcessCollateralAfterPayment

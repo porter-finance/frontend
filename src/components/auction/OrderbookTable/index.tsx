@@ -119,7 +119,7 @@ export const TableDesign = ({
 
   return (
     <div className="min-h-[385px]" {...restProps}>
-      <table className="table w-full h-full" {...getTableProps()}>
+      <table className="table h-full w-full" {...getTableProps()}>
         <thead className="sticky top-0 z-[1]">
           {headerGroups.map((headerGroup, i) => (
             <tr
@@ -129,7 +129,7 @@ export const TableDesign = ({
             >
               {headerGroup.headers.map((column, i) => (
                 <th
-                  className="text-xs font-normal tracking-widest text-[#696969] bg-transparent"
+                  className="bg-transparent text-xs font-normal tracking-widest text-[#696969]"
                   key={i}
                   {...column.getHeaderProps()}
                 >
@@ -146,18 +146,18 @@ export const TableDesign = ({
         <tbody {...getTableBodyProps()}>
           {loading &&
             [...Array(4).keys()].map((z) => (
-              <tr className="h-[57px] text-sm text-[#D2D2D2] bg-transparent" key={z}>
+              <tr className="h-[57px] bg-transparent text-sm text-[#D2D2D2]" key={z}>
                 {[...Array(columns.length).keys()].map((i) => (
-                  <td className="text-center text-[#696969] bg-transparent" key={i}>
-                    <div className="my-4 w-full max-w-sm h-4 bg-gradient-to-r from-[#1F2123] to-[#181A1C] rounded animate-pulse"></div>
+                  <td className="bg-transparent text-center text-[#696969]" key={i}>
+                    <div className="my-4 h-4 w-full max-w-sm animate-pulse rounded bg-gradient-to-r from-[#1F2123] to-[#181A1C]"></div>
                   </td>
                 ))}
               </tr>
             ))}
           {!loading && !page.length && (
-            <tr className="h-[57px] text-sm text-[#D2D2D2] bg-transparent">
+            <tr className="h-[57px] bg-transparent text-sm text-[#D2D2D2]">
               <td
-                className="py-[100px] space-y-4 text-center text-[#696969] bg-transparent"
+                className="space-y-4 bg-transparent py-[100px] text-center text-[#696969]"
                 colSpan={columns.length}
               >
                 {(account || !showConnect) && (
@@ -211,7 +211,7 @@ export const TableDesign = ({
               prepareRow(row)
               return (
                 <tr
-                  className="h-[57px] text-sm text-[#D2D2D2] bg-transparent"
+                  className="h-[57px] bg-transparent text-sm text-[#D2D2D2]"
                   key={i}
                   {...row.getRowProps()}
                 >
@@ -228,7 +228,7 @@ export const TableDesign = ({
         </tbody>
       </table>
       {!hidePagination && pageOptions.length > 0 && (
-        <div className="flex absolute right-6 bottom-7 justify-end items-center space-x-2 text-[#696969] !border-none">
+        <div className="absolute right-6 bottom-7 flex items-center justify-end space-x-2 !border-none text-[#696969]">
           <button className="btn btn-xs" disabled={!canPreviousPage} onClick={previousPage}>
             <DoubleArrowLeftIcon />
           </button>
@@ -257,15 +257,15 @@ export const ActiveStatusPill = ({
 }) => {
   return (
     <button
-      className={`relative max-h-[30px] text-[11px] text-xs uppercase font-normal disabled:text-[#181A1C] text-[#1E1E1E] disabled:bg-[#696969] pointer-events-none space-x-2 inline-flex items-center px-3 border py-1 border-transparent rounded-full shadow-sm bg-[#5BCD88] hover:none focus:outline-none focus:none ${className}`}
+      className={`hover:none focus:none pointer-events-none relative inline-flex max-h-[30px] items-center space-x-2 rounded-full border border-transparent bg-[#5BCD88] px-3 py-1 text-xs font-normal uppercase text-[#1E1E1E] shadow-sm focus:outline-none disabled:bg-[#696969] disabled:text-[#181A1C] ${className}`}
       disabled={disabled}
       type="button"
       {...rest}
     >
       {dot && !disabled && (
-        <span className="flex relative w-[6px] h-[6px]">
-          <span className="inline-flex absolute w-full h-full bg-[#181A1C] rounded-full opacity-25 animate-ping"></span>
-          <span className="inline-flex relative w-[6px] h-[6px] bg-[#181A1C] rounded-full opacity-50"></span>
+        <span className="relative flex h-[6px] w-[6px]">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#181A1C] opacity-25"></span>
+          <span className="relative inline-flex h-[6px] w-[6px] rounded-full bg-[#181A1C] opacity-50"></span>
         </span>
       )}
       <span>{title}</span>

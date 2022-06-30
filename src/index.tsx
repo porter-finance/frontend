@@ -2,6 +2,7 @@ import React from 'react'
 import { BrowserRouter } from 'react-router-dom'
 
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
+import { SafeConnector } from '@gnosis.pm/safe-apps-wagmi'
 import { RainbowKitProvider, Theme, darkTheme, getDefaultWallets } from '@rainbow-me/rainbowkit'
 import { merge } from 'lodash'
 import { createRoot } from 'react-dom/client'
@@ -44,9 +45,11 @@ const { connectors } = getDefaultWallets({
   chains,
 })
 
+// Initialize the wagmi client with the GnosisConnector along with the default
+// connectors. This is to support the Gnosis Safe website. It does not show up
+// as a connector in the list, but that's OK as you must be on the site to work
 const wagmiClient = createClient({
-  autoConnect: true,
-  connectors,
+  connectors: [new SafeConnector({ chains }), ...connectors()],
   provider,
 })
 
